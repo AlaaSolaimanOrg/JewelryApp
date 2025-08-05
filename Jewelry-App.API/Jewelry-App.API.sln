@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry-App.API", "Jewelry-App.API.csproj", "{2E74448B-2003-467E-AAF0-DD0B29782795}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jewelry-App.API", "Jewelry-App.API.csproj", "{2E74448B-2003-467E-AAF0-DD0B29782795}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry-App.Domain", "..\Jewelry-App.Domain\Jewelry-App.Domain.csproj", "{AC857A66-331B-438D-AFE0-2C650F2AF5F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jewelry-App.Domain", "..\Jewelry-App.Domain\Jewelry-App.Domain.csproj", "{AC857A66-331B-438D-AFE0-2C650F2AF5F5}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Jewelry-App.Database", "..\Jewelry-App.Database\Jewelry-App.Database.sqlproj", "{8C7D0A9B-42EC-49D1-B55E-98B99327B471}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jewelry-App.Infrastructure", "..\Jewelry-App.Infrastructure\Jewelry-App.Infrastructure.csproj", "{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry-App.Infrastructure", "..\Jewelry-App.Infrastructure\Jewelry-App.Infrastructure.csproj", "{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jewelry-App.Application", "..\Jewelry-App.Application\Jewelry-App.Application.csproj", "{D4F64B1F-24B8-4F6B-A48A-F2DAA8AEBD04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry-App.Application", "..\Jewelry-App.Application\Jewelry-App.Application.csproj", "{D4F64B1F-24B8-4F6B-A48A-F2DAA8AEBD04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jewelry-App.Resources", "..\Jewelry-App.Resources\Jewelry-App.Resources.csproj", "{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry-App.Resources", "..\Jewelry-App.Resources\Jewelry-App.Resources.csproj", "{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Jewelry-App.Database", "..\Jewelry-App.Database\Jewelry-App.Database.sqlproj", "{9CDDDA70-A036-4163-98DB-52486A488BA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{07F069D0-1401-4D99-AE10-E02D4FA82416}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,6 @@ Global
 		{AC857A66-331B-438D-AFE0-2C650F2AF5F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC857A66-331B-438D-AFE0-2C650F2AF5F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC857A66-331B-438D-AFE0-2C650F2AF5F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C7D0A9B-42EC-49D1-B55E-98B99327B471}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -47,9 +43,23 @@ Global
 		{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDDDA70-A036-4163-98DB-52486A488BA6}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2E74448B-2003-467E-AAF0-DD0B29782795} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
+		{AC857A66-331B-438D-AFE0-2C650F2AF5F5} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
+		{7F36F216-B1C9-4BD2-878F-1D1C3CDC452F} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
+		{D4F64B1F-24B8-4F6B-A48A-F2DAA8AEBD04} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
+		{D7B8A13A-0CD4-427E-BCAE-F48DDD8295E4} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
+		{9CDDDA70-A036-4163-98DB-52486A488BA6} = {07F069D0-1401-4D99-AE10-E02D4FA82416}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4581BFA3-CC03-4F3F-8394-F2B900A53064}
