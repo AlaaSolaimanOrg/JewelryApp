@@ -1,0 +1,65 @@
+/* Header Styles */
+.header {
+  background: var(--primary);
+  color: white;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--box-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
+}
+
+.logo i {
+  color: var(--gold);
+  font-size: 2rem;
+}
+
+.logo h1 {
+  font-weight: 600;
+  font-size: 1.6rem;
+  letter-spacing: 0.5px;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info i {
+  font-size: 1.2rem;
+}
+
+.page-title {
+  background: var(--gold);
+  color: white;
+  padding: 15px 25px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Main Container */
+.main-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--page-height);
+}

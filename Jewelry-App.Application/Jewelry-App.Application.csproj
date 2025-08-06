@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Jewelry-App.Domain\Jewelry-App.Domain.csproj" />
+    <ProjectReference Include="..\Jewelry-App.Infrastructure\Jewelry-App.Infrastructure.csproj" />
+    <ProjectReference Include="..\Jewelry-App.Resources\Jewelry-App.Resources.csproj" />
+  </ItemGroup>
+
 </Project>

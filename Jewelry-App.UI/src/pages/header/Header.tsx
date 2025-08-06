@@ -1,0 +1,41 @@
+import { useLocation } from "react-router-dom";
+import logo from "../../assets/images/jewelary-logo.svg";
+import Clock from "../../components/Clock/Clock";
+
+import "./header.scss";
+
+const Header = () => {
+  const location = useLocation();
+  const pagesTitles = {
+    "/": "POS Dashboard",
+    "/productLookup": "Product Lookup",
+  };
+  return (
+    <>
+      <header className="header">
+        <Link className="logo">
+          <img src={logo} alt="Logo" width={36} height={32} />
+
+          <i className="fas fa-gem"></i>
+          <h1>GoldCraft POS</h1>
+        </Link>
+        <div className="nav-controls">
+          <div className="user-info">
+            <i className="fas fa-user"></i>
+            <span>Sarah Johnson</span>
+          </div>
+          <Clock />
+          {/* <div id="current-time">{currentTime}</div> */}
+        </div>
+      </header>
+
+      <div className="page-title">
+        <span id="page-title">
+          {pagesTitles[location.pathname as keyof typeof pagesTitles]}
+        </span>
+      </div>
+    </>
+  );
+};
+
+export default Header;
