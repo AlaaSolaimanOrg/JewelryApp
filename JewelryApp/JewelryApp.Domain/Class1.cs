@@ -1,4 +1,4 @@
-﻿namespace Jewelry_App.Domain
+﻿namespace JewelryApp.Domain
 {
     public class Class1
     {

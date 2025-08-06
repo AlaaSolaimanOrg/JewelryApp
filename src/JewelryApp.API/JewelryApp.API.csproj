@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Jewelry_App.API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jewelry-App.Application\Jewelry-App.Application.csproj" />
+    <ProjectReference Include="..\..\JewelryApp\JewelryApp.Application\JewelryApp.Application.csproj" />
   </ItemGroup>
 
 </Project>

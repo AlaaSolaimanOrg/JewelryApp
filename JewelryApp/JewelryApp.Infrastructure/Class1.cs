@@ -1,4 +1,4 @@
-﻿namespace Jewelry_App.Resources
+﻿namespace JewelryApp.Infrastructure
 {
     public class Class1
     {

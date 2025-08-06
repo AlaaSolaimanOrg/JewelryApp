@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>Jewelry_App.Domain</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JewelryApp.Domain\JewelryApp.Domain.csproj" />
+    <ProjectReference Include="..\JewelryApp.Infrastructure\JewelryApp.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>
