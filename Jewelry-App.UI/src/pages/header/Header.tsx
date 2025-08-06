@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/images/jewelary-logo.svg";
 import Clock from "../../components/Clock/Clock";
 
@@ -9,11 +9,14 @@ const Header = () => {
   const pagesTitles = {
     "/": "POS Dashboard",
     "/productLookup": "Product Lookup",
+    "/transactionHistory": "Transaction History",
+    "/cartSummary": "Cart Summary",
+    "/manualItemEntry": "Manual Item Entry",
   };
   return (
     <>
       <header className="header">
-        <Link className="logo">
+        <Link to={"/"} className="logo text-decoration-none">
           <img src={logo} alt="Logo" width={36} height={32} />
 
           <i className="fas fa-gem"></i>

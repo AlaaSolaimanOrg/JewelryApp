@@ -1,11 +1,10 @@
 import "./App.scss";
-import Header from "./pages/header/Header";
 import AppRoutes from "./routes/Routes";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
     <div className="jewlery-app">
-     
       <AppRoutes />
     </div>
   );

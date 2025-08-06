@@ -1,725 +1,704 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GoldCraft POS | Jewelry Store System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-
-    </style>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
     <!-- Header -->
     <header class="header">
-        <div class="logo">
-            <i class="fas fa-gem"></i>
-            <h1>GoldCraft POS</h1>
+      <div class="logo">
+        <i class="fas fa-gem"></i>
+        <h1>GoldCraft POS</h1>
+      </div>
+      <div class="nav-controls">
+        <div class="user-info">
+          <i class="fas fa-user"></i>
+          <span>Sarah Johnson</span>
         </div>
-        <div class="nav-controls">
-            <div class="user-info">
-                <i class="fas fa-user"></i>
-                <span>Sarah Johnson</span>
-            </div>
-            <div id="current-time">10:30:45 AM</div>
-        </div>
+        <div id="current-time">10:30:45 AM</div>
+      </div>
     </header>
-    
+
     <div class="page-title">
-        <span id="page-title">POS Dashboard</span>
+      <span id="page-title">POS Dashboard</span>
     </div>
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Page 1: POS Home -->
-        <div id="home-page" class="page-content active">
-            <div class="home-container">
-                <div class="home-icon">
-                    <i class="fas fa-cash-register"></i>
-                </div>
-                <h1 class="home-title">GoldCraft Point of Sale</h1>
-                <p class="home-subtitle">Efficiently manage your jewelry store sales with our specialized POS system. Scan gold items, calculate prices by weight, and process payments seamlessly.</p>
-                
-                <button class="btn btn-primary btn-lg" onclick="navigatePage('scan-page', 'Product Lookup')">
-                    <i class="fas fa-plus-circle"></i> Start New Sale
-                </button>
-                
-                <div class="recent-transactions">
-                    <div class="recent-header">
-                        <h3>Recent Transactions</h3>
-                        <button class="btn btn-secondary" onclick="navigatePage('history-page', 'Transaction History')">
-                            <i class="fas fa-history"></i> View All
-                        </button>
-                    </div>
-                    <ul class="transaction-list">
-                        <li class="transaction-item">
-                            <span class="transaction-id">TR-2023-0582</span>
-                            <span class="transaction-amount">$1,850.75</span>
-                        </li>
-                        <li class="transaction-item">
-                            <span class="transaction-id">TR-2023-0581</span>
-                            <span class="transaction-amount">$2,420.50</span>
-                        </li>
-                        <li class="transaction-item">
-                            <span class="transaction-id">TR-2023-0580</span>
-                            <span class="transaction-amount">$3,125.25</span>
-                        </li>
-                        <li class="transaction-item">
-                            <span class="transaction-id">TR-2023-0579</span>
-                            <span class="transaction-amount">$980.30</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+      <!-- Page 1: POS Home -->
+      <div id="home-page" class="page-content active">
+        <div class="home-container">
+          <div class="home-icon">
+            <i class="fas fa-cash-register"></i>
+          </div>
+          <h1 class="home-title">GoldCraft Point of Sale</h1>
+          <p class="home-subtitle">
+            Efficiently manage your jewelry store sales with our specialized POS
+            system. Scan gold items, calculate prices by weight, and process
+            payments seamlessly.
+          </p>
 
-        <!-- Page 2: Product Lookup -->
-        <div id="scan-page" class="page-content">
-            <h2><i class="fas fa-search"></i> Product Lookup</h2>
-            <p class="subtitle">Scan barcode or search for jewelry items</p>
-            
-            <div class="search-container">
-                <input type="text" class="search-input" placeholder="Scan or Enter Barcode/SKU...">
-                <button class="search-btn"><i class="fas fa-camera"></i> Scan</button>
-            </div>
-            
-            <div class="result-panel active">
-                <div class="product-details">
-                    <div class="product-image">
-                        <i class="fas fa-ring fa-3x" style="color: #ccc;"></i>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Diamond Solitaire Ring</h3>
-                        <div class="product-sku">SKU: GLD-21K-RNG-0042</div>
-                        
-                        <div class="detail-row">
-                            <div class="detail-item">
-                                <label>Karat</label>
-                                <select>
-                                    <option>18K</option>
-                                    <option selected>21K</option>
-                                    <option>24K</option>
-                                </select>
-                            </div>
-                            <div class="detail-item">
-                                <label>Weight (grams)</label>
-                                <input type="number" value="3.5" step="0.01">
-                            </div>
-                        </div>
-                        
-                        <div class="detail-row">
-                            <div class="detail-item">
-                                <label>Price per gram</label>
-                                <input type="number" value="125.75" step="0.01">
-                            </div>
-                            <div class="detail-item">
-                                <label>Quantity</label>
-                                <input type="number" value="1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="price-display">
-                    Calculated Price: $440.13
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                    <button class="btn btn-secondary" onclick="navigatePage('manual-page', 'Manual Item Entry')">
-                        <i class="fas fa-pen"></i> Manual Entry
-                    </button>
-                </div>
-            </div>
-            
-            <div class="footer-nav">
-                <button class="btn btn-secondary" onclick="navigatePage('home-page', 'POS Dashboard')">
-                    <i class="fas fa-arrow-left"></i> Back
-                </button>
-                <button class="btn btn-primary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                    View Cart <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-        </div>
+          <button
+            class="btn btn-primary btn-lg"
+            onclick="navigatePage('scan-page', 'Product Lookup')"
+          >
+            <i class="fas fa-plus-circle"></i> Start New Sale
+          </button>
 
-        <!-- Page 3: Manual Item Entry -->
-        <div id="manual-page" class="page-content">
-            <h2><i class="fas fa-pen"></i> Manual Item Entry</h2>
-            <p class="subtitle">Enter jewelry details manually</p>
-            
-            <div class="product-details">
-                <div class="detail-row">
-                    <div class="detail-item">
-                        <label>Product Name</label>
-                        <input type="text" placeholder="Enter product name">
-                    </div>
-                    <div class="detail-item">
-                        <label>Karat</label>
-                        <select>
-                            <option>Select Karat</option>
-                            <option>18K</option>
-                            <option>21K</option>
-                            <option>24K</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-item">
-                        <label>Weight (grams)</label>
-                        <input type="number" value="" step="0.01" placeholder="0.00">
-                    </div>
-                    <div class="detail-item">
-                        <label>Price per gram</label>
-                        <input type="number" value="125.75" step="0.01">
-                    </div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-item">
-                        <label>Quantity</label>
-                        <input type="number" value="1">
-                    </div>
-                    <div class="detail-item">
-                        <label>Final Price (override)</label>
-                        <input type="number" value="" step="0.01" placeholder="Leave blank for auto-calculate">
-                    </div>
-                </div>
+          <div class="recent-transactions">
+            <div class="recent-header">
+              <h3>Recent Transactions</h3>
+              <button
+                class="btn btn-secondary"
+                onclick="navigatePage('history-page', 'Transaction History')"
+              >
+                <i class="fas fa-history"></i> View All
+              </button>
             </div>
-            
-            <div class="price-display">
-                Calculated Price: $0.00
-            </div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                    <i class="fas fa-cart-plus"></i> Add to Cart
-                </button>
-            </div>
-            
-            <div class="footer-nav">
-                <button class="btn btn-secondary" onclick="navigatePage('scan-page', 'Product Lookup')">
-                    <i class="fas fa-arrow-left"></i> Back to Search
-                </button>
-            </div>
+            <ul class="transaction-list">
+              <li class="transaction-item">
+                <span class="transaction-id">TR-2023-0582</span>
+                <span class="transaction-amount">$1,850.75</span>
+              </li>
+              <li class="transaction-item">
+                <span class="transaction-id">TR-2023-0581</span>
+                <span class="transaction-amount">$2,420.50</span>
+              </li>
+              <li class="transaction-item">
+                <span class="transaction-id">TR-2023-0580</span>
+                <span class="transaction-amount">$3,125.25</span>
+              </li>
+              <li class="transaction-item">
+                <span class="transaction-id">TR-2023-0579</span>
+                <span class="transaction-amount">$980.30</span>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
 
-        <!-- Page 4: Cart Summary -->
-        <div id="cart-page" class="page-content">
-            <h2><i class="fas fa-shopping-cart"></i> Cart Summary</h2>
-            <p class="subtitle">Review items before payment</p>
-            
-            <div class="cart-container">
-                <div>
-                    <table class="cart-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Karat</th>
-                                <th>Weight</th>
-                                <th>Price/Gram</th>
-                                <th>Subtotal</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="item-name">
-                                    <i class="fas fa-ring gem-icon"></i>
-                                    Diamond Solitaire Ring
-                                </td>
-                                <td>21K</td>
-                                <td>3.5g</td>
-                                <td>$125.75</td>
-                                <td>$440.13</td>
-                                <td class="item-actions">
-                                    <button><i class="fas fa-times"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="item-name">
-                                    <i class="fas fa-gem gem-icon"></i>
-                                    Gold Tennis Bracelet
-                                </td>
-                                <td>18K</td>
-                                <td>8.2g</td>
-                                <td>$112.30</td>
-                                <td>$920.86</td>
-                                <td class="item-actions">
-                                    <button><i class="fas fa-times"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="item-name">
-                                    <i class="fas fa-heart gem-icon"></i>
-                                    Ruby Heart Pendant
-                                </td>
-                                <td>24K</td>
-                                <td>5.1g</td>
-                                <td>$142.90</td>
-                                <td>$728.79</td>
-                                <td class="item-actions">
-                                    <button><i class="fas fa-times"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <button class="btn btn-secondary" onclick="navigatePage('discount-page', 'Apply Discount')">
-                        <i class="fas fa-tag"></i> Apply Discount
-                    </button>
-                </div>
-                
-                <div class="cart-summary">
-                    <h3>Order Summary</h3>
-                    
-                    <div class="summary-item">
-                        <span>Subtotal:</span>
-                        <span>$2,089.78</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Discount:</span>
-                        <span>$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Tax:</span>
-                        <span>$125.39</span>
-                    </div>
-                    
-                    <div class="summary-total">
-                        <span>Total:</span>
-                        <span>$2,215.17</span>
-                    </div>
-                    
-                    <div class="cart-actions">
-                        <button class="btn btn-primary" onclick="navigatePage('payment-page', 'Payment')">
-                            <i class="fas fa-credit-card"></i> Proceed to Payment
-                        </button>
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancel Sale
-                        </button>
-                        <button class="btn btn-secondary" onclick="navigatePage('scan-page', 'Product Lookup')">
-                            <i class="fas fa-plus"></i> Add More Items
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <!-- Page 3: Manual Item Entry -->
+ 
 
-        <!-- Page 5: Discount Editor -->
-        <div id="discount-page" class="page-content">
-            <h2><i class="fas fa-tag"></i> Apply Discount</h2>
-            <p class="subtitle">Adjust pricing for items or entire order</p>
-            
-            <div class="cart-container">
-                <div>
-                    <table class="cart-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Price/Gram</th>
-                                <th>Override Price</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="item-name">
-                                    <i class="fas fa-ring gem-icon"></i>
-                                    Diamond Solitaire Ring
-                                </td>
-                                <td>
-                                    <input type="number" value="125.75" step="0.01" style="width: 100px;">
-                                </td>
-                                <td>
-                                    <input type="number" value="440.13" step="0.01" style="width: 120px;">
-                                </td>
-                                <td>$440.13</td>
-                            </tr>
-                            <tr>
-                                <td class="item-name">
-                                    <i class="fas fa-gem gem-icon"></i>
-                                    Gold Tennis Bracelet
-                                </td>
-                                <td>
-                                    <input type="number" value="112.30" step="0.01" style="width: 100px;">
-                                </td>
-                                <td>
-                                    <input type="number" value="920.86" step="0.01" style="width: 120px;">
-                                </td>
-                                <td>$920.86</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div style="margin-top: 30px;">
-                        <h3>Order-Level Discount</h3>
-                        <div class="detail-row">
-                            <div class="detail-item">
-                                <label>Discount Type</label>
-                                <select>
-                                    <option>Percentage</option>
-                                    <option>Fixed Amount</option>
-                                </select>
-                            </div>
-                            <div class="detail-item">
-                                <label>Discount Value</label>
-                                <input type="number" value="0" step="0.01">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cart-summary">
-                    <h3>Discount Summary</h3>
-                    
-                    <div class="summary-item">
-                        <span>Original Total:</span>
-                        <span>$2,215.17</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Item Discounts:</span>
-                        <span>$0.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Order Discount:</span>
-                        <span>$0.00</span>
-                    </div>
-                    
-                    <div class="summary-total">
-                        <span>New Total:</span>
-                        <span>$2,215.17</span>
-                    </div>
-                    
-                    <div class="cart-actions">
-                        <button class="btn btn-primary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                            <i class="fas fa-check"></i> Apply Discount
-                        </button>
-                        <button class="btn btn-secondary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                            <i class="fas fa-times"></i> Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <!-- Page 4: Cart Summary -->
+      <div id="cart-page" class="page-content">
+        <h2><i class="fas fa-shopping-cart"></i> Cart Summary</h2>
+        <p class="subtitle">Review items before payment</p>
 
-        <!-- Page 6: Payment -->
-        <div id="payment-page" class="page-content">
-            <h2><i class="fas fa-credit-card"></i> Payment</h2>
-            <p class="subtitle">Process payment for the order</p>
-            
-            <div class="payment-container">
-                <div class="payment-methods">
-                    <div class="payment-card">
-                        <h3><i class="fas fa-money-bill"></i> Cash Payment</h3>
-                        <div class="payment-input-group">
-                            <label>Cash Amount</label>
-                            <input type="number" value="0.00" step="0.01">
-                        </div>
-                        <button class="btn btn-success">
-                            <i class="fas fa-check"></i> Apply Cash Payment
-                        </button>
-                    </div>
-                    
-                    <div class="payment-card">
-                        <h3><i class="fas fa-credit-card"></i> Card Payment</h3>
-                        <div class="payment-input-group">
-                            <label>Card Amount</label>
-                            <input type="number" value="0.00" step="0.01">
-                        </div>
-                        <button class="btn btn-info">
-                            <i class="fas fa-credit-card"></i> Process with Moneris
-                        </button>
-                    </div>
-                    
-                    <div class="payment-card">
-                        <h3><i class="fas fa-credit-card"></i> Additional Card</h3>
-                        <div class="payment-input-group">
-                            <label>Card Amount</label>
-                            <input type="number" value="0.00" step="0.01">
-                        </div>
-                        <button class="btn btn-info">
-                            <i class="fas fa-credit-card"></i> Add Card Payment
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="payment-summary">
-                    <h3>Payment Summary</h3>
-                    
-                    <div class="summary-item">
-                        <span>Order Total:</span>
-                        <span>$2,215.17</span>
-                    </div>
-                    
-                    <div class="applied-payments" style="margin: 25px 0;">
-                        <div class="summary-item">
-                            <span>Cash Payment:</span>
-                            <span>$200.00</span>
-                        </div>
-                        <div class="summary-item">
-                            <span>Card Payment:</span>
-                            <span>$500.00</span>
-                        </div>
-                    </div>
-                    
-                    <div class="balance-display">
-                        Balance Due: $1,515.17
-                    </div>
-                    
-                    <div class="cart-actions">
-                        <button class="btn btn-primary" onclick="navigatePage('receipt-page', 'Receipt Preview')">
-                            <i class="fas fa-check-circle"></i> Confirm Payment
-                        </button>
-                        <button class="btn btn-secondary" onclick="navigatePage('cart-page', 'Cart Summary')">
-                            <i class="fas fa-arrow-left"></i> Back to Cart
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page 7: Receipt Preview -->
-        <div id="receipt-page" class="page-content">
-            <h2><i class="fas fa-receipt"></i> Receipt Preview</h2>
-            <p class="subtitle">Review receipt before finalizing</p>
-            
-            <div class="receipt-container">
-                <div class="receipt-header">
-                    <div class="receipt-title">GoldCraft Jewelers</div>
-                    <div class="receipt-subtitle">123 Luxury Avenue, Diamond District</div>
-                    <div class="receipt-subtitle">Phone: (555) 123-4567</div>
-                </div>
-                
-                <div class="receipt-details">
-                    <div>
-                        <div><strong>Transaction ID:</strong> TR-2023-0583</div>
-                        <div><strong>Date:</strong> July 13, 2025</div>
-                        <div><strong>Time:</strong> 10:45:23 AM</div>
-                    </div>
-                    <div>
-                        <div><strong>Staff:</strong> Sarah Johnson</div>
-                        <div><strong>Customer:</strong> Walk-in</div>
-                        <div><strong>Payment Method:</strong> Cash & Card</div>
-                    </div>
-                </div>
-                
-                <table class="receipt-table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Karat</th>
-                            <th>Weight</th>
-                            <th>Price/Gram</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Diamond Solitaire Ring</td>
-                            <td>21K</td>
-                            <td>3.5g</td>
-                            <td>$125.75</td>
-                            <td>$440.13</td>
-                        </tr>
-                        <tr>
-                            <td>Gold Tennis Bracelet</td>
-                            <td>18K</td>
-                            <td>8.2g</td>
-                            <td>$112.30</td>
-                            <td>$920.86</td>
-                        </tr>
-                        <tr>
-                            <td>Ruby Heart Pendant</td>
-                            <td>24K</td>
-                            <td>5.1g</td>
-                            <td>$142.90</td>
-                            <td>$728.79</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="receipt-totals">
-                    <div class="receipt-total">
-                        <div class="total-label">Subtotal</div>
-                        <div class="total-value">$2,089.78</div>
-                    </div>
-                    <div class="receipt-total">
-                        <div class="total-label">Total</div>
-                        <div class="total-value">$2,215.17</div>
-                    </div>
-                </div>
-                
-                <div class="payment-breakdown">
-                    <h4>Payment Breakdown</h4>
-                    <div class="summary-item">
-                        <span>Cash Payment:</span>
-                        <span>$200.00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Card Payment:</span>
-                        <span>$2,015.17</span>
-                    </div>
-                </div>
-                
-                <div class="receipt-actions">
-                    <button class="btn btn-info" onclick="navigatePage('delivery-page', 'Receipt Delivery')">
-                        <i class="fas fa-sms"></i> Send SMS
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="fas fa-print"></i> Print Receipt
-                    </button>
-                    <button class="btn btn-success" onclick="navigatePage('home-page', 'POS Dashboard')">
-                        <i class="fas fa-check"></i> Complete Sale
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page 8: Receipt Delivery -->
-        <div id="delivery-page" class="page-content">
-            <h2><i class="fas fa-sms"></i> Receipt Delivery</h2>
-            <p class="subtitle">Send receipt to customer</p>
-            
-            <div style="max-width: 600px; margin: 0 auto;">
-                <div class="payment-card">
-                    <h3>Send via SMS</h3>
-                    <div class="payment-input-group">
-                        <label>Customer Phone Number</label>
-                        <input type="tel" placeholder="+1 (555) 123-4567">
-                    </div>
-                    
-                    <div class="action-buttons" style="margin-top: 30px;">
-                        <button class="btn btn-success" onclick="showSmsSuccess()">
-                            <i class="fas fa-paper-plane"></i> Send SMS Receipt
-                        </button>
-                        <button class="btn btn-secondary" onclick="navigatePage('home-page', 'POS Dashboard')">
-                            <i class="fas fa-times"></i> Skip & Finish
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="sms-success" style="display: none; margin-top: 30px; text-align: center; padding: 25px; background: #e8f5e9; border-radius: var(--border-radius);">
-                    <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 20px;"></i>
-                    <h3 style="color: var(--success); margin-bottom: 15px;">SMS Sent Successfully!</h3>
-                    <p>The receipt has been sent to the customer's phone.</p>
-                    
-                    <button class="btn btn-primary" onclick="navigatePage('home-page', 'POS Dashboard')" style="margin-top: 20px;">
-                        <i class="fas fa-home"></i> Return to Dashboard
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Page 9: Transaction History -->
-        <div id="history-page" class="page-content">
-            <h2><i class="fas fa-history"></i> Past Transactions</h2>
-            <p class="subtitle">View previous sales records</p>
-            
-            <div class="search-container" style="margin-bottom: 25px;">
-                <input type="text" class="search-input" placeholder="Search transactions...">
-                <button class="search-btn"><i class="fas fa-search"></i> Search</button>
-            </div>
-            
+        <div class="cart-container">
+          <div>
             <table class="cart-table">
-                <thead>
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Date & Time</th>
-                        <th>Total Amount</th>
-                        <th>Payment Type</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>TR-2023-0582</td>
-                        <td>Jul 12, 2025 14:23</td>
-                        <td>$1,850.75</td>
-                        <td>Card</td>
-                        <td>
-                            <button class="btn btn-info btn-sm"><i class="fas fa-print"></i></button>
-                            <button class="btn btn-success btn-sm"><i class="fas fa-sms"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>TR-2023-0581</td>
-                        <td>Jul 12, 2025 11:45</td>
-                        <td>$2,420.50</td>
-                        <td>Cash</td>
-                        <td>
-                            <button class="btn btn-info btn-sm"><i class="fas fa-print"></i></button>
-                            <button class="btn btn-success btn-sm"><i class="fas fa-sms"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>TR-2023-0580</td>
-                        <td>Jul 11, 2025 16:12</td>
-                        <td>$3,125.25</td>
-                        <td>Card</td>
-                        <td>
-                            <button class="btn btn-info btn-sm"><i class="fas fa-print"></i></button>
-                            <button class="btn btn-success btn-sm"><i class="fas fa-sms"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>TR-2023-0579</td>
-                        <td>Jul 10, 2025 10:33</td>
-                        <td>$980.30</td>
-                        <td>Cash & Card</td>
-                        <td>
-                            <button class="btn btn-info btn-sm"><i class="fas fa-print"></i></button>
-                            <button class="btn btn-success btn-sm"><i class="fas fa-sms"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Karat</th>
+                  <th>Weight</th>
+                  <th>Price/Gram</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="item-name">
+                    <i class="fas fa-ring gem-icon"></i>
+                    Diamond Solitaire Ring
+                  </td>
+                  <td>21K</td>
+                  <td>3.5g</td>
+                  <td>$125.75</td>
+                  <td>$440.13</td>
+                  <td class="item-actions">
+                    <button><i class="fas fa-times"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="item-name">
+                    <i class="fas fa-gem gem-icon"></i>
+                    Gold Tennis Bracelet
+                  </td>
+                  <td>18K</td>
+                  <td>8.2g</td>
+                  <td>$112.30</td>
+                  <td>$920.86</td>
+                  <td class="item-actions">
+                    <button><i class="fas fa-times"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="item-name">
+                    <i class="fas fa-heart gem-icon"></i>
+                    Ruby Heart Pendant
+                  </td>
+                  <td>24K</td>
+                  <td>5.1g</td>
+                  <td>$142.90</td>
+                  <td>$728.79</td>
+                  <td class="item-actions">
+                    <button><i class="fas fa-times"></i></button>
+                  </td>
+                </tr>
+              </tbody>
             </table>
-            
-            <div class="footer-nav">
-                <button class="btn btn-secondary" onclick="navigatePage('home-page', 'POS Dashboard')">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </button>
+
+            <button
+              class="btn btn-secondary"
+              onclick="navigatePage('discount-page', 'Apply Discount')"
+            >
+              <i class="fas fa-tag"></i> Apply Discount
+            </button>
+          </div>
+
+          <div class="cart-summary">
+            <h3>Order Summary</h3>
+
+            <div class="summary-item">
+              <span>Subtotal:</span>
+              <span>$2,089.78</span>
             </div>
+            <div class="summary-item">
+              <span>Discount:</span>
+              <span>$0.00</span>
+            </div>
+            <div class="summary-item">
+              <span>Tax:</span>
+              <span>$125.39</span>
+            </div>
+
+            <div class="summary-total">
+              <span>Total:</span>
+              <span>$2,215.17</span>
+            </div>
+
+            <div class="cart-actions">
+              <button
+                class="btn btn-primary"
+                onclick="navigatePage('payment-page', 'Payment')"
+              >
+                <i class="fas fa-credit-card"></i> Proceed to Payment
+              </button>
+              <button class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel Sale
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="navigatePage('scan-page', 'Product Lookup')"
+              >
+                <i class="fas fa-plus"></i> Add More Items
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Page 5: Discount Editor -->
+      <div id="discount-page" class="page-content">
+        <h2><i class="fas fa-tag"></i> Apply Discount</h2>
+        <p class="subtitle">Adjust pricing for items or entire order</p>
+
+        <div class="cart-container">
+          <div>
+            <table class="cart-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price/Gram</th>
+                  <th>Override Price</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="item-name">
+                    <i class="fas fa-ring gem-icon"></i>
+                    Diamond Solitaire Ring
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value="125.75"
+                      step="0.01"
+                      style="width: 100px"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value="440.13"
+                      step="0.01"
+                      style="width: 120px"
+                    />
+                  </td>
+                  <td>$440.13</td>
+                </tr>
+                <tr>
+                  <td class="item-name">
+                    <i class="fas fa-gem gem-icon"></i>
+                    Gold Tennis Bracelet
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value="112.30"
+                      step="0.01"
+                      style="width: 100px"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      value="920.86"
+                      step="0.01"
+                      style="width: 120px"
+                    />
+                  </td>
+                  <td>$920.86</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 30px">
+              <h3>Order-Level Discount</h3>
+              <div class="detail-row">
+                <div class="detail-item">
+                  <label>Discount Type</label>
+                  <select>
+                    <option>Percentage</option>
+                    <option>Fixed Amount</option>
+                  </select>
+                </div>
+                <div class="detail-item">
+                  <label>Discount Value</label>
+                  <input type="number" value="0" step="0.01" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-summary">
+            <h3>Discount Summary</h3>
+
+            <div class="summary-item">
+              <span>Original Total:</span>
+              <span>$2,215.17</span>
+            </div>
+            <div class="summary-item">
+              <span>Item Discounts:</span>
+              <span>$0.00</span>
+            </div>
+            <div class="summary-item">
+              <span>Order Discount:</span>
+              <span>$0.00</span>
+            </div>
+
+            <div class="summary-total">
+              <span>New Total:</span>
+              <span>$2,215.17</span>
+            </div>
+
+            <div class="cart-actions">
+              <button
+                class="btn btn-primary"
+                onclick="navigatePage('cart-page', 'Cart Summary')"
+              >
+                <i class="fas fa-check"></i> Apply Discount
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="navigatePage('cart-page', 'Cart Summary')"
+              >
+                <i class="fas fa-times"></i> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 6: Payment -->
+      <div id="payment-page" class="page-content">
+        <h2><i class="fas fa-credit-card"></i> Payment</h2>
+        <p class="subtitle">Process payment for the order</p>
+
+        <div class="payment-container">
+          <div class="payment-methods">
+            <div class="payment-card">
+              <h3><i class="fas fa-money-bill"></i> Cash Payment</h3>
+              <div class="payment-input-group">
+                <label>Cash Amount</label>
+                <input type="number" value="0.00" step="0.01" />
+              </div>
+              <button class="btn btn-success">
+                <i class="fas fa-check"></i> Apply Cash Payment
+              </button>
+            </div>
+
+            <div class="payment-card">
+              <h3><i class="fas fa-credit-card"></i> Card Payment</h3>
+              <div class="payment-input-group">
+                <label>Card Amount</label>
+                <input type="number" value="0.00" step="0.01" />
+              </div>
+              <button class="btn btn-info">
+                <i class="fas fa-credit-card"></i> Process with Moneris
+              </button>
+            </div>
+
+            <div class="payment-card">
+              <h3><i class="fas fa-credit-card"></i> Additional Card</h3>
+              <div class="payment-input-group">
+                <label>Card Amount</label>
+                <input type="number" value="0.00" step="0.01" />
+              </div>
+              <button class="btn btn-info">
+                <i class="fas fa-credit-card"></i> Add Card Payment
+              </button>
+            </div>
+          </div>
+
+          <div class="payment-summary">
+            <h3>Payment Summary</h3>
+
+            <div class="summary-item">
+              <span>Order Total:</span>
+              <span>$2,215.17</span>
+            </div>
+
+            <div class="applied-payments" style="margin: 25px 0">
+              <div class="summary-item">
+                <span>Cash Payment:</span>
+                <span>$200.00</span>
+              </div>
+              <div class="summary-item">
+                <span>Card Payment:</span>
+                <span>$500.00</span>
+              </div>
+            </div>
+
+            <div class="balance-display">Balance Due: $1,515.17</div>
+
+            <div class="cart-actions">
+              <button
+                class="btn btn-primary"
+                onclick="navigatePage('receipt-page', 'Receipt Preview')"
+              >
+                <i class="fas fa-check-circle"></i> Confirm Payment
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="navigatePage('cart-page', 'Cart Summary')"
+              >
+                <i class="fas fa-arrow-left"></i> Back to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 7: Receipt Preview -->
+      <div id="receipt-page" class="page-content">
+        <h2><i class="fas fa-receipt"></i> Receipt Preview</h2>
+        <p class="subtitle">Review receipt before finalizing</p>
+
+        <div class="receipt-container">
+          <div class="receipt-header">
+            <div class="receipt-title">GoldCraft Jewelers</div>
+            <div class="receipt-subtitle">
+              123 Luxury Avenue, Diamond District
+            </div>
+            <div class="receipt-subtitle">Phone: (555) 123-4567</div>
+          </div>
+
+          <div class="receipt-details">
+            <div>
+              <div><strong>Transaction ID:</strong> TR-2023-0583</div>
+              <div><strong>Date:</strong> July 13, 2025</div>
+              <div><strong>Time:</strong> 10:45:23 AM</div>
+            </div>
+            <div>
+              <div><strong>Staff:</strong> Sarah Johnson</div>
+              <div><strong>Customer:</strong> Walk-in</div>
+              <div><strong>Payment Method:</strong> Cash & Card</div>
+            </div>
+          </div>
+
+          <table class="receipt-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Karat</th>
+                <th>Weight</th>
+                <th>Price/Gram</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Diamond Solitaire Ring</td>
+                <td>21K</td>
+                <td>3.5g</td>
+                <td>$125.75</td>
+                <td>$440.13</td>
+              </tr>
+              <tr>
+                <td>Gold Tennis Bracelet</td>
+                <td>18K</td>
+                <td>8.2g</td>
+                <td>$112.30</td>
+                <td>$920.86</td>
+              </tr>
+              <tr>
+                <td>Ruby Heart Pendant</td>
+                <td>24K</td>
+                <td>5.1g</td>
+                <td>$142.90</td>
+                <td>$728.79</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="receipt-totals">
+            <div class="receipt-total">
+              <div class="total-label">Subtotal</div>
+              <div class="total-value">$2,089.78</div>
+            </div>
+            <div class="receipt-total">
+              <div class="total-label">Total</div>
+              <div class="total-value">$2,215.17</div>
+            </div>
+          </div>
+
+          <div class="payment-breakdown">
+            <h4>Payment Breakdown</h4>
+            <div class="summary-item">
+              <span>Cash Payment:</span>
+              <span>$200.00</span>
+            </div>
+            <div class="summary-item">
+              <span>Card Payment:</span>
+              <span>$2,015.17</span>
+            </div>
+          </div>
+
+          <div class="receipt-actions">
+            <button
+              class="btn btn-info"
+              onclick="navigatePage('delivery-page', 'Receipt Delivery')"
+            >
+              <i class="fas fa-sms"></i> Send SMS
+            </button>
+            <button class="btn btn-primary">
+              <i class="fas fa-print"></i> Print Receipt
+            </button>
+            <button
+              class="btn btn-success"
+              onclick="navigatePage('home-page', 'POS Dashboard')"
+            >
+              <i class="fas fa-check"></i> Complete Sale
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 8: Receipt Delivery -->
+      <div id="delivery-page" class="page-content">
+        <h2><i class="fas fa-sms"></i> Receipt Delivery</h2>
+        <p class="subtitle">Send receipt to customer</p>
+
+        <div style="max-width: 600px; margin: 0 auto">
+          <div class="payment-card">
+            <h3>Send via SMS</h3>
+            <div class="payment-input-group">
+              <label>Customer Phone Number</label>
+              <input type="tel" placeholder="+1 (555) 123-4567" />
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px">
+              <button class="btn btn-success" onclick="showSmsSuccess()">
+                <i class="fas fa-paper-plane"></i> Send SMS Receipt
+              </button>
+              <button
+                class="btn btn-secondary"
+                onclick="navigatePage('home-page', 'POS Dashboard')"
+              >
+                <i class="fas fa-times"></i> Skip & Finish
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="sms-success"
+            style="
+              display: none;
+              margin-top: 30px;
+              text-align: center;
+              padding: 25px;
+              background: #e8f5e9;
+              border-radius: var(--border-radius);
+            "
+          >
+            <i
+              class="fas fa-check-circle"
+              style="
+                font-size: 3rem;
+                color: var(--success);
+                margin-bottom: 20px;
+              "
+            ></i>
+            <h3 style="color: var(--success); margin-bottom: 15px">
+              SMS Sent Successfully!
+            </h3>
+            <p>The receipt has been sent to the customer's phone.</p>
+
+            <button
+              class="btn btn-primary"
+              onclick="navigatePage('home-page', 'POS Dashboard')"
+              style="margin-top: 20px"
+            >
+              <i class="fas fa-home"></i> Return to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 9: Transaction History -->
+      <div id="history-page" class="page-content">
+        <h2><i class="fas fa-history"></i> Past Transactions</h2>
+        <p class="subtitle">View previous sales records</p>
+
+        <div class="search-container" style="margin-bottom: 25px">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search transactions..."
+          />
+          <button class="search-btn">
+            <i class="fas fa-search"></i> Search
+          </button>
+        </div>
+
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Date & Time</th>
+              <th>Total Amount</th>
+              <th>Payment Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TR-2023-0582</td>
+              <td>Jul 12, 2025 14:23</td>
+              <td>$1,850.75</td>
+              <td>Card</td>
+              <td>
+                <button class="btn btn-info btn-sm">
+                  <i class="fas fa-print"></i>
+                </button>
+                <button class="btn btn-success btn-sm">
+                  <i class="fas fa-sms"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>TR-2023-0581</td>
+              <td>Jul 12, 2025 11:45</td>
+              <td>$2,420.50</td>
+              <td>Cash</td>
+              <td>
+                <button class="btn btn-info btn-sm">
+                  <i class="fas fa-print"></i>
+                </button>
+                <button class="btn btn-success btn-sm">
+                  <i class="fas fa-sms"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>TR-2023-0580</td>
+              <td>Jul 11, 2025 16:12</td>
+              <td>$3,125.25</td>
+              <td>Card</td>
+              <td>
+                <button class="btn btn-info btn-sm">
+                  <i class="fas fa-print"></i>
+                </button>
+                <button class="btn btn-success btn-sm">
+                  <i class="fas fa-sms"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>TR-2023-0579</td>
+              <td>Jul 10, 2025 10:33</td>
+              <td>$980.30</td>
+              <td>Cash & Card</td>
+              <td>
+                <button class="btn btn-info btn-sm">
+                  <i class="fas fa-print"></i>
+                </button>
+                <button class="btn btn-success btn-sm">
+                  <i class="fas fa-sms"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="footer-nav">
+          <button
+            class="btn btn-secondary"
+            onclick="navigatePage('home-page', 'POS Dashboard')"
+          >
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Update date and time
-        function updateDateTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            
-            document.getElementById('current-time').textContent = timeStr;
-        }
-        
-        // Initialize and update every second
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-        
-        // Navigation function
-        function navigatePage(pageId, title) {
-            // Hide all pages
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Update page title
-            document.getElementById('page-title').textContent = title;
-        }
-        
-        // Show SMS success message
-        function showSmsSuccess() {
-            document.getElementById('sms-success').style.display = 'block';
-        }
+      // Update date and time
+      function updateDateTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        document.getElementById("current-time").textContent = timeStr;
+      }
+
+      // Initialize and update every second
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+
+      // Navigation function
+      function navigatePage(pageId, title) {
+        // Hide all pages
+        document.querySelectorAll(".page-content").forEach((page) => {
+          page.classList.remove("active");
+        });
+
+        // Show selected page
+        document.getElementById(pageId).classList.add("active");
+
+        // Update page title
+        document.getElementById("page-title").textContent = title;
+      }
+
+      // Show SMS success message
+      function showSmsSuccess() {
+        document.getElementById("sms-success").style.display = "block";
+      }
     </script>
-</body>
+  </body>
 </html>
