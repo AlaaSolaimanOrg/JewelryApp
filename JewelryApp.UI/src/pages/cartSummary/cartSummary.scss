@@ -1,0 +1,86 @@
+.cart-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.cart-table th {
+  background: #f1f5f9;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--primary);
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.cart-table td {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cart-table tr:hover {
+  background: #f9f9f9;
+}
+
+.item-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gem-icon {
+  color: var(--gold);
+  font-size: 1.3rem;
+}
+
+.item-actions button {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: var(--transition);
+}
+
+.item-actions button:hover {
+  transform: scale(1.1);
+}
+
+.cart-summary {
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  padding: 25px;
+  border: 1px solid #eee;
+  align-self: start;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px dashed #ddd;
+}
+
+.summary-total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 20px 0;
+}
+
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
