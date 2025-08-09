@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JewelryApp.Domain\JewelryApp.Domain.csproj" />
+    <Folder Include="Common\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>
