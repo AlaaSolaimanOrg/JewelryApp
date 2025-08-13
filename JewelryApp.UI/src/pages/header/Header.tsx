@@ -12,7 +12,9 @@ const Header = () => {
     "/transactionHistory": "Transaction History",
     "/cartSummary": "Cart Summary",
     "/manualItemEntry": "Manual Item Entry",
+    "/applyDiscount": "Apply Dicount",
   };
+
   return (
     <>
       <header className="header">

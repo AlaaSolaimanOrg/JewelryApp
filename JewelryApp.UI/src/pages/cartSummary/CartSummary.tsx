@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import "./cartSummary.scss";
+import {
+  FaCreditCard,
+  FaGem,
+  FaPlus,
+  FaRing,
+  FaShoppingCart,
+  FaTag,
+  FaTimes,
+} from "react-icons/fa";
 
 const CartSummary = () => {
   return (
-    <div className="page-content">
-      <h2>
-        <i className="fas fa-shopping-cart"></i> Cart Summary
+    <div className="cartSummary page-content">
+      <h2 className="title">
+        <FaShoppingCart /> Cart Summary
       </h2>
       <p className="subtitle">Review items before payment</p>
 
@@ -25,7 +34,7 @@ const CartSummary = () => {
             <tbody>
               <tr>
                 <td className="item-name">
-                  <i className="fas fa-ring gem-icon"></i>
+                  <FaRing />
                   Diamond Solitaire Ring
                 </td>
                 <td>21K</td>
@@ -34,13 +43,13 @@ const CartSummary = () => {
                 <td>$440.13</td>
                 <td className="item-actions">
                   <button>
-                    <i className="fas fa-times"></i>
+                    <FaTimes />
                   </button>
                 </td>
               </tr>
               <tr>
                 <td className="item-name">
-                  <i className="fas fa-gem gem-icon"></i>
+                  <FaGem />
                   Gold Tennis Bracelet
                 </td>
                 <td>18K</td>
@@ -49,7 +58,7 @@ const CartSummary = () => {
                 <td>$920.86</td>
                 <td className="item-actions">
                   <button>
-                    <i className="fas fa-times"></i>
+                    <FaTimes />
                   </button>
                 </td>
               </tr>
@@ -64,19 +73,21 @@ const CartSummary = () => {
                 <td>$728.79</td>
                 <td className="item-actions">
                   <button>
-                    <i className="fas fa-times"></i>
+                    <FaTimes />
                   </button>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          <button
-            className="btn btn-secondary"
-            onclick="navigatePage('discount-page', 'Apply Discount')"
-          >
-            <i className="fas fa-tag"></i> Apply Discount
-          </button>
+          <Link to={"/applyDiscount"} className="text-decoration-none">
+            <button
+              className="btn btn-secondary"
+              // onclick="navigatePage('discount-page', 'Apply Discount')"
+            >
+              <FaTag /> Apply Discount
+            </button>
+          </Link>
         </div>
 
         <div className="cart-summary">
@@ -101,23 +112,23 @@ const CartSummary = () => {
           </div>
 
           <div className="cart-actions">
-            <Link to={"/productLookUp"}>
+            <Link to={"/productLookUp"} className="text-decoration-none">
               <button
-                className="btn btn-primary"
+                className="btn btn-primary w-100"
                 // onclick="navigatePage('payment-page', 'Payment')"
               >
-                <i className="fas fa-credit-card"></i> Proceed to Payment
+                <FaCreditCard /> Proceed to Payment
               </button>
             </Link>
             <button className="btn btn-secondary">
-              <i className="fas fa-times"></i> Cancel Sale
+              <FaTimes /> Cancel Sale
             </button>
-            <Link to={"/productLookUp"}>
+            <Link to={"/productLookUp"} className="text-decoration-none">
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary w-100"
                 // onclick="navigatePage('scan-page', 'Product Lookup')"
               >
-                <i className="fas fa-plus"></i> Add More Items
+                <FaPlus /> Add More Items
               </button>
             </Link>
           </div>

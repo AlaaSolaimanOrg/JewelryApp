@@ -1,5 +1,6 @@
 import { FaArrowLeft, FaCartPlus, FaPen } from "react-icons/fa";
 import "./manualItemEntry.scss";
+import { Link } from "react-router-dom";
 
 const ManualItemEntry = () => {
   return (
@@ -64,12 +65,11 @@ const ManualItemEntry = () => {
           <FaCartPlus /> Add to Cart
         </button>
 
-        <button
-          className="btn btn-secondary"
-          // onclick="navigatePage('scan-page', 'Product Lookup')"
-        >
-          <FaArrowLeft /> Back to Search
-        </button>
+        <Link to={"/productLookup"} className="text-decoration-none">
+          <button className="btn btn-secondary">
+            <FaArrowLeft /> Back to Search
+          </button>
+        </Link>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Header from "../pages/header/Header";
 import TransactionHistory from "../pages/transactionHistory/TransactionHistory";
 import CartSummary from "../pages/cartSummary/CartSummary";
 import ManualItemEntry from "../pages/manualItemEntry/ManualItemEntry";
+import ApplyDiscount from "../pages/applyDiscount/ApplyDiscount";
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
         <Route path="/transactionHistory" element={<TransactionHistory />} />
         <Route path="/cartSummary" element={<CartSummary />} />
         <Route path="/manualItemEntry" element={<ManualItemEntry />} />
+        <Route path="/applyDiscount" element={<ApplyDiscount />} />
       </Switch>
     </BrowserRouter>
   );
