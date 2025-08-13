@@ -64,7 +64,7 @@ const CartSummary = () => {
               </tr>
               <tr>
                 <td className="item-name">
-                  <i className="fas fa-heart gem-icon"></i>
+                  <FaGem />
                   Ruby Heart Pendant
                 </td>
                 <td>24K</td>
@@ -112,7 +112,7 @@ const CartSummary = () => {
           </div>
 
           <div className="cart-actions">
-            <Link to={"/productLookUp"} className="text-decoration-none">
+            <Link to={"/payment"} className="text-decoration-none">
               <button
                 className="btn btn-primary w-100"
                 // onclick="navigatePage('payment-page', 'Payment')"

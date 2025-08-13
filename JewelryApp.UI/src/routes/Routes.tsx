@@ -6,6 +6,7 @@ import TransactionHistory from "../pages/transactionHistory/TransactionHistory";
 import CartSummary from "../pages/cartSummary/CartSummary";
 import ManualItemEntry from "../pages/manualItemEntry/ManualItemEntry";
 import ApplyDiscount from "../pages/applyDiscount/ApplyDiscount";
+import Payment from "../pages/payment/Payment";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path="/cartSummary" element={<CartSummary />} />
         <Route path="/manualItemEntry" element={<ManualItemEntry />} />
         <Route path="/applyDiscount" element={<ApplyDiscount />} />
+        <Route path="/payment" element={<Payment />} />
       </Switch>
     </BrowserRouter>
   );

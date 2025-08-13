@@ -1,13 +1,14 @@
-import { FaPlusCircle } from "react-icons/fa";
+import { FaCashRegister, FaPlusCircle } from "react-icons/fa";
 import { RiHistoryFill } from "react-icons/ri";
-import "./home.scss";
 import { Link } from "react-router-dom";
+import "./home.scss";
+
 const Home = () => {
   return (
     <div className="page-content active">
       <div className="home-container">
         <div className="home-icon">
-          <i className="fas fa-cash-register"></i>
+          <FaCashRegister />
         </div>
         <h1 className="home-title">GoldCraft Point of Sale</h1>
         <p className="home-subtitle">

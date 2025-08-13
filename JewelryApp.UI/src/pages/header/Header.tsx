@@ -3,6 +3,7 @@ import logo from "../../assets/images/jewelary-logo.svg";
 import Clock from "../../components/Clock/Clock";
 
 import "./header.scss";
+import { FaGem, FaUser } from "react-icons/fa";
 
 const Header = () => {
   const location = useLocation();
@@ -21,12 +22,12 @@ const Header = () => {
         <Link to={"/"} className="logo text-decoration-none">
           <img src={logo} alt="Logo" width={36} height={32} />
 
-          <i className="fas fa-gem"></i>
+          <FaGem />
           <h1>GoldCraft POS</h1>
         </Link>
         <div className="nav-controls">
           <div className="user-info">
-            <i className="fas fa-user"></i>
+            <FaUser/>
             <span>Sarah Johnson</span>
           </div>
           <Clock />
