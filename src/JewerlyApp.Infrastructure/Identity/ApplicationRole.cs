@@ -12,4 +12,5 @@ namespace JewerlyApp.Infrastructure.Identity
         public string? Description { get; set; }
     }
 
+
 }
