@@ -1,0 +1,62 @@
+#transaction-history-page {
+  .cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .cart-table th {
+    background: #f1f5f9;
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--primary);
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .cart-table td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cart-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+
+  .cart-table tr:hover {
+    background: #f9f9f9;
+  }
+
+  .transaction-list {
+    list-style: none;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      transition: var(--transition);
+
+      &:hover {
+        background: #f9f9f9;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-id {
+        font-weight: 600;
+      }
+
+      .transaction-amount {
+        color: var(--success);
+        font-weight: 600;
+      }
+    }
+  }
+}

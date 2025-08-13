@@ -7,6 +7,7 @@ import CartSummary from "../pages/cartSummary/CartSummary";
 import ManualItemEntry from "../pages/manualItemEntry/ManualItemEntry";
 import ApplyDiscount from "../pages/applyDiscount/ApplyDiscount";
 import Payment from "../pages/payment/Payment";
+import Receipt from "../pages/receipt/Receipt";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
         <Route path="/manualItemEntry" element={<ManualItemEntry />} />
         <Route path="/applyDiscount" element={<ApplyDiscount />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/receipt" element={<Receipt />} />
       </Switch>
     </BrowserRouter>
   );

@@ -83,7 +83,6 @@ const CartSummary = () => {
           <Link to={"/applyDiscount"} className="text-decoration-none">
             <button
               className="btn btn-secondary"
-              // onclick="navigatePage('discount-page', 'Apply Discount')"
             >
               <FaTag /> Apply Discount
             </button>
@@ -115,7 +114,6 @@ const CartSummary = () => {
             <Link to={"/payment"} className="text-decoration-none">
               <button
                 className="btn btn-primary w-100"
-                // onclick="navigatePage('payment-page', 'Payment')"
               >
                 <FaCreditCard /> Proceed to Payment
               </button>
@@ -126,7 +124,6 @@ const CartSummary = () => {
             <Link to={"/productLookUp"} className="text-decoration-none">
               <button
                 className="btn btn-secondary w-100"
-                // onclick="navigatePage('scan-page', 'Product Lookup')"
               >
                 <FaPlus /> Add More Items
               </button>
