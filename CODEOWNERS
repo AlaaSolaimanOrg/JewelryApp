@@ -1,0 +1,10 @@
+# Format: <pattern> <owner1> <owner2> ...
+
+# Example: All files owned by @alaasolaiman
+* @alaasolaiman
+
+# Example: All JS files owned by @alaasolaiman and @roshdiAlMajzoub
+*.js @alaasolaiman @roshdiAlMajzoub
+
+# Example: Specific folder owned by a team
+/backend/ @my-org/backend-team
