@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JewerlyApp.API", "..\src\JewerlyApp.API\JewerlyApp.API.csproj", "{16CE7CF9-59AE-48B2-91CB-D3CB4588C3A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JewerlyApp.Application", "..\src\JewerlyApp.Application\JewerlyApp.Application.csproj", "{47A70FD9-EBA6-4B9F-928E-A5336DFFBE32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JewerlyApp.Domain", "..\src\JewerlyApp.Domain\JewerlyApp.Domain.csproj", "{9EEEA079-30D6-4924-BA89-D25E90BE5250}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JewerlyApp.Infrastructure", "..\src\JewerlyApp.Infrastructure\JewerlyApp.Infrastructure.csproj", "{87669EFA-BB11-4E03-92BE-CB88A346FFCE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16CE7CF9-59AE-48B2-91CB-D3CB4588C3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16CE7CF9-59AE-48B2-91CB-D3CB4588C3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16CE7CF9-59AE-48B2-91CB-D3CB4588C3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16CE7CF9-59AE-48B2-91CB-D3CB4588C3A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47A70FD9-EBA6-4B9F-928E-A5336DFFBE32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47A70FD9-EBA6-4B9F-928E-A5336DFFBE32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47A70FD9-EBA6-4B9F-928E-A5336DFFBE32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47A70FD9-EBA6-4B9F-928E-A5336DFFBE32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EEEA079-30D6-4924-BA89-D25E90BE5250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EEEA079-30D6-4924-BA89-D25E90BE5250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EEEA079-30D6-4924-BA89-D25E90BE5250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EEEA079-30D6-4924-BA89-D25E90BE5250}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87669EFA-BB11-4E03-92BE-CB88A346FFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87669EFA-BB11-4E03-92BE-CB88A346FFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87669EFA-BB11-4E03-92BE-CB88A346FFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87669EFA-BB11-4E03-92BE-CB88A346FFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

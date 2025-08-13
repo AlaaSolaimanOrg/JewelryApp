@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JewelryApp.Domain\JewelryApp.Domain.csproj" />
-    <ProjectReference Include="..\JewelryApp.Infrastructure\JewelryApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\JewerlyApp.Domain\JewerlyApp.Domain.csproj" />
+    <ProjectReference Include="..\JewerlyApp.Infrastructure\JewerlyApp.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

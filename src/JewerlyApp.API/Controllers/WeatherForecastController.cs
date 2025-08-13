@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace JewelryApp.API.Controllers
+namespace JewerlyApp.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -1,4 +1,4 @@
-namespace JewelryApp.API
+namespace JewerlyApp.API
 {
     public class WeatherForecast
     {
