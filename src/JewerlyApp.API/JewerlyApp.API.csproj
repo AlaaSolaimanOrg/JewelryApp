@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,6 +16,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JewerlyApp.Application\JewerlyApp.Application.csproj" />
+    <ProjectReference Include="..\JewerlyApp.Infrastructure\JewerlyApp.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

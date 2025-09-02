@@ -1,4 +1,6 @@
-﻿using JewerlyApp.Infrastructure.Identity;
+﻿using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
+using JewerlyApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Infrastructure.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,7 +19,15 @@ namespace JewerlyApp.Infrastructure.Context
         }
 
         // Your custom DbSets go here
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductImage> ProductImages { get; set; }
+        public virtual DbSet<SkuSequence> SkuSequences { get; set; }
 
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(cancellationToken);
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.19">
@@ -21,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JewerlyApp.Application\JewerlyApp.Application.csproj" />
     <ProjectReference Include="..\JewerlyApp.Domain\JewerlyApp.Domain.csproj" />
   </ItemGroup>
 

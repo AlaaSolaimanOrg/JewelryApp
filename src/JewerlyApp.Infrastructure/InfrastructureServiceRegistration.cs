@@ -1,4 +1,6 @@
-﻿using JewerlyApp.Infrastructure.Context;
+﻿using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Infrastructure.Context;
+using JewerlyApp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,13 @@ namespace JewerlyApp.Infrastructure
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(config.GetConnectionString("DbConnection")));
+
+
+            services.AddScoped<IApplicationDbContext>(provider =>
+                provider.GetRequiredService<ApplicationDbContext>());
+
+            services.AddScoped<ISkuService, SkuService>();
+            services.AddScoped<IFileService, FileService>();
 
             return services;
         }
