@@ -8,6 +8,7 @@ import ManualItemEntry from "../pages/manualItemEntry/ManualItemEntry";
 import ApplyDiscount from "../pages/applyDiscount/ApplyDiscount";
 import Payment from "../pages/payment/Payment";
 import Receipt from "../pages/receipt/Receipt";
+import ReceiptDelivery from "../pages/ReceiptDelivery/ReceiptDelivery";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
         <Route path="/applyDiscount" element={<ApplyDiscount />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/receipt" element={<Receipt />} />
+        <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
       </Switch>
     </BrowserRouter>
   );

@@ -34,7 +34,7 @@ const CartSummary = () => {
             <tbody>
               <tr>
                 <td className="item-name">
-                  <FaRing />
+                  <FaRing className="productIcon" />
                   Diamond Solitaire Ring
                 </td>
                 <td>21K</td>
@@ -49,7 +49,7 @@ const CartSummary = () => {
               </tr>
               <tr>
                 <td className="item-name">
-                  <FaGem />
+                  <FaGem className="productIcon" />
                   Gold Tennis Bracelet
                 </td>
                 <td>18K</td>
@@ -64,7 +64,7 @@ const CartSummary = () => {
               </tr>
               <tr>
                 <td className="item-name">
-                  <FaGem />
+                  <FaGem className="productIcon" />
                   Ruby Heart Pendant
                 </td>
                 <td>24K</td>
@@ -81,9 +81,7 @@ const CartSummary = () => {
           </table>
 
           <Link to={"/applyDiscount"} className="text-decoration-none">
-            <button
-              className="btn btn-secondary"
-            >
+            <button className="btn btn-secondary">
               <FaTag /> Apply Discount
             </button>
           </Link>
@@ -112,19 +110,19 @@ const CartSummary = () => {
 
           <div className="cart-actions">
             <Link to={"/payment"} className="text-decoration-none">
-              <button
-                className="btn btn-primary w-100"
-              >
+              <button className="btn btn-primary w-100">
                 <FaCreditCard /> Proceed to Payment
               </button>
             </Link>
-            <button className="btn btn-secondary">
-              <FaTimes /> Cancel Sale
-            </button>
-            <Link to={"/productLookUp"} className="text-decoration-none">
-              <button
-                className="btn btn-secondary w-100"
-              >
+
+            <Link to={"/"} className="text-decoration-none">
+              <button className="btn btn-secondary w-100">
+                <FaTimes /> Cancel Sale
+              </button>
+            </Link>
+
+            <Link to={"/manualItemEntry"} className="text-decoration-none">
+              <button className="btn btn-secondary w-100">
                 <FaPlus /> Add More Items
               </button>
             </Link>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./payment.scss";
 import {
   FaArrowLeft,
@@ -9,6 +9,8 @@ import {
 } from "react-icons/fa";
 
 const Payment = () => {
+  const navigate = useNavigate();
+
   return (
     <div id="payment-page" className="page-content">
       <h2>
@@ -83,20 +85,17 @@ const Payment = () => {
           <div className="balance-display">Balance Due: $1,515.17</div>
 
           <div className="cart-actions">
-            <Link to={"/payment"} className="text-decoration-none">
-              <button
-                className="btn btn-primary w-100"
-                //   onclick="navigatePage('receipt-page', 'Receipt Preview')"
-              >
-                <FaCheckCircle /> Confirm Payment
-              </button>
-            </Link>
+            <button
+              className="btn btn-primary w-100"
+              onClick={() => {
+                navigate("/receipt");
+              }}
+            >
+              <FaCheckCircle /> Confirm Payment
+            </button>
 
-            <Link to={"/payment"} className="text-decoration-none">
-              <button
-                className="btn btn-secondary w-100 mt-3"
-                //   onclick="navigatePage('cart-page', 'Cart Summary')"
-              >
+            <Link to={"/cartSummary"} className="text-decoration-none">
+              <button className="btn btn-secondary w-100">
                 <FaArrowLeft />
                 Back to Cart
               </button>
