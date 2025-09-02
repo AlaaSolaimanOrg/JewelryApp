@@ -1,5 +1,6 @@
 import { FaCheck, FaGem, FaRing, FaTag, FaTimes } from "react-icons/fa";
 import "./applyDiscount.scss";
+import { Link } from "react-router-dom";
 
 const ApplyDiscount = () => {
   return (
@@ -121,12 +122,15 @@ const ApplyDiscount = () => {
               <FaCheck />
               Apply Discount
             </button>
-            <button
-              className="btn btn-secondary"
-              //   onclick="navigatePage('cart-page', 'Cart Summary')"
-            >
-              <FaTimes /> Cancel
-            </button>
+
+            <Link to={"/cartSummary"} className="text-decoration-none">
+              <button
+                className="btn btn-secondary w-100"
+                //   onclick="navigatePage('cart-page', 'Cart Summary')"
+              >
+                <FaTimes /> Cancel
+              </button>
+            </Link>
           </div>
         </div>
       </div>

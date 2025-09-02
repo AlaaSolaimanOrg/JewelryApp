@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import "./receipt.scss";
+import { FaCheck, FaPrint, FaReceipt, FaSms } from "react-icons/fa";
 
 const Receipt = () => {
   return (
     <div id="receipt-page" className="page-content">
       <h2>
-        <i className="fas fa-receipt"></i> Receipt Preview
+        <FaReceipt /> Receipt Preview
       </h2>
       <p className="subtitle">Review receipt before finalizing</p>
 
@@ -107,18 +108,15 @@ const Receipt = () => {
               className="btn btn-info"
               //   onclick="navigatePage('delivery-page', 'Receipt Delivery')"
             >
-              <i className="fas fa-sms"></i> Send SMS
+              <FaSms /> Send SMS
             </button>
           </Link>
           <button className="btn btn-primary">
-            <i className="fas fa-print"></i> Print Receipt
+            <FaPrint /> Print Receipt
           </button>
-          <Link to={"/applyDiscount"} className="text-decoration-none">
-            <button
-              className="btn btn-success"
-              //   onclick="navigatePage('home-page', 'POS Dashboard')"
-            >
-              <i className="fas fa-check"></i> Complete Sale
+          <Link to={"/ReceiptDelivery"} className="text-decoration-none">
+            <button className="btn btn-success">
+              <FaCheck /> Complete Sale
             </button>
           </Link>
         </div>

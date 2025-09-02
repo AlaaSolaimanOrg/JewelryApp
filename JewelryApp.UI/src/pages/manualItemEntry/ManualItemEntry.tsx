@@ -58,9 +58,11 @@ const ManualItemEntry = () => {
       <div className="price-display">Calculated Price: $0.00</div>
 
       <div className="action-buttons">
-        <button className="btn btn-primary">
-          <FaCartPlus /> Add to Cart
-        </button>
+        <Link to={"/cartSummary"} className="text-decoration-none">
+          <button className="btn btn-primary">
+            <FaCartPlus /> Add to Cart
+          </button>
+        </Link>
 
         <Link to={"/productLookup"} className="text-decoration-none">
           <button className="btn btn-secondary">
