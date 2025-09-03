@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "./productLookup.scss";
 import { IoSearch } from "react-icons/io5";
 import { Col, Row } from "react-bootstrap";
-import DefatulProductImage from "../../assets/images/default-product.png";
+import DefatulProductImage from "../../../assets/images/default-product.png";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -33,8 +33,8 @@ const ProductLookup = () => {
 
       <div className="result-panel active">
         <Row className="product-details">
-          <Col xs={4} md={12}  className="product-image">
-              <img src={DefatulProductImage} alt="" />
+          <Col xs={4} md={12} className="product-image">
+            <img src={DefatulProductImage} alt="" />
           </Col>
           <Col className="product-info" xs={8} md={12}>
             <h3 className="product-name">Diamond Solitaire Ring</h3>

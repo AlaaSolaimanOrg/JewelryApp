@@ -1,0 +1,83 @@
+.adminHeader {
+  height: var(--header-height);
+  background: white;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  margin-left: var(--sidebar-width);
+  color: #333;
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .search-bar {
+    position: relative;
+  }
+
+  .search-bar input {
+    padding: 10px 15px 10px 40px;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    width: 300px;
+    font-size: 14px;
+    transition: var(--transition);
+    background: var(--light);
+  }
+
+  .search-bar input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+
+  .search-bar .icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary);
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .user-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .user-role {
+    font-size: 0.8rem;
+    color: var(--secondary);
+  }
+}
