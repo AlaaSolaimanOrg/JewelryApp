@@ -28,7 +28,7 @@ const AdminLayout = () => (
   <>
     <SideNav />
     <AdminHeader />
-    <main className="adminLayout-main" >
+    <main className="adminLayout-main">
       <Outlet />
     </main>
   </>
@@ -51,7 +51,7 @@ const AppRoutes = () => {
         </Route>
 
         <Route element={<AdminLayout />}>
-          <Route path="/addProduct" element={<AddProduct />} />
+          <Route path="admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>
