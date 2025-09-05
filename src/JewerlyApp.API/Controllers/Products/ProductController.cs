@@ -6,6 +6,8 @@ using JewerlyApp.Application.Products.Queries.GetProducts;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace JewerlyApp.API.Controllers.Products
 {
@@ -74,6 +76,19 @@ namespace JewerlyApp.API.Controllers.Products
                 Id = id
             };
             var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get product by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+            var query = new GetProductByIdQuery(id);
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
     }
