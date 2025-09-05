@@ -86,3 +86,4 @@ coverage/
 *.coverage
 *.coveragexml
 /src/JewerlyApp.API/appsettings.Development.json
+/src/JewerlyApp.API/appsettings.json
