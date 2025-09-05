@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Application.Products.Commands.CreateProduct;
+using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
@@ -10,7 +11,7 @@ namespace JewerlyApp.API.Controllers.Products
 {
 
     public class ProductController : MainController
-    {        
+    {
 
         /// <summary>
         /// Generate product SKU
@@ -35,7 +36,7 @@ namespace JewerlyApp.API.Controllers.Products
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
-        
+
         /// <summary>
         /// Create product
         /// </summary>
@@ -47,15 +48,31 @@ namespace JewerlyApp.API.Controllers.Products
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
-        
+
         /// <summary>
-        /// Create product
+        /// Get all products with optional filters
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery command)
         {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Delete product by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(Guid id)
+        {
+            var command = new DeleteProductCommand
+            {
+                Id = id
+            };
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }

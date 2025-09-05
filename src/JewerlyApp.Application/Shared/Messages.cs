@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Shared
 {
-    internal class Messages
+    public class Messages
     {
         //Success Messages
         public const string successLogin = "Login successful. Welcome!";
