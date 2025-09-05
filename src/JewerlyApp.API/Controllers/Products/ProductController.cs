@@ -1,5 +1,6 @@
 ﻿using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
+using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
@@ -44,8 +45,20 @@ namespace JewerlyApp.API.Controllers.Products
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Edit product
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut("edit")]
+        public async Task<IActionResult> EditProduct([FromForm] EditProductCommand command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
