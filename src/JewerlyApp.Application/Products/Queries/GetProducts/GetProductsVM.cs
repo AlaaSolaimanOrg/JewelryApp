@@ -1,20 +1,20 @@
-﻿using JewerlyApp.Domain.Entities.Common;
-using JewerlyApp.Domain.Enums;
+﻿using JewerlyApp.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JewerlyApp.Domain.Entities
+namespace JewerlyApp.Application.Products.Queries.GetProducts
 {
-    public class Product : Entity<Guid>
+    public class GetProductsVM
     {
+        public Guid Id { get; set; }
         public string Sku { get; set; }
         public string? Name { get; set; }
         public KaratType KaratType { get; set; }
         public decimal Weight { get; set; }
         public ProductCategory Category { get; set; }
-        public List<ProductImage> Images { get; set; } = new();
+        public List<ProductImageVM> Images { get; set; } = new();
     }
 }

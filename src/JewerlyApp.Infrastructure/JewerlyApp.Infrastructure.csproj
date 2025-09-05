@@ -26,4 +26,8 @@
     <ProjectReference Include="..\JewerlyApp.Domain\JewerlyApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Shared\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../assets/images/jewelary-logo.svg";
-import Clock from "../../components/Clock/Clock";
+import logo from "../../../assets/images/jewelary-logo.svg";
+import Clock from "../../../components/Clock/Clock";
 
 import { FaUser } from "react-icons/fa";
 import "./header.scss";
@@ -37,8 +37,8 @@ const Header = () => {
         </div>
       </header>
 
-      <div className="page-title">
-        <span id="page-title">
+      <div className="posHeader-page-title">
+        <span id="posHeader-page-title">
           {pagesTitles[location.pathname as keyof typeof pagesTitles]}
         </span>
       </div>

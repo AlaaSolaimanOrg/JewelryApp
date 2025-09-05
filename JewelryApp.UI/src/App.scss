@@ -1,13 +1,20 @@
 :root {
   --primary: #1a3a5f;
+  --primary-dark: #b5942d;
+  --primary-light: #f5e9c8;
+  --secondary: #6c757d;
   --gold: #d4af37;
   --gold-opacity-5: #d4af370d;
   --light-gold: #f1e6d0;
   --dark-gold: #b8860b;
   --light: #f8f9fa;
   --dark: #212529;
+  --dark-light: #343a40;
+  --gray: #e9ecef;
+  --gray-dark: #adb5bd;
   --success: #28a745;
   --danger: #dc3545;
+  --danger-light: #f8d7da;
   --warning: #ffc107;
   --info: #17a2b8;
   --border-radius: 12px;
@@ -15,6 +22,11 @@
   --transition: all 0.3s ease;
   --page-height: calc(100vh - 120px);
   --linear-blue-gold: linear-gradient(45deg, #e8f4ff 0%, #f8f0d7 100%);
+  --border: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --card-radius: 10px;
+  --sidebar-width: 260px;
+  --header-height: 70px;
 }
 
 * {
@@ -22,6 +34,15 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
 }
 
 body {
@@ -39,6 +60,48 @@ body {
   padding: 0;
   padding-bottom: 20px;
   box-sizing: border-box;
+}
+
+.adminLayout-main {
+  color: #333;
+  margin-left:  290px;
+}
+
+/* Page Content */
+.admin-page-content {
+  padding: 30px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--dark-light);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title .icon {
+  color: var(--gold);
+  background: var(--primary-light);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-actions {
+  display: flex;
+  gap: 12px;
 }
 
 // /* Page Content */
