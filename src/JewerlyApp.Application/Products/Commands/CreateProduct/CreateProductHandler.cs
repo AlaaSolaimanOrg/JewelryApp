@@ -1,5 +1,6 @@
 ﻿using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Shared;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
@@ -48,7 +49,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             {
                 Data = product.Sku,
                 StatusCode = ResponseStatusCode.Created,
-                Message = "Product added successfully",
+                Message = Messages.successItemAdded
             };
         }
     }
