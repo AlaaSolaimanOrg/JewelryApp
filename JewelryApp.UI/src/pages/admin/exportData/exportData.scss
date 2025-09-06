@@ -1,0 +1,105 @@
+#export-data {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--dark-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon {
+      color: var(--gold);
+      background: var(--primary-light);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+  }
+
+  .page-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .export-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .export-card {
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .export-card h3 {
+    margin-bottom: 15px;
+    color: var(--primary-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+
+    &.required:after {
+      content: "*";
+      color: var(--danger);
+      margin-left: 4px;
+    }
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    background: white;
+    transition: var(--transition);
+
+    &:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    }
+  }
+
+  .filter-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    input {
+      margin-right: 8px;
+    }
+  }
+
+  .text-muted {
+    color: var(--secondary);
+    font-size: 0.9em;
+  }
+}
