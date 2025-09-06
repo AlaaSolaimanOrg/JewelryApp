@@ -15,6 +15,16 @@ import {
 } from "react-icons/fa";
 
 const Dashboard = () => {
+  const headers = ["Product", "Category", "Karat", "Units Sold", "Revenue"];
+
+  const data = [
+    ["Diamond Engagement Ring", "Rings", "18K", "24", "$12,450"],
+    ["Gold Bangle Set", "Bangles", "22K", "18", "$8,250"],
+    ["Sapphire Pendant", "Necklaces", "21K", "15", "$7,890"],
+    ["Emerald Earrings", "Earrings", "18K", "12", "$5,670"],
+    ["Platinum Wedding Band", "Rings", "Platinum", "10", "$4,320"],
+  ];
+
   return (
     <div id="dashboard" className="page active">
       <div className="page-header">
@@ -104,8 +114,7 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-
-        <CustomTable />
+        <CustomTable headers={headers} data={data} />;
       </div>
     </div>
   );
