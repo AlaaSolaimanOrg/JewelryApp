@@ -15,6 +15,10 @@ const AdminHeader = () => {
         title: "Add Product",
         icon: <TbCirclePlusFilled className="icon titleIcon" />,
       },
+      "/admin/dashboard": {
+        title: "Admin Dashboard",
+        icon: <FaHome className="icon titleIcon" />,
+      },
     };
 
   return (
