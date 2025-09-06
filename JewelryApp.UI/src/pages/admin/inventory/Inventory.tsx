@@ -22,17 +22,24 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import "./inventory.scss";
+import { useNavigate } from "react-router-dom";
 
 const Inventory = () => {
+  const navigate = useNavigate();
   return (
     <div id="inventory" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaBox className="me-2" />
+          <FaBox className="icon me-2" />
           <span>Inventory Management</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gold" id="add-product-btn">
+          <button
+            className="btn-md btn-gold"
+            onClick={() => {
+              navigate("/admin/addProduct");
+            }}
+          >
             <FaPlus className="me-1" /> Add Product
           </button>
           <button className="btn-md btn-gray">

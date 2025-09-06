@@ -1,4 +1,37 @@
 #inventory {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--dark-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon {
+      color: var(--gold);
+      background: var(--primary-light);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+  }
+
+  .page-actions {
+    display: flex;
+    gap: 12px;
+  }
+
   /* Inventory Grid */
   .inventory-grid {
     display: grid;
