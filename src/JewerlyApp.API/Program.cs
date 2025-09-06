@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
+
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -15,6 +18,21 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 
+var reactAppOrigin = configuration["ReactAppUrl"];
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins(reactAppOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithExposedHeaders("Content-Disposition");
+        });
+});
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -45,5 +63,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("AllowReactApp");
 
 app.Run();
