@@ -18,6 +18,7 @@ import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
 import Customers from "../pages/admin/customers/Customers";
 import Staff from "../pages/admin/staff/Staff";
+import Settings from "../pages/admin/settings/Settings";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -63,6 +64,7 @@ const AppRoutes = () => {
           <Route path="admin/sales-reports" element={<SalesReports />} />
           <Route path="admin/customers" element={<Customers />} />
           <Route path="admin/staff" element={<Staff />} />
+          <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
