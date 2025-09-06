@@ -1,0 +1,32 @@
+#staff {
+  /* Card Styles */
+  .card {
+    background: white;
+    border-radius: var(--card-radius);
+    box-shadow: 0 5px 15px var(--shadow);
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: var(--transition);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+    background-color: white !important;
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--dark-light);
+  }
+}

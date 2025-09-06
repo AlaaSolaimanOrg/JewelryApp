@@ -18,11 +18,41 @@ const Dashboard = () => {
   const headers = ["Product", "Category", "Karat", "Units Sold", "Revenue"];
 
   const data = [
-    ["Diamond Engagement Ring", "Rings", "18K", "24", "$12,450"],
-    ["Gold Bangle Set", "Bangles", "22K", "18", "$8,250"],
-    ["Sapphire Pendant", "Necklaces", "21K", "15", "$7,890"],
-    ["Emerald Earrings", "Earrings", "18K", "12", "$5,670"],
-    ["Platinum Wedding Band", "Rings", "Platinum", "10", "$4,320"],
+    {
+      Product: "Diamond Engagement Ring",
+      Category: "Rings",
+      Karat: "18K",
+      UnitsSold: 24,
+      Revenue: "$12,450",
+    },
+    {
+      Product: "Gold Bangle Set",
+      Category: "Bangles",
+      Karat: "22K",
+      UnitsSold: 18,
+      Revenue: "$8,250",
+    },
+    {
+      Product: "Sapphire Pendant",
+      Category: "Necklaces",
+      Karat: "21K",
+      UnitsSold: 15,
+      Revenue: "$7,890",
+    },
+    {
+      Product: "Emerald Earrings",
+      Category: "Earrings",
+      Karat: "18K",
+      UnitsSold: 12,
+      Revenue: "$5,670",
+    },
+    {
+      Product: "Platinum Wedding Band",
+      Category: "Rings",
+      Karat: "Platinum",
+      UnitsSold: 10,
+      Revenue: "$4,320",
+    },
   ];
 
   return (

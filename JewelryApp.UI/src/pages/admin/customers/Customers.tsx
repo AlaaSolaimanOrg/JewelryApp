@@ -20,78 +20,86 @@ const Customers = () => {
   ];
 
   const data = [
-    [
-      "Sarah Johnson",
-      "(555) 123-4567",
-      "sarah@example.com",
-      "$24,560",
-      "Oct 28, 2023",
-      <>
-        <button className="action-btn" title="View">
-          <FaEye />
-        </button>
-        <button className="action-btn" title="Edit">
-          <FaEdit />
-        </button>
-        <button className="action-btn danger" title="Delete">
-          <FaTrash />
-        </button>
-      </>,
-    ],
-    [
-      "Michael Chen",
-      "(555) 987-6543",
-      "michael@example.com",
-      "$18,340",
-      "Oct 27, 2023",
-      <>
-        <button className="action-btn" title="View">
-          <FaEye />
-        </button>
-        <button className="action-btn" title="Edit">
-          <FaEdit />
-        </button>
-        <button className="action-btn danger" title="Delete">
-          <FaTrash />
-        </button>
-      </>,
-    ],
-    [
-      "Emma Rodriguez",
-      "(555) 456-7890",
-      "emma@example.com",
-      "$15,670",
-      "Oct 25, 2023",
-      <>
-        <button className="action-btn" title="View">
-          <FaEye />
-        </button>
-        <button className="action-btn" title="Edit">
-          <FaEdit />
-        </button>
-        <button className="action-btn danger" title="Delete">
-          <FaTrash />
-        </button>
-      </>,
-    ],
-    [
-      "David Wilson",
-      "(555) 234-5678",
-      "david@example.com",
-      "$12,890",
-      "Oct 24, 2023",
-      <>
-        <button className="action-btn" title="View">
-          <FaEye />
-        </button>
-        <button className="action-btn" title="Edit">
-          <FaEdit />
-        </button>
-        <button className="action-btn danger" title="Delete">
-          <FaTrash />
-        </button>
-      </>,
-    ],
+    {
+      Name: "Sarah Johnson",
+      Phone: "(555) 123-4567",
+      Email: "sarah@example.com",
+      TotalSpent: "$24,560",
+      LastPurchase: "Oct 28, 2023",
+      Actions: (
+        <>
+          <button className="action-btn" title="View">
+            <FaEye />
+          </button>
+          <button className="action-btn" title="Edit">
+            <FaEdit />
+          </button>
+          <button className="action-btn danger" title="Delete">
+            <FaTrash />
+          </button>
+        </>
+      ),
+    },
+    {
+      Name: "Michael Chen",
+      Phone: "(555) 987-6543",
+      Email: "michael@example.com",
+      TotalSpent: "$18,340",
+      LastPurchase: "Oct 27, 2023",
+      Actions: (
+        <>
+          <button className="action-btn" title="View">
+            <FaEye />
+          </button>
+          <button className="action-btn" title="Edit">
+            <FaEdit />
+          </button>
+          <button className="action-btn danger" title="Delete">
+            <FaTrash />
+          </button>
+        </>
+      ),
+    },
+    {
+      Name: "Emma Rodriguez",
+      Phone: "(555) 456-7890",
+      Email: "emma@example.com",
+      TotalSpent: "$15,670",
+      LastPurchase: "Oct 25, 2023",
+      Actions: (
+        <>
+          <button className="action-btn" title="View">
+            <FaEye />
+          </button>
+          <button className="action-btn" title="Edit">
+            <FaEdit />
+          </button>
+          <button className="action-btn danger" title="Delete">
+            <FaTrash />
+          </button>
+        </>
+      ),
+    },
+    {
+      Name: "David Wilson",
+      Phone: "(555) 234-5678",
+      Email: "david@example.com",
+      TotalSpent: "$12,890",
+      LastPurchase: "Oct 24, 2023",
+      Actions: (
+        <>
+          <button className="action-btn" title="View">
+            <FaEye />
+          </button>
+          <button className="action-btn" title="Edit">
+            <FaEdit />
+          </button>
+          <button className="action-btn danger" title="Delete">
+            <FaTrash />
+          </button>
+        </>
+      ),
+    },
   ];
 
   return (
