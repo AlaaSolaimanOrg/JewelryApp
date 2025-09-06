@@ -11,6 +11,5 @@ namespace JewerlyApp.Application.Products.Commands.DeleteProduct
     public class DeleteProductCommand : IRequest<GenericResponse<string>>
     {
         public Guid Id {  get; set; }
-        public string Name { get; set; }
     }
 }

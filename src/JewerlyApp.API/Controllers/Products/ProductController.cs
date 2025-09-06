@@ -4,6 +4,7 @@ using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
+using JewerlyApp.Application.Products.Queries.GetQueryById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,7 @@ namespace JewerlyApp.API.Controllers.Products
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPut("edit")]
+        [HttpPut]
         public async Task<IActionResult> EditProduct([FromForm] EditProductCommand command)
         {
             var response = await Mediator.Send(command);
@@ -81,13 +82,9 @@ namespace JewerlyApp.API.Controllers.Products
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProduct([FromQuery] DeleteProductCommand command)
         {
-            var command = new DeleteProductCommand
-            {
-                Id = id
-            };
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
@@ -97,10 +94,9 @@ namespace JewerlyApp.API.Controllers.Products
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> GetProductById([FromQuery] GetProductByIdQuery query)
         {
-            var query = new GetProductByIdQuery(id);
             var response = await Mediator.Send(query);
             return CreateResponse(response);
         }

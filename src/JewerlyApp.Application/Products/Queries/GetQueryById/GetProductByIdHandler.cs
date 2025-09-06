@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace JewerlyApp.Application.Products.Queries.GetProducts
+namespace JewerlyApp.Application.Products.Queries.GetQueryById
 {
     public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GenericResponse<GetProductsVM>>
     {
