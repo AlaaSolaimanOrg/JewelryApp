@@ -1,8 +1,23 @@
+import { useEffect } from "react";
 import { FaCloudUploadAlt, FaSave, FaTimes } from "react-icons/fa";
 import { TbCirclePlusFilled } from "react-icons/tb";
+import { generateSKU } from "../../../apis/products.api";
+import { KaratType, ProductCategory } from "../../../types/enums";
 import "./addProduct.scss";
 
 const AddProduct = () => {
+  const callAddProduct = () => {
+    const data = generateSKU({
+      karatType: KaratType.Karat18,
+      category: ProductCategory.Bracelets,
+    });
+
+    console.log("data", data);
+  };
+
+  useEffect(() => {
+    callAddProduct();
+  }, []);
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
