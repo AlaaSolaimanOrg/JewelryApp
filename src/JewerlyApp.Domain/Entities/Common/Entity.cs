@@ -34,5 +34,32 @@ namespace JewerlyApp.Domain.Entities.Common
         public int? LastUpdatedBy { get;  set; }
 
         #endregion
+
+        /// <summary>
+        /// AddCreatedByData
+        /// </summary>
+        /// <param name="user"></param>
+        public void AddCreatedByData(int? userId)
+        {
+            CreatedDate = DateTime.Now;
+            if (userId is not null && CreatedBy == null)
+            {
+                CreatedBy = userId;
+            }
+        }
+
+        /// <summary>
+        /// AddUpdatedByData
+        /// </summary>
+        /// <param name="user"></param>
+        public void AddUpdatedByData(int? userId)
+        {
+
+            LastUpdatedDate = DateTime.Now;
+            if (userId is not null)
+            {
+                LastUpdatedBy = userId;
+            }
+        }
     }
 }
