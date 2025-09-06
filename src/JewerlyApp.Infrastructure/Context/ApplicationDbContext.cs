@@ -1,11 +1,15 @@
 ﻿using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
+using JewerlyApp.Domain.Entities.Common;
 using JewerlyApp.Infrastructure.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,9 +17,11 @@ namespace JewerlyApp.Infrastructure.Context
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>, IApplicationDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // Your custom DbSets go here
@@ -25,9 +31,43 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<PricingSetting> PricingSettings { get; set; }
 
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return base.SaveChangesAsync(cancellationToken);
+            int? currentUserId = GetCurrentUserId();
+
+            foreach (var entry in ChangeTracker.Entries<IEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.AddCreatedByData(currentUserId);
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.AddUpdatedByData(currentUserId);
+                        break;
+                }
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+
+
+        private int? GetCurrentUserId()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user == null)
+                return null;
+
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return 1;
+
+            if (int.TryParse(userIdClaim.Value, out int userId))
+                return userId;
+
+            return 1;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
