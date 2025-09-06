@@ -35,6 +35,13 @@
     display: flex;
     gap: 12px;
   }
+
+  .goldingPriceCard {
+    .form-row {
+      display: flex;
+      flex-direction: column;
+    }
+  }
   /* Card Styles */
   .card {
     background: white;
