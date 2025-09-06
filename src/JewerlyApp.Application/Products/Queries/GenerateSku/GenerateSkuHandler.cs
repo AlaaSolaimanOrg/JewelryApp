@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
 using MediatR;
@@ -27,7 +28,7 @@ namespace JewerlyApp.Application.Products.Queries.GenerateSku
             {
                 Data = sku,
                 StatusCode = ResponseStatusCode.Success,
-                Message = "Success"
+                Message = Messages.SuccessItemAdded
             };
         }
     }

@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
@@ -32,6 +33,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Sku = request.Sku,
                 Weight = request.Weight,
                 Category = request.Category,
+                Type = request.Type,
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
@@ -48,7 +50,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             {
                 Data = product.Sku,
                 StatusCode = ResponseStatusCode.Created,
-                Message = "Product added successfully",
+                Message = Messages.SuccessItemAdded
             };
         }
     }

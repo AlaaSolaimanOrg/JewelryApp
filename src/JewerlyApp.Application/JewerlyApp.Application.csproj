@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Products\Commands\NewFolder1\**" />
+    <EmbeddedResource Remove="Products\Commands\NewFolder1\**" />
+    <None Remove="Products\Commands\NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
@@ -14,6 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JewerlyApp.Domain\JewerlyApp.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PricingSettings\Commands\" />
+    <Folder Include="Shared\" />
   </ItemGroup>
 
 </Project>

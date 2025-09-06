@@ -1,16 +1,21 @@
 ﻿using JewerlyApp.Application.Products.Commands.CreateProduct;
+using JewerlyApp.Application.Products.Commands.DeleteProduct;
+using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
+using JewerlyApp.Application.Products.Queries.GetQueryById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace JewerlyApp.API.Controllers.Products
 {
 
     public class ProductController : MainController
-    {        
+    {
 
         /// <summary>
         /// Generate product SKU
@@ -35,28 +40,64 @@ namespace JewerlyApp.API.Controllers.Products
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
-        
+
         /// <summary>
         /// Create product
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductCommand command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
-        
+
         /// <summary>
-        /// Create product
+        /// Edit product
         /// </summary>
-        /// <param name="query"></param>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> EditProduct([FromForm] EditProductCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get all products with optional filters
+        /// </summary>
+        /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery command)
         {
             var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Delete product by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProduct([FromQuery] DeleteProductCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get product by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProductById([FromQuery] GetProductByIdQuery query)
+        {
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
     }

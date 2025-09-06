@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Infrastructure.Context
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -22,6 +22,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductImage> ProductImages { get; set; }
         public virtual DbSet<SkuSequence> SkuSequences { get; set; }
+        public virtual DbSet<PricingSetting> PricingSettings { get; set; }
 
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

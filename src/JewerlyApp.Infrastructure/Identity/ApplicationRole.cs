@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Infrastructure.Identity
 {
-    public class ApplicationRole : IdentityRole
+    public class ApplicationRole : IdentityRole<int>
     {
         public string? Description { get; set; }
     }
