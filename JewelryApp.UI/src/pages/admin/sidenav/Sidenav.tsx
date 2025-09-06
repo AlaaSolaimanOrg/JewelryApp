@@ -9,7 +9,7 @@ import {
   FaPrint,
   FaTag,
   FaUser,
-  FaUsers
+  FaUsers,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./sidenav.scss";
@@ -60,7 +60,7 @@ const SideNav = () => {
         </Link>
 
         <div className="nav-section">Operations</div>
-        <Link to="admin/tag-printing" className="nav-item">
+        <Link to="admin/print-tags" className="nav-item">
           <FaPrint className="icon" />
           <span>Print Tags</span>
         </Link>

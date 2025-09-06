@@ -1,11 +1,15 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import AddProduct from "../pages/admin/addProduct/AddProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
+import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
 import Inventory from "../pages/admin/inventory/Inventory";
 import Pricing from "../pages/admin/pricing/Pricing";
+import TagPrinting from "../pages/admin/printTags/TagPrinting";
 import SalesReports from "../pages/admin/salesReport/SalesReports";
+import Settings from "../pages/admin/settings/Settings";
 import SideNav from "../pages/admin/sidenav/Sidenav";
+import Staff from "../pages/admin/staff/Staff";
 import ApplyDiscount from "../pages/pos/applyDiscount/ApplyDiscount";
 import CartSummary from "../pages/pos/cartSummary/CartSummary";
 import Header from "../pages/pos/header/Header";
@@ -16,9 +20,6 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
-import Customers from "../pages/admin/customers/Customers";
-import Staff from "../pages/admin/staff/Staff";
-import Settings from "../pages/admin/settings/Settings";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -65,6 +66,7 @@ const AppRoutes = () => {
           <Route path="admin/customers" element={<Customers />} />
           <Route path="admin/staff" element={<Staff />} />
           <Route path="admin/settings" element={<Settings />} />
+          <Route path="admin/print-tags" element={<TagPrinting />} />
           <Route path="admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
