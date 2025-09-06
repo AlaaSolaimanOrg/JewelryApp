@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
     <Compile Remove="Products\Commands\NewFolder1\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
     <EmbeddedResource Remove="Products\Commands\NewFolder1\**" />
-    <None Remove="NewFolder\**" />
     <None Remove="Products\Commands\NewFolder1\**" />
   </ItemGroup>
 
@@ -26,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="PricingSettings\Commands\" />
     <Folder Include="Shared\" />
   </ItemGroup>
 

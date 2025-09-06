@@ -18,6 +18,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string SuccessRepairStatusUpdated = "Repair status updated.";
         public const string SuccessPasswordChanged = "Password has been changed.";
         public const string SuccessGoldPriceUpdated = "Gold prices have been updated.";
+        public const string Success = "Successfully retrieved";
 
         //Error Messages
         public const string ErrorGeneral = "An unexpected error occurred. Please try again.";
