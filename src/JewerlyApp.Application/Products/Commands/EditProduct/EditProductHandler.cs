@@ -1,6 +1,6 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Shared;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +33,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
                 return new GenericResponse<bool>
                 {
                     StatusCode = ResponseStatusCode.NotFound,
-                    Message = Messages.errorNotFound
+                    Message = Messages.ErrorNotFound
                 };
             }
 
@@ -61,7 +61,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             {
                 StatusCode = ResponseStatusCode.Success,
                 Data = true,
-                Message = Messages.successItemUpdated
+                Message = Messages.SuccessItemUpdated
             };
         }
     }

@@ -1,6 +1,6 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Shared;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +31,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                 return new GenericResponse<GetProductsVM>
                 {
                     StatusCode = ResponseStatusCode.NotFound,
-                    Message = Messages.errorNotFound
+                    Message = Messages.ErrorNotFound
                 };
             }
             var productVM = new GetProductsVM

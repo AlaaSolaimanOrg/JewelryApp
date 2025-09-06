@@ -1,6 +1,6 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Shared;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +29,7 @@ namespace JewerlyApp.Application.Products.Commands.DeleteProduct
                 return new GenericResponse<string>
                 {
                     StatusCode = ResponseStatusCode.NotFound,
-                    Message = Messages.errorNotFound
+                    Message = Messages.ErrorNotFound
                 };
             }
 
@@ -40,7 +40,7 @@ namespace JewerlyApp.Application.Products.Commands.DeleteProduct
             return new GenericResponse<string>
             {
                 StatusCode = ResponseStatusCode.Success,
-                Message = Messages.successItemDeleted
+                Message = Messages.SuccessItemDeleted
             };
         }
     }
