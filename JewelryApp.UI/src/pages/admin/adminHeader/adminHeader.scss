@@ -12,11 +12,16 @@
   margin-left: var(--sidebar-width);
   color: #333;
 
+  .titleIcon {
+    padding: 4px;
+  }
   .header-actions {
     display: flex;
     align-items: center;
     gap: 20px;
   }
+
+  /*search Bar*/
 
   .search-bar {
     position: relative;
@@ -79,5 +84,44 @@
   .user-role {
     font-size: 0.8rem;
     color: var(--secondary);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .search-bar input {
+    width: 200px;
+  }
+  .adminHeader {
+    margin-left: 100px;
+    padding-left: 0;
+  }
+
+  .adminLayout-main {
+    margin-left: 100px;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .adminLayout-main {
+    margin-left: 100px;
+    padding-left: 0;
+  }
+  .header {
+    padding: 0 15px;
+  }
+
+  .search-bar input {
+    width: 150px;
+  }
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .user-info {
+    display: none;
+  }
+  .page-actions {
+    flex-wrap: wrap;
   }
 }

@@ -1,19 +1,22 @@
+import { FaCloudUploadAlt, FaSave, FaTimes } from "react-icons/fa";
+import { TbCirclePlusFilled } from "react-icons/tb";
 import "./addProduct.scss";
 
 const AddProduct = () => {
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
-        <h1 className="page-title">
-          <i className="fas fa-plus-circle"></i>
+        <h1 className="page-title ">
+          <TbCirclePlusFilled className="icon" />
           <span>Add New Product</span>
         </h1>
         <div className="page-actions">
-          <button className="btn btn-secondary">
-            <i className="fas fa-times"></i> Cancel
+          <button className="btn-md btn-gray">
+            <FaTimes className="icon" />
+            Cancel
           </button>
-          <button className="btn btn-primary">
-            <i className="fas fa-save"></i> Save Product
+          <button className="btn-md btn-gold">
+            <FaSave className="icon" /> Save Product
           </button>
         </div>
       </div>
@@ -146,14 +149,14 @@ const AddProduct = () => {
                 background: "var(--light)",
               }}
             >
-              <i
-                className="fas fa-cloud-upload-alt"
+              <FaCloudUploadAlt
                 style={{
                   fontSize: "24px",
                   color: "var(--secondary)",
                   marginBottom: "10px",
                 }}
-              ></i>
+              />
+
               <p>
                 Drag & drop images or{" "}
                 <a href="#" style={{ color: "var(--gold)" }}>

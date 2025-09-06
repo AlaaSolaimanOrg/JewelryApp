@@ -1,7 +1,15 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import AddProduct from "../pages/admin/addProduct/AddProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
+import Customers from "../pages/admin/customers/Customers";
+import Dashboard from "../pages/admin/dashboard/Dashboard";
+import Inventory from "../pages/admin/inventory/Inventory";
+import Pricing from "../pages/admin/pricing/Pricing";
+import TagPrinting from "../pages/admin/printTags/TagPrinting";
+import SalesReports from "../pages/admin/salesReport/SalesReports";
+import Settings from "../pages/admin/settings/Settings";
 import SideNav from "../pages/admin/sidenav/Sidenav";
+import Staff from "../pages/admin/staff/Staff";
 import ApplyDiscount from "../pages/pos/applyDiscount/ApplyDiscount";
 import CartSummary from "../pages/pos/cartSummary/CartSummary";
 import Header from "../pages/pos/header/Header";
@@ -12,6 +20,7 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
+import ExportData from "../pages/admin/exportData/ExportData";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -28,7 +37,7 @@ const AdminLayout = () => (
   <>
     <SideNav />
     <AdminHeader />
-    <main className="adminLayout-main" >
+    <main className="adminLayout-main">
       <Outlet />
     </main>
   </>
@@ -51,7 +60,16 @@ const AppRoutes = () => {
         </Route>
 
         <Route element={<AdminLayout />}>
-          <Route path="/addProduct" element={<AddProduct />} />
+          <Route path="admin/dashboard" element={<Dashboard />} />
+          <Route path="admin/inventory" element={<Inventory />} />
+          <Route path="admin/pricing" element={<Pricing />} />
+          <Route path="admin/sales-reports" element={<SalesReports />} />
+          <Route path="admin/customers" element={<Customers />} />
+          <Route path="admin/staff" element={<Staff />} />
+          <Route path="admin/settings" element={<Settings />} />
+          <Route path="admin/print-tags" element={<TagPrinting />} />
+          <Route path="admin/export-data" element={<ExportData />} />
+          <Route path="admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>

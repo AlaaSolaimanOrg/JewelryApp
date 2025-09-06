@@ -1,16 +1,17 @@
+import { AiFillHome } from "react-icons/ai";
 import {
-  FaHome,
-  FaGem,
   FaBox,
-  FaTag,
-  FaUsers,
-  FaUser,
-  FaCog,
-  FaPrint,
-  FaFile,
-  FaPlus,
   FaChartLine,
+  FaCog,
+  FaFile,
+  FaGem,
+  FaPlus,
+  FaPrint,
+  FaTag,
+  FaUser,
+  FaUsers,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import "./sidenav.scss";
 
 const SideNav = () => {
@@ -29,48 +30,48 @@ const SideNav = () => {
       </div>
       <div className="nav-links">
         <div className="nav-section">Inventory</div>
-        <a href="#" className="nav-item" data-page="dashboard">
-          <FaHome className="icon" />
+        <Link to="admin/dashboard" className="nav-item">
+          <AiFillHome className="icon homeIcon" />
           <span>Dashboard</span>
-        </a>
-        <a href="#" className="nav-item" data-page="inventory">
+        </Link>
+        <Link to="admin/inventory" className="nav-item">
           <FaBox className="icon" />
           <span>Inventory</span>
-        </a>
-        <a href="#" className="nav-item" data-page="pricing">
+        </Link>
+        <Link to="admin/pricing" className="nav-item">
           <FaTag className="icon" />
           <span>Pricing</span>
-        </a>
-        <a href="#" className="nav-item" data-page="sales-reports">
+        </Link>
+        <Link to="admin/sales-reports" className="nav-item">
           <FaChartLine className="icon" />
           <span>Sales Reports</span>
-        </a>
-        <a href="#" className="nav-item" data-page="customers">
+        </Link>
+        <Link to="admin/customers" className="nav-item">
           <FaUsers className="icon" />
           <span>Customers</span>
-        </a>
-        <a href="#" className="nav-item" data-page="staff">
+        </Link>
+        <Link to="admin/staff" className="nav-item">
           <FaUser className="icon" />
           <span>Staff</span>
-        </a>
-        <a href="#" className="nav-item" data-page="settings">
+        </Link>
+        <Link to="admin/settings" className="nav-item">
           <FaCog className="icon" />
           <span>Settings</span>
-        </a>
+        </Link>
 
         <div className="nav-section">Operations</div>
-        <a href="#" className="nav-item" data-page="tag-printing">
+        <Link to="admin/print-tags" className="nav-item">
           <FaPrint className="icon" />
           <span>Print Tags</span>
-        </a>
-        <a href="#" className="nav-item" data-page="export-data">
+        </Link>
+        <Link to="admin/export-data" className="nav-item">
           <FaFile className="icon" />
           <span>Export Data</span>
-        </a>
-        <a href="#" className="nav-item" data-page="add-product">
+        </Link>
+        <Link to="admin/addProduct" className="nav-item">
           <FaPlus className="icon" />
           <span>Add Product</span>
-        </a>
+        </Link>
       </div>
     </aside>
   );
