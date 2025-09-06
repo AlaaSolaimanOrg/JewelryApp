@@ -1,6 +1,10 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import AddProduct from "../pages/admin/addProduct/AddProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
+import Dashboard from "../pages/admin/dashboard/Dashboard";
+import Inventory from "../pages/admin/inventory/Inventory";
+import Pricing from "../pages/admin/pricing/Pricing";
+import SalesReports from "../pages/admin/salesReport/SalesReports";
 import SideNav from "../pages/admin/sidenav/Sidenav";
 import ApplyDiscount from "../pages/pos/applyDiscount/ApplyDiscount";
 import CartSummary from "../pages/pos/cartSummary/CartSummary";
@@ -12,9 +16,6 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
-import Dashboard from "../pages/admin/dashboard/Dashboard";
-import Inventory from "../pages/admin/inventory/Inventory";
-import Pricing from "../pages/admin/pricing/Pricing";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -57,6 +58,7 @@ const AppRoutes = () => {
           <Route path="admin/dashboard" element={<Dashboard />} />
           <Route path="admin/inventory" element={<Inventory />} />
           <Route path="admin/pricing" element={<Pricing />} />
+          <Route path="admin/sales-reports" element={<SalesReports />} />
           <Route path="admin/addProduct" element={<AddProduct />} />
         </Route>
       </Routes>
