@@ -13,6 +13,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<Product> Products { get; set; }
         DbSet<ProductImage> ProductImages { get; set; }
         DbSet<SkuSequence> SkuSequences { get; }
+        DbSet<PricingSetting> PricingSettings { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

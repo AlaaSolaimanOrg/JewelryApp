@@ -14,6 +14,7 @@ namespace JewerlyApp.Domain.Entities
         public string? Name { get; set; }
         public KaratType KaratType { get; set; }
         public decimal Weight { get; set; }
+        public ProductType Type { get; set; }
         public ProductCategory Category { get; set; }
         public List<ProductImage> Images { get; set; } = new();
     }

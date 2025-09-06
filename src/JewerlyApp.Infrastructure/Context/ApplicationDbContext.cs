@@ -22,6 +22,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductImage> ProductImages { get; set; }
         public virtual DbSet<SkuSequence> SkuSequences { get; set; }
+        public virtual DbSet<PricingSetting> PricingSettings { get; set; }
 
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

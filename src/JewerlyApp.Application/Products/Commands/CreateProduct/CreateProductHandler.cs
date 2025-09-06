@@ -33,6 +33,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Sku = request.Sku,
                 Weight = request.Weight,
                 Category = request.Category,
+                Type = request.Type,
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
