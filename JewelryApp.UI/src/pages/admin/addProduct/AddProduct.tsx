@@ -1,23 +1,52 @@
-import { useEffect } from "react";
-import { FaCloudUploadAlt, FaSave, FaTimes } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaSave, FaTimes } from "react-icons/fa";
 import { TbCirclePlusFilled } from "react-icons/tb";
 import { generateSKU } from "../../../apis/products.api";
 import { KaratType, ProductCategory } from "../../../types/enums";
+import useLocalApi from "../../../useLocalApi";
 import "./addProduct.scss";
 
 const AddProduct = () => {
-  const callAddProduct = () => {
-    const data = generateSKU({
-      karatType: KaratType.Karat18,
-      category: ProductCategory.Bracelets,
-    });
+  const [productFields, setProductFields] = useState({
+    productName: { value: "", isValid: false, errorMessage: "" },
+    SKU: { value: "", isValid: false, errorMessage: "" },
+    karat: { value: "", isValid: false, errorMessage: "" },
+    weight: { value: "", isValid: false, errorMessage: "" },
+    category: { value: "", isValid: false, errorMessage: "" },
+    sizeDetails: { value: "", isValid: false, errorMessage: "" },
+    tags: { value: [], isValid: false, errorMessage: "" },
+    productImage: { value: "", isValid: false, errorMessage: "" },
+  });
 
-    console.log("data", data);
+  const handleProductField = (fieldName, property, value) => {
+    setProductFields((pre) => {
+      return {
+        ...pre,
+        [fieldName]: {
+          ...pre[fieldName],
+          [property]: value,
+        },
+      };
+    });
+  };
+
+  const { data: generatedSKU } = useLocalApi({
+    apiToCall: (data) => generateSKU(data.payload),
+    payload: {
+      karatType: productFields.karat.value,
+      category: productFields.category.value,
+    },
+    extraEffectCheck:
+      !!productFields.karat.value && !!productFields.category.value,
+    effectDependency: [productFields.karat.value, productFields.category.value],
+  }) as {
+    data: any;
   };
 
   useEffect(() => {
-    callAddProduct();
-  }, []);
+    handleProductField("SKU", "value", generatedSKU);
+  }, [generatedSKU]);
+
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
@@ -38,6 +67,7 @@ const AddProduct = () => {
 
       <div className="card">
         <form id="product-form">
+          {/* Product Name */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -46,10 +76,16 @@ const AddProduct = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter product name"
+                  value={productFields.productName.value}
+                  onChange={(e) =>
+                    handleProductField("productName", "value", e.target.value)
+                  }
                   required
                 />
               </div>
             </div>
+
+            {/* SKU */}
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">SKU</label>
@@ -57,22 +93,31 @@ const AddProduct = () => {
                   type="text"
                   className="form-control"
                   placeholder="Generate SKU"
+                  value={generatedSKU}
+                  disabled={true}
                   required
                 />
               </div>
             </div>
           </div>
 
+          {/* Karat & Weight */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Karat</label>
-                <select className="form-control" required>
+                <select
+                  className="form-control"
+                  value={productFields.karat.value}
+                  onChange={(e) =>
+                    handleProductField("karat", "value", e.target.value)
+                  }
+                  required
+                >
                   <option value="">Select Karat</option>
-                  <option value="18K">18K Gold</option>
-                  <option value="21K">21K Gold</option>
-                  <option value="22K">22K Gold</option>
-                  <option value="platinum">Platinum</option>
+                  <option value={KaratType.Karat18}>18K Gold</option>
+                  <option value={KaratType.Karat21}>21K Gold</option>
+                  <option value={KaratType.Karat24}>22K Gold</option>
                 </select>
               </div>
             </div>
@@ -84,102 +129,125 @@ const AddProduct = () => {
                   step="0.1"
                   className="form-control"
                   placeholder="0.0"
+                  value={productFields.weight.value}
+                  onChange={(e) =>
+                    handleProductField("weight", "value", e.target.value)
+                  }
                   required
                 />
               </div>
             </div>
           </div>
 
+          {/* Category  */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Category</label>
-                <select className="form-control" required>
+                <select
+                  className="form-control"
+                  value={productFields.category.value}
+                  onChange={(e) =>
+                    handleProductField("category", "value", e.target.value)
+                  }
+                  required
+                >
                   <option value="">Select Category</option>
-                  <option value="rings">Rings</option>
-                  <option value="necklaces">Necklaces</option>
-                  <option value="earrings">Earrings</option>
-                  <option value="bangles">Bangles</option>
-                  <option value="bracelets">Bracelets</option>
-                  <option value="pendants">Pendants</option>
+                  <option value={ProductCategory.Necklaces}>Necklaces</option>
+                  <option value={ProductCategory.Bracelets}>Bracelets</option>
+                  <option value={ProductCategory.Rings}>Rings</option>
+                  <option value={ProductCategory.Earrings}>Earrings</option>
+                  <option value={ProductCategory.Pendants}>Pendants</option>
+                  <option value={ProductCategory.Bullion}>Bullion</option>
                 </select>
               </div>
             </div>
             <div className="form-col">
               <div className="form-group">
-                <label className="form-label required">Quantity</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="0"
-                  required
-                />
+                <label className="form-label">Size Details</label>
+                <div className="form-row">
+                  <div className="form-col">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Ring size (if applicable)"
+                      value={productFields.sizeDetails.value}
+                      onChange={(e) =>
+                        handleProductField(
+                          "sizeDetails",
+                          "value",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Size Details</label>
-            <div className="form-row">
-              <div className="form-col">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Ring size (if applicable)"
-                />
-              </div>
-              <div className="form-col">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Necklace length (if applicable)"
-                />
-              </div>
-            </div>
-          </div>
+          {/* Size Details */}
 
+          {/* Tags */}
           <div className="form-group">
             <label className="form-label">Tags</label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               <label className="filter-option" style={{ margin: 0 }}>
-                <input type="checkbox" /> New Arrival
+                <input
+                  type="checkbox"
+                  checked={productFields.tags.value.includes("new")}
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...productFields.tags.value, "new"]
+                      : productFields.tags.value.filter((tag) => tag !== "new");
+                    handleProductField("tags", "value", newValue);
+                  }}
+                />{" "}
+                New Arrival
               </label>
               <label className="filter-option" style={{ margin: 0 }}>
-                <input type="checkbox" /> Featured
+                <input
+                  type="checkbox"
+                  checked={productFields.tags.value.includes("featured")}
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...productFields.tags.value, "featured"]
+                      : productFields.tags.value.filter(
+                          (tag) => tag !== "featured"
+                        );
+                    handleProductField("tags", "value", newValue);
+                  }}
+                />{" "}
+                Featured
               </label>
               <label className="filter-option" style={{ margin: 0 }}>
-                <input type="checkbox" /> Premium
+                <input
+                  type="checkbox"
+                  checked={productFields.tags.value.includes("premium")}
+                  onChange={(e) => {
+                    const newValue = e.target.checked
+                      ? [...productFields.tags.value, "premium"]
+                      : productFields.tags.value.filter(
+                          (tag) => tag !== "premium"
+                        );
+                    handleProductField("tags", "value", newValue);
+                  }}
+                />{" "}
+                Premium
               </label>
             </div>
           </div>
 
+          {/* Product Image */}
           <div className="form-group">
             <label className="form-label">Product Image</label>
-            <div
-              style={{
-                border: "1px dashed var(--border)",
-                borderRadius: "8px",
-                padding: "20px",
-                textAlign: "center",
-                background: "var(--light)",
-              }}
-            >
-              <FaCloudUploadAlt
-                style={{
-                  fontSize: "24px",
-                  color: "var(--secondary)",
-                  marginBottom: "10px",
-                }}
-              />
-
-              <p>
-                Drag & drop images or{" "}
-                <a href="#" style={{ color: "var(--gold)" }}>
-                  browse
-                </a>
-              </p>
-              <small className="text-muted">Recommended size: 500x500px</small>
-            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                handleProductField("productImage", "value", e.target.files[0])
+              }
+            />
           </div>
         </form>
       </div>

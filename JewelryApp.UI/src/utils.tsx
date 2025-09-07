@@ -48,3 +48,10 @@ export const requestApi = async (
     throw error; // Re-throw to handle in the component
   }
 };
+
+
+export const checkRequestSucceeded = (status: number) => {
+  const successStatuses = [200, 201, 204];
+
+  return successStatuses.includes(status);
+};

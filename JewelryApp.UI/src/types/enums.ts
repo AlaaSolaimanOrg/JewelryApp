@@ -1,6 +1,7 @@
 export enum KaratType {
   Karat18 = 18,
   Karat21 = 21,
+  Karat24 = 24,
 }
 
 export enum ProductCategory {
@@ -10,4 +11,9 @@ export enum ProductCategory {
   Earrings = 4,
   Pendants = 5,
   Bullion = 6,
+}
+
+export enum ProductType {
+  Gold = 1,
+  Silver = 2,
 }
