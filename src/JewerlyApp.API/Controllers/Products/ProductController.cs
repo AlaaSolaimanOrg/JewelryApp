@@ -6,6 +6,7 @@ using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Application.Products.Queries.GetQueryById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.API.Controllers.Products
 {
-
+    [Authorize]
     public class ProductController : MainController
     {
 

@@ -1,0 +1,15 @@
+﻿using JewerlyApp.Application.Common.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace JewerlyApp.Application.Interfaces
+{
+    public interface IUserService
+    {
+        Task<GenericResponse<int>> ValidateUserAsync(string username, string password);
+        Task<bool> IsInRoleAsync(int userId, string roleName);
+    }
+}

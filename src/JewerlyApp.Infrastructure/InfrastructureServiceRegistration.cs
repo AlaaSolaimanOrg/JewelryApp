@@ -25,6 +25,8 @@ namespace JewerlyApp.Infrastructure
 
             services.AddScoped<ISkuService, SkuService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ITokenService, JwtTokenService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }
