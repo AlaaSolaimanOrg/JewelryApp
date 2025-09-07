@@ -1,19 +1,46 @@
 import { useEffect, useState } from "react";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { TbCirclePlusFilled } from "react-icons/tb";
-import { generateSKU } from "../../../apis/products.api";
-import { KaratType, ProductCategory } from "../../../types/enums";
+import {
+  createProduct,
+  generateSKU,
+} from "../../../apis/products.api/products.api";
+import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import useLocalApi from "../../../useLocalApi";
 import "./addProduct.scss";
+import { checkRequestSucceeded } from "../../../utils";
+import type { CreateProductPayload } from "../../../apis/products.api/products.api.type";
+
+interface Field<T> {
+  value: T;
+  isValid: boolean;
+  errorMessage: string;
+}
+
+interface ProductFields {
+  productName: Field<string>;
+  SKU: Field<string>;
+  karat: Field<KaratType | null>;
+  productType: Field<ProductType | null>;
+  weight: Field<number | "">;
+  category: Field<ProductCategory | null>;
+  sizeDetails: Field<string>;
+  description: Field<string>;
+  tags: Field<string[]>;
+  productImage: Field<File | "">;
+}
 
 const AddProduct = () => {
-  const [productFields, setProductFields] = useState({
+  const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
+  const [productFields, setProductFields] = useState<ProductFields>({
     productName: { value: "", isValid: false, errorMessage: "" },
     SKU: { value: "", isValid: false, errorMessage: "" },
-    karat: { value: "", isValid: false, errorMessage: "" },
+    karat: { value: null, isValid: false, errorMessage: "" },
+    productType: { value: null, isValid: false, errorMessage: "" },
     weight: { value: "", isValid: false, errorMessage: "" },
-    category: { value: "", isValid: false, errorMessage: "" },
+    category: { value: null, isValid: false, errorMessage: "" },
     sizeDetails: { value: "", isValid: false, errorMessage: "" },
+    description: { value: "", isValid: false, errorMessage: "" },
     tags: { value: [], isValid: false, errorMessage: "" },
     productImage: { value: "", isValid: false, errorMessage: "" },
   });
@@ -46,6 +73,36 @@ const AddProduct = () => {
   useEffect(() => {
     handleProductField("SKU", "value", generatedSKU);
   }, [generatedSKU]);
+
+  const callCreateProduct = () => {
+    setIsLoadingCreateProduct(true);
+
+    const payload: CreateProductPayload = {
+      name: productFields.productName.value,
+      sku: productFields.SKU.value,
+      category: productFields.category.value as ProductCategory,
+      type: productFields.productType.value as ProductType,
+      karatType: productFields.karat.value as KaratType,
+      description: productFields.description.value || undefined,
+      weight: Number(productFields.weight.value),
+      images: productFields.productImage.value
+        ? [productFields.productImage.value as File]
+        : [],
+    };
+
+    createProduct(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.status)) {
+        } else {
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsLoadingCreateProduct(false);
+      });
+  };
 
   return (
     <div id="add-product-page" className="page">
@@ -186,7 +243,26 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* Size Details */}
+          {/* Produc Type  */}
+          <div className="form-row">
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label required">Product Type</label>
+                <select
+                  className="form-control"
+                  value={productFields.productType.value}
+                  onChange={(e) =>
+                    handleProductField("productType", "value", e.target.value)
+                  }
+                  required
+                >
+                  <option value="">Select Type</option>
+                  <option value={ProductType.Gold}>Gold</option>
+                  <option value={ProductType.Silver}>Silver</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
           {/* Tags */}
           <div className="form-group">
