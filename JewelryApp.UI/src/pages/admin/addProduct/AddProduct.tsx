@@ -10,6 +10,7 @@ import useLocalApi from "../../../useLocalApi";
 import "./addProduct.scss";
 import { checkRequestSucceeded } from "../../../utils";
 import type { CreateProductPayload } from "../../../apis/products.api/products.api.type";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 
 const productFieldsInitialState = {
   productName: { value: "", isValid: false, errorMessage: "" },
@@ -21,12 +22,21 @@ const productFieldsInitialState = {
   sizeDetails: { value: "", isValid: false, errorMessage: "" },
   description: { value: "", isValid: false, errorMessage: "" },
   tags: { value: [], isValid: false, errorMessage: "" },
-  productImage: { value: "", isValid: false, errorMessage: "" },
 };
 
 const AddProduct = () => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
+
+  const [files, setFiles] = useState([]);
+
+  console.log("files", files);
+
+  const images = files.map((file) => {
+    const formData = new FormData();
+    formData.append("Images", file); // backend expects "Images"
+    return formData;
+  });
 
   const handleProductField = (fieldName, property, value) => {
     setProductFields((pre) => {
@@ -40,6 +50,7 @@ const AddProduct = () => {
     });
   };
 
+  console.log("productFields", productFields);
   const { data: generatedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
@@ -60,18 +71,24 @@ const AddProduct = () => {
   const callCreateProduct = () => {
     setIsLoadingCreateProduct(true);
 
-    const payload: CreateProductPayload = {
-      name: productFields.productName.value,
-      sku: productFields.SKU.value,
-      category: productFields.category.value,
-      type: productFields.productType.value,
-      karatType: productFields.karat.value,
-      description: productFields.description.value || undefined,
-      weight: Number(productFields.weight.value),
-      images: [],
-    };
+    const formData = new FormData();
 
-    createProduct(payload)
+    formData.append("Name", productFields.productName.value);
+    formData.append("Sku", productFields.SKU.value);
+    formData.append("Category", productFields.category.value); // enum as string or number depending on .valuebackend
+    formData.append("Type", productFields.productType.value);
+    formData.append("KaratType", productFields.karat.value);
+    formData.append("Description", productFields.description.value || "");
+    formData.append("Weight", productFields.weight.value);
+
+    // Append images
+    if (files && files.length > 0) {
+      files.forEach((file, index) => {
+        formData.append("Images", file); // name must match property in C# command
+      });
+    }
+
+    createProduct(formData)
       .then((response) => {
         if (checkRequestSucceeded(response.status)) {
         } else {
@@ -89,16 +106,6 @@ const AddProduct = () => {
     setProductFields(productFieldsInitialState);
   };
 
-  const isFormValid = Object.entries(productFields).every(([key, field]) => {
-    if (key === "description") return true;
-
-    if (Array.isArray(field.value)) return field.value.length > 0;
-
-    return !!field.value;
-  });
-
-  console.log("isFormValid", isFormValid);
-
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
@@ -112,11 +119,7 @@ const AddProduct = () => {
             Cancel
           </button>
 
-          <button
-            className="btn-md btn-gold"
-            onClick={callCreateProduct}
-            disabled={!isFormValid || isLoadingCreateProduct}
-          >
+          <button className="btn-md btn-gold" onClick={callCreateProduct}>
             <FaSave className="icon" /> Save Product
           </button>
         </div>
@@ -265,7 +268,7 @@ const AddProduct = () => {
           </div>
 
           {/* Tags */}
-          <div className="form-group">
+          {/* <div className="form-group">
             <label className="form-label">Tags</label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
               <label className="filter-option" style={{ margin: 0 }}>
@@ -312,10 +315,10 @@ const AddProduct = () => {
                 Premium
               </label>
             </div>
-          </div>
+          </div> */}
 
           {/* Product Image */}
-          <div className="form-group">
+          {/* <div className="form-group">
             <label className="form-label">Product Image</label>
             <input
               type="file"
@@ -324,7 +327,8 @@ const AddProduct = () => {
                 handleProductField("productImage", "value", e.target.files[0])
               }
             />
-          </div>
+          </div> */}
+          <ImageUpload files={files} setFiles={setFiles} />
         </form>
       </div>
     </div>
