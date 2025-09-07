@@ -11,39 +11,22 @@ import "./addProduct.scss";
 import { checkRequestSucceeded } from "../../../utils";
 import type { CreateProductPayload } from "../../../apis/products.api/products.api.type";
 
-interface Field<T> {
-  value: T;
-  isValid: boolean;
-  errorMessage: string;
-}
-
-interface ProductFields {
-  productName: Field<string>;
-  SKU: Field<string>;
-  karat: Field<KaratType | null>;
-  productType: Field<ProductType | null>;
-  weight: Field<number | "">;
-  category: Field<ProductCategory | null>;
-  sizeDetails: Field<string>;
-  description: Field<string>;
-  tags: Field<string[]>;
-  productImage: Field<File | "">;
-}
+const productFieldsInitialState = {
+  productName: { value: "", isValid: false, errorMessage: "" },
+  SKU: { value: "", isValid: false, errorMessage: "" },
+  karat: { value: null, isValid: false, errorMessage: "" },
+  productType: { value: null, isValid: false, errorMessage: "" },
+  weight: { value: null, isValid: false, errorMessage: "" },
+  category: { value: null, isValid: false, errorMessage: "" },
+  sizeDetails: { value: "", isValid: false, errorMessage: "" },
+  description: { value: "", isValid: false, errorMessage: "" },
+  tags: { value: [], isValid: false, errorMessage: "" },
+  productImage: { value: "", isValid: false, errorMessage: "" },
+};
 
 const AddProduct = () => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
-  const [productFields, setProductFields] = useState<ProductFields>({
-    productName: { value: "", isValid: false, errorMessage: "" },
-    SKU: { value: "", isValid: false, errorMessage: "" },
-    karat: { value: null, isValid: false, errorMessage: "" },
-    productType: { value: null, isValid: false, errorMessage: "" },
-    weight: { value: "", isValid: false, errorMessage: "" },
-    category: { value: null, isValid: false, errorMessage: "" },
-    sizeDetails: { value: "", isValid: false, errorMessage: "" },
-    description: { value: "", isValid: false, errorMessage: "" },
-    tags: { value: [], isValid: false, errorMessage: "" },
-    productImage: { value: "", isValid: false, errorMessage: "" },
-  });
+  const [productFields, setProductFields] = useState(productFieldsInitialState);
 
   const handleProductField = (fieldName, property, value) => {
     setProductFields((pre) => {
@@ -80,14 +63,12 @@ const AddProduct = () => {
     const payload: CreateProductPayload = {
       name: productFields.productName.value,
       sku: productFields.SKU.value,
-      category: productFields.category.value as ProductCategory,
-      type: productFields.productType.value as ProductType,
-      karatType: productFields.karat.value as KaratType,
+      category: productFields.category.value,
+      type: productFields.productType.value,
+      karatType: productFields.karat.value,
       description: productFields.description.value || undefined,
       weight: Number(productFields.weight.value),
-      images: productFields.productImage.value
-        ? [productFields.productImage.value as File]
-        : [],
+      images: [],
     };
 
     createProduct(payload)
@@ -104,6 +85,20 @@ const AddProduct = () => {
       });
   };
 
+  const handleCancelAddProduct = () => {
+    setProductFields(productFieldsInitialState);
+  };
+
+  const isFormValid = Object.entries(productFields).every(([key, field]) => {
+    if (key === "description") return true;
+
+    if (Array.isArray(field.value)) return field.value.length > 0;
+
+    return !!field.value;
+  });
+
+  console.log("isFormValid", isFormValid);
+
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
@@ -112,11 +107,16 @@ const AddProduct = () => {
           <span>Add New Product</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gray">
+          <button className="btn-md btn-gray" onClick={handleCancelAddProduct}>
             <FaTimes className="icon" />
             Cancel
           </button>
-          <button className="btn-md btn-gold">
+
+          <button
+            className="btn-md btn-gold"
+            onClick={callCreateProduct}
+            disabled={!isFormValid || isLoadingCreateProduct}
+          >
             <FaSave className="icon" /> Save Product
           </button>
         </div>
