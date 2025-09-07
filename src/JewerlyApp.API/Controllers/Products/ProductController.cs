@@ -46,7 +46,7 @@ namespace JewerlyApp.API.Controllers.Products
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductCommand command)
         {
             var response = await Mediator.Send(command);

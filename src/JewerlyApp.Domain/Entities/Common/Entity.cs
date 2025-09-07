@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Domain.Entities.Common
 {
-    public abstract class Entity<TId> where TId : notnull
+    public abstract class Entity<TId> : IEntity where TId : notnull
     {
         #region Props
 
@@ -48,6 +48,8 @@ namespace JewerlyApp.Domain.Entities.Common
             }
         }
 
+        
+
         /// <summary>
         /// AddUpdatedByData
         /// </summary>
@@ -61,5 +63,7 @@ namespace JewerlyApp.Domain.Entities.Common
                 LastUpdatedBy = userId;
             }
         }
+
+        
     }
 }
