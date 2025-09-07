@@ -2,18 +2,37 @@
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using JewerlyApp.Application.PricingSettings.Queries;
+using MediatR;
+using System.Threading.Tasks;
+using JewerlyApp.Application.Products.Commands.EditPricingSettings;
+using JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings;
 
 namespace JewerlyApp.API.Controllers.PricingSettings
 {
     public class PricingSettingsController : MainController
     {
         /// <summary>
-        /// Get Global Pricing Settings per metal
+        /// Get all global pricing settings per metal
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetGlobalPricingSettings([FromQuery] GetGlobalPricingSettingsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditPricingSettings([FromForm] EditPricingSettingsCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPricingSettings([FromQuery] GetPricingSettingsQuery query) 
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
