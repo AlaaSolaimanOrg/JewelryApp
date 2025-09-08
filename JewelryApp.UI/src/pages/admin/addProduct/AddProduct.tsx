@@ -5,23 +5,22 @@ import {
   createProduct,
   generateSKU,
 } from "../../../apis/products.api/products.api";
+import ImageUpload from "../../../components/ImageUpload/ImageUpload";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import useLocalApi from "../../../useLocalApi";
-import "./addProduct.scss";
 import { checkRequestSucceeded } from "../../../utils";
-import type { CreateProductPayload } from "../../../apis/products.api/products.api.type";
-import ImageUpload from "../../../components/ImageUpload/ImageUpload";
+import "./addProduct.scss";
 
 const productFieldsInitialState = {
-  productName: { value: "", isValid: false, errorMessage: "" },
-  SKU: { value: "", isValid: false, errorMessage: "" },
-  karat: { value: null, isValid: false, errorMessage: "" },
-  productType: { value: null, isValid: false, errorMessage: "" },
-  weight: { value: null, isValid: false, errorMessage: "" },
-  category: { value: null, isValid: false, errorMessage: "" },
-  sizeDetails: { value: "", isValid: false, errorMessage: "" },
-  description: { value: "", isValid: false, errorMessage: "" },
-  tags: { value: [], isValid: false, errorMessage: "" },
+  productName: "",
+  SKU: "",
+  karat: "",
+  productType: "",
+  weight: "",
+  category: "",
+  sizeDetails: "",
+  description: "",
 };
 
 const AddProduct = () => {
@@ -32,65 +31,63 @@ const AddProduct = () => {
 
   console.log("files", files);
 
-  const images = files.map((file) => {
-    const formData = new FormData();
-    formData.append("Images", file); // backend expects "Images"
-    return formData;
-  });
-
-  const handleProductField = (fieldName, property, value) => {
+  const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
       return {
         ...pre,
-        [fieldName]: {
-          ...pre[fieldName],
-          [property]: value,
-        },
+        [fieldName]: value,
       };
     });
   };
 
   console.log("productFields", productFields);
-  const { data: generatedSKU } = useLocalApi({
+  const { data: generatedSKU, setData: setGeneratedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
-      karatType: productFields.karat.value,
-      category: productFields.category.value,
+      karatType: productFields.karat,
+      category: productFields.category,
     },
-    extraEffectCheck:
-      !!productFields.karat.value && !!productFields.category.value,
-    effectDependency: [productFields.karat.value, productFields.category.value],
+    extraEffectCheck: !!productFields.karat && !!productFields.category,
+    effectDependency: [productFields.karat, productFields.category],
   }) as {
     data: any;
+    setData: any;
   };
+  console.log("generatedSKU", generatedSKU);
 
   useEffect(() => {
-    handleProductField("SKU", "value", generatedSKU);
+    handleProductField("SKU", generatedSKU);
   }, [generatedSKU]);
+
+  const handleCancelAddProduct = () => {
+    setProductFields(productFieldsInitialState);
+    setFiles([]);
+    setGeneratedSKU(null);
+  };
 
   const callCreateProduct = () => {
     setIsLoadingCreateProduct(true);
 
     const formData = new FormData();
 
-    formData.append("Name", productFields.productName.value);
-    formData.append("Sku", productFields.SKU.value);
-    formData.append("Category", productFields.category.value); // enum as string or number depending on .valuebackend
-    formData.append("Type", productFields.productType.value);
-    formData.append("KaratType", productFields.karat.value);
-    formData.append("Description", productFields.description.value || "");
-    formData.append("Weight", productFields.weight.value);
+    formData.append("Name", productFields.productName);
+    formData.append("Sku", productFields.SKU);
+    formData.append("Category", productFields.category);
+    formData.append("Type", productFields.productType);
+    formData.append("KaratType", productFields.karat);
+    formData.append("Description", productFields.description);
+    formData.append("Weight", productFields.weight);
 
-    // Append images
     if (files && files.length > 0) {
-      files.forEach((file, index) => {
-        formData.append("Images", file); // name must match property in C# command
+      files.forEach((file) => {
+        formData.append("Images", file);
       });
     }
 
     createProduct(formData)
       .then((response) => {
-        if (checkRequestSucceeded(response.status)) {
+        if (checkRequestSucceeded(response.statusCode)) {
+          handleCancelAddProduct();
         } else {
         }
       })
@@ -102,9 +99,16 @@ const AddProduct = () => {
       });
   };
 
-  const handleCancelAddProduct = () => {
-    setProductFields(productFieldsInitialState);
-  };
+  const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
+    ([key, value]) => {
+      console.log({ key, value });
+      if (key === "description") return false;
+      if (Array.isArray(value)) {
+        return value.length === 0;
+      }
+      return !value;
+    }
+  );
 
   return (
     <div id="add-product-page" className="page">
@@ -119,7 +123,11 @@ const AddProduct = () => {
             Cancel
           </button>
 
-          <button className="btn-md btn-gold" onClick={callCreateProduct}>
+          <button
+            className="btn-md btn-gold"
+            disabled={checkAnyProductFieldHasNoValue && !files.length}
+            onClick={callCreateProduct}
+          >
             <FaSave className="icon" /> Save Product
           </button>
         </div>
@@ -134,11 +142,12 @@ const AddProduct = () => {
                 <label className="form-label required">Product Name</label>
                 <input
                   type="text"
+                  maxLength={100}
                   className="form-control"
                   placeholder="Enter product name"
-                  value={productFields.productName.value}
+                  value={productFields.productName}
                   onChange={(e) =>
-                    handleProductField("productName", "value", e.target.value)
+                    handleProductField("productName", e.target.value)
                   }
                   required
                 />
@@ -148,11 +157,12 @@ const AddProduct = () => {
             {/* SKU */}
             <div className="form-col">
               <div className="form-group">
-                <label className="form-label required">SKU</label>
+                <label className="form-label">SKU</label>
                 <input
+                  key={generatedSKU}
                   type="text"
-                  className="form-control"
-                  placeholder="Generate SKU"
+                  className="form-control disabled-gold"
+                  placeholder="Auto Generated SKU"
                   value={generatedSKU}
                   disabled={true}
                   required
@@ -161,17 +171,15 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* Karat & Weight */}
+          {/* Karat */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Karat</label>
                 <select
                   className="form-control"
-                  value={productFields.karat.value}
-                  onChange={(e) =>
-                    handleProductField("karat", "value", e.target.value)
-                  }
+                  value={productFields.karat}
+                  onChange={(e) => handleProductField("karat", e.target.value)}
                   required
                 >
                   <option value="">Select Karat</option>
@@ -189,10 +197,14 @@ const AddProduct = () => {
                   step="0.1"
                   className="form-control"
                   placeholder="0.0"
-                  value={productFields.weight.value}
-                  onChange={(e) =>
-                    handleProductField("weight", "value", e.target.value)
-                  }
+                  value={productFields.weight}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+
+                    if (inputValue.length <= 12) {
+                      handleProductField("weight", inputValue);
+                    }
+                  }}
                   required
                 />
               </div>
@@ -206,9 +218,9 @@ const AddProduct = () => {
                 <label className="form-label required">Category</label>
                 <select
                   className="form-control"
-                  value={productFields.category.value}
+                  value={productFields.category}
                   onChange={(e) =>
-                    handleProductField("category", "value", e.target.value)
+                    handleProductField("category", e.target.value)
                   }
                   required
                 >
@@ -229,15 +241,12 @@ const AddProduct = () => {
                   <div className="form-col">
                     <input
                       type="text"
+                      maxLength={100}
                       className="form-control"
                       placeholder="Ring size (if applicable)"
-                      value={productFields.sizeDetails.value}
+                      value={productFields.sizeDetails}
                       onChange={(e) =>
-                        handleProductField(
-                          "sizeDetails",
-                          "value",
-                          e.target.value
-                        )
+                        handleProductField("sizeDetails", e.target.value)
                       }
                     />
                   </div>
@@ -246,16 +255,16 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* Produc Type  */}
+          {/* Product Type  */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Product Type</label>
                 <select
                   className="form-control"
-                  value={productFields.productType.value}
+                  value={productFields.productType}
                   onChange={(e) =>
-                    handleProductField("productType", "value", e.target.value)
+                    handleProductField("productType", e.target.value)
                   }
                   required
                 >
@@ -263,6 +272,24 @@ const AddProduct = () => {
                   <option value={ProductType.Gold}>Gold</option>
                   <option value={ProductType.Silver}>Silver</option>
                 </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="form-row">
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label">Description</label>
+                <textarea
+                  className="form-control"
+                  value={productFields.description}
+                  onChange={(e) =>
+                    handleProductField("description", e.target.value)
+                  }
+                  placeholder="Enter product description"
+                  rows={4}
+                />
               </div>
             </div>
           </div>
@@ -279,9 +306,9 @@ const AddProduct = () => {
                     const newValue = e.target.checked
                       ? [...productFields.tags.value, "new"]
                       : productFields.tags.value.filter((tag) => tag !== "new");
-                    handleProductField("tags", "value", newValue);
+                    handleProductField("tags", newValue);
                   }}
-                />{" "}
+                />
                 New Arrival
               </label>
               <label className="filter-option" style={{ margin: 0 }}>
@@ -294,9 +321,9 @@ const AddProduct = () => {
                       : productFields.tags.value.filter(
                           (tag) => tag !== "featured"
                         );
-                    handleProductField("tags", "value", newValue);
+                    handleProductField("tags", newValue);
                   }}
-                />{" "}
+                />
                 Featured
               </label>
               <label className="filter-option" style={{ margin: 0 }}>
@@ -309,9 +336,9 @@ const AddProduct = () => {
                       : productFields.tags.value.filter(
                           (tag) => tag !== "premium"
                         );
-                    handleProductField("tags", "value", newValue);
+                    handleProductField("tags", newValue);
                   }}
-                />{" "}
+                />
                 Premium
               </label>
             </div>
@@ -324,13 +351,14 @@ const AddProduct = () => {
               type="file"
               accept="image/*"
               onChange={(e) =>
-                handleProductField("productImage", "value", e.target.files[0])
+                handleProductField("productImage", e.target.files[0])
               }
             />
           </div> */}
           <ImageUpload files={files} setFiles={setFiles} />
         </form>
       </div>
+      <LoadingScreen isLoading={isLoadingCreateProduct} />
     </div>
   );
 };

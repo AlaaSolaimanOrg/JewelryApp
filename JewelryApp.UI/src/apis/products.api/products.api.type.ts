@@ -1,4 +1,8 @@
-import type { KaratType, ProductCategory, ProductType } from "../../types/enums";
+import type {
+  KaratType,
+  ProductCategory,
+  ProductType,
+} from "../../types/enums";
 
 export interface CreateProductPayload {
   name: string;
@@ -8,5 +12,5 @@ export interface CreateProductPayload {
   karatType: KaratType;
   description?: string;
   weight: number;
-  images: File[]; // maps to IFormFile[]
+  images: File[];
 }

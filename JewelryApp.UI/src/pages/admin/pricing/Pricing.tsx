@@ -71,7 +71,7 @@ const Pricing = () => {
               <label
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
-                <input type="radio" name="pricing-method" defaultChecked />{" "}
+                <input type="radio" name="pricing-method" defaultChecked />
                 Manual Pricing
               </label>
               <label
@@ -135,7 +135,7 @@ const Pricing = () => {
               <label
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
-                <input type="radio" name="pricing-method" defaultChecked />{" "}
+                <input type="radio" name="pricing-method" defaultChecked />
                 Manual Pricing
               </label>
               <label

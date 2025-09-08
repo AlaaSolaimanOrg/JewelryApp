@@ -1,7 +1,6 @@
 import type { KaratType, ProductCategory } from "../../types/enums";
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
-import type { CreateProductPayload } from "./products.api.type";
 
 export const generateSKU = async (payload: {
   karatType: KaratType;
@@ -9,7 +8,7 @@ export const generateSKU = async (payload: {
 }) => {
   return requestApi("GET", apiRoutes.product.generateSku, payload);
 };
-export const createProduct = async (payload: CreateProductPayload) => {
+export const createProduct = async (payload: FormData) => {
   return requestApi("POST", apiRoutes.product.createProduct, payload, null, {
     headers: { "Content-Type": "multipart/form-data" },
   });

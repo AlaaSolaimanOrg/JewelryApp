@@ -1,0 +1,34 @@
+.imageUpload {
+  .imageUploadZone {
+    width: 100%;
+    background-color: #f8f9fa;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    .browse {
+      color: #d4af37;
+      text-decoration: underline;
+    }
+  }
+
+  .dragZone {
+    border: 2px dashed #d4af37;
+    color: #d4af37;
+  }
+
+  .droppedImageWrapper {
+    position: relative;
+    .closeIcon {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 20px;
+    }
+  }
+}
