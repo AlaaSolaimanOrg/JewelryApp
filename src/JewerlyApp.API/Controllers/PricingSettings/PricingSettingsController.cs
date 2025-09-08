@@ -7,6 +7,7 @@ using MediatR;
 using System.Threading.Tasks;
 using JewerlyApp.Application.Products.Commands.EditPricingSettings;
 using JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JewerlyApp.API.Controllers.PricingSettings
 {
@@ -18,6 +19,7 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = ("Admin"))]
         public async Task<IActionResult> GetGlobalPricingSettings([FromQuery] GetGlobalPricingSettingsQuery query)
         {
             var response = await Mediator.Send(query);
@@ -32,6 +34,7 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,PosRole")]
         public async Task<IActionResult> GetPricingSettings([FromQuery] GetPricingSettingsQuery query) 
         {
             var response = await Mediator.Send(query);

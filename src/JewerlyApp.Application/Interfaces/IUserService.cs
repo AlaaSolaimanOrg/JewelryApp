@@ -9,7 +9,7 @@ namespace JewerlyApp.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<GenericResponse<int>> ValidateUserAsync(string username, string password);
+        Task<GenericResponse<(int UserId, string UserName, IList<string> Roles)>> ValidateUserAsync(string username, string password);
         Task<bool> IsInRoleAsync(int userId, string roleName);
     }
 }

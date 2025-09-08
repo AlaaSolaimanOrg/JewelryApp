@@ -35,12 +35,13 @@ namespace JewerlyApp.Application.Auth.Commands.Login
                 };
 
             // Generate JWT
-            var token = await _tokenService.GenerateAccessToken(validation.Data);
+            var token = await _tokenService.GenerateAccessToken(validation.Data.UserId, validation.Data.UserName, validation.Data.Roles);
+            var refreshToken = await _tokenService.GenerateRefreshToken(validation.Data.UserId);
             var result = new LoginResponse
             {
                 AccessToken = token,
                 ExpiresAt = DateTime.UtcNow,
-                RefreshToken = ""
+                RefreshToken = refreshToken,
             };
 
             return new GenericResponse<LoginResponse>
