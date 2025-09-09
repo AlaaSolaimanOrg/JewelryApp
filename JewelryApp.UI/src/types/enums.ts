@@ -17,3 +17,8 @@ export enum ProductType {
   Gold = 1,
   Silver = 2,
 }
+
+export enum SortDirection {
+  Ascending,
+  Descending,
+}

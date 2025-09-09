@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { checkRequestSucceeded } from "./utils";
+import { checkRequestSucceeded } from "../utils";
 
 type ApiSortSearchPropsType = {
   payload?: any;

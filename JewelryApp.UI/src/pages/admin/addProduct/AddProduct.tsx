@@ -8,8 +8,8 @@ import {
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
-import useLocalApi from "../../../useLocalApi";
-import { checkRequestSucceeded } from "../../../utils";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./addProduct.scss";
 
 const productFieldsInitialState = {
@@ -87,8 +87,11 @@ const AddProduct = () => {
     createProduct(formData)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
+          console.log("response", response);
           handleCancelAddProduct();
+          showSuccess(response?.message);
         } else {
+          showError(response?.message);
         }
       })
       .catch((e) => {
@@ -125,7 +128,7 @@ const AddProduct = () => {
 
           <button
             className="btn-md btn-gold"
-            disabled={checkAnyProductFieldHasNoValue && !files.length}
+            disabled={checkAnyProductFieldHasNoValue || !files.length}
             onClick={callCreateProduct}
           >
             <FaSave className="icon" /> Save Product

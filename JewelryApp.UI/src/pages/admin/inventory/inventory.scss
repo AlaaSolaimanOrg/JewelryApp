@@ -32,6 +32,130 @@
     gap: 12px;
   }
 
+  /* Table Styles */
+  .table-container {
+    overflow-x: auto;
+    border-radius: var(--card-radius);
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th,
+  td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    background-color: var(--light);
+    font-weight: 600;
+    color: var(--dark);
+    cursor: pointer;
+    position: relative;
+  }
+
+  th:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  th:hover:after {
+    content: "↕";
+    position: absolute;
+    right: 10px;
+    color: var(--gray-dark);
+  }
+
+  tr:hover {
+    background-color: rgba(212, 175, 55, 0.05);
+  }
+
+  .product-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #f9f9f9, #f0f0f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--light);
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border: 1px solid var(--border);
+  }
+
+  .tag-new {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+  }
+
+  .tag-featured {
+    background: rgba(0, 123, 255, 0.1);
+    border-color: rgba(0, 123, 255, 0.2);
+    color: #0069d9;
+  }
+
+  .tag-premium {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.2);
+    color: var(--primary-dark);
+  }
+
+  .tag-low-stock {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.2);
+    color: var(--danger);
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    color: var(--secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: var(--transition);
+    font-size: 16px;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .action-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .action-btn.danger:hover {
+    background: var(--danger-light);
+    color: var(--danger);
+  }
+
   /* Inventory Grid */
   .inventory-grid {
     display: grid;
@@ -49,50 +173,6 @@
     justify-content: space-between;
     font-size: 0.9rem;
     color: var(--secondary);
-  }
-
-  /* Filter Sidebar */
-  .filter-sidebar {
-    background: white;
-    border-radius: var(--card-radius);
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-
-  .filter-title {
-    font-size: 1.1rem;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: var(--dark-light);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .filter-title i {
-    color: var(--gold);
-  }
-
-  .filter-group {
-    margin-bottom: 20px;
-  }
-
-  .filter-group-title {
-    font-weight: 500;
-    margin-bottom: 10px;
-    display: block;
-    color: var(--dark-light);
-  }
-
-  .filter-option {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-
-  .filter-option input {
-    margin-right: 8px;
   }
 
   /* Card Styles */
