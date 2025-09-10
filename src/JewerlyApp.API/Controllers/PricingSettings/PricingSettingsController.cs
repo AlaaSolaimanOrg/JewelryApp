@@ -25,7 +25,7 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditPricingSettings([FromForm] EditPricingSettingsCommand command)
+        public async Task<IActionResult> EditPricingSettings([FromBody] EditPricingSettingsCommand command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
