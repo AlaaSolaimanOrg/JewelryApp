@@ -80,7 +80,6 @@ export const showError = (message) => {
   });
 };
 
-
 export const debounce = (func, delay) => {
   let timeoutId;
   return (...args) => {
@@ -90,3 +89,9 @@ export const debounce = (func, delay) => {
     }, delay);
   };
 };
+
+export async function urlToFile(url: string, fileName: string): Promise<File> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], fileName, { type: blob.type });
+}

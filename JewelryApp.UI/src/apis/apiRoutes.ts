@@ -1,6 +1,8 @@
 export const apiRoutes = {
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
+    getPricingSettings: "PricingSettings/GetPricingSettings",
+    editPricingSettings: "PricingSettings/EditPricingSettings",
   },
   product: {
     generateSku: "Product/GenerateSku",

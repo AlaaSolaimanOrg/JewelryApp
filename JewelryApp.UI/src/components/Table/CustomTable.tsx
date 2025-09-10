@@ -22,15 +22,21 @@ const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {headers.map((header, colIndex) => (
-                <td key={colIndex}>
-                  {row[header.replace(/\s/g, "")] ?? row[header]}
-                </td>
-              ))}
+          {data?.length ? (
+            data?.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {headers?.map((header, colIndex) => (
+                  <td key={colIndex}>
+                    {row[header.replace(/\s/g, "")] ?? row[header]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr className="noResultsFound">
+              <td colSpan={headers.length}>No results found</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

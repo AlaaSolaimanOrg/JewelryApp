@@ -44,7 +44,6 @@ interface Product {
 const Inventory = () => {
   const navigate = useNavigate();
 
-  const [mappedProducts, setMappedProducts] = useState([]);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
   const {
@@ -79,7 +78,7 @@ const Inventory = () => {
     "Actions",
   ];
 
-  const data = products.map((product) => ({
+  const data = products?.map((product) => ({
     Image: (
       <img
         src={`${API_URL}${product.images[0]?.imageUrl}`}
@@ -193,7 +192,7 @@ const Inventory = () => {
               <div>
                 <div className="search-bar" style={{ width: "250px" }}>
                   <FaSearch className="icon me-1" />
-                  <input type="text" placeholder="Search inventory..." />
+                  <input type="text" placeholder="Search inventory..."  onChange={onSearchChange}/>
                 </div>
               </div>
             </div>

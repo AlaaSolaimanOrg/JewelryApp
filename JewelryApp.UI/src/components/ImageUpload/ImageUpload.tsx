@@ -1,9 +1,8 @@
-import { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import "./imageUpload.scss";
+import { useCallback } from "react";
 import { Col, Row } from "react-bootstrap";
-import { IoIosCloseCircleOutline } from "react-icons/io";
+import { useDropzone } from "react-dropzone";
 import { FaTrash } from "react-icons/fa";
+import "./imageUpload.scss";
 
 const ImageUpload = ({ files, setFiles }) => {
   const onDrop = useCallback((acceptedFiles) => {
@@ -35,7 +34,7 @@ const ImageUpload = ({ files, setFiles }) => {
       <div {...getRootProps()}>
         <input {...getInputProps()} />
 
-        {files.length > 0 && !isDragActive ? (
+        {files?.length > 0 && !isDragActive ? (
           <Row>
             {files.map((file, index) => (
               <Col xs={4} className="droppedImageWrapper p-3">

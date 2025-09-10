@@ -10,8 +10,44 @@ import {
   FaCartPlus,
   FaPen,
 } from "react-icons/fa";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { getProductById } from "../../../apis/products.api/products.api";
+import { useMemo, useState, type ChangeEvent } from "react";
+import { debounce } from "../../../utils";
 
 const ProductLookup = () => {
+  const [searchInput, setSearchInput] = useState("");
+  const [searchBy, setSearchBy] = useState("");
+  const { data: product } = useLocalApi({
+    apiToCall: (data) => getProductById(data.payload),
+    payload: {
+      searchBy: searchBy,
+    },
+    extraEffectCheck: !!searchBy,
+    effectDependency: [searchBy],
+  }) as {
+    data: any;
+  };
+
+  // Debounce only updates searchBy (used for API)
+  const debouncedSetSearchBy = useMemo(
+    () =>
+      debounce((value: string) => {
+        if (value?.length && value?.length < 20) {
+          setSearchBy(value);
+        } else {
+          setSearchBy(""); // clear when empty/too long
+        }
+      }, 700),
+    [] // 👈 stable across renders
+  );
+
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = event.target.value;
+    setSearchInput(inputValue); // update UI immediately
+    debouncedSetSearchBy(inputValue); // trigger API search after delay
+  };
+
   return (
     <div className="page-content productLookUp">
       <h3 className="d-flex align-items-center gap-2">
@@ -24,6 +60,8 @@ const ProductLookup = () => {
           type="text"
           className="search-input"
           placeholder="Scan or Enter Barcode/SKU..."
+          value={searchInput}
+          onChange={handleSearch}
         />
         <button className="search-btn">
           <FaCamera />

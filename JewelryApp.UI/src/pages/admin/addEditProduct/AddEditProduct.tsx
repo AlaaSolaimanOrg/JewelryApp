@@ -3,6 +3,7 @@ import { FaSave, FaTimes } from "react-icons/fa";
 import { TbCirclePlusFilled } from "react-icons/tb";
 import {
   createProduct,
+  editProduct,
   generateSKU,
   getProductById,
 } from "../../../apis/products.api/products.api";
@@ -10,9 +11,15 @@ import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import {
+  checkRequestSucceeded,
+  showError,
+  showSuccess,
+  urlToFile,
+} from "../../../utils";
 import "./addEditProduct.scss";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { API_URL } from "../../../config/config";
 
 const productFieldsInitialState = {
   productName: "",
@@ -25,6 +32,7 @@ const productFieldsInitialState = {
 };
 
 const AddEditProduct = ({ isEdit }) => {
+  const navigate = useNavigate();
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
 
@@ -67,22 +75,39 @@ const AddEditProduct = ({ isEdit }) => {
   }) as {
     data: any;
   };
-  console.log("generatedSKU", generatedSKU);
-  console.log("product", product);
 
   useEffect(() => {
-    if (isEdit) {
+    if (!isEdit) {
+      handleCancelAddProduct();
+    }
+  }, [isEdit]);
+
+  useEffect(() => {
+    if (isEdit && product) {
       setProductFields({
         productName: product.name,
         SKU: product.sku,
         karat: product.karatType,
-        productType: product.type,
+        productType: product.productType,
         weight: product.weight,
         category: product.category,
         description: product.description,
       });
+
+      const loadFiles = async () => {
+        const apiFiles: any = await Promise.all(
+          product?.images?.map(async (file, index) => {
+            const fullUrl = `${API_URL}${file.imageUrl}`;
+            const fetchedFile = await urlToFile(fullUrl, `image-${index}.jpg`);
+            return Object.assign(fetchedFile, { preview: fullUrl });
+          })
+        );
+        setFiles(apiFiles);
+      };
+
+      loadFiles();
     }
-  }, [product]);
+  }, [product, isEdit]);
 
   useEffect(() => {
     handleProductField("SKU", generatedSKU);
@@ -99,6 +124,10 @@ const AddEditProduct = ({ isEdit }) => {
 
     const formData = new FormData();
 
+    if (isEdit && productId) {
+      formData.append("Id", productId);
+    }
+
     formData.append("Name", productFields.productName);
     formData.append("Sku", productFields.SKU);
     formData.append("Category", productFields.category);
@@ -113,12 +142,15 @@ const AddEditProduct = ({ isEdit }) => {
       });
     }
 
-    createProduct(formData)
+    const apiToCall = isEdit ? editProduct : createProduct;
+    apiToCall(formData)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           console.log("response", response);
-          handleCancelAddProduct();
           showSuccess(response?.message);
+          if (!isEdit) {
+            handleCancelAddProduct();
+          }
         } else {
           showError(response?.message);
         }

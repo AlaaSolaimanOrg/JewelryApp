@@ -296,3 +296,9 @@ body {
 .form-col {
   flex: 1;
 }
+
+.disabled-gold-input {
+  color: var(--gold) !important;
+  font-weight: bold !important;
+  background-color: rgba(212, 175, 55, 0.05) !important;
+}
