@@ -111,7 +111,7 @@ const useLocalApiSearchSortPagination = <T = any>({
         }
         setDataExtractedFromResponse(finalData);
       }
-    } catch (error) {
+    } catch (error: any) {
       showError(error?.message);
 
       console.error(error?.message);

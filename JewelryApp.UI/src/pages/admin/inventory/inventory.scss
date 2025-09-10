@@ -303,32 +303,4 @@
     color: var(--secondary);
   }
 
-  /* Pagination */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 25px;
-  }
-
-  .page-item {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    background: white;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    font-size: 14px;
-    transition: var(--transition);
-  }
-
-  .page-item:hover,
-  .page-item.active {
-    background: var(--gold);
-    color: white;
-    border-color: var(--gold);
-  }
 }

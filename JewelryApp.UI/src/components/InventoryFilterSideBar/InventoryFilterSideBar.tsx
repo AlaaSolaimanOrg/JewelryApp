@@ -23,10 +23,6 @@ const InventoryFilterSideBar = () => {
           <input type="checkbox" id="karat-22" />
           <label htmlFor="karat-22">22K Gold</label>
         </div>
-        <div className="filter-option">
-          <input type="checkbox" id="platinum" />
-          <label htmlFor="platinum">Platinum</label>
-        </div>
       </div>
 
       {/* Weight */}

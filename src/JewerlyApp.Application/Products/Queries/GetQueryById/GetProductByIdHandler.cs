@@ -43,6 +43,8 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 KaratType = product.KaratType,
                 Weight = product.Weight,
                 Category = product.Category,
+                ProductType = product.Type,
+                Description = product.Description,
                 Images = product.Images.Select(i => new ProductImageVM
                 {
                     ImageUrl = i.ImageUrl

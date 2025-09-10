@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     KaratType = x.KaratType,
                     Weight = x.Weight,
                     Category = x.Category,
+                    ProductType = x.Type,
+                    Description = x.Description,
                     Images = x.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   FaArrowDown,
   FaArrowUp,
@@ -6,27 +7,29 @@ import {
   FaEdit,
   FaExchangeAlt,
   FaExclamationTriangle,
-  FaEye,
   FaFileExport,
   FaGem,
-  FaHeart,
   FaHistory,
-  FaInfinity,
   FaPlus,
-  FaRing,
   FaSearch,
-  FaStar,
   FaTag,
   FaTags,
   FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { getProducts } from "../../../apis/products.api/products.api";
+import {
+  deleteProduct,
+  getProducts,
+} from "../../../apis/products.api/products.api";
+import InventoryFilterSideBar from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+import Paginator from "../../../components/Paginator/Paginator";
+import CustomTable from "../../../components/Table/CustomTable";
+import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import type { KaratType, ProductCategory } from "../../../types/enums";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
-import InventoryFilterSideBar from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
-import CustomTable from "../../../components/Table/CustomTable";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
 interface Product {
   id: string; // Guid -> string
@@ -35,14 +38,19 @@ interface Product {
   karatType: KaratType; // enum
   weight: number; // decimal -> number
   category: ProductCategory; // enum
-  images: string[]; // list
+  images: { imageUrl: string }[]; // list
 }
 
 const Inventory = () => {
   const navigate = useNavigate();
 
+  const [mappedProducts, setMappedProducts] = useState([]);
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+
   const {
     data: products,
+    isLoading: isLoadingProducts,
+    fetchData: recallGetProducts,
     onSearchChange,
     onPaginationChange,
     onPageSizeChange,
@@ -52,102 +60,99 @@ const Inventory = () => {
     searchBy,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
-    extraPayload: {},
   });
 
   console.log("products", products);
 
+  useEffect(() => {
+    // const mappedProducts =
+  }, [products]);
+
   const headers = [
-    "Name",
-    "Phone",
-    "Email",
-    "Total Spent",
-    "Last Purchase",
+    "Image",
+    "Product Name",
+    "SKU",
+    "Karat",
+    "Weight",
+    "Category",
+    "Tags",
     "Actions",
   ];
 
-  const data = [
-    {
-      Name: "Sarah Johnson",
-      Phone: "(555) 123-4567",
-      Email: "sarah@example.com",
-      TotalSpent: "$24,560",
-      LastPurchase: "Oct 28, 2023",
-      Actions: (
-        <>
-          <button className="action-btn" title="View">
-            <FaEye />
-          </button>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "Michael Chen",
-      Phone: "(555) 987-6543",
-      Email: "michael@example.com",
-      TotalSpent: "$18,340",
-      LastPurchase: "Oct 27, 2023",
-      Actions: (
-        <>
-          <button className="action-btn" title="View">
-            <FaEye />
-          </button>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "Emma Rodriguez",
-      Phone: "(555) 456-7890",
-      Email: "emma@example.com",
-      TotalSpent: "$15,670",
-      LastPurchase: "Oct 25, 2023",
-      Actions: (
-        <>
-          <button className="action-btn" title="View">
-            <FaEye />
-          </button>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "David Wilson",
-      Phone: "(555) 234-5678",
-      Email: "david@example.com",
-      TotalSpent: "$12,890",
-      LastPurchase: "Oct 24, 2023",
-      Actions: (
-        <>
-          <button className="action-btn" title="View">
-            <FaEye />
-          </button>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-  ];
+  const data = products.map((product) => ({
+    Image: (
+      <img
+        src={`${API_URL}${product.images[0]?.imageUrl}`}
+        alt={product.name ?? ""}
+        style={{
+          width: "40px",
+          height: "40px",
+          objectFit: "cover",
+          borderRadius: "6px",
+        }}
+      />
+    ),
+    ProductName: product.name,
+    SKU: product.sku,
+    Karat: `${product.karatType}K`,
+    Weight: `${product.weight}g`,
+    Category:
+      product.category === 1
+        ? "Necklaces"
+        : product.category === 2
+        ? "Bracelets"
+        : "Other",
+    Actions: (
+      <>
+        <button
+          className="action-btn"
+          title="Edit"
+          onClick={() => handleEditProduct(product.id)}
+        >
+          <FaEdit />
+        </button>
+        <button className="action-btn" title="History">
+          <FaHistory />
+        </button>
+        <button className="action-btn" title="Print Tag">
+          <FaTag />
+        </button>
+        <button
+          className="action-btn danger"
+          title="Delete"
+          onClick={() => handleDeleteProduct(product.id)}
+        >
+          <FaTrash />
+        </button>
+      </>
+    ),
+  }));
+
+  const handleEditProduct = (productId) => {
+    navigate(`/admin/editProduct/${productId}`);
+  };
+
+  const handleDeleteProduct = (productId) => {
+    setIsDeletingProduct(true);
+
+    const payload = { id: productId };
+    deleteProduct(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          console.log("response", response);
+          showSuccess(response?.message);
+          recallGetProducts();
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsDeletingProduct(false);
+      });
+  };
 
   return (
     <div id="inventory" className="page">
@@ -193,185 +198,21 @@ const Inventory = () => {
               </div>
             </div>
 
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Product Name</th>
-                    <th>SKU</th>
-                    <th>Karat</th>
-                    <th>Weight</th>
-                    <th>Quantity</th>
-                    <th>Category</th>
-                    <th>Tags</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div className="product-img">
-                        <FaRing />
-                      </div>
-                    </td>
-                    <td>Diamond Engagement Ring</td>
-                    <td>GL-RNG-001</td>
-                    <td>18K</td>
-                    <td>4.2g</td>
-                    <td>12</td>
-                    <td>Rings</td>
-                    <td>
-                      <span className="tag tag-new">New</span>
-                      <span className="tag tag-premium">Premium</span>
-                    </td>
-                    <td>
-                      <button className="action-btn" title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button className="action-btn" title="History">
-                        <FaHistory />
-                      </button>
-                      <button className="action-btn" title="Print Tag">
-                        <FaTag />
-                      </button>
-                      <button className="action-btn danger" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="product-img">
-                        <FaGem />
-                      </div>
-                    </td>
-                    <td>Sapphire Pendant</td>
-                    <td>GL-PND-042</td>
-                    <td>21K</td>
-                    <td>7.8g</td>
-                    <td>8</td>
-                    <td>Necklaces</td>
-                    <td>
-                      <span className="tag tag-featured">Featured</span>
-                    </td>
-                    <td>
-                      <button className="action-btn" title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button className="action-btn" title="History">
-                        <FaHistory />
-                      </button>
-                      <button className="action-btn" title="Print Tag">
-                        <FaTag />
-                      </button>
-                      <button className="action-btn danger" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="product-img">
-                        <FaStar />
-                      </div>
-                    </td>
-                    <td>Gold Bangle Set</td>
-                    <td>GL-BGL-205</td>
-                    <td>22K</td>
-                    <td>24.5g</td>
-                    <td>3</td>
-                    <td>Bangles</td>
-                    <td>
-                      <span className="tag tag-premium">Premium</span>
-                      <span className="tag tag-low-stock">Low Stock</span>
-                    </td>
-                    <td>
-                      <button className="action-btn" title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button className="action-btn" title="History">
-                        <FaHistory />
-                      </button>
-                      <button className="action-btn" title="Print Tag">
-                        <FaTag />
-                      </button>
-                      <button className="action-btn danger" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="product-img">
-                        <FaHeart />
-                      </div>
-                    </td>
-                    <td>Emerald Earrings</td>
-                    <td>GL-ERN-112</td>
-                    <td>18K</td>
-                    <td>3.5g</td>
-                    <td>15</td>
-                    <td>Earrings</td>
-                    <td>
-                      <span className="tag tag-new">New</span>
-                    </td>
-                    <td>
-                      <button className="action-btn" title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button className="action-btn" title="History">
-                        <FaHistory />
-                      </button>
-                      <button className="action-btn" title="Print Tag">
-                        <FaTag />
-                      </button>
-                      <button className="action-btn danger" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div className="product-img">
-                        <FaInfinity />
-                      </div>
-                    </td>
-                    <td>Platinum Wedding Band</td>
-                    <td>GL-RNG-078</td>
-                    <td>Platinum</td>
-                    <td>5.3g</td>
-                    <td>7</td>
-                    <td>Rings</td>
-                    <td>
-                      <span className="tag tag-featured">Featured</span>
-                    </td>
-                    <td>
-                      <button className="action-btn" title="Edit">
-                        <FaEdit />
-                      </button>
-                      <button className="action-btn" title="History">
-                        <FaHistory />
-                      </button>
-                      <button className="action-btn" title="Print Tag">
-                        <FaTag />
-                      </button>
-                      <button className="action-btn danger" title="Delete">
-                        <FaTrash />
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <CustomTable data={data} headers={headers} />
 
-            <div className="pagination">
+            <Paginator
+              totalRecords={pagination.totalRecords}
+              pageNumber={pagination.pageNumber}
+              pageSize={pagination.pageSize}
+              onPageSizeChange={onPageSizeChange}
+            />
+            {/* <div className="pagination">
               <div className="page-item active">1</div>
               <div className="page-item">2</div>
               <div className="page-item">3</div>
               <div className="page-item">4</div>
               <div className="page-item">5</div>
-            </div>
+            </div> */}
           </div>
 
           {/* Summary */}
@@ -420,8 +261,8 @@ const Inventory = () => {
             </div>
           </div>
         </div>
-        <CustomTable data={data} headers={headers} />
       </div>
+      <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>
   );
 };

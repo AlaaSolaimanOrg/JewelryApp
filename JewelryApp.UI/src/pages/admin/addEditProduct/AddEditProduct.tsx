@@ -4,13 +4,15 @@ import { TbCirclePlusFilled } from "react-icons/tb";
 import {
   createProduct,
   generateSKU,
+  getProductById,
 } from "../../../apis/products.api/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import "./addProduct.scss";
+import "./addEditProduct.scss";
+import { useParams } from "react-router-dom";
 
 const productFieldsInitialState = {
   productName: "",
@@ -19,13 +21,14 @@ const productFieldsInitialState = {
   productType: "",
   weight: "",
   category: "",
-  sizeDetails: "",
   description: "",
 };
 
-const AddProduct = () => {
+const AddEditProduct = ({ isEdit }) => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
+
+  const { productId } = useParams();
 
   const [files, setFiles] = useState([]);
 
@@ -53,7 +56,33 @@ const AddProduct = () => {
     data: any;
     setData: any;
   };
+
+  const { data: product } = useLocalApi({
+    apiToCall: (data) => getProductById(data.payload),
+    payload: {
+      id: productId,
+    },
+    extraEffectCheck: !!productId,
+    effectDependency: [productId],
+  }) as {
+    data: any;
+  };
   console.log("generatedSKU", generatedSKU);
+  console.log("product", product);
+
+  useEffect(() => {
+    if (isEdit) {
+      setProductFields({
+        productName: product.name,
+        SKU: product.sku,
+        karat: product.karatType,
+        productType: product.type,
+        weight: product.weight,
+        category: product.category,
+        description: product.description,
+      });
+    }
+  }, [product]);
 
   useEffect(() => {
     handleProductField("SKU", generatedSKU);
@@ -118,7 +147,7 @@ const AddProduct = () => {
       <div className="page-header">
         <h1 className="page-title ">
           <TbCirclePlusFilled className="icon" />
-          <span>Add New Product</span>
+          {isEdit ? <span>Edit Product</span> : <span>Add New Product</span>}
         </h1>
         <div className="page-actions">
           <button className="btn-md btn-gray" onClick={handleCancelAddProduct}>
@@ -214,8 +243,9 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* Category  */}
           <div className="form-row">
+            {/* Category  */}
+
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Category</label>
@@ -237,29 +267,9 @@ const AddProduct = () => {
                 </select>
               </div>
             </div>
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">Size Details</label>
-                <div className="form-row">
-                  <div className="form-col">
-                    <input
-                      type="text"
-                      maxLength={100}
-                      className="form-control"
-                      placeholder="Ring size (if applicable)"
-                      value={productFields.sizeDetails}
-                      onChange={(e) =>
-                        handleProductField("sizeDetails", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Product Type  */}
-          <div className="form-row">
+            {/* Product Type  */}
+
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Product Type</label>
@@ -366,4 +376,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default AddEditProduct;
