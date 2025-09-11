@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace JewerlyApp.Application.Products.Queries.GetQueryById
 {
 
-    public class GetProductByIdQuery : IRequest<GenericResponse<GetProductsVM>>
+    public class GetProductByIdQuery : IRequest<GenericResponse<GetProductByIdVM>>
     {
         public Guid Id { get; set; }
         public string? SearchBy { get; set; }

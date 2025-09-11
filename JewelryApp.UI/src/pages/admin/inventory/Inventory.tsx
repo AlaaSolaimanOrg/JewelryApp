@@ -26,19 +26,26 @@ import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import type { KaratType, ProductCategory } from "../../../types/enums";
+import type {
+  KaratType,
+  ProductCategory,
+  ProductType,
+} from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
-interface Product {
-  id: string; // Guid -> string
-  sku: string; // string
-  name?: string | null; // string? -> optional
-  karatType: KaratType; // enum
-  weight: number; // decimal -> number
-  category: ProductCategory; // enum
-  images: { imageUrl: string }[]; // list
+export interface Product {
+  id: string;
+  sku: string;
+  name?: string;
+  karatType: KaratType;
+  weight: number;
+  category: ProductCategory;
+  productType: ProductType;
+  description?: string;
+  pricePerGram?: number;
+  images: { imageUrl: string }[];
 }
 
 const Inventory = () => {
@@ -192,7 +199,11 @@ const Inventory = () => {
               <div>
                 <div className="search-bar" style={{ width: "250px" }}>
                   <FaSearch className="icon me-1" />
-                  <input type="text" placeholder="Search inventory..."  onChange={onSearchChange}/>
+                  <input
+                    type="text"
+                    placeholder="Search inventory..."
+                    onChange={onSearchChange}
+                  />
                 </div>
               </div>
             </div>

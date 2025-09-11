@@ -95,3 +95,6 @@ export async function urlToFile(url: string, fileName: string): Promise<File> {
   const blob = await response.blob();
   return new File([blob], fileName, { type: blob.type });
 }
+
+export const safeValue = (value: any, fallbackValue: any = "") =>
+  value ?? fallbackValue;

@@ -8,6 +8,7 @@ type ApiSortSearchPropsType = {
   extractFromResponse?: string[];
   responseProperty?: string;
   apiToCall: (data: any) => any;
+  dataInitalValue?: any;
   apiName?: string;
   finallyCallback?: () => void;
 };
@@ -19,12 +20,13 @@ const useLocalApi = ({
   responseProperty = "",
   effectDependency = [],
   finallyCallback = () => {},
+  dataInitalValue = [],
   apiToCall,
   apiName,
 }: ApiSortSearchPropsType) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [data, setData] = useState<any[] | any>([]);
+  const [data, setData] = useState<any[] | any>(dataInitalValue);
 
   const [statusCode, setStatusCode] = useState<any[] | any>([]);
   const [dataExtractedFromResponse, setDataExtractedFromResponse] =
@@ -36,7 +38,7 @@ const useLocalApi = ({
 
   const fetchData = async () => {
     setIsLoading(true);
-    setData([]);
+    setData(dataInitalValue);
     const requestData = {
       payload: {
         ...payload,

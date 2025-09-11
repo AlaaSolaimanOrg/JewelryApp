@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Products.Queries.GetQueryById
 {
-    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GenericResponse<GetProductsVM>>
+    public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, GenericResponse<GetProductByIdVM>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -21,7 +21,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
             _context = context;
         }
 
-        public async Task<GenericResponse<GetProductsVM>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<GetProductByIdVM>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
             var product = await _context.Products
                 .Include(p => p.Images)
@@ -29,13 +29,13 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
 
             if (product == null)
             {
-                return new GenericResponse<GetProductsVM>
+                return new GenericResponse<GetProductByIdVM>
                 {
                     StatusCode = ResponseStatusCode.NotFound,
                     Message = Messages.ErrorNotFound
                 };
             }
-            var productVM = new GetProductsVM
+            var productVM = new GetProductByIdVM
             {
                 Id = product.Id,
                 Sku = product.Sku,
@@ -51,7 +51,13 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 }).ToList()
             };
 
-            return new GenericResponse<GetProductsVM>
+            // pricePerGram (to be checked)
+
+            var pricePerGram = _context.PricingSettings.AsNoTracking().FirstOrDefault(priceSetting => priceSetting.KaratType == product.KaratType)?.Price;
+
+            productVM.PricePerGram = pricePerGram;
+
+            return new GenericResponse<GetProductByIdVM>
             {
                 StatusCode = ResponseStatusCode.Success,
                 Data = productVM
