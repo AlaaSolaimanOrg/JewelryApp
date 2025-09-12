@@ -98,3 +98,8 @@ export async function urlToFile(url: string, fileName: string): Promise<File> {
 
 export const safeValue = (value: any, fallbackValue: any = "") =>
   value ?? fallbackValue;
+
+export function checkSKUFormat(value) {
+  const regex = /^[A-Z]{3}-\d{2}-\d{4}-\d{5}$/;
+  return regex.test(value);
+}

@@ -1,8 +1,5 @@
-import { Link } from "react-router-dom";
-import "./productLookup.scss";
-import { IoSearch } from "react-icons/io5";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { Col, Row } from "react-bootstrap";
-import DefatulProductImage from "../../../assets/images/default-product.png";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -10,22 +7,25 @@ import {
   FaCartPlus,
   FaPen,
 } from "react-icons/fa";
-import useLocalApi from "../../../hooks/useLocalApi";
+import { IoSearch } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { getProductById } from "../../../apis/products.api/products.api";
-import { useMemo, useState, type ChangeEvent } from "react";
-import { debounce, safeValue } from "../../../utils";
-import type { Product } from "../../admin/inventory/Inventory";
 import { API_URL } from "../../../config/config";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { checkSKUFormat, debounce, safeValue } from "../../../utils";
+import type { Product } from "../../admin/inventory/Inventory";
+import "./productLookup.scss";
 
 const ProductLookup = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchBy, setSearchBy] = useState("");
+
   const { data: product, setData: setProduct } = useLocalApi({
     apiToCall: (data) => getProductById(data.payload),
     payload: {
       searchBy: searchBy,
     },
-    extraEffectCheck: !!searchBy,
+    extraEffectCheck: !!searchBy && checkSKUFormat(searchBy),
     effectDependency: [searchBy],
     dataInitalValue: null,
   }) as {
@@ -77,7 +77,7 @@ const ProductLookup = () => {
         </button>
       </div>
 
-      {!!product ? (
+      {product ? (
         <div className="result-panel active">
           <Row className="product-details">
             <Col xs={4} md={12} className="product-image">

@@ -99,6 +99,7 @@ const Pricing = () => {
       callEditPrice(price.productType, price.karatType, price.pricePerGram);
     });
   };
+  
   return (
     <div id="pricing" className="page">
       <div className="page-header">
