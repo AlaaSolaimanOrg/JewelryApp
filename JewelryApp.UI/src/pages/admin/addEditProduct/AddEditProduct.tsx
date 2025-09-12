@@ -20,6 +20,9 @@ import {
 import "./addEditProduct.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_URL } from "../../../config/config";
+import Barcode from "react-barcode";
+import { IoBarcodeSharp } from "react-icons/io5";
+import { AiFillPrinter } from "react-icons/ai";
 
 const productFieldsInitialState = {
   productName: "",
@@ -338,6 +341,21 @@ const AddEditProduct = ({ isEdit }) => {
               </div>
             </div>
           </div>
+
+          {generatedSKU && (
+            <div className="barcodeGenerator">
+              <div className="titleContainer">
+                <IoBarcodeSharp className="icon" />
+                <span className="title">Barcode</span>
+              </div>
+
+              <Barcode className="barCode " value={generatedSKU} />
+
+              <div className="actionsContainer">
+                <AiFillPrinter />
+              </div>
+            </div>
+          )}
 
           {/* Tags */}
           {/* <div className="form-group">
