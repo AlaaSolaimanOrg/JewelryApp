@@ -27,13 +27,16 @@ namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
 
         public async Task<GenericResponse<bool>> Handle(EditPricingSettingsCommand request, CancellationToken cancellationToken)
         {
+            var settings = await _context.PricingSettings
+                .Where(x => request.PricingSettings.Any(r => r.ProductType == x.ProductType && r.KaratType == x.KaratType))
+                .ToListAsync(cancellationToken);
+
             foreach (var pricingSettingVm in request.PricingSettings)
             {
-                var pricingSetting = await _context.PricingSettings
-                    .FirstOrDefaultAsync(ps =>
+                var pricingSetting =settings
+                    .FirstOrDefault(ps =>
                         ps.ProductType == pricingSettingVm.ProductType &&
-                        ps.KaratType == pricingSettingVm.KaratType,
-                        cancellationToken);
+                        ps.KaratType == pricingSettingVm.KaratType);
 
                 if (pricingSetting == null)
                 {
