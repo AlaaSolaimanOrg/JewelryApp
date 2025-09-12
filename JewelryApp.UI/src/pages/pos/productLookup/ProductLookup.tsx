@@ -1,8 +1,5 @@
-import { Link } from "react-router-dom";
-import "./productLookup.scss";
-import { IoSearch } from "react-icons/io5";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { Col, Row } from "react-bootstrap";
-import DefatulProductImage from "../../../assets/images/default-product.png";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -10,12 +7,14 @@ import {
   FaCartPlus,
   FaPen,
 } from "react-icons/fa";
-import useLocalApi from "../../../hooks/useLocalApi";
+import { IoCart, IoSearch } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import { getProductById } from "../../../apis/products.api/products.api";
-import { useMemo, useState, type ChangeEvent } from "react";
+import { API_URL } from "../../../config/config";
+import useLocalApi from "../../../hooks/useLocalApi";
 import { debounce, safeValue } from "../../../utils";
 import type { Product } from "../../admin/inventory/Inventory";
-import { API_URL } from "../../../config/config";
+import "./productLookup.scss";
 
 const ProductLookup = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -55,6 +54,8 @@ const ProductLookup = () => {
   };
 
   console.log("product", product);
+
+  const totalPrice = (product?.pricePerGram ?? 0) * product?.weight;
 
   return (
     <div className="page-content productLookUp">
@@ -119,7 +120,7 @@ const ProductLookup = () => {
             </Col>
           </Row>
 
-          <div className="price-display">Calculated Price: $440.13</div>
+          <div className="price-display">Calculated Price: ${totalPrice}</div>
 
           <div className="action-buttons d-flex gap-2">
             <Link to={"/cartSummary"} className="text-decoration-none">
