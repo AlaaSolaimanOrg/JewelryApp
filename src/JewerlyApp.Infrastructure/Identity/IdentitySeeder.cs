@@ -20,7 +20,6 @@ namespace JewerlyApp.Infrastructure.Identity
             string adminPassword = "Admin@123"; // Change in production
 
             // 1️⃣ Ensure Role Exists
-            if (!await roleManager.RoleExistsAsync(adminRoleName))
             {
                 await roleManager.CreateAsync(new ApplicationRole
                 {
