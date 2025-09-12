@@ -5,8 +5,11 @@ using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings;
 
 namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
 {
@@ -24,25 +27,31 @@ namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
 
         public async Task<GenericResponse<bool>> Handle(EditPricingSettingsCommand request, CancellationToken cancellationToken)
         {
-            var pricingSetting = await _context.PricingSettings
-                .FirstOrDefaultAsync(ps =>
-                    ps.ProductType == request.ProductType &&
-                    ps.KaratType == request.KaratType,
-                    cancellationToken);
+            var settings = await _context.PricingSettings
+                .Where(x => request.PricingSettings.Any(r => r.ProductType == x.ProductType && r.KaratType == x.KaratType))
+                .ToListAsync(cancellationToken);
 
-            if (pricingSetting == null)
+            foreach (var pricingSettingVm in request.PricingSettings)
             {
-                pricingSetting = new PricingSetting
+                var pricingSetting =settings
+                    .FirstOrDefault(ps =>
+                        ps.ProductType == pricingSettingVm.ProductType &&
+                        ps.KaratType == pricingSettingVm.KaratType);
+
+                if (pricingSetting == null)
                 {
-                    ProductType = request.ProductType,
-                    KaratType = request.KaratType,
-                    Price = request.PricePerGram
-                };
-                _context.PricingSettings.Add(pricingSetting);
-            }
-            else
-            {
-                pricingSetting.Price = request.PricePerGram;
+                    pricingSetting = new PricingSetting
+                    {
+                        ProductType = pricingSettingVm.ProductType,
+                        KaratType = pricingSettingVm.KaratType,
+                        Price = pricingSettingVm.PricePerGram
+                    };
+                    _context.PricingSettings.Add(pricingSetting);
+                }
+                else
+                {
+                    pricingSetting.Price = pricingSettingVm.PricePerGram;
+                }
             }
 
             await _context.SaveChangesAsync(cancellationToken);

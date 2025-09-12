@@ -101,6 +101,16 @@
 
     .form-group {
       margin-bottom: 20px;
+      .disabled-gold {
+        color: var(--gold);
+        font-weight: 600;
+        background-color: #f8f9fa;
+      }
+
+      .disabled-gold::placeholder {
+        color: var(--gold);
+        font-weight: 600;
+      }
     }
 
     .form-label {

@@ -198,6 +198,13 @@ body {
   color: white !important;
 }
 
+.btn-gold:disabled {
+  background: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
 .btn-gold:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
@@ -288,4 +295,10 @@ body {
 
 .form-col {
   flex: 1;
+}
+
+.disabled-gold-input {
+  color: var(--gold) !important;
+  font-weight: bold !important;
+  background-color: rgba(212, 175, 55, 0.05) !important;
 }

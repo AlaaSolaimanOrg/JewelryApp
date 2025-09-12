@@ -1,5 +1,5 @@
 {
-  "API_URL": "https://localhost:7171/",
+  "API_URL": "https://localhost:7171",
   "API_TIMEOUT": 10000,
   "APP_NAME": "MyViteApp"
 }

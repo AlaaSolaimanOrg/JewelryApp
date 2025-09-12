@@ -10,5 +10,6 @@ namespace JewerlyApp.Domain.Enums
     {
         Karat18 = 18,
         Karat21 =21,
+        Karat24 =24,
     }
 }

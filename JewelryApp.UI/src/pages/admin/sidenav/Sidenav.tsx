@@ -11,10 +11,67 @@ import {
   FaUser,
   FaUsers,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./sidenav.scss";
 
 const SideNav = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems = [
+    {
+      label: "Dashboard",
+      icon: <AiFillHome className="icon homeIcon" />,
+      path: "/admin/dashboard",
+    },
+    {
+      label: "Inventory",
+      icon: <FaBox className="icon" />,
+      path: "/admin/inventory",
+    },
+    {
+      label: "Pricing",
+      icon: <FaTag className="icon" />,
+      path: "/admin/pricing",
+    },
+    {
+      label: "Sales Reports",
+      icon: <FaChartLine className="icon" />,
+      path: "/admin/sales-reports",
+    },
+    {
+      label: "Customers",
+      icon: <FaUsers className="icon" />,
+      path: "/admin/customers",
+    },
+    { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
+    {
+      label: "Settings",
+      icon: <FaCog className="icon" />,
+      path: "/admin/settings",
+    },
+  ];
+
+  const operationItems = [
+    {
+      label: "Print Tags",
+      icon: <FaPrint className="icon" />,
+      path: "/admin/print-tags",
+    },
+    {
+      label: "Export Data",
+      icon: <FaFile className="icon" />,
+      path: "/admin/export-data",
+    },
+    {
+      label: "Add Product",
+      icon: <FaPlus className="icon" />,
+      path: "/admin/addProduct",
+    },
+  ];
+
+  const isActive = (path) => location.pathname === path;
+
   return (
     <aside className="sidebar">
       <div className="logo">
@@ -28,50 +85,31 @@ const SideNav = () => {
           <small>Inventory System</small>
         </div>
       </div>
+
       <div className="nav-links">
         <div className="nav-section">Inventory</div>
-        <Link to="admin/dashboard" className="nav-item">
-          <AiFillHome className="icon homeIcon" />
-          <span>Dashboard</span>
-        </Link>
-        <Link to="admin/inventory" className="nav-item">
-          <FaBox className="icon" />
-          <span>Inventory</span>
-        </Link>
-        <Link to="admin/pricing" className="nav-item">
-          <FaTag className="icon" />
-          <span>Pricing</span>
-        </Link>
-        <Link to="admin/sales-reports" className="nav-item">
-          <FaChartLine className="icon" />
-          <span>Sales Reports</span>
-        </Link>
-        <Link to="admin/customers" className="nav-item">
-          <FaUsers className="icon" />
-          <span>Customers</span>
-        </Link>
-        <Link to="admin/staff" className="nav-item">
-          <FaUser className="icon" />
-          <span>Staff</span>
-        </Link>
-        <Link to="admin/settings" className="nav-item">
-          <FaCog className="icon" />
-          <span>Settings</span>
-        </Link>
+        {navItems.map((item) => (
+          <button
+            key={item.label}
+            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+            onClick={() => navigate(item.path)}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
 
         <div className="nav-section">Operations</div>
-        <Link to="admin/print-tags" className="nav-item">
-          <FaPrint className="icon" />
-          <span>Print Tags</span>
-        </Link>
-        <Link to="admin/export-data" className="nav-item">
-          <FaFile className="icon" />
-          <span>Export Data</span>
-        </Link>
-        <Link to="admin/addProduct" className="nav-item">
-          <FaPlus className="icon" />
-          <span>Add Product</span>
-        </Link>
+        {operationItems.map((item) => (
+          <button
+            key={item.label}
+            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+            onClick={() => navigate(item.path)}
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
       </div>
     </aside>
   );

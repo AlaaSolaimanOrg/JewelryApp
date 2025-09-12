@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from "axios";
 import axiosInstance from "./services/axios.service";
+import { toast } from "react-toastify";
 
 // Optional: helper to transform payload keys for GET params
 const addParamsToObjKeys = (obj: Record<string, any>) => {
@@ -48,3 +49,52 @@ export const requestApi = async (
     throw error; // Re-throw to handle in the component
   }
 };
+
+export const checkRequestSucceeded = (status: number) => {
+  const successStatuses = [200, 201, 204];
+
+  return successStatuses.includes(status);
+};
+
+export const showSuccess = (message) => {
+  toast.success(message, {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+  });
+};
+
+export const showError = (message) => {
+  toast.error(message, {
+    position: "top-center",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+  });
+};
+
+export const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+};
+
+export async function urlToFile(url: string, fileName: string): Promise<File> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], fileName, { type: blob.type });
+}
+
+export const safeValue = (value: any, fallbackValue: any = "") =>
+  value ?? fallbackValue;
