@@ -22,3 +22,13 @@ export enum SortDirection {
   Ascending,
   Descending,
 }
+
+export enum Currency {
+  USD = 0,
+  CAD = 1,
+}
+
+export enum PricingSettingEntryType {
+  Manual = 1,
+  ApiIntegration = 2,
+}

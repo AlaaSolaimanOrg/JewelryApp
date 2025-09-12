@@ -17,9 +17,11 @@ export const getPricingSettings = async (payload: {}) => {
   );
 };
 export const editPricingSettings = async (payload: {
-  productType: ProductType;
-  karatType: KaratType;
-  pricePerGram: number;
+  pricingSettings: {
+    productType: ProductType;
+    karatType: KaratType;
+    pricePerGram: number;
+  }[];
 }) => {
   return requestApi(
     "PUT",
