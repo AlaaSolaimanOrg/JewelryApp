@@ -3,11 +3,6 @@ using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Auth.Commands.Login
 {
@@ -35,13 +30,35 @@ namespace JewerlyApp.Application.Auth.Commands.Login
                 };
 
             // Generate JWT
-            var token = await _tokenService.GenerateAccessToken(validation.Data.UserId, validation.Data.UserName, validation.Data.Roles);
-            var refreshToken = await _tokenService.GenerateRefreshToken(validation.Data.UserId);
+            var accessTokenResult =  _tokenService.GenerateAccessToken(validation.Data.UserId, validation.Data.UserName, validation.Data.Roles);
+
+            if (accessTokenResult.StatusCode != ResponseStatusCode.Success)
+            {
+                return new GenericResponse<LoginResponse>
+                {
+                    Data = null,
+                    StatusCode = accessTokenResult.StatusCode,
+                    Message = accessTokenResult.Message,
+                };
+            }
+            
+            var refreshTokenResult = await _tokenService.GenerateRefreshToken(validation.Data.UserId);
+
+            if (refreshTokenResult.StatusCode != ResponseStatusCode.Success)
+            {
+                return new GenericResponse<LoginResponse>
+                {
+                    Data = null,
+                    StatusCode = refreshTokenResult.StatusCode,
+                    Message = refreshTokenResult.Message,
+                };
+            }
+
             var result = new LoginResponse
             {
-                AccessToken = token,
+                AccessToken = accessTokenResult.Data!,
                 ExpiresAt = DateTime.UtcNow,
-                RefreshToken = refreshToken,
+                RefreshToken = refreshTokenResult.Data!,
             };
 
             return new GenericResponse<LoginResponse>

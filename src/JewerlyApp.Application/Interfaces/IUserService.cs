@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Dtos;
+using JewerlyApp.Application.Common.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace JewerlyApp.Application.Interfaces
     {
         Task<GenericResponse<(int UserId, string UserName, IList<string> Roles)>> ValidateUserAsync(string username, string password);
         Task<bool> IsInRoleAsync(int userId, string roleName);
+        Task<UserDto> GetLoggedInUser();
     }
 }

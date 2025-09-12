@@ -66,7 +66,8 @@ namespace JewerlyApp.Infrastructure.Identity
                     UserName = email,
                     Email = email,
                     FullName = fullName,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    IsActive = true,
                 };
 
                 var result = await userManager.CreateAsync(user, password);
@@ -75,6 +76,12 @@ namespace JewerlyApp.Infrastructure.Identity
                     throw new Exception($"Failed to create user {email}: {string.Join(", ", result.Errors)}");
                 }
             }
+            else
+            {
+                user.IsActive = true;
+                await userManager.UpdateAsync(user);
+            }
+            
 
             // 3️⃣ Ensure user is in the roles
             foreach (var roleName in roles)
