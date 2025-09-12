@@ -42,6 +42,8 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             product.KaratType = request.KaratType;
             product.Weight = request.Weight;
             product.Category = request.Category;
+            product.Type = request.Type;
+            product.Description = request.Description;
             product.LastUpdatedDate = DateTime.UtcNow;
             
             if (product.Images != null && product.Images.Any())

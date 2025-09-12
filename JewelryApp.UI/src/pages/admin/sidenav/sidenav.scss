@@ -66,6 +66,9 @@
     transition: var(--transition);
     border-radius: 8px;
     font-size: 0.95rem;
+    background: none;
+    border: none;
+    min-width: 230px;
   }
 
   .nav-item:hover,
@@ -107,6 +110,7 @@
     justify-content: center;
     padding: 15px;
     margin: 4px;
+    min-width: 54px;
   }
   .sidebar .nav-item .icon {
     margin-right: 0;

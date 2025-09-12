@@ -120,4 +120,15 @@
     background: var(--danger-light);
     color: var(--danger);
   }
+
+  .noResultsFound {
+    td {
+      height: 300px;
+      text-align: center !important;
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 20px;
+      background-color: rgba(212, 175, 55, 0.05);
+    }
+  }
 }

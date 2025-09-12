@@ -1,0 +1,43 @@
+/* Filter Sidebar */
+.filter-sidebar {
+  background: white;
+  border-radius: var(--card-radius);
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  .filter-title {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: var(--dark-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filter-title i {
+    color: var(--gold);
+  }
+
+  .filter-group {
+    margin-bottom: 20px;
+  }
+
+  .filter-group-title {
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: block;
+    color: var(--dark-light);
+  }
+
+  .filter-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .filter-option input {
+    margin-right: 8px;
+  }
+}

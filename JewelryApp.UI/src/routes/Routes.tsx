@@ -1,8 +1,9 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import AddProduct from "../pages/admin/addProduct/AddProduct";
+import AddEditProduct from "../pages/admin/addEditProduct/AddEditProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
 import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
+import ExportData from "../pages/admin/exportData/ExportData";
 import Inventory from "../pages/admin/inventory/Inventory";
 import Pricing from "../pages/admin/pricing/Pricing";
 import TagPrinting from "../pages/admin/printTags/TagPrinting";
@@ -20,7 +21,6 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
-import ExportData from "../pages/admin/exportData/ExportData";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -69,7 +69,8 @@ const AppRoutes = () => {
           <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/print-tags" element={<TagPrinting />} />
           <Route path="admin/export-data" element={<ExportData />} />
-          <Route path="admin/addProduct" element={<AddProduct />} />
+          <Route path="admin/addProduct" element={<AddEditProduct isEdit={false} />} />
+          <Route path="admin/editProduct/:productId" element={<AddEditProduct isEdit={true} />} />
         </Route>
       </Routes>
     </BrowserRouter>

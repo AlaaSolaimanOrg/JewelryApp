@@ -101,6 +101,16 @@
 
     .form-group {
       margin-bottom: 20px;
+      .disabled-gold {
+        color: var(--gold);
+        font-weight: 600;
+        background-color: #f8f9fa;
+      }
+
+      .disabled-gold::placeholder {
+        color: var(--gold);
+        font-weight: 600;
+      }
     }
 
     .form-label {
@@ -169,6 +179,42 @@
       color: var(--gold);
       text-decoration: underline;
       cursor: pointer;
+    }
+  }
+
+  .barcodeGenerator {
+    width: 100%;
+    height: 300px;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 10%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 40px;
+
+    .barCode {
+      flex: 1;
+      text {
+        fill: var(--gold) !important;
+      }
+    }
+
+    .titleContainer {
+      flex: 1;
+      color: var(--gold);
+      display: flex;
+      gap: 8px;
+      font-size: 40px;
+      align-items: center;
+    }
+
+    .actionsContainer {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }
