@@ -51,9 +51,9 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 }).ToList()
             };
 
-            // pricePerGram (to be checked)
-
-            var pricePerGram = _context.PricingSettings.AsNoTracking().FirstOrDefault(priceSetting => priceSetting.KaratType == product.KaratType)?.Price;
+            var pricePerGram = await _context.PricingSettings.AsNoTracking()
+                .Where(priceSetting => priceSetting.KaratType == product.KaratType && priceSetting.ProductType == product.Type).Select(x => x.Price)
+                .FirstOrDefaultAsync(cancellationToken);
 
             productVM.PricePerGram = pricePerGram;
 
