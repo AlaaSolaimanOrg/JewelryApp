@@ -71,9 +71,9 @@ namespace JewerlyApp.API.Controllers.Products
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery command)
+        public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery query)
         {
-            var response = await Mediator.Send(command);
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
 
@@ -83,7 +83,7 @@ namespace JewerlyApp.API.Controllers.Products
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<IActionResult> DeleteProduct([FromQuery] DeleteProductCommand command)
+        public async Task<IActionResult> DeleteProduct([FromBody] DeleteProductCommand command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
