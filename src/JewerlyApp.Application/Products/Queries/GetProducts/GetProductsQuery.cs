@@ -8,7 +8,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
     public class GetProductsQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetProductsVM>>
     {
         public string? SearchBy { get; set; }
-        public KaratType? KaratTypeFilter { get; set; }
+        public List<KaratType> KaratTypeFilter { get; set; } = new List<KaratType>();
         public decimal? WeightFilter { get; set; }
         public ProductCategory? ProductCategoryFilter { get; set; }
 
