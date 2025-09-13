@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Domain.Enums
 {
-    public enum Discounts
+    public enum DiscountType
     {
-        FixedAmounts=0,
-        Percentages=1
+        None =1,
+        FixedAmounts,
+        Percentages
 
     }
 }

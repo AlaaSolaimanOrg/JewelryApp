@@ -73,18 +73,6 @@ namespace JewerlyApp.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            // Fluent API configurations for the many-to-many relationship
-            // between Cart and Product, using CartProduct as the join entity.
-            builder.Entity<CartProduct>()
-                .HasOne(cp => cp.Cart)
-                .WithMany(c => c.CartProducts)
-                .HasForeignKey(cp => cp.CartId);
-
-            builder.Entity<CartProduct>()
-                .HasOne(cp => cp.Product)
-                .WithMany() // No navigation property on Product for CartProduct
-                .HasForeignKey(cp => cp.ProductId);
         }
     }
 }
