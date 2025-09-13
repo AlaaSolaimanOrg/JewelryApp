@@ -30,7 +30,7 @@ import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   KaratType,
-  type ProductCategory,
+  ProductCategory,
   type ProductType,
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
@@ -57,12 +57,12 @@ const Inventory = () => {
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters | null>(
     {
-      karat: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
-      weight: 15,
-      category: "All Categories",
-      ringSize: "Any",
-      necklaceLength: "Any",
-      tags: [],
+      karatTypes: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+      weight: 250,
+      category: null,
+      // ringSize: "Any",
+      // necklaceLength: "Any",
+      // tags: [],
     }
   );
 
@@ -82,12 +82,15 @@ const Inventory = () => {
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
-      KaratTypeFilter: appliedFilters?.karat,
+      karatTypeFilter: appliedFilters?.karatTypes,
+      weightFilter: appliedFilters?.weight,
+      productCategoryFilter: appliedFilters?.category,
     },
     extraEffectDependency: [appliedFilters],
   });
 
   console.log("products", products);
+  console.log("pagination", pagination);
 
   useEffect(() => {
     // const mappedProducts =
@@ -121,12 +124,7 @@ const Inventory = () => {
     SKU: product.sku,
     Karat: `${product.karatType}K`,
     Weight: `${product.weight}g`,
-    Category:
-      product.category === 1
-        ? "Necklaces"
-        : product.category === 2
-        ? "Bracelets"
-        : "Other",
+    Category: ProductCategory[product.category],
     Actions: (
       <>
         <button
@@ -233,7 +231,7 @@ const Inventory = () => {
               totalRecords={pagination.totalRecords}
               pageNumber={pagination.pageNumber}
               pageSize={pagination.pageSize}
-              onPageSizeChange={onPageSizeChange}
+              onPaginationChange={onPaginationChange}
             />
             {/* <div className="pagination">
               <div className="page-item active">1</div>
@@ -245,7 +243,7 @@ const Inventory = () => {
           </div>
 
           {/* Summary */}
-          <div className="card">
+          {/* <div className="card">
             <div className="card-header">
               <h3 className="card-title">Inventory Summary</h3>
             </div>
@@ -288,7 +286,7 @@ const Inventory = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />

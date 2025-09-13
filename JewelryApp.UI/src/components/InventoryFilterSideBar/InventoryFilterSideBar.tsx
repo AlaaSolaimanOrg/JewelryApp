@@ -1,26 +1,28 @@
 import { useState } from "react";
 import { FaFilter, FaRedo } from "react-icons/fa";
 import "./inventoryFilterSideBar.scss";
-import { KaratType } from "../../types/enums";
+import { KaratType, ProductCategory } from "../../types/enums";
 
 export interface InventoryFilters {
-  karat: KaratType[];
+  karatTypes: KaratType[];
   weight: number;
-  category: string;
-  ringSize: string;
-  necklaceLength: string;
-  tags: string[];
+  category: ProductCategory | null;
+  // ringSize: string;
+  // necklaceLength: string;
+  // tags: string[];
 }
 
+const filtersInitialState: InventoryFilters = {
+  karatTypes: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+  weight: 250,
+  category: null, 
+  // ringSize: "Any",
+  // necklaceLength: "Any",
+  // tags: [],
+};
+
 const InventoryFilterSideBar = ({ setAppliedFilters }) => {
-  const [filters, setFilters] = useState<InventoryFilters>({
-    karat: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
-    weight: 15,
-    category: "All Categories",
-    ringSize: "Any",
-    necklaceLength: "Any",
-    tags: [],
-  });
+  const [filters, setFilters] = useState<InventoryFilters>(filtersInitialState);
 
   const toggleValueInArray = (array, currentValue): string[] => {
     return array.includes(currentValue)
@@ -30,7 +32,7 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => {
-      if (key === "karat" || key === "tags") {
+      if (key === "karatTypes" || key === "tags") {
         return { ...prev, [key]: toggleValueInArray(prev[key], value) };
       }
       return { ...prev, [key]: value };
@@ -38,20 +40,16 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
   };
 
   const resetFilters = () => {
-    setFilters({
-      karat: ["18K Gold", "21K Gold"],
-      weight: 15,
-      category: "All Categories",
-      ringSize: "Any",
-      necklaceLength: "Any",
-      tags: [],
-    });
+    setFilters(filtersInitialState);
+    setAppliedFilters(filtersInitialState);
   };
+
   const karatOptions = [
     { label: "18K Gold", value: KaratType.Karat18 },
     { label: "21K Gold", value: KaratType.Karat21 },
     { label: "24K Gold", value: KaratType.Karat24 },
   ];
+
   return (
     <div className="filter-sidebar">
       <h3 className="filter-title">
@@ -66,10 +64,10 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
             <input
               type="checkbox"
               id={karatOption.label}
-              checked={filters.karat.some(
-                (karatValue) => karatValue == karatOption.value
-              )}
-              onChange={() => handleFilterChange("karat", karatOption.value)}
+              checked={filters.karatTypes.includes(karatOption.value)}
+              onChange={() =>
+                handleFilterChange("karatTypes", karatOption.value)
+              }
             />
             <label htmlFor={karatOption.label}>{karatOption.label}</label>
           </div>
@@ -83,7 +81,7 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
           <input
             type="range"
             min="0"
-            max="50"
+            max="250"
             value={filters.weight}
             className="slider"
             onChange={(e) =>
@@ -94,7 +92,7 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
         <div className="slider-values">
           <span>0g</span>
           <span>{filters.weight}g</span>
-          <span>50g</span>
+          <span>250g</span>
         </div>
       </div>
 
@@ -103,21 +101,27 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
         <span className="filter-group-title">Category</span>
         <select
           className="form-control"
-          value={filters.category}
-          onChange={(e) => handleFilterChange("category", e.target.value)}
+          value={filters.category ?? ""}
+          onChange={(e) =>
+            handleFilterChange(
+              "category",
+              e.target.value === "" ? null : Number(e.target.value)
+            )
+          }
         >
-          <option>All Categories</option>
-          <option>Rings</option>
-          <option>Necklaces</option>
-          <option>Earrings</option>
-          <option>Bangles</option>
-          <option>Bracelets</option>
-          <option>Pendants</option>
+          <option value="">Category</option> {/* First default option */}
+          {Object.entries(ProductCategory)
+            .filter(([key, value]) => typeof value === "number")
+            .map(([key, value]) => (
+              <option key={value} value={value}>
+                {key}
+              </option>
+            ))}
         </select>
       </div>
 
       {/* Size */}
-      <div className="filter-group">
+      {/* <div className="filter-group">
         <span className="filter-group-title">Size</span>
         <div className="form-row">
           <div className="form-col">
@@ -153,25 +157,7 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Tags */}
-      <div className="filter-group">
-        <span className="filter-group-title">Tags</span>
-        {["New Arrivals", "Featured", "Premium Collection", "Low Stock"].map(
-          (t) => (
-            <div className="filter-option" key={t}>
-              <input
-                type="checkbox"
-                id={t}
-                checked={filters.tags.includes(t)}
-                onChange={() => handleFilterChange("tags", t)}
-              />
-              <label htmlFor={t}>{t}</label>
-            </div>
-          )
-        )}
-      </div>
+      </div> */}
 
       {/* Buttons */}
       <div className="form-group" style={{ marginTop: "20px" }}>
