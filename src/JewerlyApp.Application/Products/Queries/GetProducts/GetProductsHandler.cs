@@ -27,7 +27,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
             var query = _context.Products.AsNoTracking()
                 .Where(x => 
                     (request.KaratTypeFilter.Contains(x.KaratType)) &&
-                    (request.WeightFilter == null || x.Weight == request.WeightFilter) &&
+                    (x.Weight <= request.WeightFilter) &&
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 )
                 .Select(x => new GetProductsVM
