@@ -21,15 +21,17 @@ import {
   deleteProduct,
   getProducts,
 } from "../../../apis/products.api/products.api";
-import InventoryFilterSideBar from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+import InventoryFilterSideBar, {
+  type InventoryFilters,
+} from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import type {
+import {
   KaratType,
-  ProductCategory,
-  ProductType,
+  type ProductCategory,
+  type ProductType,
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
@@ -53,6 +55,19 @@ const Inventory = () => {
 
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
+  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters | null>(
+    {
+      karat: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+      weight: 15,
+      category: "All Categories",
+      ringSize: "Any",
+      necklaceLength: "Any",
+      tags: [],
+    }
+  );
+
+  console.log("appliedFilters", appliedFilters);
+
   const {
     data: products,
     isLoading: isLoadingProducts,
@@ -66,6 +81,10 @@ const Inventory = () => {
     searchBy,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
+    extraPayload: {
+      KaratTypeFilter: appliedFilters?.karat,
+    },
+    extraEffectDependency: [appliedFilters],
   });
 
   console.log("products", products);
@@ -190,7 +209,7 @@ const Inventory = () => {
 
       <div className="inventory-grid">
         {/* Sidebar */}
-        <InventoryFilterSideBar />
+        <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
         {/* Inventory Content */}
         <div className="inventory-content">
           <div className="card">

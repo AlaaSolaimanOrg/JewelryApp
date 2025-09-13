@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig } from "axios";
 import axiosInstance from "./services/axios.service";
 import { toast } from "react-toastify";
+import qs from "qs";
 
 // Optional: helper to transform payload keys for GET params
 const addParamsToObjKeys = (obj: Record<string, any>) => {
@@ -35,6 +36,10 @@ export const requestApi = async (
   } else {
     // For GET/DELETE requests, merge payload with params
     config.params = { ...params, ...finalPayload };
+
+    // Properly serialize arrays
+    config.paramsSerializer = (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" });
   }
 
   try {
@@ -46,7 +51,7 @@ export const requestApi = async (
       error.response?.status,
       error.response?.data || error.message
     );
-    throw error; // Re-throw to handle in the component
+    throw error;
   }
 };
 
