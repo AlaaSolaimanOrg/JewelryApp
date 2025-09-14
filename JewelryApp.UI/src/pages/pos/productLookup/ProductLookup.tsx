@@ -72,6 +72,7 @@ const ProductLookup = () => {
           placeholder="Scan or Enter Barcode/SKU..."
           value={searchInput}
           onChange={handleSearch}
+          maxLength={17}
         />
         <button className="search-btn">
           <FaCamera />

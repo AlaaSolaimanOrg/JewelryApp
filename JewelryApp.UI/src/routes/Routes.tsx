@@ -21,6 +21,7 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
+import Login from "../pages/admin/Login/Login";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -69,9 +70,18 @@ const AppRoutes = () => {
           <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/print-tags" element={<TagPrinting />} />
           <Route path="admin/export-data" element={<ExportData />} />
-          <Route path="admin/addProduct" element={<AddEditProduct isEdit={false} />} />
-          <Route path="admin/editProduct/:productId" element={<AddEditProduct isEdit={true} />} />
+          <Route
+            path="admin/addProduct"
+            element={<AddEditProduct isEdit={false} />}
+          />
+          <Route
+            path="admin/editProduct/:productId"
+            element={<AddEditProduct isEdit={true} />}
+          />
         </Route>
+
+        <Route path="admin/" element={<Login />} />
+        <Route path="admin/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
