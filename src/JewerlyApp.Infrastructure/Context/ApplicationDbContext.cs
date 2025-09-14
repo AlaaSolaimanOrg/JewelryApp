@@ -29,6 +29,8 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<ProductImage> ProductImages { get; set; }
         public virtual DbSet<SkuSequence> SkuSequences { get; set; }
         public virtual DbSet<PricingSetting> PricingSettings { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
+        public virtual DbSet<CartProduct> CartProducts { get; set; }
 
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -52,8 +54,6 @@ namespace JewerlyApp.Infrastructure.Context
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-
-
         private int? GetCurrentUserId()
         {
             var user = _httpContextAccessor.HttpContext?.User;
@@ -73,10 +73,6 @@ namespace JewerlyApp.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            // Fluent API configurations (if needed)
-            // e.g. builder.Entity<Product>().HasKey(p => p.Id);
         }
     }
-
 }
