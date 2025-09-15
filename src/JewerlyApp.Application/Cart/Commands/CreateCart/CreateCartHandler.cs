@@ -40,7 +40,7 @@ namespace JewerlyApp.Application.Carts.Commands.CreateCart
                 return new GenericResponse<string>
                 {
                     StatusCode = ResponseStatusCode.BadRequest,
-                    Message = Messages.Error_User_Already_Exists,
+                    Message = Messages.Error_Cart_Already_Exists,
                 };
             }
 

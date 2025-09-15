@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Refresh_Token_Required = "Refresh token is required.";
         public const string Error_Refresh_Token_Expired = "Invalid or expired refresh token.";
         public const string Error_User_Not_Found = "User not found.";
+        public const string Error_Cart_Already_Exists = "Cart Already Exists.";
         public const string Error_User_Inactive = "User account is not active.";
         public const string Error_Token_Revoke = "Failed to revoke token.";
         public const string Error_Token_Validation = "Failed to validate refresh token.";
