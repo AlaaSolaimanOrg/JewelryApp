@@ -19,6 +19,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string SuccessPasswordChanged = "Password has been changed.";
         public const string SuccessGoldPriceUpdated = "Gold prices have been updated.";
         public const string Success = "Successfully retrieved";
+        public const string SuccessCartCreated = "Cart Successfully Created.";
         public const string Success_Action = "Action done successfully";
         public const string Success_User_Created = "User created successfully.";
         public const string Success_User_Updated = "User updated successfully.";
