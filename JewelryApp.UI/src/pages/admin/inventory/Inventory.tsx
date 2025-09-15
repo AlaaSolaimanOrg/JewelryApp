@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
 import {
-  FaArrowDown,
-  FaArrowUp,
   FaBox,
-  FaDollarSign,
   FaEdit,
   FaExchangeAlt,
-  FaExclamationTriangle,
   FaFileExport,
-  FaGem,
   FaHistory,
   FaPlus,
   FaSearch,
   FaTag,
   FaTags,
-  FaTrash,
+  FaTrash
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -24,6 +19,7 @@ import {
 import InventoryFilterSideBar, {
   type InventoryFilters,
 } from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import { API_URL } from "../../../config/config";
@@ -35,7 +31,6 @@ import {
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
 export interface Product {
   id: string;
@@ -74,11 +69,7 @@ const Inventory = () => {
     fetchData: recallGetProducts,
     onSearchChange,
     onPaginationChange,
-    onPageSizeChange,
-    onSortChange,
-    isLoading: isLoadingUsers,
     pagination,
-    searchBy,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {

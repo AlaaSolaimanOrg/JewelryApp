@@ -1,7 +1,64 @@
-import "./login.scss";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../../apis/login.api/login.api";
 import logo from "../../../assets/images/jewelary-logo.svg";
+import { checkRequestSucceeded, showError } from "../../../utils";
+import "./login.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [isloading, setIsLoading] = useState(false);
+
+  const callLogin = () => {
+    setIsLoading(true);
+
+    const payload = { username: email, password: password };
+    login(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          console.log("response", response);
+          const { accessToken, refreshToken } = response.data;
+
+          if (remember) {
+            localStorage.setItem("accessToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+          } else {
+            sessionStorage.setItem("accessToken", accessToken);
+            sessionStorage.setItem("refreshToken", refreshToken);
+          }
+
+          navigate("/admin/dashboard");
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  // Handle form submit
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      email,
+      password,
+      remember,
+    };
+
+    console.log("Form submitted:", payload);
+
+    callLogin();
+  };
+
   return (
     <div id="login">
       <div className="login-container">
@@ -11,7 +68,7 @@ const Login = () => {
         </div>
         <h2>Login</h2>
 
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleSubmit}>
           {/* Email */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -20,6 +77,8 @@ const Login = () => {
               id="email"
               name="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -32,6 +91,8 @@ const Login = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -39,14 +100,20 @@ const Login = () => {
           {/* Options */}
           <div className="form-options">
             <label className="remember-me">
-              <input type="checkbox" name="remember" /> Remember me
+              <input
+                type="checkbox"
+                name="remember"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              Remember me
             </label>
             <a href="/forgot-password" className="forgot-password">
               Forgot password?
             </a>
           </div>
 
-          <button type="submit" className="btn btn-secondary">
+          <button type="submit" className="btn btn-secondary loginButton">
             Submit
           </button>
         </form>

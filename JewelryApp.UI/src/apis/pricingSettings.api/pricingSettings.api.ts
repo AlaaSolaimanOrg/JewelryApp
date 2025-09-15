@@ -9,11 +9,11 @@ export const getGlobalPricingSettings = async (payload: any) => {
     payload
   );
 };
-export const getPricingSettings = async (payload: {}) => {
+export const getPricingSettings = async () => {
   return requestApi(
     "GET",
     apiRoutes.pricingSettings.getPricingSettings,
-    payload
+    {}
   );
 };
 export const editPricingSettings = async (payload: {

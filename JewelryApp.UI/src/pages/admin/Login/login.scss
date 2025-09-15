@@ -13,6 +13,7 @@
     background-color: white;
     width: 50%;
     border-radius: var(--border-radius);
+    max-width: 600px;
     .logo {
       display: flex;
       align-items: center;
@@ -40,7 +41,42 @@
       .form-options {
         display: flex;
         flex-direction: column;
+        margin-bottom: 20px;
+        .remember-me {
+          font-weight: 600;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--primary);
+        }
+        .forgot-password {
+          text-decoration: none;
+          color: var(--primary);
+          font-weight: 600;
+          font-size: 12px;
+          margin-top: 12px;
+        }
       }
+    }
+
+    .loginButton {
+      margin: auto;
+      height: 40px;
+      min-width: 200px;
+      font-size: 12px !important;
+    }
+
+    /*Tablet view */
+    @media (max-width: 1024px) {
+      width: 70%;
+      padding: 70px 30px;
+    }
+
+    /*Mobile view */
+    @media (max-width: 768px) {
+      width: 80%;
+      padding: 50px 20px; // optional: reduce padding on smaller screens
     }
   }
 }

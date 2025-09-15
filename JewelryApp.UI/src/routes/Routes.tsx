@@ -22,6 +22,7 @@ import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
 import Login from "../pages/admin/Login/Login";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -60,7 +61,13 @@ const AppRoutes = () => {
           <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
         </Route>
 
-        <Route element={<AdminLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="admin/dashboard" element={<Dashboard />} />
           <Route path="admin/inventory" element={<Inventory />} />
           <Route path="admin/pricing" element={<Pricing />} />

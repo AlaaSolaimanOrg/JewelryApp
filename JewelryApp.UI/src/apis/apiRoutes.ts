@@ -1,4 +1,8 @@
 export const apiRoutes = {
+  auth: {
+    login: "Auth/Login",
+    refreshToken: "Auth/RefreshTokens",
+  },
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",

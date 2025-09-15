@@ -10,7 +10,12 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";
 import { useEffect, useState } from "react";
 import { Currency, KaratType, ProductType } from "../../../types/enums";
-import { checkRequestSucceeded, safeValue, showError, showSuccess } from "../../../utils";
+import {
+  checkRequestSucceeded,
+  safeValue,
+  showError,
+  showSuccess,
+} from "../../../utils";
 
 export interface PriceItem {
   productType: ProductType;
@@ -127,7 +132,7 @@ const Pricing = () => {
   };
 
   const { data: pricingSettings } = useLocalApi({
-    apiToCall: (data) => getPricingSettings(data.payload),
+    apiToCall: () => getPricingSettings(),
   }) as {
     data: any;
     setData: any;
