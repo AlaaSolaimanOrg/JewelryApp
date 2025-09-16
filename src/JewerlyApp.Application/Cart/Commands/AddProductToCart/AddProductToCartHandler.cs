@@ -1,5 +1,4 @@
-﻿using JewerlyApp.Application.Carts.Commands.AddProductToCart;
-using JewerlyApp.Application.Common.Messages;
+﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
@@ -48,6 +47,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             {
                 cart = new Cart
                 {
+                    Id = Guid.NewGuid(),
                     CreatedBy = loggedInUser.Id,
                     CreatedDate = DateTime.UtcNow,
                     SubTotal = 0,
@@ -96,6 +96,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             // Create a new CartProduct.
             var newCartProduct = new CartProduct
             {
+                Id = Guid.NewGuid(),
                 CartId = cart.Id,
                 ProductId = request.ProductId,
                 OriginalPricePerGram = priceSetting.Price,
@@ -106,7 +107,6 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             // Recalculate the subtotal of the entire cart.
             cart.SubTotal += product.Weight * newCartProduct.OriginalPricePerGram.GetValueOrDefault();
 
-            _context.Carts.Update(cart);
             await _context.SaveChangesAsync(cancellationToken);
 
             return new GenericResponse<string>

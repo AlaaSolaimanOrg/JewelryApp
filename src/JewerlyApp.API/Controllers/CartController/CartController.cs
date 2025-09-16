@@ -1,5 +1,4 @@
 ﻿using JewerlyApp.Application.Carts.Commands.AddProductToCart;
-using JewerlyApp.Application.Carts.Commands.CreateCart;
 using JewerlyApp.Application.Carts.Commands.DeleteCart;
 using JewerlyApp.Application.Carts.Commands.RemoveProductFromCart;
 using JewerlyApp.Application.Carts.Commands.UpdateCart;
@@ -22,12 +21,6 @@ namespace JewerlyApp.API.Controllers.Cart
 {
     public class CartController : MainController
     {
-        [HttpPost]
-        public async Task<IActionResult> CreateCart([FromBody] CreateCartCommand command) 
-        {
-            var response = await Mediator.Send(command);
-            return CreateResponse(response);
-        }
         [HttpPost]
         public async Task<IActionResult> AddProductToCart([FromBody] AddProductToCartCommand command) 
         {
