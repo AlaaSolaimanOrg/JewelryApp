@@ -17,4 +17,8 @@ export const apiRoutes = {
     deleteProduct: "Product/DeleteProduct",
     getProductById: "Product/GetProductById",
   },
+  users: {
+    getAllUsers: "Users/GetAllUsers",
+    getAllRoles: "Users/GetAllRoles/roles",
+  },
 };

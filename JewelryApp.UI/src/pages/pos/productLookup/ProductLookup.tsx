@@ -53,9 +53,6 @@ const ProductLookup = () => {
       setProduct(null);
     }
   };
-
-  console.log("product", product);
-
   const totalPrice = (product?.pricePerGram ?? 0) * product?.weight;
 
   return (

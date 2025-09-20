@@ -42,8 +42,6 @@ axiosInstance.interceptors.response.use(
           callRefreshToken({ refreshToken })
             .then((response) => {
               if (checkRequestSucceeded(response.statusCode)) {
-                console.log("response", response);
-
                 const newAccessToken = response.data.accessToken;
                 // Save new token
                 if (localStorage.getItem("refreshToken")) {

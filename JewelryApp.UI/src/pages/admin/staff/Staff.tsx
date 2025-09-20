@@ -1,218 +1,85 @@
-import {
-  FaCheckCircle,
-  FaEdit,
-  FaMinusCircle,
-  FaPlus,
-  FaTrash,
-  FaUserShield,
-} from "react-icons/fa";
-import "./staff.scss";
+import { FaEdit, FaPlus, FaTrash, FaUserShield } from "react-icons/fa";
+import { getAllUsers } from "../../../apis/users.api/users.api";
+import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import "./staff.scss";
+
+export interface User {
+  id: number;
+  userName: string;
+  email: string;
+  fullName: string;
+  lastName: string;
+  phoneNumber: string;
+  isActive: boolean;
+  roles: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 const Staff = () => {
+  const {
+    data: users,
+    // isLoading: isLoadingUsers,
+    // fetchData: recallGetUsers,
+    onSearchChange,
+    onPaginationChange,
+    pagination,
+  } = useLocalApiSearchSortPagination<User>({
+    apiToCall: () => getAllUsers(),
+  });
+
+  // Table headers
   const staffMembersHeaders = [
     "Name",
-    "Role",
+    "Role(s)",
     "Email",
-    "LastLogin",
+    "Phone",
+    "Created At",
     "Status",
     "Actions",
   ];
 
-  const staffMembersData = [
-    {
-      Name: "Admin Manager",
-      Role: "Administrator",
-      Email: "admin@example.com",
-      LastLogin: "Today, 09:24 AM",
-      Status: <span className="tag tag-new">Active</span>,
-      Actions: (
-        <>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "Inventory Specialist",
-      Role: "Inventory Manager",
-      Email: "inventory@example.com",
-      LastLogin: "Yesterday, 04:15 PM",
-      Status: <span className="tag tag-new">Active</span>,
-      Actions: (
-        <>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "Sales Associate",
-      Role: "Sales Staff",
-      Email: "sales@example.com",
-      LastLogin: "Oct 28, 2023",
-      Status: <span className="tag tag-new">Active</span>,
-      Actions: (
-        <>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-    {
-      Name: "Store Manager",
-      Role: "Manager",
-      Email: "manager@example.com",
-      LastLogin: "Oct 26, 2023",
-      Status: <span className="tag tag-featured">On Leave</span>,
-      Actions: (
-        <>
-          <button className="action-btn" title="Edit">
-            <FaEdit />
-          </button>
-          <button className="action-btn danger" title="Delete">
-            <FaTrash />
-          </button>
-        </>
-      ),
-    },
-  ];
+  // Dynamic data mapping
+  const staffMembersData = users?.map((user) => ({
+    Name: user.fullName ?? user.userName,
+    "Role(s)": user.roles?.join(", "),
+    Email: user.email,
+    Phone: user.phoneNumber ?? "—",
+    "Created At": new Date(user.createdAt).toLocaleDateString(),
+    Status: user.isActive ? (
+      <span className="tag tag-new">Active</span>
+    ) : (
+      <span className="tag tag-featured">Inactive</span>
+    ),
+    Actions: (
+      <>
+        <button
+          className="action-btn"
+          title="Edit"
+          onClick={() => handleEditUser(user.id)}
+        >
+          <FaEdit />
+        </button>
+        <button
+          className="action-btn danger"
+          title="Delete"
+          onClick={() => handleDeleteUser(user.id)}
+        >
+          <FaTrash />
+        </button>
+      </>
+    ),
+  }));
 
-  const permissionsHeaders = [
-    "Role",
-    "Inventory",
-    "Customers",
-    "Sales",
-    "Reports",
-    "Settings",
-  ];
+  const handleEditUser = (userId: number) => {
+    // navigate(`/admin/editUser/${userId}`);
+  };
 
-  const permissionsData = [
-    {
-      Role: "Administrator",
-      Inventory: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Customers: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Sales: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Reports: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Settings: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-    },
-    {
-      Role: "Manager",
-      Inventory: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Customers: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Sales: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Reports: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Settings: (
-        <>
-          <FaMinusCircle color="#6c757d" /> Limited
-        </>
-      ),
-    },
-    {
-      Role: "Inventory Manager",
-      Inventory: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Customers: (
-        <>
-          <FaMinusCircle color="#6c757d" /> View
-        </>
-      ),
-      Sales: (
-        <>
-          <FaMinusCircle color="#6c757d" /> None
-        </>
-      ),
-      Reports: (
-        <>
-          <FaMinusCircle color="#6c757d" /> Limited
-        </>
-      ),
-      Settings: (
-        <>
-          <FaMinusCircle color="#6c757d" /> None
-        </>
-      ),
-    },
-    {
-      Role: "Sales Staff",
-      Inventory: (
-        <>
-          <FaMinusCircle color="#6c757d" /> View
-        </>
-      ),
-      Customers: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Sales: (
-        <>
-          <FaCheckCircle color="#28a745" /> Full
-        </>
-      ),
-      Reports: (
-        <>
-          <FaMinusCircle color="#6c757d" /> Limited
-        </>
-      ),
-      Settings: (
-        <>
-          <FaMinusCircle color="#6c757d" /> None
-        </>
-      ),
-    },
-  ];
+  const handleDeleteUser = (userId: number) => {
+    // call delete user API then recallGetUsers();
+  };
 
   return (
     <div id="staff" className="page">
@@ -230,18 +97,25 @@ const Staff = () => {
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Staff Members</h3>
+          <div style={{ width: "250px" }}>
+            <input
+              type="text"
+              placeholder="Search staff..."
+              className="search-bar"
+              onChange={onSearchChange}
+            />
+          </div>
         </div>
 
         <CustomTable headers={staffMembersHeaders} data={staffMembersData} />
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Permissions Matrix</h3>
-        </div>
-
-        <CustomTable headers={permissionsHeaders} data={permissionsData} />
-      </div>
+      <Paginator
+        totalRecords={pagination.totalRecords}
+        pageNumber={pagination.pageNumber}
+        pageSize={pagination.pageSize}
+        onPaginationChange={onPaginationChange}
+      />
     </div>
   );
 };

@@ -69,8 +69,6 @@ const Pricing = () => {
       pricePerGram: 0,
     },
   ]);
-
-  console.log("prices", prices);
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {
       productType: ProductType.Gold,
@@ -118,16 +116,11 @@ const Pricing = () => {
   };
 
   const handleProductTypePrices = (productType: ProductType) => {
-    console.log("productType", productType);
     const removedOldPrices = prices.filter(
       (price) => price.productType != productType
     );
-
-    console.log("removedOldPrices", removedOldPrices);
     const globalPrices =
       productType == ProductType.Gold ? globalGoldPrices : globalSilverPrices;
-    console.log("globalPrices", globalPrices);
-
     setPrices([...removedOldPrices, ...globalPrices]);
   };
 
@@ -230,7 +223,6 @@ const Pricing = () => {
     editPricingSettings(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           showSuccess(response?.message);
         } else {
           showError(response?.message);

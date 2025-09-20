@@ -9,7 +9,7 @@ import {
   FaSearch,
   FaTag,
   FaTags,
-  FaTrash
+  FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -60,9 +60,6 @@ const Inventory = () => {
       // tags: [],
     }
   );
-
-  console.log("appliedFilters", appliedFilters);
-
   const {
     data: products,
     isLoading: isLoadingProducts,
@@ -79,14 +76,6 @@ const Inventory = () => {
     },
     extraEffectDependency: [appliedFilters],
   });
-
-  console.log("products", products);
-  console.log("pagination", pagination);
-
-  useEffect(() => {
-    // const mappedProducts =
-  }, [products]);
-
   const headers = [
     "Image",
     "Product Name",
@@ -153,7 +142,6 @@ const Inventory = () => {
     deleteProduct(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           showSuccess(response?.message);
           recallGetProducts();
         } else {

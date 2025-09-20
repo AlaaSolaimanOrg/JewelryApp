@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../apis/login.api/login.api";
@@ -13,6 +14,20 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [isloading, setIsLoading] = useState(false);
 
+  const redirectAfterLogin = (accessToken) => {
+    const decoded: any = jwtDecode(accessToken);
+
+    const roles =
+      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    if (roles.includes("Admin") || roles.includes("Admin2")) {
+      navigate("/admin/dashboard");
+    } else if (roles.includes("PosRole")) {
+      navigate("/dashboard");
+    } else {
+      // Default redirect if no roles match
+      navigate("/unauthorized");
+    }
+  };
   const callLogin = () => {
     setIsLoading(true);
 
@@ -20,7 +35,6 @@ const Login = () => {
     login(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           const { accessToken, refreshToken } = response.data;
 
           if (remember) {
@@ -31,7 +45,7 @@ const Login = () => {
             sessionStorage.setItem("refreshToken", refreshToken);
           }
 
-          navigate("/admin/dashboard");
+          redirectAfterLogin(accessToken);
         } else {
           showError(response?.message);
         }
@@ -53,9 +67,6 @@ const Login = () => {
       password,
       remember,
     };
-
-    console.log("Form submitted:", payload);
-
     callLogin();
   };
 

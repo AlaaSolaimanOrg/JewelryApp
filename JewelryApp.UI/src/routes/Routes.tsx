@@ -1,10 +1,12 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import AddEditProduct from "../pages/admin/addEditProduct/AddEditProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
 import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
 import ExportData from "../pages/admin/exportData/ExportData";
 import Inventory from "../pages/admin/inventory/Inventory";
+import Login from "../pages/admin/Login/Login";
 import Pricing from "../pages/admin/pricing/Pricing";
 import TagPrinting from "../pages/admin/printTags/TagPrinting";
 import SalesReports from "../pages/admin/salesReport/SalesReports";
@@ -21,8 +23,6 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
-import Login from "../pages/admin/Login/Login";
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -49,8 +49,15 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<POSLayout />}>
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["PosRole"]}>
+              <POSLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Home />} />
           <Route path="/productLookup" element={<ProductLookup />} />
           <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/cartSummary" element={<CartSummary />} />
@@ -63,7 +70,7 @@ const AppRoutes = () => {
 
         <Route
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={["Admin", "Admin2"]}>
               <AdminLayout />
             </ProtectedRoute>
           }
