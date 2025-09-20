@@ -1,8 +1,8 @@
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
 
-export const getAllUsers = async () => {
-  return requestApi("GET", apiRoutes.users.getAllUsers);
+export const getAllUsers = async (payload) => {
+  return requestApi("GET", apiRoutes.users.getAllUsers,payload) ;
 };
 
 export const getAllRoles = async () => {
@@ -10,7 +10,10 @@ export const getAllRoles = async () => {
 };
 
 export const softDeleteUser = async (payload: { userId: string }) => {
-  return requestApi("DELETE", apiRoutes.users.softDeleteUser, payload);
+  return requestApi(
+    "DELETE",
+    `${apiRoutes.users.softDeleteUser}/${payload.userId}`
+  );
 };
 
 export const createUser = async (payload: {
@@ -25,16 +28,13 @@ export const createUser = async (payload: {
 export const updateUser = async (payload: {
   userId: string;
   userName: string;
-  email: string;
-  password: string;
+  isactive: boolean;
   roles: string[];
 }) => {
   return requestApi(
     "PUT",
-    apiRoutes.users.updateUser,
-    payload,
-    {},
-    { userId: payload.userId }
+    `${apiRoutes.users.updateUser}/${payload.userId}`,
+    payload
   );
 };
 

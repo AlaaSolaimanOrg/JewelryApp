@@ -18,6 +18,7 @@ const staffFieldsInitialState = {
   email: "",
   password: "",
   roles: [] as string[],
+  isActive: true, // default active
 };
 
 const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
@@ -42,7 +43,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     effectDependency: [], // only once on mount
   }) as { data: string[] };
 
-  // Load existing user if edit
   useEffect(() => {
     if (isEdit && staff) {
       setStaffFields({
@@ -50,6 +50,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
         email: staff.email,
         password: "", // don't prefill password
         roles: staff.roles || [],
+        isActive: staff.isActive ?? true, // load isActive from API
       });
     } else if (!isEdit) {
       handleCancel();
@@ -64,27 +65,38 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   const handleCancel = () => {
-    setStaffFields(staffFieldsInitialState);
+    if (isEdit) {
+      navigate("/admin/staff");
+    } else {
+      setStaffFields(staffFieldsInitialState);
+    }
   };
 
   const callSaveStaff = () => {
     setIsLoading(true);
-    const payload = {
+    const createPayload = {
       userName: staffFields.userName,
       email: staffFields.email,
       password: staffFields.password,
       roles: staffFields.roles,
     };
+    const editPayload = {
+      userId: userId,
+      userName: staffFields.userName,
+      email: staffFields.email,
+      isActive: staffFields.isActive,
+      roles: staffFields.roles,
+    };
 
     const apiToCall = isEdit ? updateUser : createUser;
-    apiToCall(isEdit ? { id: userId, ...payload } : payload)
+    apiToCall(isEdit ? editPayload : createPayload)
       .then((response: any) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           if (!isEdit) {
             handleCancel();
           } else {
-            navigate("/staff"); // go back to staff list
+            navigate("/admin/staff"); // go back to staff list
           }
         } else {
           showError(response?.message);
@@ -243,6 +255,23 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                 ) : (
                   <p>Loading roles...</p>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* is Active */}
+
+          <div className="form-row">
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label">Active</label>
+                <input
+                  type="checkbox"
+                  checked={staffFields.isActive}
+                  onChange={(e) =>
+                    handleFieldChange("isActive", e.target.checked)
+                  }
+                />
               </div>
             </div>
           </div>

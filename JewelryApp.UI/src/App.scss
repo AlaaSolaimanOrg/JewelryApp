@@ -58,16 +58,19 @@ body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  padding-bottom: 20px;
   box-sizing: border-box;
 }
 
+.adminLayoutContainer {
+  height: 100vh;
+}
 .adminLayout-main {
   color: #333;
   padding-left: 290px;
   padding-top: 30px;
   padding-right: 40px;
   background-color: #fafafa;
+  height: calc(100% - 70px);
 }
 
 /* Page Content */

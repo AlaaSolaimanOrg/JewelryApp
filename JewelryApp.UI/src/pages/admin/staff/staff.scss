@@ -58,4 +58,14 @@
     transform: translateY(-50%);
     color: var(--secondary);
   }
+  .disabledIcon {
+    opacity: 0.5;
+    &:hover {
+      background: white !important;
+      color: #6c757d;
+    }
+    .icon {
+      cursor: default;
+    }
+  }
 }

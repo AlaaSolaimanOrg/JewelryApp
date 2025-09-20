@@ -70,6 +70,15 @@ const SideNav = () => {
     },
   ];
 
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    navigate("/login");
+  };
+
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -110,6 +119,15 @@ const SideNav = () => {
             <span>{item.label}</span>
           </button>
         ))}
+        {/* Logout button */}
+        <button
+          className="nav-item logout-btn"
+          onClick={handleLogout}
+          style={{ marginTop: "16px", color: "#d9534f" }}
+        >
+          <FaUser className="icon" />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );

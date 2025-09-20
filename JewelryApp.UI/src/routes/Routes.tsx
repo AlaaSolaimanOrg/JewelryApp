@@ -6,7 +6,6 @@ import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
 import ExportData from "../pages/admin/exportData/ExportData";
 import Inventory from "../pages/admin/inventory/Inventory";
-import Login from "../pages/admin/Login/Login";
 import Pricing from "../pages/admin/pricing/Pricing";
 import TagPrinting from "../pages/admin/printTags/TagPrinting";
 import SalesReports from "../pages/admin/salesReport/SalesReports";
@@ -24,6 +23,8 @@ import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
 import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
+import Unauthorized from "../pages/general/unauthorized/Unauthorized";
+import Login from "../pages/general/login/Login";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -37,13 +38,13 @@ const POSLayout = () => (
 
 // Admin Layout (can add AdminHeader/Sidebar if needed)
 const AdminLayout = () => (
-  <>
+  <div className="adminLayoutContainer">
     <SideNav />
     <AdminHeader />
     <main className="adminLayout-main">
       <Outlet />
     </main>
-  </>
+  </div>
 );
 
 const AppRoutes = () => {
@@ -103,7 +104,8 @@ const AppRoutes = () => {
         </Route>
 
         <Route path="admin/" element={<Login />} />
-        <Route path="admin/login" element={<Login />} />
+        <Route path="login" element={<Login />} />
+        <Route path="unauthorized" element={<Unauthorized />} />
       </Routes>
     </BrowserRouter>
   );

@@ -6,7 +6,7 @@ import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSor
 import "./staff.scss";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export interface User {
   id: number;
@@ -32,7 +32,7 @@ const Staff = () => {
     onPaginationChange,
     pagination,
   } = useLocalApiSearchSortPagination<User>({
-    apiToCall: () => getAllUsers(),
+    apiToCall: (data) => getAllUsers(data.payload),
   });
 
   // Table headers
@@ -68,11 +68,12 @@ const Staff = () => {
           <FaEdit />
         </button>
         <button
-          className="action-btn danger"
+          className={`action-btn ${!user.isActive ? "disabledIcon" : "danger"}`}
           title="Delete"
           onClick={() => handleDeleteUser(user.id)}
+          disabled={!user.isActive}
         >
-          <FaTrash />
+          <FaTrash className="icon" />
         </button>
       </>
     ),
@@ -108,10 +109,13 @@ const Staff = () => {
         <h1 className="page-title">
           <FaUserShield className="icon" /> <span>Staff Management</span>
         </h1>
+
         <div className="page-actions">
-          <button className="btn-md btn-gold">
-            <FaPlus /> Add Staff
-          </button>
+          <Link to={"/admin/addStaff"} className="text-decoration-none">
+            <button className="btn-md btn-gold">
+              <FaPlus /> Add Staff
+            </button>
+          </Link>
         </div>
       </div>
 
