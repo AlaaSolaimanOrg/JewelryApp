@@ -67,13 +67,13 @@ const ProductLookup = () => {
   const handleAddToCartClick = (productId) => {
     setIsAddingProduct(true);
 
-    const payload = { productId: productId };
+    const payload = { productId: productId, price: product.pricePerGram };
     addProductToCart(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           setProduct(null);
-          setSearchBy("")
+          setSearchBy("");
         } else {
           showError(response?.message);
         }
