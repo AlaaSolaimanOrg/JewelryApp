@@ -3,6 +3,7 @@ export const apiRoutes = {
     login: "Auth/Login",
     refreshToken: "Auth/RefreshTokens",
   },
+  cart: { addProductToCart: "Cart/AddProductToCart" },
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",

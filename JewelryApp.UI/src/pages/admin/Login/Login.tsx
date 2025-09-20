@@ -22,7 +22,7 @@ const Login = () => {
     if (roles.includes("Admin") || roles.includes("Admin2")) {
       navigate("/admin/dashboard");
     } else if (roles.includes("PosRole")) {
-      navigate("/dashboard");
+      navigate("/");
     } else {
       // Default redirect if no roles match
       navigate("/unauthorized");
