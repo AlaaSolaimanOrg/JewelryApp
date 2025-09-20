@@ -1,8 +1,12 @@
-﻿using JewerlyApp.Application.Common.Dtos;
+﻿using JewerlyApp.Application.Auth.Queries.GetAllUsers;
+using JewerlyApp.Application.Common.Dtos;
+using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Domain.Enums;
+using JewerlyApp.Infrastructure.Context;
 using JewerlyApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +23,14 @@ namespace JewerlyApp.Infrastructure.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IUserService _userService;
+        private readonly ApplicationDbContext _context;
 
-        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IUserService userService)
+        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IUserService userService, ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _userService = userService;
+            _context = context;
         }
 
         public async Task<GenericResponse<UserDto>> CreateUserAsync(CreateUserRequest request)
@@ -255,32 +261,59 @@ namespace JewerlyApp.Infrastructure.Services
             }
         }
 
-        public async Task<GenericResponse<List<UserDto>>> GetAllUsersAsync()
+        public async Task<PaginatedResponse<UserDto>> GetAllUsersAsync(GetAllUsersQuery query, CancellationToken cancellationToken)
         {
             try
             {
-                var users = await _userManager.Users.ToListAsync();
-                var userDtos = new List<UserDto>();
+                var usersQuery =    from u in _context.Users
+                                    join ur in _context.UserRoles on u.Id equals ur.UserId into userRoles
+                                    from ur in userRoles.DefaultIfEmpty()
+                                    join r in _context.Roles on ur.RoleId equals r.Id into roles
+                                    from r in roles.DefaultIfEmpty()
 
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    userDtos.Add(MapToUserDto(user, roles));
-                }
+                                    where string.IsNullOrWhiteSpace(query.SearchBy) ||
+                                          u.FullName!.Contains(query.SearchBy) ||
+                                          u.Email!.Contains(query.SearchBy) ||
+                                          (r != null && r.Name!.Contains(query.SearchBy))
+                                    group r by u into g
+                                    select new UserDto
+                                    {
+                                        Id = g.Key.Id,
+                                        UserName = g.Key.UserName!,
+                                        Email = g.Key.Email!,
+                                        FullName = g.Key.FullName,
+                                        LastName = g.Key.FullName,
+                                        PhoneNumber = g.Key.PhoneNumber,
+                                        IsActive = g.Key.IsActive,
+                                        CreatedAt = g.Key.CreatedAt,
+                                        UpdatedAt = g.Key.UpdatedAt,
+                                        Roles = g.Where(x => x != null).Select(x => x.Name).Distinct().ToList()!
+                                    };
 
-                return new GenericResponse<List<UserDto>>
+                // 📊 Total count
+                var totalRecords = await usersQuery.CountAsync();
+
+                var users = await usersQuery
+                    .ApplySorting(query.SortBy, query.SortDirection)
+                    .ApplyPagination(query.PageNumber, query.PageSize)
+                    .ToListAsync(cancellationToken);
+
+                return new PaginatedResponse<UserDto>
                 {
-                    StatusCode = ResponseStatusCode.Success,
-                    Data = userDtos,
-                    Message = Messages.Success
-                };
+                    Data = users,
+                    PageNumber = query.PageNumber,
+                    PageSize = query.PageSize,
+                    TotalRecords = totalRecords,
+                    StatusCode = totalRecords == 0 ? ResponseStatusCode.NoContent : ResponseStatusCode.Success,
+                    Message = Messages.Success,
+                };               
             }
             catch (Exception ex)
             {
-                return new GenericResponse<List<UserDto>>
+                return new PaginatedResponse<UserDto>
                 {
                     StatusCode = ResponseStatusCode.InternalServerError,
-                    Message = Messages.ErrorGeneral
+                    Message = ex.Message
                 };
             }
         }
