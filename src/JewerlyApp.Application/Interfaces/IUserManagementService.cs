@@ -17,7 +17,7 @@ namespace JewerlyApp.Application.Interfaces
         Task<GenericResponse<List<UserDto>>> GetAllUsersAsync();
         Task<GenericResponse<bool>> RestoreUserAsync(int userId);
         Task<GenericResponse<List<string>>> GetAllRolesAsync();
-        Task<GenericResponse<List<string>>> GetUserRolesAsync(int userId);
+        Task<GenericResponse<List<string>>> GetUserRolesAsync();
 
         Task<GenericResponse<bool>> AssignRolesToUserAsync(int userId, List<string> roles);
         Task<GenericResponse<bool>> RemoveRolesFromUserAsync(int userId, List<string> roles);

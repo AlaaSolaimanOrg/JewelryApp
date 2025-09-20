@@ -18,11 +18,13 @@ namespace JewerlyApp.Infrastructure.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IUserService _userService;
 
-        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public UserManagementService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IUserService userService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _userService = userService;
         }
 
         public async Task<GenericResponse<UserDto>> CreateUserAsync(CreateUserRequest request)
@@ -358,10 +360,11 @@ namespace JewerlyApp.Infrastructure.Services
                 Message = Messages.Success
             };            
         }
-        public async Task<GenericResponse<List<string>>> GetUserRolesAsync(int userId)
+        public async Task<GenericResponse<List<string>>> GetUserRolesAsync()
         {
             try
             {
+                var userId = _userService.GetCurrentUserId();
                 var user = await _userManager.FindByIdAsync(userId.ToString());
                 if (user == null)
                 {
