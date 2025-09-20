@@ -13,5 +13,6 @@ namespace JewerlyApp.Application.Interfaces
         Task<GenericResponse<(int UserId, string UserName, IList<string> Roles)>> ValidateUserAsync(string username, string password);
         Task<bool> IsInRoleAsync(int userId, string roleName);
         Task<UserDto> GetLoggedInUser();
+        int GetCurrentUserId();
     }
 }

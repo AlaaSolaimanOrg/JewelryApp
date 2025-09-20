@@ -37,9 +37,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 };
             }
 
-            var cart = await _context.Carts
-                .Include(c => c.Products)
-                .ThenInclude(cp => cp.Product)
+            var cart = await _context.Carts.Include(x => x.Products)                
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             // If the user does not have a cart, create a new one.
@@ -55,7 +53,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                     Discount = 0,
                     Products = new List<CartProduct>()
                 };
-                _context.Carts.Add(cart);
+                await _context.Carts.AddAsync(cart, cancellationToken);
             }
 
             var product = await _context.Products.FindAsync(new object[] { request.ProductId }, cancellationToken);
@@ -76,8 +74,17 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             {
                 return new GenericResponse<string>
                 {
-                    StatusCode = ResponseStatusCode.InternalServerError,
+                    StatusCode = ResponseStatusCode.BadRequest,
                     Message = $"Pricing setting for {product.Type} with {product.KaratType} is missing."
+                };
+            }
+
+            if(priceSetting.Price != request.Price)
+            {
+                return new GenericResponse<string>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Invalid_Price,
                 };
             }
 

@@ -11,6 +11,7 @@ namespace JewerlyApp.Domain.Entities
     public class Cart : Entity<Guid>
     {
         public decimal SubTotal {  get; set; }
+        public decimal Total {  get; set; }
         public decimal Taxes { get; set; }
         public decimal? Discount {  get; set; }
         public DiscountType DiscountType { get; set; }
