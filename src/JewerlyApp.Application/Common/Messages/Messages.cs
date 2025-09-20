@@ -67,6 +67,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Role_Has_Users = "Cannot delete role with assigned users.";
         public const string Error_User_Role_Removal_Failed = "Failed to remove roles from user.";
         public const string Error_Password_Reset_Failed = "Failed to reset password.";
+        public const string Error_Invalid_Price = "Invalid price. Price has been updated";
 
         //POS Messages
         public const string PosCartEmpty = "Cannot checkout. The shopping cart is empty.";

@@ -4,10 +4,6 @@ using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Carts.Queries.GetCartProducts
 {
@@ -35,12 +31,7 @@ namespace JewerlyApp.Application.Carts.Queries.GetCartProducts
                 };
             }
 
-            var cart = await _context.Carts
-                .Include(c => c.Products)
-                .ThenInclude(cp => cp.Product)
-                .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
-
-            if (cart == null)
+            if (!_context.Carts.Any(x => x.CreatedBy == loggedInUser.Id))
             {
                 return new GenericResponse<List<GetCartProductsVM>>
                 {
@@ -50,22 +41,26 @@ namespace JewerlyApp.Application.Carts.Queries.GetCartProducts
                 };
             }
 
-            var cartProducts = cart.Products
+
+            var products = await _context.CartProducts
+                .Where(x => x.Cart!.CreatedBy == loggedInUser.Id)
                 .Select(cp => new GetCartProductsVM
                 {
                     ProductId = cp.ProductId,
-                    Sku = cp.Product.Sku,
-                    Name = cp.Product.Name,
-                    KaratType = (int)cp.Product.KaratType,
+                    Sku = cp.Product!.Sku,
+                    Name = cp.Product.Name!,
+                    KaratType = cp.Product.KaratType,
                     Weight = cp.Product.Weight,
                     PricePerGram = cp.OriginalPricePerGram.GetValueOrDefault()
                 })
-                .ToList();
+                .ToListAsync(cancellationToken);
+
 
             return new GenericResponse<List<GetCartProductsVM>>
             {
-                Data = cartProducts,
-                StatusCode = ResponseStatusCode.Success
+                Data = products,
+                StatusCode = products.Any() ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,
+                Message = Messages.Success,
             };
         }
     }

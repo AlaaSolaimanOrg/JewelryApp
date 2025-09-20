@@ -36,7 +36,6 @@ namespace JewerlyApp.Application.Carts.Commands.RemoveProductFromCart
 
             var cart = await _context.Carts
                 .Include(c => c.Products)
-                    .ThenInclude(cp => cp.Product)
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             if (cart == null)
