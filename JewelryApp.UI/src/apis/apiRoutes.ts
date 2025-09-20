@@ -21,5 +21,9 @@ export const apiRoutes = {
   users: {
     getAllUsers: "Users/GetAllUsers",
     getAllRoles: "Users/GetAllRoles/roles",
+    softDeleteUser: "Users/SoftDeleteUser",
+    createUser: "Users/CreateUser",
+    updateUser: "Users/UpdateUser",
+    getUserById: "Users/GetUserById",
   },
 };

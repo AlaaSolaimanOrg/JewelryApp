@@ -23,6 +23,7 @@ import ProductLookup from "../pages/pos/productLookup/ProductLookup";
 import Receipt from "../pages/pos/receipt/Receipt";
 import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
+import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -90,6 +91,14 @@ const AppRoutes = () => {
           <Route
             path="admin/editProduct/:productId"
             element={<AddEditProduct isEdit={true} />}
+          />
+          <Route
+            path="admin/addStaff"
+            element={<AddEditStaff isEdit={false} />}
+          />
+          <Route
+            path="admin/editStaff/:userId"
+            element={<AddEditStaff isEdit={true} />}
           />
         </Route>
 

@@ -1,9 +1,12 @@
 import { FaEdit, FaPlus, FaTrash, FaUserShield } from "react-icons/fa";
-import { getAllUsers } from "../../../apis/users.api/users.api";
+import { getAllUsers, softDeleteUser } from "../../../apis/users.api/users.api";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./staff.scss";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface User {
   id: number;
@@ -19,10 +22,12 @@ export interface User {
 }
 
 const Staff = () => {
+  const navigate = useNavigate();
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
   const {
     data: users,
     // isLoading: isLoadingUsers,
-    // fetchData: recallGetUsers,
+    fetchData: recallGetUsers,
     onSearchChange,
     onPaginationChange,
     pagination,
@@ -74,13 +79,29 @@ const Staff = () => {
   }));
 
   const handleEditUser = (userId: number) => {
-    // navigate(`/admin/editUser/${userId}`);
+    navigate(`/admin/editStaff/${userId}`);
   };
 
-  const handleDeleteUser = (userId: number) => {
-    // call delete user API then recallGetUsers();
-  };
+  const handleDeleteUser = (userId) => {
+    setIsDeletingUser(true);
 
+    const payload = { userId: userId };
+    softDeleteUser(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          showSuccess(response?.message);
+          recallGetUsers();
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsDeletingUser(false);
+      });
+  };
   return (
     <div id="staff" className="page">
       <div className="page-header">
@@ -97,11 +118,10 @@ const Staff = () => {
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Staff Members</h3>
-          <div style={{ width: "250px" }}>
+          <div style={{ width: "250px" }} className="search-bar">
             <input
               type="text"
               placeholder="Search staff..."
-              className="search-bar"
               onChange={onSearchChange}
             />
           </div>

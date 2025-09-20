@@ -13,7 +13,6 @@ export const requestApi = async (
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
   url: string,
   payload: any = {},
-  authCtx: any = null,
   extraConfig: AxiosRequestConfig = {},
   params: any = {},
   addParams: boolean = false
@@ -27,7 +26,6 @@ export const requestApi = async (
   const config: AxiosRequestConfig = {
     method,
     url,
-    ...(authCtx && { headers: { Authorization: `Bearer ${authCtx.token}` } }),
     ...extraConfig,
   };
 
