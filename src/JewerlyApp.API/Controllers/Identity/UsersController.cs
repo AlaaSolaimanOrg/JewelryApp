@@ -1,8 +1,10 @@
-﻿using JewerlyApp.Application.Common.Dtos;
+﻿using JewerlyApp.Application.Auth.Queries.GetAllUsers;
+using JewerlyApp.Application.Common.Dtos;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace JewerlyApp.API.Controllers.Identity
 {
@@ -87,9 +89,9 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery query)
         {
-            var response = await _userManagementService.GetAllUsersAsync();
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
 
@@ -110,11 +112,11 @@ namespace JewerlyApp.API.Controllers.Identity
         /// </summary>
         /// <param name="userId">User ID</param>
         /// <returns>List of user roles</returns>
-        [HttpGet("{userId}/roles")]
+        [HttpGet]
         [Authorize(Roles = "Admin,PosRole")]
-        public async Task<IActionResult> GetUserRoles(int userId)
+        public async Task<IActionResult> GetUserRoles()
         {
-            var response = await _userManagementService.GetUserRolesAsync(userId);
+            var response = await _userManagementService.GetUserRolesAsync();
             return CreateResponse(response);
         }
 

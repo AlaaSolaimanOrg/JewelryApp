@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Dtos;
+﻿using JewerlyApp.Application.Auth.Queries.GetAllUsers;
+using JewerlyApp.Application.Common.Dtos;
 using JewerlyApp.Application.Common.Responses;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,10 @@ namespace JewerlyApp.Application.Interfaces
         Task<GenericResponse<UserDto>> UpdateUserAsync(int userId, UpdateUserRequest request);
         Task<GenericResponse<bool>> SoftDeleteUserAsync(int userId);
         Task<GenericResponse<UserDto>> GetUserByIdAsync(int userId);
-        Task<GenericResponse<List<UserDto>>> GetAllUsersAsync();
+        Task<PaginatedResponse<UserDto>> GetAllUsersAsync(GetAllUsersQuery query, CancellationToken cancellationToken);
         Task<GenericResponse<bool>> RestoreUserAsync(int userId);
         Task<GenericResponse<List<string>>> GetAllRolesAsync();
-        Task<GenericResponse<List<string>>> GetUserRolesAsync(int userId);
+        Task<GenericResponse<List<string>>> GetUserRolesAsync();
 
         Task<GenericResponse<bool>> AssignRolesToUserAsync(int userId, List<string> roles);
         Task<GenericResponse<bool>> RemoveRolesFromUserAsync(int userId, List<string> roles);
