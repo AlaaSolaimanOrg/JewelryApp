@@ -1,10 +1,12 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,6 +36,8 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCart
             }
 
             var cart = await _context.Carts
+                .Include(c => c.Products)
+                .ThenInclude(cp => cp.Product)
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             if (cart == null)
@@ -47,6 +51,13 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCart
 
             cart.Discount = request.Discount;
             cart.DiscountType = request.DiscountType;
+
+            cart.SubTotal = cart.Products.Sum(cp =>
+                (cp.OverriddenPricePerGram ?? cp.OriginalPricePerGram.GetValueOrDefault()) *
+                (cp.Product?.Weight ?? 0)
+            );
+
+            cart.Total = cart.SubTotal + cart.Taxes - (cart.Discount ?? 0);
 
             await _context.SaveChangesAsync(cancellationToken);
 
