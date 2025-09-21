@@ -1,15 +1,25 @@
 import { FaRedo } from "react-icons/fa";
 import "./pricingCard.scss";
-import { KaratType } from "../../types/enums";
+import { KaratType, ProductType } from "../../types/enums";
 import type { PriceItem } from "../../pages/admin/pricing/Pricing";
 
 const PricingCard = ({
+  cardTitle,
   prices = [],
-  handlePriceChange = (karatType, value) => {},
+  globalPrices = [],
+  productType,
+  handlePriceChange,
+  recallGlobalPrices,
+  handleProductTypePrices,
   isGlobal = false,
 }: {
+  cardTitle: string;
   prices: PriceItem[];
+  globalPrices: PriceItem[];
+  productType: ProductType;
   handlePriceChange?: any;
+  recallGlobalPrices?: any;
+  handleProductTypePrices?: any;
   isGlobal?: boolean;
 }) => {
   const karatLabels: Record<KaratType, string> = {
@@ -21,7 +31,7 @@ const PricingCard = ({
   return (
     <div className="pricingCard">
       <div className="card-header">
-        <h3 className="card-title">Gold Pricing</h3>
+        <h3 className="card-title">{cardTitle}</h3>
       </div>
 
       <div className="form-row">
@@ -39,7 +49,11 @@ const PricingCard = ({
                 }`}
                 value={price.pricePerGram}
                 onChange={(event) =>
-                  handlePriceChange(price.karatType, Number(event.target.value))
+                  handlePriceChange(
+                    productType,
+                    price.karatType,
+                    Number(event.target.value)
+                  )
                 }
                 disabled={isGlobal}
               />
@@ -49,7 +63,12 @@ const PricingCard = ({
       </div>
 
       {isGlobal ? (
-        <button className="btn-md btn-gold">
+        <button
+          className="btn-md btn-gold"
+          onClick={() => {
+            recallGlobalPrices();
+          }}
+        >
           <FaRedo className="icon" /> Refresh Prices
         </button>
       ) : (
@@ -59,13 +78,26 @@ const PricingCard = ({
             <label
               style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
-              <input type="radio" name="pricing-method" defaultChecked />
+              <input
+                type="radio"
+                name={`${ProductType[productType]}-pricing-method`}
+                defaultChecked
+              />
               Manual Pricing
             </label>
             <label
               style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
-              <input type="radio" name="pricing-method" /> API Integration
+              <input
+                type="radio"
+                name={`${ProductType[productType]}-pricing-method`}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    handleProductTypePrices(productType);
+                  }
+                }}
+              />
+              API Integration
             </label>
           </div>
         </div>

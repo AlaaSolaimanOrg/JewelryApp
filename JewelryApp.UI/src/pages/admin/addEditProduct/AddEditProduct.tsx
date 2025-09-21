@@ -42,9 +42,6 @@ const AddEditProduct = ({ isEdit }) => {
   const { productId } = useParams();
 
   const [files, setFiles] = useState([]);
-
-  console.log("files", files);
-
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
       return {
@@ -53,8 +50,6 @@ const AddEditProduct = ({ isEdit }) => {
       };
     });
   };
-
-  console.log("productFields", productFields);
   const { data: generatedSKU, setData: setGeneratedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
@@ -149,7 +144,6 @@ const AddEditProduct = ({ isEdit }) => {
     apiToCall(formData)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           showSuccess(response?.message);
           if (!isEdit) {
             handleCancelAddProduct();
@@ -168,7 +162,6 @@ const AddEditProduct = ({ isEdit }) => {
 
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
-      console.log({ key, value });
       if (key === "description") return false;
       if (Array.isArray(value)) {
         return value.length === 0;

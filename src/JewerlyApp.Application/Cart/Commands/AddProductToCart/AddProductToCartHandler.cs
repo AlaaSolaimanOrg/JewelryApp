@@ -37,9 +37,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 };
             }
 
-            var cart = await _context.Carts
-                .Include(c => c.Products)
-                .ThenInclude(cp => cp.Product)
+            var cart = await _context.Carts.Include(x => x.Products)                
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             if (cart == null)
@@ -54,7 +52,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                     Discount = 0,
                     Products = new List<CartProduct>()
                 };
-                _context.Carts.Add(cart);
+                await _context.Carts.AddAsync(cart, cancellationToken);
             }
 
             var product = await _context.Products.FindAsync(new object[] { request.ProductId }, cancellationToken);
@@ -77,6 +75,15 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 {
                     StatusCode = ResponseStatusCode.InternalServerError,
                     Message = Messages.Error_Pricing_Settings
+                };
+            }
+
+            if(priceSetting.Price != request.Price)
+            {
+                return new GenericResponse<string>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Invalid_Price,
                 };
             }
 

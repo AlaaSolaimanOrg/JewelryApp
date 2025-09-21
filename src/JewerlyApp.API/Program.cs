@@ -90,6 +90,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!)),
         ClockSkew = TimeSpan.Zero // optional, remove default 5 min tolerance
+
     };
 });
 

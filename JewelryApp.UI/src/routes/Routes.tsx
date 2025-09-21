@@ -1,10 +1,12 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import AddEditProduct from "../pages/admin/addEditProduct/AddEditProduct";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
 import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
 import ExportData from "../pages/admin/exportData/ExportData";
 import Inventory from "../pages/admin/inventory/Inventory";
+import Login from "../pages/admin/Login/Login";
 import Pricing from "../pages/admin/pricing/Pricing";
 import TagPrinting from "../pages/admin/printTags/TagPrinting";
 import SalesReports from "../pages/admin/salesReport/SalesReports";
@@ -47,7 +49,13 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<POSLayout />}>
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["PosRole"]}>
+              <POSLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<Home />} />
           <Route path="/productLookup" element={<ProductLookup />} />
           <Route path="/transactionHistory" element={<TransactionHistory />} />
@@ -59,7 +67,13 @@ const AppRoutes = () => {
           <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
         </Route>
 
-        <Route element={<AdminLayout />}>
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["Admin", "Admin2"]}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="admin/dashboard" element={<Dashboard />} />
           <Route path="admin/inventory" element={<Inventory />} />
           <Route path="admin/pricing" element={<Pricing />} />
@@ -69,9 +83,18 @@ const AppRoutes = () => {
           <Route path="admin/settings" element={<Settings />} />
           <Route path="admin/print-tags" element={<TagPrinting />} />
           <Route path="admin/export-data" element={<ExportData />} />
-          <Route path="admin/addProduct" element={<AddEditProduct isEdit={false} />} />
-          <Route path="admin/editProduct/:productId" element={<AddEditProduct isEdit={true} />} />
+          <Route
+            path="admin/addProduct"
+            element={<AddEditProduct isEdit={false} />}
+          />
+          <Route
+            path="admin/editProduct/:productId"
+            element={<AddEditProduct isEdit={true} />}
+          />
         </Route>
+
+        <Route path="admin/" element={<Login />} />
+        <Route path="admin/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );

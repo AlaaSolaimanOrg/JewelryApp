@@ -8,7 +8,6 @@ type ApiSortSearchPropsType<T> = {
   extraEffectCheck?: boolean;
   extraEffectDependency?: any[];
   extractFromResponse?: string[];
-  responseProperty?: string;
   apiToCall: (data: any) => Promise<any>;
   apiName?: string;
   finallyCallback?: () => void;
@@ -21,7 +20,6 @@ const useLocalApiSearchSortPagination = <T = any>({
   extraPayload = {},
   extractFromResponse = [],
   extraEffectCheck = true,
-  responseProperty = "",
   extraEffectDependency = [],
   finallyCallback = () => {},
   initialSortBy = "",
@@ -92,7 +90,6 @@ const useLocalApiSearchSortPagination = <T = any>({
     };
     try {
       const response = await apiToCall(requestData);
-      console.log("response", response);
       const { data: responseData, message, totalRecords, pageSize } = response;
 
       processErrorResponse(response, message);

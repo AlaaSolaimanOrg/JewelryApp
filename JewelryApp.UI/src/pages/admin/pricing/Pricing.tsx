@@ -2,19 +2,37 @@ import { Col, Row } from "react-bootstrap";
 import { FaSyncAlt, FaTag } from "react-icons/fa";
 import {
   editPricingSettings,
+  getGlobalPricingSettings,
   getPricingSettings,
 } from "../../../apis/pricingSettings.api/pricingSettings.api";
 import PricingCard from "../../../components/PricingCard/PricingCard";
 import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";
 import { useEffect, useState } from "react";
-import { KaratType, ProductType } from "../../../types/enums";
-import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { Currency, KaratType, ProductType } from "../../../types/enums";
+import {
+  checkRequestSucceeded,
+  safeValue,
+  showError,
+  showSuccess,
+} from "../../../utils";
 
 export interface PriceItem {
   productType: ProductType;
   karatType: KaratType;
   pricePerGram: number;
+}
+
+interface MetalPricing {
+  productType: "Silver" | "Gold";
+  price_gram_24k: number;
+  price_gram_22k: number;
+  price_gram_21k: number;
+  price_gram_20k: number;
+  price_gram_18k: number;
+  price_gram_16k: number;
+  price_gram_14k: number;
+  price_gram_10k: number;
 }
 
 const Pricing = () => {
@@ -35,22 +53,111 @@ const Pricing = () => {
       karatType: KaratType.Karat24,
       pricePerGram: 0,
     },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat18,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat21,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat24,
+      pricePerGram: 0,
+    },
+  ]);
+  const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
+    {
+      productType: ProductType.Gold,
+      karatType: KaratType.Karat18,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Gold,
+      karatType: KaratType.Karat21,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Gold,
+      karatType: KaratType.Karat24,
+      pricePerGram: 0,
+    },
   ]);
 
-  const handlePriceChange = (karatType, value) => {
+  const [globalSilverPrices, setGlobalSilverPrices] = useState<PriceItem[]>([
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat18,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat21,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat24,
+      pricePerGram: 0,
+    },
+  ]);
+
+  const handlePriceChange = (productType, karatType, value) => {
     setPrices((prev) =>
       prev.map((price) =>
-        price.karatType === karatType
+        price.karatType === karatType && price.productType === productType
           ? { ...price, pricePerGram: value }
           : price
       )
     );
   };
 
+  const handleProductTypePrices = (productType: ProductType) => {
+    const removedOldPrices = prices.filter(
+      (price) => price.productType != productType
+    );
+    const globalPrices =
+      productType == ProductType.Gold ? globalGoldPrices : globalSilverPrices;
+    setPrices([...removedOldPrices, ...globalPrices]);
+  };
+
   const { data: pricingSettings } = useLocalApi({
-    apiToCall: (data) => getPricingSettings(data.payload),
+    apiToCall: () => getPricingSettings(),
   }) as {
     data: any;
+    setData: any;
+  };
+
+  const {
+    data: goldGlobalPricingSettings,
+    fetchData: recallGoldGlobalPricingSettings,
+  } = useLocalApi({
+    apiToCall: (data) => getGlobalPricingSettings(data.payload),
+    payload: {
+      productType: ProductType.Gold,
+      currency: Currency.USD,
+    },
+  }) as {
+    data: MetalPricing;
+    fetchData: any;
+    setData: any;
+  };
+  const {
+    data: silverGlobalPricingSettings,
+    fetchData: recallSilverGlobalPricingSettings,
+  } = useLocalApi({
+    apiToCall: (data) => getGlobalPricingSettings(data.payload),
+    payload: {
+      productType: ProductType.Silver,
+      currency: Currency.USD,
+    },
+  }) as {
+    data: MetalPricing;
+    fetchData: any;
+
     setData: any;
   };
 
@@ -66,21 +173,56 @@ const Pricing = () => {
     });
     setPrices(newPrices);
   }, [pricingSettings]);
-  console.log("pricingSettings", pricingSettings);
-  console.log("prices", prices);
 
-  const callEditPrice = (productType, karatType, pricePerGram) => {
+  useEffect(() => {
+    setGlobalGoldPrices([
+      {
+        productType: ProductType.Gold,
+        karatType: KaratType.Karat18,
+        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_18k, 0),
+      },
+      {
+        productType: ProductType.Gold,
+        karatType: KaratType.Karat21,
+        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_21k, 0),
+      },
+      {
+        productType: ProductType.Gold,
+        karatType: KaratType.Karat24,
+        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_24k, 0),
+      },
+    ]);
+  }, [goldGlobalPricingSettings]);
+
+  useEffect(() => {
+    setGlobalSilverPrices([
+      {
+        productType: ProductType.Silver,
+        karatType: KaratType.Karat18,
+        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_18k, 0),
+      },
+      {
+        productType: ProductType.Silver,
+        karatType: KaratType.Karat21,
+        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_21k, 0),
+      },
+      {
+        productType: ProductType.Silver,
+        karatType: KaratType.Karat24,
+        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_24k, 0),
+      },
+    ]);
+  }, [silverGlobalPricingSettings]);
+
+  const callEditPrice = (prices) => {
     setIsEditingPrices(true);
 
     const payload = {
-      productType: productType,
-      karatType: karatType,
-      pricePerGram: pricePerGram,
+      pricingSettings: prices,
     };
     editPricingSettings(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           showSuccess(response?.message);
         } else {
           showError(response?.message);
@@ -95,11 +237,9 @@ const Pricing = () => {
   };
 
   const handleApplyPrices = () => {
-    prices.forEach((price) => {
-      callEditPrice(price.productType, price.karatType, price.pricePerGram);
-    });
+    callEditPrice(prices);
   };
-  
+
   return (
     <div id="pricing" className="page">
       <div className="page-header">
@@ -116,10 +256,49 @@ const Pricing = () => {
 
       <Row>
         <Col sm={6}>
-          <PricingCard prices={prices} handlePriceChange={handlePriceChange} />
+          <PricingCard
+            cardTitle="Gold Pricing"
+            productType={ProductType.Gold}
+            prices={prices.filter(
+              (price) => price.productType == ProductType.Gold
+            )}
+            globalPrices={goldGlobalPricingSettings}
+            handlePriceChange={handlePriceChange}
+            handleProductTypePrices={handleProductTypePrices}
+          />
         </Col>
         <Col sm={6}>
-          <PricingCard isGlobal />
+          <PricingCard
+            cardTitle="Global Gold Pricing"
+            productType={ProductType.Gold}
+            prices={globalGoldPrices}
+            isGlobal
+            recallGlobalPrices={recallGoldGlobalPricingSettings}
+          />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col sm={6}>
+          <PricingCard
+            cardTitle="Silver Pricing"
+            productType={ProductType.Silver}
+            prices={prices.filter(
+              (price) => price.productType == ProductType.Silver
+            )}
+            globalPrices={silverGlobalPricingSettings}
+            handlePriceChange={handlePriceChange}
+            handleProductTypePrices={handleProductTypePrices}
+          />
+        </Col>
+        <Col sm={6}>
+          <PricingCard
+            cardTitle="Global Silver Pricing"
+            productType={ProductType.Silver}
+            prices={globalSilverPrices}
+            isGlobal
+            recallGlobalPrices={recallSilverGlobalPricingSettings}
+          />
         </Col>
       </Row>
     </div>

@@ -12,13 +12,22 @@ import { Link } from "react-router-dom";
 import { getProductById } from "../../../apis/products.api/products.api";
 import { API_URL } from "../../../config/config";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { checkSKUFormat, debounce, safeValue } from "../../../utils";
+import {
+  checkRequestSucceeded,
+  checkSKUFormat,
+  debounce,
+  safeValue,
+  showError,
+  showSuccess,
+} from "../../../utils";
 import type { Product } from "../../admin/inventory/Inventory";
 import "./productLookup.scss";
+import { addProductToCart } from "../../../apis/cart.api/cart.api";
 
 const ProductLookup = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchBy, setSearchBy] = useState("");
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
 
   const { data: product, setData: setProduct } = useLocalApi({
     apiToCall: (data) => getProductById(data.payload),
@@ -53,10 +62,29 @@ const ProductLookup = () => {
       setProduct(null);
     }
   };
-
-  console.log("product", product);
-
   const totalPrice = (product?.pricePerGram ?? 0) * product?.weight;
+
+  const handleAddToCartClick = (productId) => {
+    setIsAddingProduct(true);
+
+    const payload = { productId: productId, price: product.pricePerGram };
+    addProductToCart(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          showSuccess(response?.message);
+          setProduct(null);
+          setSearchBy("");
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsAddingProduct(false);
+      });
+  };
 
   return (
     <div className="page-content productLookUp">
@@ -72,6 +100,7 @@ const ProductLookup = () => {
           placeholder="Scan or Enter Barcode/SKU..."
           value={searchInput}
           onChange={handleSearch}
+          maxLength={17}
         />
         <button className="search-btn">
           <FaCamera />
@@ -124,12 +153,15 @@ const ProductLookup = () => {
           <div className="price-display">Calculated Price: ${totalPrice}</div>
 
           <div className="action-buttons d-flex gap-2">
-            <Link to={"/cartSummary"} className="text-decoration-none">
-              <button className="btn btn-primary">
-                <FaCartPlus />
-                Add to Cart
-              </button>
-            </Link>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                handleAddToCartClick(product.id);
+              }}
+            >
+              <FaCartPlus />
+              Add to Cart
+            </button>
 
             <Link to={"/manualItemEntry"} className="text-decoration-none">
               <button className="btn btn-secondary">

@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import {
-  FaArrowDown,
-  FaArrowUp,
   FaBox,
-  FaDollarSign,
   FaEdit,
   FaExchangeAlt,
-  FaExclamationTriangle,
   FaFileExport,
-  FaGem,
   FaHistory,
   FaPlus,
   FaSearch,
@@ -21,19 +16,21 @@ import {
   deleteProduct,
   getProducts,
 } from "../../../apis/products.api/products.api";
-import InventoryFilterSideBar from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+import InventoryFilterSideBar, {
+  type InventoryFilters,
+} from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import type {
+import {
   KaratType,
   ProductCategory,
-  ProductType,
+  type ProductType,
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
 export interface Product {
   id: string;
@@ -53,27 +50,32 @@ const Inventory = () => {
 
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
+  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters | null>(
+    {
+      karatTypes: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+      weight: 250,
+      category: null,
+      // ringSize: "Any",
+      // necklaceLength: "Any",
+      // tags: [],
+    }
+  );
   const {
     data: products,
     isLoading: isLoadingProducts,
     fetchData: recallGetProducts,
     onSearchChange,
     onPaginationChange,
-    onPageSizeChange,
-    onSortChange,
-    isLoading: isLoadingUsers,
     pagination,
-    searchBy,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
+    extraPayload: {
+      karatTypeFilter: appliedFilters?.karatTypes,
+      weightFilter: appliedFilters?.weight,
+      productCategoryFilter: appliedFilters?.category,
+    },
+    extraEffectDependency: [appliedFilters],
   });
-
-  console.log("products", products);
-
-  useEffect(() => {
-    // const mappedProducts =
-  }, [products]);
-
   const headers = [
     "Image",
     "Product Name",
@@ -102,12 +104,7 @@ const Inventory = () => {
     SKU: product.sku,
     Karat: `${product.karatType}K`,
     Weight: `${product.weight}g`,
-    Category:
-      product.category === 1
-        ? "Necklaces"
-        : product.category === 2
-        ? "Bracelets"
-        : "Other",
+    Category: ProductCategory[product.category],
     Actions: (
       <>
         <button
@@ -145,7 +142,6 @@ const Inventory = () => {
     deleteProduct(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
-          console.log("response", response);
           showSuccess(response?.message);
           recallGetProducts();
         } else {
@@ -190,7 +186,7 @@ const Inventory = () => {
 
       <div className="inventory-grid">
         {/* Sidebar */}
-        <InventoryFilterSideBar />
+        <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
         {/* Inventory Content */}
         <div className="inventory-content">
           <div className="card">
@@ -214,7 +210,7 @@ const Inventory = () => {
               totalRecords={pagination.totalRecords}
               pageNumber={pagination.pageNumber}
               pageSize={pagination.pageSize}
-              onPageSizeChange={onPageSizeChange}
+              onPaginationChange={onPaginationChange}
             />
             {/* <div className="pagination">
               <div className="page-item active">1</div>
@@ -226,7 +222,7 @@ const Inventory = () => {
           </div>
 
           {/* Summary */}
-          <div className="card">
+          {/* <div className="card">
             <div className="card-header">
               <h3 className="card-title">Inventory Summary</h3>
             </div>
@@ -269,7 +265,7 @@ const Inventory = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />

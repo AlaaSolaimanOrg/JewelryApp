@@ -1,4 +1,9 @@
 export const apiRoutes = {
+  auth: {
+    login: "Auth/Login",
+    refreshToken: "Auth/RefreshTokens",
+  },
+  cart: { addProductToCart: "Cart/AddProductToCart" },
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",
@@ -12,5 +17,9 @@ export const apiRoutes = {
     getProducts: "Product/GetProducts",
     deleteProduct: "Product/DeleteProduct",
     getProductById: "Product/GetProductById",
+  },
+  users: {
+    getAllUsers: "Users/GetAllUsers",
+    getAllRoles: "Users/GetAllRoles/roles",
   },
 };
