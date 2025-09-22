@@ -22,12 +22,23 @@ import {
 } from "../../../utils";
 import type { Product } from "../../admin/inventory/Inventory";
 import "./productLookup.scss";
-import { addProductToCart } from "../../../apis/cart.api/cart.api";
+import {
+  addProductToCart,
+  getCartProducts,
+} from "../../../apis/cart.api/cart.api";
+import type { CartProduct } from "../cartSummary/CartSummary";
 
 const ProductLookup = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchBy, setSearchBy] = useState("");
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [anyProductAdded, setAnyProductAdded] = useState(false);
+
+  const { data: cartProducts } = useLocalApi({
+    apiToCall: (data) => getCartProducts(data.payload),
+  }) as {
+    data: CartProduct[];
+  };
 
   const { data: product, setData: setProduct } = useLocalApi({
     apiToCall: (data) => getProductById(data.payload),
@@ -74,6 +85,9 @@ const ProductLookup = () => {
           showSuccess(response?.message);
           setProduct(null);
           setSearchBy("");
+          if (!anyProductAdded) {
+            setAnyProductAdded(true);
+          }
         } else {
           showError(response?.message);
         }
@@ -185,7 +199,10 @@ const ProductLookup = () => {
         </Link>
 
         <Link to={"/cartSummary"} className="text-decoration-none">
-          <button className="btn btn-primary">
+          <button
+            className="btn btn-primary"
+            disabled={!cartProducts.length && !anyProductAdded}
+          >
             View Cart <FaArrowRight />
           </button>
         </Link>

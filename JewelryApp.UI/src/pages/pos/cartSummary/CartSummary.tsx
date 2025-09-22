@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   FaCreditCard,
   FaPlus,
@@ -6,7 +7,7 @@ import {
   FaTag,
   FaTimes,
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   deleteCart,
   getCartProducts,
@@ -15,7 +16,6 @@ import {
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./cartSummary.scss";
-import { useState } from "react";
 
 export interface CartProduct {
   productId: string;
@@ -27,11 +27,16 @@ export interface CartProduct {
 }
 
 const CartSummary = () => {
+  const location = useLocation();
+
   const navigate = useNavigate();
+  
 
   const [isDeletingCart, setIsDeletingCart] = useState(false);
 
-  const { data: cartProducts } = useLocalApi({
+  const { totalDiscount } = location.state || { totalDiscount: 0 };
+
+  const { data: cartProducts, fetchData: recallGetCartProducts } = useLocalApi({
     apiToCall: (data) => getCartProducts(data.payload),
   }) as {
     data: CartProduct[];
@@ -39,17 +44,14 @@ const CartSummary = () => {
     setData: any;
   };
 
-  console.log("cartProducts", cartProducts);
-
   // Calculate subtotal, tax, and total
   const subtotal =
     cartProducts?.reduce(
       (sum, item) => sum + item.weight * item.pricePerGram,
       0
     ) || 0;
-  const discount = 0; // Placeholder, update as needed
   const tax = subtotal * 0.05; // Example: 5% tax
-  const total = subtotal - discount + tax;
+  const total = subtotal - totalDiscount + tax;
 
   const handleCancelSale = () => {
     setIsDeletingCart(true);
@@ -78,6 +80,10 @@ const CartSummary = () => {
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
+          if (cartProducts.length == 1) {
+            return navigate("/productLookup");
+          }
+          recallGetCartProducts();
         } else {
           showError(response?.message);
         }
@@ -167,7 +173,7 @@ const CartSummary = () => {
           </div>
           <div className="summary-item">
             <span>Discount:</span>
-            <span>${discount.toFixed(2)}</span>
+            <span>${totalDiscount.toFixed(2)}</span>
           </div>
           <div className="summary-item">
             <span>Tax:</span>
@@ -181,7 +187,10 @@ const CartSummary = () => {
 
           <div className="cart-actions">
             <Link to={"/payment"} className="text-decoration-none">
-              <button className="btn btn-primary w-100">
+              <button
+                className="btn btn-primary w-100"
+                disabled={!cartProducts.length}
+              >
                 <FaCreditCard /> Proceed to Payment
               </button>
             </Link>
@@ -189,11 +198,12 @@ const CartSummary = () => {
             <button
               className="btn btn-secondary w-100"
               onClick={handleCancelSale}
+              disabled={!cartProducts.length}
             >
               <FaTimes /> Cancel Sale
             </button>
 
-            <Link to={"/manualItemEntry"} className="text-decoration-none">
+            <Link to={"/productLookup"} className="text-decoration-none">
               <button className="btn btn-secondary w-100">
                 <FaPlus /> Add More Items
               </button>

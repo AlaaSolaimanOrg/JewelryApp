@@ -158,3 +158,7 @@ export const renderLongDescription = (
   }
   return cleanedString;
 };
+
+export const trimLeadingZeros = (value: number | string) => {
+  return Number(String(value).replace(/^0+(?=\d)/, ""));
+};

@@ -32,3 +32,8 @@ export enum PricingSettingEntryType {
   Manual = 1,
   ApiIntegration = 2,
 }
+
+export enum OrderDiscount {
+  Percentage = 1,
+  FixedAmount = 2,
+}
