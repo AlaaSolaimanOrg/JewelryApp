@@ -109,7 +109,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 OriginalPricePerGram = priceSetting.Price,
                 OverriddenPricePerGram = null
             };
-            cart.Products.Add(newCartProduct);
+            await _context.CartProducts.AddAsync(newCartProduct, cancellationToken);
 
             // Recalculate the subtotal of the entire cart.
             cart.SubTotal += product.Weight * newCartProduct.OriginalPricePerGram.GetValueOrDefault();

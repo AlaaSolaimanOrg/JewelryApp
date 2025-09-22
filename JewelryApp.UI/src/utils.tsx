@@ -2,6 +2,8 @@ import type { AxiosRequestConfig } from "axios";
 import axiosInstance from "./services/axios.service";
 import { toast } from "react-toastify";
 import qs from "qs";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import type React from "react";
 
 // Optional: helper to transform payload keys for GET params
 const addParamsToObjKeys = (obj: Record<string, any>) => {
@@ -29,7 +31,12 @@ export const requestApi = async (
     ...extraConfig,
   };
 
-  if (method === "POST" || method === "PUT" || method === "PATCH") {
+  if (
+    method === "POST" ||
+    method === "PUT" ||
+    method === "PATCH" ||
+    method == "DELETE"
+  ) {
     config.data = finalPayload;
   } else {
     // For GET/DELETE requests, merge payload with params
@@ -106,3 +113,48 @@ export function checkSKUFormat(value) {
   const regex = /^[A-Z]{3}-\d{2}-\d{4}-\d{5}$/;
   return regex.test(value);
 }
+
+function containsArabic(text: string): boolean {
+  const arabicRegex = /[\u0600-\u06FF]/;
+  return arabicRegex.test(text);
+}
+
+export const renderTooltip = (
+  mainText: string | React.JSX.Element,
+  subElement: string | React.JSX.Element
+) => {
+  const tooltip = <Tooltip id="tooltip">{subElement}</Tooltip>;
+
+  return (
+    <OverlayTrigger
+      placement="top"
+      delay={{ show: 250, hide: 400 }}
+      overlay={tooltip}
+    >
+      <span>{mainText}</span>
+    </OverlayTrigger>
+  );
+};
+
+export const renderLongDescription = (
+  description: string | undefined,
+  maxLength = 15
+): string | React.JSX.Element => {
+  if (!description) return "";
+  // Create a DOMParser to parse the HTML string
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(description, "text/html");
+
+  // Extract the text content without HTML tags
+  const cleanedString = doc.body.textContent || "";
+
+  // Return the first 50 characters if the string is longer than that
+  if (cleanedString?.length > maxLength) {
+    const isArabic = containsArabic(cleanedString.slice(0, maxLength).trim());
+    const trimmedText = isArabic
+      ? "..." + cleanedString.slice(0, maxLength).trim()
+      : cleanedString.slice(0, maxLength).trim() + "...";
+    return renderTooltip(trimmedText, cleanedString);
+  }
+  return cleanedString;
+};

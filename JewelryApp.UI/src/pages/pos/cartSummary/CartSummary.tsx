@@ -1,16 +1,120 @@
-import { Link } from "react-router-dom";
-import "./cartSummary.scss";
 import {
   FaCreditCard,
-  FaGem,
   FaPlus,
   FaRing,
   FaShoppingCart,
   FaTag,
   FaTimes,
 } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { deleteCart, getCartProducts } from "../../../apis/cart.api/cart.api";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import "./cartSummary.scss";
+import { useState } from "react";
+
+export interface CartProduct {
+  productId: string;
+  sku: string;
+  name: string;
+  karatType: number;
+  weight: number;
+  pricePerGram: number;
+}
 
 const CartSummary = () => {
+  const navigate = useNavigate();
+
+  const [isDeletingCart, setIsDeletingCart] = useState(false);
+
+  const { data: cartProducts } = useLocalApi({
+    apiToCall: (data) => getCartProducts(data.payload),
+  }) as {
+    data: CartProduct[];
+    fetchData: any;
+    setData: any;
+  };
+
+  console.log("cartProducts", cartProducts);
+
+  // Calculate subtotal, tax, and total
+  const subtotal =
+    cartProducts?.reduce(
+      (sum, item) => sum + item.weight * item.pricePerGram,
+      0
+    ) || 0;
+  const discount = 0; // Placeholder, update as needed
+  const tax = subtotal * 0.05; // Example: 5% tax
+  const total = subtotal - discount + tax;
+
+  const handleCancelSale = () => {
+    setIsDeletingCart(true);
+
+    deleteCart()
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          showSuccess(response?.message);
+          navigate("/productLookup");
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setIsDeletingCart(false);
+      });
+  };
+
+  const headers = [
+    { label: "Product" },
+    { label: "Karat" },
+    { label: "Weight" },
+    { label: "Price/Gram" },
+    { label: "Subtotal" },
+    { label: "" },
+  ];
+
+  function renderCartTableHeader() {
+    return (
+      <tr>
+        {headers.map((header, idx) => (
+          <th key={idx}>{header.label}</th>
+        ))}
+      </tr>
+    );
+  }
+
+  function renderCartTableRows(cartProducts: CartProduct[]) {
+    if (!cartProducts || cartProducts.length === 0) {
+      return (
+        <tr>
+          <td colSpan={headers.length} style={{ textAlign: "center" }}>
+            No products in cart.
+          </td>
+        </tr>
+      );
+    }
+    return cartProducts.map((product) => (
+      <tr key={product.productId}>
+        <td className="item-name">
+          <FaRing className="productIcon" />
+          {product.name}
+        </td>
+        <td>{product.karatType}K</td>
+        <td>{product.weight}g</td>
+        <td>${product.pricePerGram.toFixed(2)}</td>
+        <td>${(product.weight * product.pricePerGram).toFixed(2)}</td>
+        <td className="item-actions">
+          <button>
+            <FaTimes />
+          </button>
+        </td>
+      </tr>
+    ));
+  }
+
   return (
     <div className="cartSummary page-content">
       <h2 className="title">
@@ -21,63 +125,8 @@ const CartSummary = () => {
       <div className="cart-container">
         <div>
           <table className="cart-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Karat</th>
-                <th>Weight</th>
-                <th>Price/Gram</th>
-                <th>Subtotal</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="item-name">
-                  <FaRing className="productIcon" />
-                  Diamond Solitaire Ring
-                </td>
-                <td>21K</td>
-                <td>3.5g</td>
-                <td>$125.75</td>
-                <td>$440.13</td>
-                <td className="item-actions">
-                  <button>
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="item-name">
-                  <FaGem className="productIcon" />
-                  Gold Tennis Bracelet
-                </td>
-                <td>18K</td>
-                <td>8.2g</td>
-                <td>$112.30</td>
-                <td>$920.86</td>
-                <td className="item-actions">
-                  <button>
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="item-name">
-                  <FaGem className="productIcon" />
-                  Ruby Heart Pendant
-                </td>
-                <td>24K</td>
-                <td>5.1g</td>
-                <td>$142.90</td>
-                <td>$728.79</td>
-                <td className="item-actions">
-                  <button>
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
+            <thead>{renderCartTableHeader()}</thead>
+            <tbody>{renderCartTableRows(cartProducts)}</tbody>
           </table>
 
           <Link to={"/applyDiscount"} className="text-decoration-none">
@@ -92,20 +141,20 @@ const CartSummary = () => {
 
           <div className="summary-item">
             <span>Subtotal:</span>
-            <span>$2,089.78</span>
+            <span>${subtotal.toFixed(2)}</span>
           </div>
           <div className="summary-item">
             <span>Discount:</span>
-            <span>$0.00</span>
+            <span>${discount.toFixed(2)}</span>
           </div>
           <div className="summary-item">
             <span>Tax:</span>
-            <span>$125.39</span>
+            <span>${tax.toFixed(2)}</span>
           </div>
 
           <div className="summary-total">
             <span>Total:</span>
-            <span>$2,215.17</span>
+            <span>${total.toFixed(2)}</span>
           </div>
 
           <div className="cart-actions">
@@ -115,11 +164,12 @@ const CartSummary = () => {
               </button>
             </Link>
 
-            <Link to={"/"} className="text-decoration-none">
-              <button className="btn btn-secondary w-100">
-                <FaTimes /> Cancel Sale
-              </button>
-            </Link>
+            <button
+              className="btn btn-secondary w-100"
+              onClick={handleCancelSale}
+            >
+              <FaTimes /> Cancel Sale
+            </button>
 
             <Link to={"/manualItemEntry"} className="text-decoration-none">
               <button className="btn btn-secondary w-100">

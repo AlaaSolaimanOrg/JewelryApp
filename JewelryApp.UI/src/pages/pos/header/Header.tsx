@@ -2,10 +2,14 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import Clock from "../../../components/Clock/Clock";
 
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaSignOutAlt } from "react-icons/fa";
 import "./header.scss";
 
+import { useNavigate } from "react-router-dom";
+
 const Header = () => {
+  const navigate = useNavigate();
+
   const location = useLocation();
   const pagesTitles = {
     "/": "POS Dashboard",
@@ -17,6 +21,15 @@ const Header = () => {
     "/payment": "Payment",
     "/receipt": "Receipt Preview",
     "/ReceiptDelivery": "Receipt Delivery",
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
+    navigate("/login");
   };
 
   return (
@@ -33,7 +46,20 @@ const Header = () => {
             <span>Sarah Johnson</span>
           </div>
           <Clock />
-          {/* <div id="current-time">{currentTime}</div> */}
+          <button
+            className="logout-btn"
+            title="Logout"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              marginLeft: 12,
+              color: "white",
+            }}
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt size={20} />
+          </button>
         </div>
       </header>
 
