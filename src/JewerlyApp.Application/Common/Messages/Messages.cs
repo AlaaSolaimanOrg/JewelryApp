@@ -71,6 +71,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Discount = "Fixed Discount can't be a negative number.";
         public const string Error_Percentage_Discount = "Percentage discount must be between 0 and 100.";
         public const string Error_Pricing_Settings = "Pricing settings for this type with this karat type is missing.";
+        public const string Error_Invalid_Price = "Invalid Price";
 
         //POS Messages
         public const string Pos_No_Cart = "No cart is found.";

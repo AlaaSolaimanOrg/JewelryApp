@@ -14,7 +14,6 @@ namespace JewerlyApp.Domain.Entities
         public decimal Total {  get; set; }
         public decimal Taxes { get; set; }
         public decimal? Discount {  get; set; }
-        public decimal Total { get; set; }
         public DiscountType DiscountType { get; set; }
         public ICollection<CartProduct> Products { get; set; }      
 
