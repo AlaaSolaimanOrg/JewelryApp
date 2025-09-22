@@ -2,6 +2,7 @@
 using JewerlyApp.Application.Carts.Commands.DeleteCart;
 using JewerlyApp.Application.Carts.Commands.RemoveProductFromCart;
 using JewerlyApp.Application.Carts.Commands.UpdateCart;
+using JewerlyApp.Application.Carts.Commands.UpdateCartProduct;
 using JewerlyApp.Application.Carts.Queries.GetCartProducts;
 using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
@@ -50,6 +51,13 @@ namespace JewerlyApp.API.Controllers.Cart
         public async Task<IActionResult> GetCartProducts([FromQuery] GetCartProductsQuery query) 
         {
             var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCartProduct([FromBody] UpdateCartProductCommand command) 
+        {
+            var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
 
