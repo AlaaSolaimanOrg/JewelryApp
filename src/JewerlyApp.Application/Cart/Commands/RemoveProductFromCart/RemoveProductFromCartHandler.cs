@@ -35,7 +35,8 @@ namespace JewerlyApp.Application.Carts.Commands.RemoveProductFromCart
             }
 
             var cart = await _context.Carts
-                .Include(c => c.Products)
+                .Include(c => c.CartProducts)
+                .ThenInclude(c=>c.Product)
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             if (cart == null)
@@ -47,7 +48,7 @@ namespace JewerlyApp.Application.Carts.Commands.RemoveProductFromCart
                 };
             }
 
-            var cartProduct = cart.Products.FirstOrDefault(cp => cp.ProductId == request.ProductId);
+            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == request.ProductId);
 
             if (cartProduct == null)
             {

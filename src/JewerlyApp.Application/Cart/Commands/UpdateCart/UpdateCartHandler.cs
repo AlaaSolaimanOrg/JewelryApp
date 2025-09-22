@@ -36,7 +36,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCart
             }
 
             var cart = await _context.Carts
-                .Include(c => c.Products)
+                .Include(c => c.CartProducts)
                 .ThenInclude(cp => cp.Product)
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
@@ -52,7 +52,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCart
             cart.Discount = request.Discount;
             cart.DiscountType = request.DiscountType;
 
-            cart.SubTotal = cart.Products.Sum(cp =>
+            cart.SubTotal = cart.CartProducts.Sum(cp =>
                 (cp.OverriddenPricePerGram ?? cp.OriginalPricePerGram.GetValueOrDefault()) *
                 (cp.Product?.Weight ?? 0)
             );

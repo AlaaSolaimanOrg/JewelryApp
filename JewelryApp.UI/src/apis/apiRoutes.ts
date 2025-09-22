@@ -7,6 +7,7 @@ export const apiRoutes = {
     addProductToCart: "Cart/AddProductToCart",
     getCartProducts: "Cart/GetCartProducts",
     deleteCart: "Cart/DeleteCart",
+    removeProductFromCart: "Cart/RemoveProductFromCart",
   },
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",

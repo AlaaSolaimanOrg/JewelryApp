@@ -36,7 +36,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCartProduct
             }
 
             var cart = await _context.Carts
-                .Include(c => c.Products)
+                .Include(c => c.CartProducts)
                 .ThenInclude(cp => cp.Product)
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
@@ -49,7 +49,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCartProduct
                 };
             }
 
-            var cartProduct = cart.Products.FirstOrDefault(cp => cp.ProductId == request.ProductId);
+            var cartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == request.ProductId);
             if (cartProduct == null)
             {
                 return new GenericResponse<string>
@@ -100,7 +100,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCartProduct
             }
             cartProduct.OverriddenPricePerGram = newOverriddenPricePerGram;
 
-            cart.SubTotal = cart.Products.Sum(cp =>
+            cart.SubTotal = cart.CartProducts.Sum(cp =>
                 (cp.OverriddenPricePerGram ?? cp.OriginalPricePerGram.GetValueOrDefault()) *
                 (cp.Product?.Weight ?? 0)
             );

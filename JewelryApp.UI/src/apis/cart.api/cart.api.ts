@@ -12,3 +12,7 @@ export const getCartProducts = async (payload) => {
 export const deleteCart = async () => {
   return requestApi("DELETE", apiRoutes.cart.deleteCart);
 };
+
+export const removeProductFromCart = async (payload: { productId: string }) => {
+  return requestApi("POST", apiRoutes.cart.removeProductFromCart, payload);
+};

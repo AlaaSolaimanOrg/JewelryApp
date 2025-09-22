@@ -37,7 +37,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 };
             }
 
-            var cart = await _context.Carts.Include(x => x.Products)                
+            var cart = await _context.Carts.Include(x => x.CartProducts)                
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
             if (cart == null)
@@ -50,7 +50,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                     SubTotal = 0,
                     Taxes = 0,
                     Discount = 0,
-                    Products = new List<CartProduct>()
+                    CartProducts = new List<CartProduct>()
                 };
                 await _context.Carts.AddAsync(cart, cancellationToken);
             }
@@ -87,7 +87,7 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 };
             }
 
-            var existingCartProduct = cart.Products.FirstOrDefault(cp => cp.ProductId == request.ProductId);
+            var existingCartProduct = cart.CartProducts.FirstOrDefault(cp => cp.ProductId == request.ProductId);
 
             if (existingCartProduct != null)
             {

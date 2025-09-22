@@ -7,7 +7,11 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { deleteCart, getCartProducts } from "../../../apis/cart.api/cart.api";
+import {
+  deleteCart,
+  getCartProducts,
+  removeProductFromCart,
+} from "../../../apis/cart.api/cart.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./cartSummary.scss";
@@ -66,6 +70,22 @@ const CartSummary = () => {
         setIsDeletingCart(false);
       });
   };
+  const handleRemoveProductFromCart = (productId) => {
+    const payload = {
+      productId: productId,
+    };
+    removeProductFromCart(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          showSuccess(response?.message);
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      });
+  };
 
   const headers = [
     { label: "Product" },
@@ -107,7 +127,9 @@ const CartSummary = () => {
         <td>${product.pricePerGram.toFixed(2)}</td>
         <td>${(product.weight * product.pricePerGram).toFixed(2)}</td>
         <td className="item-actions">
-          <button>
+          <button
+            onClick={() => handleRemoveProductFromCart(product.productId)}
+          >
             <FaTimes />
           </button>
         </td>
