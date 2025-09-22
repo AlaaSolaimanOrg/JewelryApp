@@ -40,7 +40,6 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             var cart = await _context.Carts.Include(x => x.Products)                
                 .FirstOrDefaultAsync(c => c.CreatedBy == loggedInUser.Id, cancellationToken);
 
-            // If the user does not have a cart, create a new one.
             if (cart == null)
             {
                 cart = new Cart
@@ -74,8 +73,8 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             {
                 return new GenericResponse<string>
                 {
-                    StatusCode = ResponseStatusCode.BadRequest,
-                    Message = $"Pricing setting for {product.Type} with {product.KaratType} is missing."
+                    StatusCode = ResponseStatusCode.InternalServerError,
+                    Message = Messages.Error_Pricing_Settings
                 };
             }
 
@@ -92,7 +91,6 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
 
             if (existingCartProduct != null)
             {
-                // If the product already exists, return an error since we are not tracking quantity.
                 return new GenericResponse<string>
                 {
                     StatusCode = ResponseStatusCode.BadRequest,
@@ -100,7 +98,6 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
                 };
             }
 
-            // Create a new CartProduct.
             var newCartProduct = new CartProduct
             {
                 Id = Guid.NewGuid(),
@@ -111,8 +108,9 @@ namespace JewerlyApp.Application.Carts.Commands.AddProductToCart
             };
             await _context.CartProducts.AddAsync(newCartProduct, cancellationToken);
 
-            // Recalculate the subtotal of the entire cart.
             cart.SubTotal += product.Weight * newCartProduct.OriginalPricePerGram.GetValueOrDefault();
+
+            cart.Total = cart.SubTotal + cart.Taxes - (cart.Discount ?? 0);
 
             await _context.SaveChangesAsync(cancellationToken);
 

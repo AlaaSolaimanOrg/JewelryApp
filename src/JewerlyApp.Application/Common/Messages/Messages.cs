@@ -67,9 +67,13 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Role_Has_Users = "Cannot delete role with assigned users.";
         public const string Error_User_Role_Removal_Failed = "Failed to remove roles from user.";
         public const string Error_Password_Reset_Failed = "Failed to reset password.";
-        public const string Error_Invalid_Price = "Invalid price. Price has been updated";
+        public const string Error_Discount_Result = "Fixed discount results in a negative result.";
+        public const string Error_Discount = "Fixed Discount can't be a negative number.";
+        public const string Error_Percentage_Discount = "Percentage discount must be between 0 and 100.";
+        public const string Error_Pricing_Settings = "Pricing settings for this type with this karat type is missing.";
 
         //POS Messages
+        public const string Pos_No_Cart = "No cart is found.";
         public const string PosCartEmpty = "Cannot checkout. The shopping cart is empty.";
         public const string PosItemNotFound = "Product not found. Please check the SKU or barcode.";
         public const string PosSplitPaymentFailed = "Split payment failed. Please ensure all parts of the payment are valid.";

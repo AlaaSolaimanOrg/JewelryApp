@@ -42,7 +42,7 @@ namespace JewerlyApp.Application.Carts.Commands.DeleteCart
                 return new GenericResponse<Guid>
                 {
                     StatusCode = ResponseStatusCode.NotFound,
-                    Message = Messages.PosCartEmpty
+                    Message = Messages.Pos_No_Cart
                 };
             }
 
