@@ -6,9 +6,11 @@ import { FaUser, FaSignOutAlt } from "react-icons/fa";
 import "./header.scss";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { setRoles } = useAuth();
 
   const location = useLocation();
   const pagesTitles = {
@@ -29,6 +31,7 @@ const Header = () => {
     localStorage.removeItem("refreshToken");
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    setRoles([]);
     navigate("/login");
   };
 

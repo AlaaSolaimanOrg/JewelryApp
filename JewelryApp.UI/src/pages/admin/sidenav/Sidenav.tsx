@@ -13,10 +13,12 @@ import {
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./sidenav.scss";
+import { useAuth } from "../../../context/AuthContext";
 
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setRoles } = useAuth();
 
   const navItems = [
     {
@@ -76,6 +78,7 @@ const SideNav = () => {
     localStorage.removeItem("refreshToken");
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
+    setRoles([]);
     navigate("/login");
   };
 

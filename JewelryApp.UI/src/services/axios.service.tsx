@@ -16,7 +16,7 @@ axiosInstance.interceptors.request.use(
     const token =
       localStorage.getItem("accessToken") ||
       sessionStorage.getItem("accessToken");
-    console.log("token",token);
+    console.log("token", token);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    return error?.response;
   }
 );
 

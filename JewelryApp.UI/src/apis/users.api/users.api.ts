@@ -2,7 +2,7 @@ import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
 
 export const getAllUsers = async (payload) => {
-  return requestApi("GET", apiRoutes.users.getAllUsers,payload) ;
+  return requestApi("GET", apiRoutes.users.getAllUsers, payload);
 };
 
 export const getAllRoles = async () => {
@@ -40,4 +40,8 @@ export const updateUser = async (payload: {
 
 export const getUserById = async (payload: { userId: string }) => {
   return requestApi("GET", `${apiRoutes.users.getUserById}/${payload.userId}`);
+};
+
+export const getUserRoles = async () => {
+  return requestApi("GET", apiRoutes.users.getUserRoles);
 };

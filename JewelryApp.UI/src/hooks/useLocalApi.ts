@@ -11,6 +11,7 @@ type ApiSortSearchPropsType = {
   dataInitalValue?: any;
   apiName?: string;
   finallyCallback?: () => void;
+  initallyIsLoading?: boolean;
 };
 
 const useLocalApi = ({
@@ -23,8 +24,9 @@ const useLocalApi = ({
   dataInitalValue = [],
   apiToCall,
   apiName,
+  initallyIsLoading = false,
 }: ApiSortSearchPropsType) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(initallyIsLoading);
 
   const [data, setData] = useState<any[] | any>(dataInitalValue);
 

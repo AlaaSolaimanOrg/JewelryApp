@@ -30,7 +30,6 @@ const CartSummary = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
-  
 
   const [isDeletingCart, setIsDeletingCart] = useState(false);
 
@@ -186,14 +185,18 @@ const CartSummary = () => {
           </div>
 
           <div className="cart-actions">
-            <Link to={"/payment"} className="text-decoration-none">
-              <button
-                className="btn btn-primary w-100"
-                disabled={!cartProducts.length}
-              >
-                <FaCreditCard /> Proceed to Payment
-              </button>
-            </Link>
+            <button
+              className="btn btn-primary w-100"
+              disabled={!cartProducts.length}
+              onClick={() => {
+                navigate("/payment", {
+                  state: { totalDiscount, total, tax },
+                  replace: true,
+                });
+              }}
+            >
+              <FaCreditCard /> Proceed to Payment
+            </button>
 
             <button
               className="btn btn-secondary w-100"

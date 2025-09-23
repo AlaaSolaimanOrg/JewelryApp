@@ -1,24 +1,22 @@
 import { jwtDecode } from "jwt-decode";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../apis/login.api/login.api";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import { checkRequestSucceeded, showError } from "../../../utils";
 import "./login.scss";
+import { useAuth } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { roles, callGetUserRoles } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [isloading, setIsLoading] = useState(false);
 
-  const redirectAfterLogin = (accessToken) => {
-    const decoded: any = jwtDecode(accessToken);
-
-    const roles =
-      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  const redirectAfterLogin = () => {
     if (roles.includes("Admin") || roles.includes("Admin2")) {
       navigate("/admin/dashboard");
     } else if (roles.includes("PosRole")) {
@@ -28,6 +26,13 @@ const Login = () => {
       navigate("/unauthorized");
     }
   };
+
+  useEffect(() => {
+    if (roles.length) {
+      redirectAfterLogin();
+    }
+  }, [roles]);
+
   const callLogin = () => {
     setIsLoading(true);
 
@@ -45,7 +50,7 @@ const Login = () => {
             sessionStorage.setItem("refreshToken", refreshToken);
           }
 
-          redirectAfterLogin(accessToken);
+          callGetUserRoles();
         } else {
           showError(response?.message);
         }

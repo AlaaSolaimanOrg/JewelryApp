@@ -30,5 +30,6 @@ export const apiRoutes = {
     createUser: "Users/CreateUser",
     updateUser: "Users/UpdateUser",
     getUserById: "Users/GetUserById",
+    getUserRoles: "Users/getUserRoles",
   },
 };

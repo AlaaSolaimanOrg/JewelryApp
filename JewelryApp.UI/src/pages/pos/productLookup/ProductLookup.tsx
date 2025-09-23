@@ -81,6 +81,7 @@ const ProductLookup = () => {
     const payload = { productId: productId, price: product.pricePerGram };
     addProductToCart(payload)
       .then((response) => {
+        console.log("response",response)
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           setProduct(null);
@@ -89,6 +90,7 @@ const ProductLookup = () => {
             setAnyProductAdded(true);
           }
         } else {
+          console.log("test")
           showError(response?.message);
         }
       })
@@ -177,7 +179,7 @@ const ProductLookup = () => {
               Add to Cart
             </button>
 
-            <Link to={"/manualItemEntry"} className="text-decoration-none">
+            <Link to={"/manualItemEntry"} className="text-decoration-none temoporarylyHide">
               <button className="btn btn-secondary">
                 <FaPen />
                 Manual Entry

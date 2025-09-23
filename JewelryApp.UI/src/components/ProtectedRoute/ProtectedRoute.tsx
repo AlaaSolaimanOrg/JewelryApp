@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import React, { type JSX } from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -11,6 +12,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles,
 }) => {
+  const { roles, isLoading } = useAuth();
   const accessToken =
     localStorage.getItem("accessToken") ||
     sessionStorage.getItem("accessToken");
@@ -19,13 +21,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
+  if (isLoading) {
+    return <div>Loading...</div>; // or a spinner
+  }
+
+  console.log(" roles, isLoading ", roles, isLoading);
   try {
     const decoded: any = jwtDecode(accessToken);
-
-    const decodedRoles =
-      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-    const roles = Array.isArray(decodedRoles) ? decodedRoles : [decodedRoles];
 
     const isExpired = (decoded.exp as number) * 1000 < Date.now();
 
