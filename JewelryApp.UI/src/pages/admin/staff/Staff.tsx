@@ -1,5 +1,9 @@
 import { FaEdit, FaPlus, FaTrash, FaUserShield } from "react-icons/fa";
-import { getAllUsers, softDeleteUser } from "../../../apis/users.api/users.api";
+import {
+  getAllRoles,
+  getAllUsers,
+  softDeleteUser,
+} from "../../../apis/users.api/users.api";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
@@ -33,6 +37,10 @@ const Staff = () => {
     pagination,
   } = useLocalApiSearchSortPagination<User>({
     apiToCall: (data) => getAllUsers(data.payload),
+  });
+
+  const { data: allRoles } = useLocalApiSearchSortPagination<string>({
+    apiToCall: () => getAllRoles(),
   });
 
   // Table headers
@@ -130,16 +138,29 @@ const Staff = () => {
             />
           </div>
         </div>
-
         <CustomTable headers={staffMembersHeaders} data={staffMembersData} />
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+        />
       </div>
 
-      <Paginator
-        totalRecords={pagination.totalRecords}
-        pageNumber={pagination.pageNumber}
-        pageSize={pagination.pageSize}
-        onPaginationChange={onPaginationChange}
-      />
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Roles</h3>
+        </div>
+
+        <CustomTable
+          headers={["Role"]}
+          data={allRoles.map((role) => {
+            return {
+              Role: role,
+            };
+          })}
+        />
+      </div>
     </div>
   );
 };

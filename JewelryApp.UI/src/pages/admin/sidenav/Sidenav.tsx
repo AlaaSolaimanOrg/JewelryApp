@@ -70,6 +70,11 @@ const SideNav = () => {
       icon: <FaPlus className="icon" />,
       path: "/admin/addProduct",
     },
+    {
+      label: "Add Staff",
+      icon: <FaPlus className="icon" />,
+      path: "/admin/addStaff",
+    },
   ];
 
   // Logout handler
