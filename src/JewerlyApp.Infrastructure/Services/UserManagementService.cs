@@ -51,6 +51,8 @@ namespace JewerlyApp.Infrastructure.Services
                 {
                     UserName = request.UserName,
                     Email = request.Email,
+                    FullName = request.FullName,
+                    PhoneNumber = request.PhoneNumber,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -122,6 +124,9 @@ namespace JewerlyApp.Infrastructure.Services
 
                 if (request.IsActive.HasValue)
                     user.IsActive = request.IsActive.Value;
+
+                user.FullName = request.FullName;
+                user.PhoneNumber = request.PhoneNumber; 
 
                 user.UpdatedAt = DateTime.UtcNow;
 
