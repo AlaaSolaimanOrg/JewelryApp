@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -125,10 +125,10 @@ const ProductLookup = () => {
       {product ? (
         <div className="result-panel active">
           <Row className="product-details">
-            <Col xs={4} md={12} className="product-image">
+            <Col xs={6}  className="product-image">
               <img src={`${API_URL}${product?.images?.[0]?.imageUrl}`} alt="" />
             </Col>
-            <Col className="product-info" xs={8} md={12}>
+            <Col className="product-info" xs={6} >
               <h3 className="product-name">{product.name}</h3>
               <div className="product-sku">SKU: {product.sku}</div>
 

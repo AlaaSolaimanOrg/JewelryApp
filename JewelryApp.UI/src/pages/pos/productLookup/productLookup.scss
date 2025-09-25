@@ -55,17 +55,11 @@
     }
 
     .product-details {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 25px;
-
       .product-image {
-        display: flex;
         align-items: center;
         justify-content: center;
         min-height: 200px;
         color: #888;
-        width: 100%;
         position: relative;
 
         img {
