@@ -81,7 +81,6 @@ const ProductLookup = () => {
     const payload = { productId: productId, price: product.pricePerGram };
     addProductToCart(payload)
       .then((response) => {
-        console.log("response",response)
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           setProduct(null);
@@ -90,7 +89,6 @@ const ProductLookup = () => {
             setAnyProductAdded(true);
           }
         } else {
-          console.log("test")
           showError(response?.message);
         }
       })
@@ -131,8 +129,8 @@ const ProductLookup = () => {
               <img src={`${API_URL}${product?.images?.[0]?.imageUrl}`} alt="" />
             </Col>
             <Col className="product-info" xs={8} md={12}>
-              <h3 className="product-name">Diamond Solitaire Ring</h3>
-              <div className="product-sku">SKU: GLD-21K-RNG-0042</div>
+              <h3 className="product-name">{product.name}</h3>
+              <div className="product-sku">SKU: {product.sku}</div>
 
               <Row>
                 <Col xs={12} md={6} className="detail-item">

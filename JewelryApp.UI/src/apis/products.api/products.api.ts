@@ -20,13 +20,13 @@ export const getProductById = async (payload: {
 };
 
 export const createProduct = async (payload: FormData) => {
-  return requestApi("POST", apiRoutes.product.createProduct, payload, null, {
+  return requestApi("POST", apiRoutes.product.createProduct, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 export const editProduct = async (payload: FormData) => {
-  return requestApi("PUT", apiRoutes.product.editProduct, payload, null, {
+  return requestApi("PUT", apiRoutes.product.editProduct, payload, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };

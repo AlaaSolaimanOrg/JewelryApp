@@ -18,7 +18,7 @@ namespace JewerlyApp.Application.Interfaces
         Task<PaginatedResponse<UserDto>> GetAllUsersAsync(GetAllUsersQuery query, CancellationToken cancellationToken);
         Task<GenericResponse<bool>> RestoreUserAsync(int userId);
         Task<GenericResponse<List<string>>> GetAllRolesAsync();
-        Task<GenericResponse<List<string>>> GetUserRolesAsync();
+        Task<GenericResponse<UserDto>> GetUserInfoAsync();
 
         Task<GenericResponse<bool>> AssignRolesToUserAsync(int userId, List<string> roles);
         Task<GenericResponse<bool>> RemoveRolesFromUserAsync(int userId, List<string> roles);

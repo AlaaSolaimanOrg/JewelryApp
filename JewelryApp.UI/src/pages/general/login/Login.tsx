@@ -1,15 +1,14 @@
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../apis/login.api/login.api";
 import logo from "../../../assets/images/jewelary-logo.svg";
+import { useAuth } from "../../../context/AuthContext";
 import { checkRequestSucceeded, showError } from "../../../utils";
 import "./login.scss";
-import { useAuth } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { roles, callGetUserRoles } = useAuth();
+  const { userInfo, callGetUserInfo } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,9 +16,9 @@ const Login = () => {
   const [isloading, setIsLoading] = useState(false);
 
   const redirectAfterLogin = () => {
-    if (roles.includes("Admin") || roles.includes("Admin2")) {
+    if (userInfo?.roles?.includes("Admin") || userInfo?.roles?.includes("Admin2")) {
       navigate("/admin/dashboard");
-    } else if (roles.includes("PosRole")) {
+    } else if (userInfo?.roles?.includes("PosRole")) {
       navigate("/");
     } else {
       // Default redirect if no roles match
@@ -28,15 +27,15 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (roles.length) {
+    if (userInfo?.roles?.length) {
       redirectAfterLogin();
     }
-  }, [roles]);
+  }, [userInfo]);
 
   const callLogin = () => {
     setIsLoading(true);
 
-    const payload = { username: email, password: password };
+    const payload = { email: email, password: password };
     login(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
@@ -50,7 +49,7 @@ const Login = () => {
             sessionStorage.setItem("refreshToken", refreshToken);
           }
 
-          callGetUserRoles();
+          callGetUserInfo();
         } else {
           showError(response?.message);
         }

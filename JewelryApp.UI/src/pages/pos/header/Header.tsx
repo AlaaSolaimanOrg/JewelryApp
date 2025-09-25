@@ -10,7 +10,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { setRoles } = useAuth();
+  const { userInfo, setUserInfo } = useAuth();
 
   const location = useLocation();
   const pagesTitles = {
@@ -31,7 +31,9 @@ const Header = () => {
     localStorage.removeItem("refreshToken");
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
-    setRoles([]);
+    setUserInfo((pre) => {
+      return { ...pre, roles: [] };
+    });
     navigate("/login");
   };
 
@@ -46,7 +48,7 @@ const Header = () => {
         <div className="nav-controls">
           <div className="user-info">
             <FaUser />
-            <span>Sarah Johnson</span>
+            <span>{userInfo?.userName}</span>
           </div>
           <Clock />
           <button

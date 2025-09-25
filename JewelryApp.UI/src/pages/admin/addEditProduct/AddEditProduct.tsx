@@ -245,7 +245,7 @@ const AddEditProduct = ({ isEdit }) => {
                   <option value="">Select Karat</option>
                   <option value={KaratType.Karat18}>18K Gold</option>
                   <option value={KaratType.Karat21}>21K Gold</option>
-                  <option value={KaratType.Karat24}>22K Gold</option>
+                  <option value={KaratType.Karat24}>24K Gold</option>
                 </select>
               </div>
             </div>

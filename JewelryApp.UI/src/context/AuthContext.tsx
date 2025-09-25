@@ -1,20 +1,33 @@
 // src/contexts/AuthContext.tsx
 import React, { createContext, useContext } from "react";
-import { getUserRoles } from "../apis/users.api/users.api";
+import { getUserInfo } from "../apis/users.api/users.api";
 import useLocalApi from "../hooks/useLocalApi";
 
-interface AuthContextType {
+interface User {
+  id: number;
+  userName: string;
+  email: string;
+  fullName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
+  isActive: boolean;
   roles: string[];
-  setRoles: any;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+interface AuthContextType {
+  userInfo: User | null;
+  setUserInfo: any;
   isLoading: boolean;
-  callGetUserRoles: () => Promise<string[]>;
+  callGetUserInfo: () => Promise<string[]>;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  roles: [],
-  setRoles: () => {},
+  userInfo: null,
+  setUserInfo: () => {},
   isLoading: true,
-  callGetUserRoles: () => {},
+  callGetUserInfo: () => {},
 });
 
 export const AuthProvider = ({
@@ -27,16 +40,16 @@ export const AuthProvider = ({
     sessionStorage.getItem("accessToken");
 
   const {
-    data: allUserRoles,
-    setData: setRoles,
+    data: userInfo,
+    setData: setUserInfo,
     isLoading,
-    fetchData: callGetUserRoles,
+    fetchData: callGetUserInfo,
   } = useLocalApi({
-    apiToCall: () => getUserRoles(),
+    apiToCall: () => getUserInfo(),
     extraEffectCheck: !!accessToken,
     initallyIsLoading: true,
   }) as {
-    data: string[];
+    data: User;
     setData: any;
     isLoading: boolean;
     fetchData: () => void;
@@ -44,7 +57,7 @@ export const AuthProvider = ({
 
   return (
     <AuthContext.Provider
-      value={{ roles: allUserRoles, isLoading, callGetUserRoles, setRoles }}
+      value={{ userInfo: userInfo, isLoading, callGetUserInfo, setUserInfo }}
     >
       {children}
     </AuthContext.Provider>

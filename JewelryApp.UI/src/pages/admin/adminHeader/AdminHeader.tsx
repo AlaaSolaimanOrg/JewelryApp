@@ -3,9 +3,11 @@ import "./adminHeader.scss";
 import { useLocation } from "react-router-dom";
 import { TbCirclePlusFilled } from "react-icons/tb";
 import type { JSX } from "react";
+import { useAuth } from "../../../context/AuthContext";
 
 const AdminHeader = () => {
   const location = useLocation();
+  const { userInfo } = useAuth();
 
   const pathName = location.pathname;
 
@@ -41,8 +43,8 @@ const AdminHeader = () => {
         <div className="user-profile">
           <div className="user-avatar">AM</div>
           <div className="user-info">
-            <div className="user-name">Admin Manager</div>
-            <div className="user-role">Store Admin</div>
+            <div className="user-name">{userInfo?.userName}</div>
+            {/* <div className="user-role">Store Admin</div> */}
           </div>
         </div>
       </div>

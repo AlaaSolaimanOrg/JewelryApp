@@ -42,6 +42,6 @@ export const getUserById = async (payload: { userId: string }) => {
   return requestApi("GET", `${apiRoutes.users.getUserById}/${payload.userId}`);
 };
 
-export const getUserRoles = async () => {
-  return requestApi("GET", apiRoutes.users.getUserRoles);
+export const getUserInfo = async () => {
+  return requestApi("GET", apiRoutes.users.getUserInfo);
 };

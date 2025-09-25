@@ -12,7 +12,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles,
 }) => {
-  const { roles, isLoading } = useAuth();
+  const { userInfo, isLoading } = useAuth();
   const accessToken =
     localStorage.getItem("accessToken") ||
     sessionStorage.getItem("accessToken");
@@ -25,7 +25,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <div>Loading...</div>; // or a spinner
   }
 
-  console.log(" roles, isLoading ", roles, isLoading);
   try {
     const decoded: any = jwtDecode(accessToken);
 
@@ -37,10 +36,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return <Navigate to="/login" replace />;
     }
 
-    console.log("roles", roles);
     // ✅ Check role authorization
     if (allowedRoles && allowedRoles.length > 0) {
-      const hasRole = roles?.some((role) => allowedRoles.includes(role));
+      const hasRole = userInfo?.roles?.some((role) => allowedRoles.includes(role));
       if (!hasRole) {
         return <Navigate to="/unauthorized" replace />; // you can create this page
       }

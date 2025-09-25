@@ -37,7 +37,7 @@ namespace JewerlyApp.Infrastructure.Services
         {
             try
             {
-                var existingUser = await _userManager.FindByNameAsync(request.UserName);
+                var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null)
                 {
                     return new GenericResponse<UserDto>
@@ -393,7 +393,7 @@ namespace JewerlyApp.Infrastructure.Services
                 Message = Messages.Success
             };            
         }
-        public async Task<GenericResponse<List<string>>> GetUserRolesAsync()
+        public async Task<GenericResponse<UserDto>> GetUserInfoAsync()
         {
             try
             {
@@ -401,7 +401,7 @@ namespace JewerlyApp.Infrastructure.Services
                 var user = await _userManager.FindByIdAsync(userId.ToString());
                 if (user == null)
                 {
-                    return new GenericResponse<List<string>>
+                    return new GenericResponse<UserDto>
                     {
                         StatusCode = ResponseStatusCode.NotFound,
                         Message = Messages.Error_User_Not_Found
@@ -409,16 +409,19 @@ namespace JewerlyApp.Infrastructure.Services
                 }
 
                 var roles = await _userManager.GetRolesAsync(user);
-                return new GenericResponse<List<string>>
+
+                var result = MapToUserDto(user, roles);
+
+                return new GenericResponse<UserDto>
                 {
                     StatusCode = ResponseStatusCode.Success,
-                    Data = roles.ToList(),
+                    Data = result,
                     Message = Messages.Success
                 };
             }
             catch (Exception ex)
             {
-                return new GenericResponse<List<string>>
+                return new GenericResponse<UserDto>
                 {
                     StatusCode = ResponseStatusCode.InternalServerError,
                     Message = ex.Message,
@@ -517,7 +520,7 @@ namespace JewerlyApp.Infrastructure.Services
                     var errors = result.Errors.Select(e => e.Description).ToList();
                     return new GenericResponse<bool>
                     {
-                        StatusCode = ResponseStatusCode.BadRequest,
+                        StatusCode = ResponseStatusCode. BadRequest,
                         Message = Messages.Error_User_Role_Removal_Failed,
                         Errors = errors
                     };

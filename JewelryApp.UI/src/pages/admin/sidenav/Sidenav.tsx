@@ -18,7 +18,7 @@ import { useAuth } from "../../../context/AuthContext";
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setRoles } = useAuth();
+  const { setUserInfo } = useAuth();
 
   const navItems = [
     {
@@ -83,7 +83,9 @@ const SideNav = () => {
     localStorage.removeItem("refreshToken");
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("refreshToken");
-    setRoles([]);
+    setUserInfo((pre) => {
+      return { ...pre, roles: [] };
+    });
     navigate("/login");
   };
 

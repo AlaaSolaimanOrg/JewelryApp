@@ -19,7 +19,7 @@ namespace JewerlyApp.Application.Auth.Commands.Login
 
         public async Task<GenericResponse<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var validation = await _userService.ValidateUserAsync(request.Username, request.Password);
+            var validation = await _userService.ValidateUserAsync(request.Email, request.Password);
 
             if (validation.StatusCode != ResponseStatusCode.Success)
                 return new GenericResponse<LoginResponse>

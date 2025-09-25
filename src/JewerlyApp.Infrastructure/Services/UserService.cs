@@ -26,16 +26,16 @@ namespace JewerlyApp.Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<GenericResponse<(int UserId, string UserName, IList<string> Roles)>> ValidateUserAsync(string username, string password)
+        public async Task<GenericResponse<(int UserId, string UserName, IList<string> Roles)>> ValidateUserAsync(string email, string password)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return new GenericResponse<(int, string, IList<string>)>
                 {
                     Data = default,
                     StatusCode = ResponseStatusCode.BadRequest,
-                    Message = "Invalid username"
+                    Message = "Invalid email"
                 };
             }
 

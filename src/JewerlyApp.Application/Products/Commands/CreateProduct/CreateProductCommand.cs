@@ -13,8 +13,8 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 {
     public class CreateProductCommand : IRequest<GenericResponse<string>>
     {
-        public string Name { get; set; }
-        public string Sku { get; set; }
+        public string? Name { get; set; }
+        public string? Sku { get; set; }
         public ProductCategory Category { get; set; }
         public ProductType Type { get; set; }
         public KaratType KaratType { get; set; }

@@ -114,9 +114,9 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <returns>List of user roles</returns>
         [HttpGet]
         [Authorize(Roles = "Admin,PosRole")]
-        public async Task<IActionResult> GetUserRoles()
+        public async Task<IActionResult> GetUserInfo()
         {
-            var response = await _userManagementService.GetUserRolesAsync();
+            var response = await _userManagementService.GetUserInfoAsync();
             return CreateResponse(response);
         }
 
