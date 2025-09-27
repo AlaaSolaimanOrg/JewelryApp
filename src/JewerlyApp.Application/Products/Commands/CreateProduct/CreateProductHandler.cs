@@ -34,7 +34,8 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Weight = request.Weight,
                 Category = request.Category,
                 Type = request.Type,
-                Description = request.Description
+                Description = request.Description,
+                Quantity = request.Quantity,
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
