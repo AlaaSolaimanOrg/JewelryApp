@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using JewerlyApp.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace JewerlyApp.Application.Products.Commands.EditProduct
 {
@@ -17,6 +18,9 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
         public KaratType KaratType { get; set; }
         public string? Description { get; set; }
         public decimal Weight { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater or equal to 1")]
+        public int Quantity { get; set; }
 
         public List<IFormFile> Images { get; set; } = new List<IFormFile>();
     }

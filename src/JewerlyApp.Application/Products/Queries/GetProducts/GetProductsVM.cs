@@ -17,6 +17,8 @@
             public ProductCategory Category { get; set; }
             public ProductType ProductType { get; set; }
             public string? Description { get; set; }
+            public decimal? PricePerGram { get; set; } = null;
+            public decimal? Price { get; set; } = null;
             public List<ProductImageVM> Images { get; set; } = new();
         }
     }

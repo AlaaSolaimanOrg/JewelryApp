@@ -45,6 +45,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             product.Type = request.Type;
             product.Description = request.Description;
             product.LastUpdatedDate = DateTime.UtcNow;
+            product.Quantity = request.Quantity;
             
             if (product.Images != null && product.Images.Any())
             {

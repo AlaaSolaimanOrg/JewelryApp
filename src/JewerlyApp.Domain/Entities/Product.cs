@@ -17,6 +17,7 @@ namespace JewerlyApp.Domain.Entities
         public ProductType Type { get; set; }
         public ProductCategory Category { get; set; }
         public string? Description { get; set; }
+        public int? Quantity { get; set; } = 1;
         public List<ProductImage> Images { get; set; } = new();
     }
 }
