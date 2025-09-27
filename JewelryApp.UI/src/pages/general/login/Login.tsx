@@ -123,9 +123,6 @@ const Login = () => {
               />
               Remember me
             </label>
-            <a href="/forgot-password" className="forgot-password">
-              Forgot password?
-            </a>
           </div>
 
           <button type="submit" className="btn btn-secondary loginButton">
