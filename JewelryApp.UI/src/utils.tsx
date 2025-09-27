@@ -162,3 +162,10 @@ export const renderLongDescription = (
 export const trimLeadingZeros = (value: number | string) => {
   return Number(String(value).replace(/^0+(?=\d)/, ""));
 };
+
+export const isPositiveInteger = (value: string | number): boolean => {
+  if (typeof value === "number") {
+    return Number.isInteger(value) && value > 0;
+  }
+  return /^[0-9]+$/.test(value);
+};

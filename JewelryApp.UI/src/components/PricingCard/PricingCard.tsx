@@ -25,6 +25,7 @@ const PricingCard = ({
   const karatLabels: Record<KaratType, string> = {
     [KaratType.Karat18]: "18K",
     [KaratType.Karat21]: "21K",
+    [KaratType.Karat22]: "22K",
     [KaratType.Karat24]: "24K",
   };
 
@@ -36,7 +37,10 @@ const PricingCard = ({
 
       <div className="form-row">
         {prices.map((price) => (
-          <div className="form-col">
+          <div
+            className="form-col"
+            key={`${price.productType}-${price.karatType}`}
+          >
             <div className="form-group">
               <label className={`form-label ${!isGlobal ? "required" : ""}`}>
                 {`${karatLabels[price.karatType]} Price/Gram ($)`}

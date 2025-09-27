@@ -13,9 +13,14 @@ export interface InventoryFilters {
 }
 
 const filtersInitialState: InventoryFilters = {
-  karatTypes: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+  karatTypes: [
+    KaratType.Karat18,
+    KaratType.Karat21,
+    KaratType.Karat22,
+    KaratType.Karat24,
+  ],
   weight: 250,
-  category: null, 
+  category: null,
   // ringSize: "Any",
   // necklaceLength: "Any",
   // tags: [],
@@ -47,6 +52,7 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
   const karatOptions = [
     { label: "18K Gold", value: KaratType.Karat18 },
     { label: "21K Gold", value: KaratType.Karat21 },
+    { label: "22K Gold", value: KaratType.Karat22 },
     { label: "24K Gold", value: KaratType.Karat24 },
   ];
 

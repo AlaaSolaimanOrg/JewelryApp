@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   FaBox,
   FaEdit,
   FaExchangeAlt,
   FaFileExport,
-  FaHistory,
   FaPlus,
   FaSearch,
   FaTag,
   FaTags,
-  FaTrash,
+  FaTrash
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -42,6 +41,7 @@ export interface Product {
   productType: ProductType;
   description?: string;
   pricePerGram?: number;
+  quantity: number;
   images: { imageUrl: string }[];
 }
 
@@ -52,7 +52,7 @@ const Inventory = () => {
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters | null>(
     {
-      karatTypes: [KaratType.Karat18, KaratType.Karat21, KaratType.Karat24],
+      karatTypes: [KaratType.Karat18, KaratType.Karat21,KaratType.Karat22, KaratType.Karat24],
       weight: 250,
       category: null,
       // ringSize: "Any",
@@ -79,6 +79,7 @@ const Inventory = () => {
   const headers = [
     "Image",
     "Product Name",
+    "Quantity",
     "SKU",
     "Karat",
     "Weight",
@@ -100,6 +101,7 @@ const Inventory = () => {
         }}
       />
     ),
+    Quantity: product.quantity,
     ProductName: product.name,
     SKU: product.sku,
     Karat: `${product.karatType}K`,
@@ -113,9 +115,6 @@ const Inventory = () => {
           onClick={() => handleEditProduct(product.id)}
         >
           <FaEdit />
-        </button>
-        <button className="action-btn" title="History">
-          <FaHistory />
         </button>
         <button className="action-btn" title="Print Tag">
           <FaTag />

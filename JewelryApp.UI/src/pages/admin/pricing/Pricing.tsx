@@ -50,6 +50,11 @@ const Pricing = () => {
     },
     {
       productType: ProductType.Gold,
+      karatType: KaratType.Karat22,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Gold,
       karatType: KaratType.Karat24,
       pricePerGram: 0,
     },
@@ -65,10 +70,16 @@ const Pricing = () => {
     },
     {
       productType: ProductType.Silver,
+      karatType: KaratType.Karat22,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
       karatType: KaratType.Karat24,
       pricePerGram: 0,
     },
   ]);
+
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {
       productType: ProductType.Gold,
@@ -78,6 +89,11 @@ const Pricing = () => {
     {
       productType: ProductType.Gold,
       karatType: KaratType.Karat21,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Gold,
+      karatType: KaratType.Karat22,
       pricePerGram: 0,
     },
     {
@@ -96,6 +112,11 @@ const Pricing = () => {
     {
       productType: ProductType.Silver,
       karatType: KaratType.Karat21,
+      pricePerGram: 0,
+    },
+    {
+      productType: ProductType.Silver,
+      karatType: KaratType.Karat22,
       pricePerGram: 0,
     },
     {
@@ -145,21 +166,21 @@ const Pricing = () => {
     fetchData: any;
     setData: any;
   };
-  const {
-    data: silverGlobalPricingSettings,
-    fetchData: recallSilverGlobalPricingSettings,
-  } = useLocalApi({
-    apiToCall: (data) => getGlobalPricingSettings(data.payload),
-    payload: {
-      productType: ProductType.Silver,
-      currency: Currency.USD,
-    },
-  }) as {
-    data: MetalPricing;
-    fetchData: any;
 
-    setData: any;
-  };
+  // const {
+  //   data: silverGlobalPricingSettings,
+  //   fetchData: recallSilverGlobalPricingSettings,
+  // } = useLocalApi({
+  //   apiToCall: (data) => getGlobalPricingSettings(data.payload),
+  //   payload: {
+  //     productType: ProductType.Silver,
+  //     currency: Currency.USD,
+  //   },
+  // }) as {
+  //   data: MetalPricing;
+  //   fetchData: any;
+  //   setData: any;
+  // };
 
   useEffect(() => {
     const newPrices = prices.map((oldPrice) => {
@@ -188,31 +209,41 @@ const Pricing = () => {
       },
       {
         productType: ProductType.Gold,
+        karatType: KaratType.Karat22,
+        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_22k, 0),
+      },
+      {
+        productType: ProductType.Gold,
         karatType: KaratType.Karat24,
         pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_24k, 0),
       },
     ]);
   }, [goldGlobalPricingSettings]);
 
-  useEffect(() => {
-    setGlobalSilverPrices([
-      {
-        productType: ProductType.Silver,
-        karatType: KaratType.Karat18,
-        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_18k, 0),
-      },
-      {
-        productType: ProductType.Silver,
-        karatType: KaratType.Karat21,
-        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_21k, 0),
-      },
-      {
-        productType: ProductType.Silver,
-        karatType: KaratType.Karat24,
-        pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_24k, 0),
-      },
-    ]);
-  }, [silverGlobalPricingSettings]);
+  // useEffect(() => {
+  //   setGlobalSilverPrices([
+  //     {
+  //       productType: ProductType.Silver,
+  //       karatType: KaratType.Karat18,
+  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_18k, 0),
+  //     },
+  //     {
+  //       productType: ProductType.Silver,
+  //       karatType: KaratType.Karat21,
+  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_21k, 0),
+  //     },
+  //     {
+  //       productType: ProductType.Silver,
+  //       karatType: KaratType.Karat22,
+  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_22k, 0),
+  //     },
+  //     {
+  //       productType: ProductType.Silver,
+  //       karatType: KaratType.Karat24,
+  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_24k, 0),
+  //     },
+  //   ]);
+  // }, [silverGlobalPricingSettings]);
 
   const callEditPrice = (prices) => {
     setIsEditingPrices(true);
@@ -278,7 +309,7 @@ const Pricing = () => {
         </Col>
       </Row>
 
-      <Row>
+      {/* <Row >
         <Col sm={6}>
           <PricingCard
             cardTitle="Silver Pricing"
@@ -300,7 +331,7 @@ const Pricing = () => {
             recallGlobalPrices={recallSilverGlobalPricingSettings}
           />
         </Col>
-      </Row>
+      </Row> */}
     </div>
   );
 };

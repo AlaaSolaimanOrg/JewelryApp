@@ -16,6 +16,7 @@ import {
   checkRequestSucceeded,
   checkSKUFormat,
   debounce,
+  isPositiveInteger,
   safeValue,
   showError,
   showSuccess,
@@ -33,6 +34,7 @@ const ProductLookup = () => {
   const [searchBy, setSearchBy] = useState("");
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [anyProductAdded, setAnyProductAdded] = useState(false);
+  const [productQuantity, setProductQuantity] = useState(1);
 
   const { data: cartProducts } = useLocalApi({
     apiToCall: (data) => getCartProducts(data.payload),
@@ -73,7 +75,8 @@ const ProductLookup = () => {
       setProduct(null);
     }
   };
-  const totalPrice = (product?.pricePerGram ?? 0) * product?.weight;
+  const totalPrice =
+    (product?.pricePerGram ?? 0) * product?.weight * productQuantity;
 
   const handleAddToCartClick = (productId) => {
     setIsAddingProduct(true);
@@ -125,10 +128,10 @@ const ProductLookup = () => {
       {product ? (
         <div className="result-panel active">
           <Row className="product-details">
-            <Col xs={6}  className="product-image">
+            <Col xs={6} lg={4} className="product-image">
               <img src={`${API_URL}${product?.images?.[0]?.imageUrl}`} alt="" />
             </Col>
-            <Col className="product-info" xs={6} >
+            <Col className="product-info" xs={6} lg={8}>
               <h3 className="product-name">{product.name}</h3>
               <div className="product-sku">SKU: {product.sku}</div>
 
@@ -152,7 +155,24 @@ const ProductLookup = () => {
               </Row>
 
               <Row>
-                <Col xs={12} className="detail-item">
+                <Col xs={6} className="detail-item">
+                  <label>Quantity</label>
+                  <input
+                    type="number"
+                    value={productQuantity}
+                    onChange={(e) => {
+                      const value = e.target.value;
+
+                      if (value.length > 7) {
+                        return;
+                      } else if (value === "" || isPositiveInteger(value)) {
+                        setProductQuantity(Number(value));
+                      }
+                    }}
+                  />
+                </Col>
+
+                <Col xs={6} className="detail-item">
                   <label>Price per gram</label>
                   <input
                     value={`${safeValue(product.pricePerGram)}`}
@@ -172,12 +192,20 @@ const ProductLookup = () => {
               onClick={() => {
                 handleAddToCartClick(product.id);
               }}
+              disabled={
+                productQuantity < 1 ||
+                productQuantity > product.quantity ||
+                isAddingProduct
+              }
             >
               <FaCartPlus />
               Add to Cart
             </button>
 
-            <Link to={"/manualItemEntry"} className="text-decoration-none temoporarylyHide">
+            <Link
+              to={"/manualItemEntry"}
+              className="text-decoration-none temoporarylyHide"
+            >
               <button className="btn btn-secondary">
                 <FaPen />
                 Manual Entry

@@ -1,6 +1,7 @@
 export enum KaratType {
   Karat18 = 18,
   Karat21 = 21,
+  Karat22 = 22,
   Karat24 = 24,
 }
 

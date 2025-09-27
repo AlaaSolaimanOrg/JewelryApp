@@ -12,6 +12,7 @@
             public Guid Id { get; set; }
             public string Sku { get; set; }
             public string? Name { get; set; }
+            public int? Quantity { get; set; }
             public KaratType KaratType { get; set; }
             public decimal Weight { get; set; }
             public ProductCategory Category { get; set; }

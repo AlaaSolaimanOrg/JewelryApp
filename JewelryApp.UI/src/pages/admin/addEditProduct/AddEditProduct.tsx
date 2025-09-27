@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+import Barcode from "react-barcode";
+import { AiFillPrinter } from "react-icons/ai";
 import { FaSave, FaTimes } from "react-icons/fa";
+import { IoBarcodeSharp } from "react-icons/io5";
 import { TbCirclePlusFilled } from "react-icons/tb";
+import { useParams } from "react-router-dom";
 import {
   createProduct,
   editProduct,
@@ -9,20 +13,17 @@ import {
 } from "../../../apis/products.api/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
-import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
+import { API_URL } from "../../../config/config";
 import useLocalApi from "../../../hooks/useLocalApi";
+import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import {
   checkRequestSucceeded,
+  isPositiveInteger,
   showError,
   showSuccess,
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { API_URL } from "../../../config/config";
-import Barcode from "react-barcode";
-import { IoBarcodeSharp } from "react-icons/io5";
-import { AiFillPrinter } from "react-icons/ai";
 
 const productFieldsInitialState = {
   productName: "",
@@ -32,10 +33,10 @@ const productFieldsInitialState = {
   weight: "",
   category: "",
   description: "",
+  quantity: 1,
 };
 
 const AddEditProduct = ({ isEdit }) => {
-  const navigate = useNavigate();
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
 
@@ -90,6 +91,7 @@ const AddEditProduct = ({ isEdit }) => {
         weight: product.weight,
         category: product.category,
         description: product.description,
+        quantity: product.quantity,
       });
 
       const loadFiles = async () => {
@@ -133,6 +135,7 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("KaratType", productFields.karat);
     formData.append("Description", productFields.description);
     formData.append("Weight", productFields.weight);
+    formData.append("quantity", productFields.quantity?.toString());
 
     if (files && files.length > 0) {
       files.forEach((file) => {
@@ -231,6 +234,33 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
+          <div className="form-row">
+            {/* Quantity */}
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label required">Quantity</label>
+                <input
+                  type="number"
+                  min={1} // ensures positive
+                  step={1} // disables decimals
+                  className="form-control"
+                  placeholder="Enter quantity"
+                  value={productFields.quantity}
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (value.length > 7) {
+                      return;
+                    } else if (value === "" || isPositiveInteger(value)) {
+                      handleProductField("quantity", value);
+                    }
+                  }}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Karat */}
           <div className="form-row">
             <div className="form-col">
@@ -245,6 +275,7 @@ const AddEditProduct = ({ isEdit }) => {
                   <option value="">Select Karat</option>
                   <option value={KaratType.Karat18}>18K Gold</option>
                   <option value={KaratType.Karat21}>21K Gold</option>
+                  <option value={KaratType.Karat22}>22K Gold</option>
                   <option value={KaratType.Karat24}>24K Gold</option>
                 </select>
               </div>
