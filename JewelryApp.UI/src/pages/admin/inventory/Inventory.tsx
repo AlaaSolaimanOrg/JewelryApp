@@ -8,7 +8,7 @@ import {
   FaSearch,
   FaTag,
   FaTags,
-  FaTrash
+  FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,7 +20,9 @@ import InventoryFilterSideBar, {
 } from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable from "../../../components/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/Table/CustomTable";
 import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
@@ -42,6 +44,7 @@ export interface Product {
   description?: string;
   pricePerGram?: number;
   quantity: number;
+  price: number;
   images: { imageUrl: string }[];
 }
 
@@ -50,16 +53,23 @@ const Inventory = () => {
 
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
 
-  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters | null>(
-    {
-      karatTypes: [KaratType.Karat18, KaratType.Karat21,KaratType.Karat22, KaratType.Karat24],
-      weight: 250,
-      category: null,
-      // ringSize: "Any",
-      // necklaceLength: "Any",
-      // tags: [],
-    }
-  );
+  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
+    karatTypes: [
+      KaratType.Karat18,
+      KaratType.Karat21,
+      KaratType.Karat22,
+      KaratType.Karat24,
+    ],
+    weightFrom: 0,
+    weightTo: 9999,
+    priceFrom: 0,
+    priceTo: 999999,
+    category: null,
+    // ringSize: "Any",
+    // necklaceLength: "Any",
+    // tags: [],
+  });
+
   const {
     data: products,
     isLoading: isLoadingProducts,
@@ -71,21 +81,26 @@ const Inventory = () => {
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
       karatTypeFilter: appliedFilters?.karatTypes,
-      weightFilter: appliedFilters?.weight,
+      weightFromFilter: appliedFilters?.weightFrom,
+      weightToFilter: appliedFilters?.weightTo,
+      priceFromFilter: appliedFilters?.priceFrom,
+      priceToFilter: appliedFilters?.priceTo,
       productCategoryFilter: appliedFilters?.category,
     },
     extraEffectDependency: [appliedFilters],
   });
-  const headers = [
-    "Image",
-    "Product Name",
-    "Quantity",
-    "SKU",
-    "Karat",
-    "Weight",
-    "Category",
-    "Tags",
-    "Actions",
+
+  const headers: TableHeader[] = [
+    { key: "image", label: "Image", width: "100px" },
+    { key: "productName", label: "Product Name", width: "250px" },
+    { key: "price", label: "Price", width: "100px" },
+    { key: "quantity", label: "Quantity", width: "100px" },
+    { key: "sku", label: "SKU", width: "120px" },
+    { key: "karat", label: "Karat", width: "80px" },
+    { key: "weight", label: "Weight", width: "100px" },
+    { key: "category", label: "Category", width: "150px" },
+    { key: "tags", label: "Tags", width: "150px" },
+    { key: "actions", label: "Actions", width: "150px" },
   ];
 
   const data = products?.map((product) => ({
@@ -102,6 +117,7 @@ const Inventory = () => {
       />
     ),
     Quantity: product.quantity,
+    Price: product.price,
     ProductName: product.name,
     SKU: product.sku,
     Karat: `${product.karatType}K`,
@@ -130,11 +146,11 @@ const Inventory = () => {
     ),
   }));
 
-  const handleEditProduct = (productId) => {
+  const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
   };
 
-  const handleDeleteProduct = (productId) => {
+  const handleDeleteProduct = (productId: string) => {
     setIsDeletingProduct(true);
 
     const payload = { id: productId };
@@ -186,11 +202,14 @@ const Inventory = () => {
       <div className="inventory-grid">
         {/* Sidebar */}
         <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
+
         {/* Inventory Content */}
         <div className="inventory-content">
           <div className="card">
             <div className="card-header">
-              <h3 className="card-title">Inventory Items (124)</h3>
+              <h3 className="card-title">
+                Inventory Items ({pagination.totalRecords})
+              </h3>
               <div>
                 <div className="search-bar" style={{ width: "250px" }}>
                   <FaSearch className="icon me-1" />
@@ -211,62 +230,10 @@ const Inventory = () => {
               pageSize={pagination.pageSize}
               onPaginationChange={onPaginationChange}
             />
-            {/* <div className="pagination">
-              <div className="page-item active">1</div>
-              <div className="page-item">2</div>
-              <div className="page-item">3</div>
-              <div className="page-item">4</div>
-              <div className="page-item">5</div>
-            </div> */}
           </div>
-
-          {/* Summary */}
-          {/* <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">Inventory Summary</h3>
-            </div>
-
-            <div className="kpi-grid">
-              <div className="kpi-card">
-                <div className="kpi-header">
-                  <div className="kpi-title">Total Items</div>
-                  <div className="kpi-icon">
-                    <FaGem />
-                  </div>
-                </div>
-                <div className="kpi-value">124</div>
-                <div className="kpi-trend">
-                  <FaArrowUp /> 8 new this week
-                </div>
-              </div>
-              <div className="kpi-card">
-                <div className="kpi-header">
-                  <div className="kpi-title">Stock Value</div>
-                  <div className="kpi-icon">
-                    <FaDollarSign />
-                  </div>
-                </div>
-                <div className="kpi-value">$892,350</div>
-                <div className="kpi-trend down">
-                  <FaArrowDown /> 2.1% from last month
-                </div>
-              </div>
-              <div className="kpi-card">
-                <div className="kpi-header">
-                  <div className="kpi-title">Low Stock Items</div>
-                  <div className="kpi-icon">
-                    <FaExclamationTriangle />
-                  </div>
-                </div>
-                <div className="kpi-value">7</div>
-                <div className="kpi-trend">
-                  <FaArrowUp /> Needs attention
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
+
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>
   );

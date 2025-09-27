@@ -29,7 +29,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                 .Include(p => p.Images)
                 .Where(x =>
                     request.KaratTypeFilter.Contains(x.KaratType) &&
-                    x.Weight <= request.WeightFilter &&
+                    x.Weight >= request.weightFromFilter &&
+                    x.Weight <= request.weightToFilter &&
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 );
 

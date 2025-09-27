@@ -5,7 +5,10 @@ import { KaratType, ProductCategory } from "../../types/enums";
 
 export interface InventoryFilters {
   karatTypes: KaratType[];
-  weight: number;
+  weightFrom: number;
+  weightTo: number;
+  priceFrom: number;
+  priceTo: number;
   category: ProductCategory | null;
   // ringSize: string;
   // necklaceLength: string;
@@ -19,26 +22,36 @@ const filtersInitialState: InventoryFilters = {
     KaratType.Karat22,
     KaratType.Karat24,
   ],
-  weight: 250,
+  weightFrom: 0,
+  weightTo: 9999,
+  priceFrom: 0,
+  priceTo: 999999,
   category: null,
   // ringSize: "Any",
   // necklaceLength: "Any",
   // tags: [],
 };
 
-const InventoryFilterSideBar = ({ setAppliedFilters }) => {
+const InventoryFilterSideBar = ({
+  setAppliedFilters,
+}: {
+  setAppliedFilters: (filters: InventoryFilters) => void;
+}) => {
   const [filters, setFilters] = useState<InventoryFilters>(filtersInitialState);
 
-  const toggleValueInArray = (array, currentValue): string[] => {
+  const toggleValueInArray = (array: any[], currentValue: any): any[] => {
     return array.includes(currentValue)
       ? array.filter((oldValue) => oldValue !== currentValue)
       : [...array, currentValue];
   };
 
-  const handleFilterChange = (key, value) => {
+  const handleFilterChange = (key: keyof InventoryFilters, value: any) => {
     setFilters((prev) => {
       if (key === "karatTypes" || key === "tags") {
-        return { ...prev, [key]: toggleValueInArray(prev[key], value) };
+        return {
+          ...prev,
+          [key]: toggleValueInArray(prev[key] as any[], value),
+        };
       }
       return { ...prev, [key]: value };
     });
@@ -83,22 +96,76 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
       {/* Weight */}
       <div className="filter-group">
         <span className="filter-group-title">Weight (grams)</span>
-        <div className="range-slider">
-          <input
-            type="range"
-            min="0"
-            max="250"
-            value={filters.weight}
-            className="slider"
-            onChange={(e) =>
-              handleFilterChange("weight", Number(e.target.value))
-            }
-          />
+        <div className="form-row">
+          <div className="form-col">
+            <label className="form-label">From</label>
+            <input
+              type="number"
+              min={0}
+              max={filters.weightTo}
+              value={filters.weightFrom}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (val <= filters.weightTo)
+                  handleFilterChange("weightFrom", val);
+              }}
+              className="form-control"
+            />
+          </div>
+          <div className="form-col">
+            <label className="form-label">To</label>
+            <input
+              type="number"
+              min={filters.weightFrom}
+              max={9999}
+              value={filters.weightTo}
+              onChange={(e) => {
+                if (e.target.value.length > 4) {
+                  return;
+                }
+                handleFilterChange("weightTo", Number(e.target.value));
+              }}
+              className="form-control"
+            />
+          </div>
         </div>
-        <div className="slider-values">
-          <span>0g</span>
-          <span>{filters.weight}g</span>
-          <span>250g</span>
+      </div>
+
+      {/* Price */}
+      <div className="filter-group">
+        <span className="filter-group-title">Price</span>
+        <div className="form-row">
+          <div className="form-col">
+            <label className="form-label">From</label>
+            <input
+              type="number"
+              min={0}
+              max={filters.priceTo}
+              value={filters.priceFrom}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (val <= filters.priceTo)
+                  handleFilterChange("priceFrom", val);
+              }}
+              className="form-control"
+            />
+          </div>
+          <div className="form-col">
+            <label className="form-label">To</label>
+            <input
+              type="number"
+              min={filters.priceFrom}
+              max={999999}
+              value={filters.priceTo}
+              onChange={(e) => {
+                if (e.target.value.length > 9) {
+                  return;
+                }
+                handleFilterChange("priceTo", Number(e.target.value));
+              }}
+              className="form-control"
+            />
+          </div>
         </div>
       </div>
 
@@ -115,9 +182,9 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
             )
           }
         >
-          <option value="">Category</option> {/* First default option */}
+          <option value="">Category</option>
           {Object.entries(ProductCategory)
-            .filter(([key, value]) => typeof value === "number")
+            .filter(([_, value]) => typeof value === "number")
             .map(([key, value]) => (
               <option key={value} value={value}>
                 {key}
@@ -125,45 +192,6 @@ const InventoryFilterSideBar = ({ setAppliedFilters }) => {
             ))}
         </select>
       </div>
-
-      {/* Size */}
-      {/* <div className="filter-group">
-        <span className="filter-group-title">Size</span>
-        <div className="form-row">
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Ring Size</label>
-              <select
-                className="form-control"
-                value={filters.ringSize}
-                onChange={(e) => handleFilterChange("ringSize", e.target.value)}
-              >
-                <option>Any</option>
-                <option>4-6</option>
-                <option>7-9</option>
-                <option>10+</option>
-              </select>
-            </div>
-          </div>
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Necklace Length</label>
-              <select
-                className="form-control"
-                value={filters.necklaceLength}
-                onChange={(e) =>
-                  handleFilterChange("necklaceLength", e.target.value)
-                }
-              >
-                <option>Any</option>
-                <option>16-18"</option>
-                <option>19-21"</option>
-                <option>22+"</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div> */}
 
       {/* Buttons */}
       <div className="form-group" style={{ marginTop: "20px" }}>

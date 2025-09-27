@@ -1,13 +1,21 @@
 // CustomTable.tsx
+import React from "react";
 import "./customTable.scss";
+
 type TableRow = Record<
   string,
   string | number | React.ReactNode | null | undefined
 >;
 
+export type TableHeader = {
+  key: string;
+  label: string;
+  width?: string;
+};
+
 type CustomTableProps = {
-  headers: string[];
-  data: TableRow[]; // array of objects
+  headers: TableHeader[];
+  data: TableRow[];
 };
 
 const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
@@ -17,17 +25,19 @@ const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
         <thead>
           <tr>
             {headers.map((header, i) => (
-              <th key={i}>{header}</th>
+              <th key={i} style={{ width: header.width }}>
+                {header.label}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data?.length ? (
-            data?.map((row, rowIndex) => (
+            data.map((row, rowIndex) => (
               <tr key={rowIndex}>
-                {headers?.map((header, colIndex) => (
+                {headers.map((header, colIndex) => (
                   <td key={colIndex}>
-                    {row[header.replace(/\s/g, "")] ?? row[header]}
+                    {row[header.key] ?? row[header.label.replace(/\s/g, "")]}
                   </td>
                 ))}
               </tr>
