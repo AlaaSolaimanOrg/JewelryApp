@@ -24,7 +24,7 @@ namespace JewerlyApp.Application.PricingSettings.Queries.GetGlobalPricingSetting
 
         public async Task<GenericResponse<GetGlobalPricingSettingsVM>> Handle(GetGlobalPricingSettingsQuery request, CancellationToken cancellationToken)
         {
-            string apiKey = "goldapi-euptlsmf86umr8-io";
+            string apiKey = "goldapi-bdlo8nsmfzb09p4-io";
             string symbol = request.ProductType == ProductType.Gold ? "XAU" : "XAG";
             string curr = request.Currency.ToString();
             string date = "";
