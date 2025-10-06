@@ -18,6 +18,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import "./mainPosPage.scss";
+import ScanModal from "../../../components/ScanModal/ScanModal";
 
 const initialCustomer = {
   name: "John Doe",
@@ -69,6 +70,7 @@ const initialProducts: Product[] = [
 
 const MainPosPage = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+  const [showScanModal, setShowScanModal] = useState(false);
   const [customer, setCustomer] = useState(initialCustomer);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -168,7 +170,12 @@ const MainPosPage = () => {
               Add New Customer
             </button>
           </div>
-          <button className="scan-btn">
+          <button
+            className="scan-btn"
+            onClick={() => {
+              setShowScanModal(true);
+            }}
+          >
             <FaBarcode style={{ marginRight: "8px" }} /> Scan Product
           </button>
         </header>
@@ -456,6 +463,7 @@ const MainPosPage = () => {
         show={showAddCustomerModal}
         onClose={() => setShowAddCustomerModal(false)}
       />
+      <ScanModal show={showScanModal} onClose={() => setShowScanModal(false)} />
     </div>
   );
 };

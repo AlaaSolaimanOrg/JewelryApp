@@ -16,7 +16,7 @@ const Home = () => {
           system. Scan gold items, calculate prices by weight, and process
           payments seamlessly.
         </p>
-        <Link to={"/productLookup"} className="text-decoration-none">
+        <Link to={"/main"} className="text-decoration-none">
           <button className="btn btn-primary btn-lg">
             <FaPlusCircle /> Start New Sale
           </button>

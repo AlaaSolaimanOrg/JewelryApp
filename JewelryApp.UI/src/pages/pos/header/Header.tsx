@@ -39,7 +39,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="header">
+      <header id="posHeader">
         <Link to={"/"} className="logo text-decoration-none">
           <img src={logo} alt="Logo" width={36} height={32} />
 

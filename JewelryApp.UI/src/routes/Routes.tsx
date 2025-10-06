@@ -1,6 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import AddEditProduct from "../pages/admin/addEditProduct/AddEditProduct";
+import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
 import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
 import Customers from "../pages/admin/customers/Customers";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
@@ -12,20 +13,12 @@ import SalesReports from "../pages/admin/salesReport/SalesReports";
 import Settings from "../pages/admin/settings/Settings";
 import SideNav from "../pages/admin/sidenav/Sidenav";
 import Staff from "../pages/admin/staff/Staff";
-import ApplyDiscount from "../pages/pos/applyDiscount/ApplyDiscount";
-import CartSummary from "../pages/pos/cartSummary/CartSummary";
+import Login from "../pages/general/login/Login";
+import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 import Header from "../pages/pos/header/Header";
 import Home from "../pages/pos/home/Home";
-import ManualItemEntry from "../pages/pos/manualItemEntry/ManualItemEntry";
-import Payment from "../pages/pos/payment/Payment";
-import ProductLookup from "../pages/pos/productLookup/ProductLookup";
-import Receipt from "../pages/pos/receipt/Receipt";
-import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
-import TransactionHistory from "../pages/pos/transactionHistory/TransactionHistory";
-import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
-import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Login from "../pages/general/login/Login";
 import MainPosPage from "../pages/pos/mainPosPage/MainPosPage";
+import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -61,13 +54,13 @@ const AppRoutes = () => {
         >
           <Route path="/" element={<Home />} />
           <Route path="/main" element={<MainPosPage />} />
-          <Route path="/productLookup" element={<ProductLookup />} />
+          {/* <Route path="/productLookup" element={<ProductLookup />} />
           <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/cartSummary" element={<CartSummary />} />
           <Route path="/manualItemEntry" element={<ManualItemEntry />} />
           <Route path="/applyDiscount" element={<ApplyDiscount />} />
           <Route path="/payment" element={<Payment />} />
-          <Route path="/receipt" element={<Receipt />} />
+          <Route path="/receipt" element={<Receipt />} /> */}
           <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
         </Route>
 

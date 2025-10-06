@@ -1,3 +1,10 @@
+import {
+  FaChartLine,
+  FaChartBar,
+  FaWeightHanging,
+  FaShoppingCart,
+  FaUsers,
+} from "react-icons/fa";
 import "./salesReports.scss";
 
 const SalesReports = () => {
@@ -6,7 +13,7 @@ const SalesReports = () => {
       <div className="container">
         <header className="header">
           <div className="logo">
-            <i className="fas fa-chart-line"></i>
+            <FaChartLine className="icon" style={{ marginRight: "8px" }} />
             GoldCraft Sales Report
           </div>
           <div className="date-range">
@@ -19,7 +26,7 @@ const SalesReports = () => {
 
         <section className="section">
           <h2 className="section-title">
-            <i className="fas fa-chart-bar"></i> Summary of Sales
+            <FaChartBar className="icon" style={{ marginRight: "8px" }} /> Summary of Sales
           </h2>
           <div className="summary-cards">
             <div className="summary-card">
@@ -43,7 +50,8 @@ const SalesReports = () => {
 
         <section className="section">
           <h2 className="section-title">
-            <i className="fas fa-weight-hanging"></i> Gold Sold by Karat
+            <FaWeightHanging className="icon" style={{ marginRight: "8px" }} /> Gold Sold by
+            Karat
           </h2>
           <div className="karat-cards">
             <div className="karat-card">
@@ -75,7 +83,7 @@ const SalesReports = () => {
 
         <section className="section">
           <h2 className="section-title">
-            <i className="fas fa-shopping-cart"></i> Items Sold
+            <FaShoppingCart className="icon" style={{ marginRight: "8px" }} /> Items Sold
           </h2>
           <div className="filter-section">
             <select className="filter-select">
@@ -167,7 +175,7 @@ const SalesReports = () => {
 
         <section className="section">
           <h2 className="section-title">
-            <i className="fas fa-users"></i> Customers Sold To
+            <FaUsers className="icon" style={{ marginRight: "8px" }} /> Customers Sold To
           </h2>
           <div className="filter-section">
             <input
