@@ -6,6 +6,7 @@ import type { CartProduct } from "../cartSummary/CartSummary";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { getCartProducts } from "../../../apis/cart.api/cart.api";
 import { OrderDiscount } from "../../../types/enums";
+import type { TableHeader } from "../../../components/Table/CustomTable";
 
 interface EditableCartProduct {
   productId: string;
@@ -97,11 +98,11 @@ const ApplyDiscount = () => {
   };
 
   // Table headers
-  const headers = [
-    { label: "Product" },
-    { label: "Weight (g)" },
-    { label: "Price/Gram" },
-    { label: "Subtotal" },
+  const headers: TableHeader[] = [
+    { key: "product", label: "Product", width: "200px" },
+    { key: "weight", label: "Weight (g)", width: "120px" },
+    { key: "pricePerGram", label: "Price/Gram", width: "120px" },
+    { key: "subtotal", label: "Subtotal", width: "150px" },
   ];
 
   function renderTableHeader() {

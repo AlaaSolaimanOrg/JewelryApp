@@ -1,15 +1,15 @@
-import CustomTable from "../../../components/Table/CustomTable";
+import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
 import "./tagPrinting.scss";
 import { FaPrint, FaSearch, FaRedo, FaGem, FaHeart } from "react-icons/fa";
 
 const TagPrinting = () => {
-  const productsHeaders = [
-    "Select",
-    "Product",
-    "SKU",
-    "Karat",
-    "Weight",
-    "Price",
+  const productsHeaders: TableHeader[] = [
+    { key: "select", label: "Select", width: "60px" },
+    { key: "product", label: "Product", width: "250px" },
+    { key: "sku", label: "SKU", width: "120px" },
+    { key: "karat", label: "Karat", width: "80px" },
+    { key: "weight", label: "Weight", width: "100px" },
+    { key: "price", label: "Price", width: "120px" },
   ];
 
   const productsData = [

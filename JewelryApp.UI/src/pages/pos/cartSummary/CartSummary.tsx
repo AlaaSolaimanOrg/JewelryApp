@@ -16,6 +16,7 @@ import {
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./cartSummary.scss";
+import type { TableHeader } from "../../../components/Table/CustomTable";
 
 export interface CartProduct {
   productId: string;
@@ -92,13 +93,13 @@ const CartSummary = () => {
       });
   };
 
-  const headers = [
-    { label: "Product" },
-    { label: "Karat" },
-    { label: "Weight" },
-    { label: "Price/Gram" },
-    { label: "Subtotal" },
-    { label: "" },
+  const headers: TableHeader[] = [
+    { key: "product", label: "Product", width: "200px" },
+    { key: "karat", label: "Karat", width: "80px" },
+    { key: "weight", label: "Weight", width: "100px" },
+    { key: "pricePerGram", label: "Price/Gram", width: "120px" },
+    { key: "subtotal", label: "Subtotal", width: "150px" },
+    { key: "actions", label: "", width: "100px" }, // usually for buttons/icons
   ];
 
   function renderCartTableHeader() {

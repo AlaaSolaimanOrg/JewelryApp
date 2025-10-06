@@ -1,24 +1,24 @@
-import React, { useState, type JSX } from "react";
-import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
+import { useState, type JSX } from "react";
 import {
-  FaGem,
   FaBarcode,
-  FaUser,
-  FaUserCircle,
-  FaEnvelope,
-  FaPhone,
   FaBirthdayCake,
-  FaShoppingCart,
+  FaCreditCard,
+  FaEnvelope,
+  FaGem,
+  FaHeart,
+  FaPhone,
   FaPlusCircle,
   FaRing,
-  FaHeart,
-  FaTag,
+  FaShoppingCart,
   FaStickyNote,
-  FaCreditCard,
+  FaTag,
   FaTimes,
+  FaUser,
+  FaUserCircle,
 } from "react-icons/fa";
-import "./mainPosPage.scss";
+import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import ScanModal from "../../../components/ScanModal/ScanModal";
+import "./mainPosPage.scss";
 
 const initialCustomer = {
   name: "John Doe",
@@ -147,7 +147,6 @@ const MainPosPage = () => {
     });
   };
 
-  
   return (
     <div id="mainPosPage" className="page-content">
       <header className="header">

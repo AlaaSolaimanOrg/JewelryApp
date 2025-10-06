@@ -6,17 +6,17 @@ import {
   FaTrash,
   FaUsers,
 } from "react-icons/fa";
-import CustomTable from "../../../components/Table/CustomTable";
+import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
 import "./customers.scss";
 
 const Customers = () => {
-  const headers = [
-    "Name",
-    "Phone",
-    "Email",
-    "Total Spent",
-    "Last Purchase",
-    "Actions",
+  const headers: TableHeader[] = [
+    { key: "name", label: "Name", width: "200px" },
+    { key: "phone", label: "Phone", width: "150px" },
+    { key: "email", label: "Email", width: "250px" },
+    { key: "totalSpent", label: "Total Spent", width: "120px" },
+    { key: "lastPurchase", label: "Last Purchase", width: "150px" },
+    { key: "actions", label: "Actions", width: "150px" },
   ];
 
   const data = [

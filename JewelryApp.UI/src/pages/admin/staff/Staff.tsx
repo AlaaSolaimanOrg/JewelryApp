@@ -44,14 +44,14 @@ const Staff = () => {
   });
 
   // Table headers
-  const staffMembersHeaders = [
-    "Name",
-    "Role(s)",
-    "Email",
-    "Phone",
-    "Created At",
-    "Status",
-    "Actions",
+  const staffMembersHeaders: TableHeader[] = [
+    { key: "name", label: "Name", width: "200px" },
+    { key: "roles", label: "Role(s)", width: "150px" },
+    { key: "email", label: "Email", width: "250px" },
+    { key: "phone", label: "Phone", width: "150px" },
+    { key: "createdAt", label: "Created At", width: "150px" },
+    { key: "status", label: "Status", width: "120px" },
+    { key: "actions", label: "Actions", width: "150px" },
   ];
 
   // Dynamic data mapping
@@ -153,7 +153,7 @@ const Staff = () => {
         </div>
 
         <CustomTable
-          headers={["Role"]}
+          headers={[{ key: "role", label: "Role", width: "200px" }]}
           data={allRoles.map((role) => {
             return {
               Role: role,

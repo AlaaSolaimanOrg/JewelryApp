@@ -1,4 +1,4 @@
-import CustomTable from "../../../components/Table/CustomTable";
+import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
 import "./dashboard.scss";
 
 // Import icons from react-icons/fa
@@ -15,7 +15,13 @@ import {
 } from "react-icons/fa";
 
 const Dashboard = () => {
-  const headers = ["Product", "Category", "Karat", "Units Sold", "Revenue"];
+  const headers: TableHeader[] = [
+    { key: "product", label: "Product", width: "200px" },
+    { key: "category", label: "Category", width: "150px" },
+    { key: "karat", label: "Karat", width: "80px" },
+    { key: "unitsSold", label: "Units Sold", width: "120px" },
+    { key: "revenue", label: "Revenue", width: "150px" },
+  ];
 
   const data = [
     {
