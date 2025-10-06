@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, type JSX } from "react";
 import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import {
   FaGem,
@@ -19,27 +19,151 @@ import {
 } from "react-icons/fa";
 import "./mainPosPage.scss";
 
+const initialCustomer = {
+  name: "John Doe",
+  email: "john.doe@example.com",
+  phone: "(555) 123-4567",
+  birthday: "March 15, 1985",
+};
+
+type Product = {
+  name: string;
+  icon: JSX.Element;
+  kraft: string;
+  weight: string;
+  pricePerGram: string;
+  unitPrice: string;
+  subtotal: string;
+  manual?: boolean;
+};
+
+const initialProducts: Product[] = [
+  {
+    name: "Diamond Solitaire Ring",
+    icon: <FaRing />,
+    kraft: "21K",
+    weight: "3.5",
+    pricePerGram: "125.75",
+    unitPrice: "125.75",
+    subtotal: "440.13",
+  },
+  {
+    name: "Gold Tennis Bracelet",
+    icon: <FaRing />,
+    kraft: "18K",
+    weight: "8.2",
+    pricePerGram: "112.30",
+    unitPrice: "112.30",
+    subtotal: "920.68",
+  },
+  {
+    name: "Ruby Heart Pendant",
+    icon: <FaHeart />,
+    kraft: "24K",
+    weight: "5.1",
+    pricePerGram: "142.90",
+    unitPrice: "142.90",
+    subtotal: "728.79",
+  },
+];
+
 const MainPosPage = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+  const [customer, setCustomer] = useState(initialCustomer);
+  const [customerInfoActive, setCustomerInfoActive] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [products, setProducts] = useState(initialProducts);
+  const [discountAmount, setDiscountAmount] = useState("");
+  const [discountType, setDiscountType] = useState("percentage");
+  const [notes, setNotes] = useState("");
+  const [cashAmount, setCashAmount] = useState("");
+  const [cardAmount, setCardAmount] = useState("");
+
+  // Calculate totals
+  const subtotal = products.reduce((sum, p) => sum + parseFloat(p.subtotal), 0);
+  const discount = discountAmount
+    ? discountType === "percentage"
+      ? (subtotal * parseFloat(discountAmount)) / 100
+      : parseFloat(discountAmount)
+    : 0;
+  const tax = parseFloat((subtotal * 0.06).toFixed(2));
+  const total = subtotal - discount + tax;
+
+  // Search input enter
+  const handleSearchKeyUp = (e) => {
+    if (e.key === "Enter" && searchInput.trim() !== "") {
+      // Simulate finding a customer
+      setCustomer({
+        name: "Sarah Johnson",
+        email: "sarah.j@example.com",
+        phone: "(555) 987-6543",
+        birthday: "August 22, 1990",
+      });
+      setCustomerInfoActive(true);
+    }
+  };
+
+  // Manual entry
+  const handleManualEntry = () => {
+    setProducts([
+      ...products,
+      {
+        name: "",
+        icon: <FaRing />,
+        kraft: "14K",
+        weight: "",
+        pricePerGram: "",
+        unitPrice: "",
+        subtotal: "",
+        manual: true,
+      },
+    ]);
+  };
+
+  // Remove product
+  const handleRemoveProduct = (idx) => {
+    setProducts(products.filter((_, i) => i !== idx));
+  };
+
+  // Update manual product
+  const handleManualProductChange = (idx, field, value) => {
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[idx][field] = value;
+      // Calculate subtotal if possible
+      if (
+        field === "weight" ||
+        field === "pricePerGram" ||
+        field === "unitPrice"
+      ) {
+        const w = parseFloat(updated[idx].weight) || 0;
+        const ppg = parseFloat(updated[idx].pricePerGram) || 0;
+        updated[idx].unitPrice = ppg.toFixed(2);
+        updated[idx].subtotal = (w * ppg).toFixed(2);
+      }
+      return updated;
+    });
+  };
+
   return (
     <div id="mainPosPage">
       <div className="container">
         <header className="header">
           <div className="logo">
-            <FaGem />
-            GoldCraft POS
+            <FaGem /> GoldCraft POS
           </div>
           <div className="search-section">
             <input
               type="text"
               className="search-input"
-              placeholder="Search customer..."
+              placeholder={`Search customer by ...`}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyUp={handleSearchKeyUp}
             />
             <button
               className="add-customer-btn"
-              onClick={() => {
-                setShowAddCustomerModal(true);
-              }}
+              onClick={() => setShowAddCustomerModal(true)}
             >
               Add New Customer
             </button>
@@ -49,45 +173,50 @@ const MainPosPage = () => {
           </button>
         </header>
 
-        <div className="customer-info" id="customerInfo">
+        <div
+          className={`customer-info${customerInfoActive ? " active" : ""}`}
+          id="customerInfo"
+        >
           <h3 className="customer-title">
-            <FaUser />
-            Customer Information
+            <FaUser /> Customer Information
           </h3>
           <div className="customer-details">
             <div className="customer-detail">
               <FaUserCircle
-                style={{ marginRight: "8px", color: "var(--primary)" }}
+                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
               />
-              <span id="customerName">John Doe</span>
+              <span id="customerName">{customer.name}</span>
             </div>
             <div className="customer-detail">
               <FaEnvelope
-                style={{ marginRight: "8px", color: "var(--primary)" }}
+                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
               />
-              <span id="customerEmail">john.doe@example.com</span>
+              <span id="customerEmail">{customer.email}</span>
             </div>
             <div className="customer-detail">
               <FaPhone
-                style={{ marginRight: "8px", color: "var(--primary)" }}
+                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
               />
-              <span id="customerPhone">(555) 123-4567</span>
+              <span id="customerPhone">{customer.phone}</span>
             </div>
             <div className="customer-detail">
               <FaBirthdayCake
-                style={{ marginRight: "8px", color: "var(--primary)" }}
+                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
               />
-              <span id="customerBirthday">March 15, 1985</span>
+              <span id="customerBirthday">{customer.birthday}</span>
             </div>
           </div>
         </div>
 
         <section className="products-section">
           <h2 className="section-title">
-            <FaShoppingCart className="icon" />
-            Cart Summary
+            <FaShoppingCart className="icon" /> Cart Summary
           </h2>
-          <button className="manual-entry-btn" id="manualEntryBtn">
+          <button
+            className="manual-entry-btn"
+            id="manualEntryBtn"
+            onClick={handleManualEntry}
+          >
             <FaPlusCircle style={{ marginRight: "8px" }} /> Manual Entry
           </button>
           <table className="products-table">
@@ -103,98 +232,156 @@ const MainPosPage = () => {
               </tr>
             </thead>
             <tbody id="productsTableBody">
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="product-image">
-                      <FaRing />
+              {products.map((p, idx) => (
+                <tr key={idx} className={p.manual ? "manual-row" : ""}>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div className="product-image">{p.icon}</div>
+                      <div style={{ marginLeft: "10px" }}>
+                        {p.manual ? (
+                          <input
+                            type="text"
+                            className="product-name-input"
+                            placeholder="Product Name"
+                            value={p.name}
+                            onChange={(e) =>
+                              handleManualProductChange(
+                                idx,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                          />
+                        ) : (
+                          p.name
+                        )}
+                      </div>
                     </div>
-                    <div style={{ marginLeft: "10px" }}>
-                      Diamond Solitaire Ring
-                    </div>
-                  </div>
-                </td>
-                <td>21K</td>
-                <td>
-                  <input type="text" className="weight-input" value="3.5g" />
-                </td>
-                <td>
-                  <input type="text" className="price-input" value="$125.75" />
-                </td>
-                <td>$125.75</td>
-                <td>$440.13</td>
-                <td>
-                  <button className="remove-btn">
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="product-image">
-                      <FaRing />
-                    </div>
-                    <div style={{ marginLeft: "10px" }}>
-                      Gold Tennis Bracelet
-                    </div>
-                  </div>
-                </td>
-                <td>18K</td>
-                <td>
-                  <input type="text" className="weight-input" value="8.2g" />
-                </td>
-                <td>
-                  <input type="text" className="price-input" value="$112.30" />
-                </td>
-                <td>$112.30</td>
-                <td>$920.68</td>
-                <td>
-                  <button className="remove-btn">
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="product-image">
-                      <FaHeart />
-                    </div>
-                    <div style={{ marginLeft: "10px" }}>Ruby Heart Pendant</div>
-                  </div>
-                </td>
-                <td>24K</td>
-                <td>
-                  <input type="text" className="weight-input" value="5.1g" />
-                </td>
-                <td>
-                  <input type="text" className="price-input" value="$142.90" />
-                </td>
-                <td>$142.90</td>
-                <td>$728.79</td>
-                <td>
-                  <button className="remove-btn">
-                    <FaTimes />
-                  </button>
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    {p.manual ? (
+                      <select
+                        value={p.kraft}
+                        onChange={(e) =>
+                          handleManualProductChange(
+                            idx,
+                            "kraft",
+                            e.target.value
+                          )
+                        }
+                        style={{
+                          width: "100%",
+                          padding: "8px",
+                          border: "1px solid #ddd",
+                          borderRadius: "6px",
+                        }}
+                      >
+                        <option>14K</option>
+                        <option>18K</option>
+                        <option>21K</option>
+                        <option>24K</option>
+                      </select>
+                    ) : (
+                      p.kraft
+                    )}
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="weight-input"
+                      placeholder={p.manual ? "0.0g" : ""}
+                      value={p.weight}
+                      onChange={
+                        p.manual
+                          ? (e) =>
+                              handleManualProductChange(
+                                idx,
+                                "weight",
+                                e.target.value
+                              )
+                          : undefined
+                      }
+                      readOnly={!p.manual}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="price-input"
+                      placeholder={p.manual ? "$0.00" : ""}
+                      value={p.pricePerGram}
+                      onChange={
+                        p.manual
+                          ? (e) =>
+                              handleManualProductChange(
+                                idx,
+                                "pricePerGram",
+                                e.target.value
+                              )
+                          : undefined
+                      }
+                      readOnly={!p.manual}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="price-input"
+                      placeholder={p.manual ? "$0.00" : ""}
+                      value={p.unitPrice}
+                      onChange={
+                        p.manual
+                          ? (e) =>
+                              handleManualProductChange(
+                                idx,
+                                "unitPrice",
+                                e.target.value
+                              )
+                          : undefined
+                      }
+                      readOnly={!p.manual}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      className="subtotal-input"
+                      placeholder={p.manual ? "$0.00" : ""}
+                      value={p.subtotal}
+                      readOnly
+                    />
+                  </td>
+                  <td>
+                    <button
+                      className="remove-btn"
+                      onClick={() => handleRemoveProduct(idx)}
+                    >
+                      <FaTimes />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </section>
 
         <section className="discount-section">
           <h2 className="section-title">
-            <FaTag className="icon" />
-            Apply Discount
+            <FaTag className="icon" /> Apply Discount
           </h2>
           <div className="discount-inputs">
             <input
               type="text"
               className="discount-amount"
               placeholder="Discount amount"
+              value={discountAmount}
+              onChange={(e) => setDiscountAmount(e.target.value)}
             />
-            <select className="discount-type">
+            <select
+              className="discount-type"
+              value={discountType}
+              onChange={(e) => setDiscountType(e.target.value)}
+            >
               <option value="percentage">Percentage (%)</option>
               <option value="fixed">Fixed Value ($)</option>
             </select>
@@ -203,19 +390,19 @@ const MainPosPage = () => {
 
         <section className="notes-section">
           <h2 className="section-title">
-            <FaStickyNote className="icon" />
-            Notes / Remarks
+            <FaStickyNote className="icon" /> Notes / Remarks
           </h2>
           <textarea
             className="notes-textarea"
             placeholder="Add any notes or remarks here..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
           />
         </section>
 
         <section className="payment-section">
           <h2 className="section-title">
-            <FaCreditCard className="icon" />
-            Payment
+            <FaCreditCard className="icon" /> Payment
           </h2>
           <div className="payment-inputs">
             <div className="payment-input-group">
@@ -224,6 +411,8 @@ const MainPosPage = () => {
                 type="text"
                 className="payment-input"
                 placeholder="$0.00"
+                value={cashAmount}
+                onChange={(e) => setCashAmount(e.target.value)}
               />
             </div>
             <div className="payment-input-group">
@@ -232,6 +421,8 @@ const MainPosPage = () => {
                 type="text"
                 className="payment-input"
                 placeholder="$0.00"
+                value={cardAmount}
+                onChange={(e) => setCardAmount(e.target.value)}
               />
             </div>
           </div>
@@ -239,19 +430,19 @@ const MainPosPage = () => {
           <div className="order-summary">
             <div className="summary-row">
               <span>Subtotal:</span>
-              <span>$2,089.78</span>
+              <span>${subtotal.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Discount:</span>
-              <span>$0.00</span>
+              <span>${discount.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Tax:</span>
-              <span>$125.39</span>
+              <span>${tax.toFixed(2)}</span>
             </div>
             <div className="summary-row total">
               <span>Total:</span>
-              <span>$2,215.17</span>
+              <span>${total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -263,9 +454,7 @@ const MainPosPage = () => {
       </div>
       <AddCustomerModal
         show={showAddCustomerModal}
-        onClose={() => {
-          setShowAddCustomerModal(false);
-        }}
+        onClose={() => setShowAddCustomerModal(false)}
       />
     </div>
   );

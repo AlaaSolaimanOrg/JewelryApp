@@ -5,18 +5,11 @@ import "./addCustomerModal.scss";
 interface AddCustomerModalProps {
   show: boolean;
   onClose: () => void;
-  onSave?: (customer: {
-    name: string;
-    email: string;
-    phone: string;
-    birthday: string;
-  }) => void;
 }
 
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   show,
   onClose,
-  onSave,
 }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,9 +17,6 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   const [birthday, setBirthday] = useState("");
 
   const handleSave = () => {
-    if (onSave) {
-      onSave({ name, email, phone, birthday });
-    }
     onClose();
   };
 

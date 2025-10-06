@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GoldCraft Sales Report</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-blue: #1a3a5f;
+        --primary-gold: #d4af37;
+        --light-bg: #f5f7fa;
+        --card-bg: #ffffff;
+        --text-dark: #333333;
+        --text-light: #ffffff;
+        --border-radius: 12px;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--light-bg);
+        color: var(--text-dark);
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Header Styles */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+        padding: 15px 25px;
+        border-radius: var(--border-radius);
+        margin-bottom: 25px;
+        box-shadow: var(--shadow);
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo i {
+        color: var(--primary-gold);
+        margin-right: 10px;
+      }
+
+      .date-range {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .date-input {
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .date-input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .apply-btn {
+        background-color: var(--primary-gold);
+        color: var(--primary-blue);
+        border: none;
+        border-radius: 6px;
+        padding: 8px 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .apply-btn:hover {
+        background-color: #e6c035;
+      }
+
+      /* Section Styles */
+      .section {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: var(--shadow);
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary-blue);
+        display: flex;
+        align-items: center;
+      }
+
+      .section-title i {
+        margin-right: 10px;
+        color: var(--primary-gold);
+      }
+
+      /* Summary Cards */
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .summary-card {
+        background-color: #f9f9f9;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        text-align: center;
+        border-left: 4px solid var(--primary-blue);
+      }
+
+      .summary-card.gold {
+        border-left-color: var(--primary-gold);
+      }
+
+      .summary-card h3 {
+        font-size: 16px;
+        color: var(--primary-blue);
+        margin-bottom: 10px;
+      }
+
+      .summary-card .amount {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--primary-blue);
+      }
+
+      .summary-card.gold .amount {
+        color: var(--primary-gold);
+      }
+
+      /* Table Styles */
+      .table-container {
+        overflow-x: auto;
+        margin-top: 15px;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table th {
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 2px solid var(--primary-blue);
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+
+      .data-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eaeaea;
+      }
+
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .highlight {
+        background-color: rgba(212, 175, 55, 0.1);
+        font-weight: 600;
+      }
+
+      /* Filter Section */
+      .filter-section {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .filter-select {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        font-size: 14px;
+        min-width: 150px;
+      }
+
+      /* Button Styles */
+      .view-receipt-btn {
+        background-color: var(--primary-gold);
+        color: var(--primary-blue);
+        border: none;
+        border-radius: 6px;
+        padding: 8px 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+      }
+
+      .view-receipt-btn:hover {
+        background-color: #e6c035;
+      }
+
+      /* Karat Cards */
+      .karat-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .karat-card {
+        background-color: #f9f9f9;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        text-align: center;
+        border-top: 4px solid var(--primary-gold);
+      }
+
+      .karat-card h3 {
+        font-size: 18px;
+        color: var(--primary-blue);
+        margin-bottom: 10px;
+      }
+
+      .karat-card .grams {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary-blue);
+        margin-bottom: 5px;
+      }
+
+      .karat-card .price {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .karat-card .value {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-gold);
+        margin-top: 10px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .date-range {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .summary-cards,
+        .karat-cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <i class="fas fa-chart-line"></i>
+          GoldCraft Sales Report
+        </div>
+        <div class="date-range">
+          <input type="date" class="date-input" value="2023-10-01" />
+          <span style="color: white">to</span>
+          <input type="date" class="date-input" value="2023-10-31" />
+          <button class="apply-btn">Apply</button>
+        </div>
+      </header>
+
+      <!-- Section 1: Summary of Sales -->
+      <section class="section">
+        <h2 class="section-title">
+          <i class="fas fa-chart-bar"></i> Summary of Sales
+        </h2>
+        <div class="summary-cards">
+          <div class="summary-card">
+            <h3>Total Sales Amount</h3>
+            <div class="amount">$12,458.75</div>
+          </div>
+          <div class="summary-card">
+            <h3>Cash Amount Paid</h3>
+            <div class="amount">$7,325.50</div>
+          </div>
+          <div class="summary-card">
+            <h3>Card Amount Paid</h3>
+            <div class="amount">$5,133.25</div>
+          </div>
+          <div class="summary-card gold">
+            <h3>Discount Amount</h3>
+            <div class="amount">$625.40</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Gold Sold by Karat -->
+      <section class="section">
+        <h2 class="section-title">
+          <i class="fas fa-weight-hanging"></i> Gold Sold by Karat
+        </h2>
+        <div class="karat-cards">
+          <div class="karat-card">
+            <h3>24K Gold</h3>
+            <div class="grams">42.5g</div>
+            <div class="price">$142.90/g</div>
+            <div class="value">$6,073.25</div>
+          </div>
+          <div class="karat-card">
+            <h3>22K Gold</h3>
+            <div class="grams">28.3g</div>
+            <div class="price">$132.50/g</div>
+            <div class="value">$3,749.75</div>
+          </div>
+          <div class="karat-card">
+            <h3>21K Gold</h3>
+            <div class="grams">35.7g</div>
+            <div class="price">$125.75/g</div>
+            <div class="value">$4,489.28</div>
+          </div>
+          <div class="karat-card">
+            <h3>18K Gold</h3>
+            <div class="grams">52.1g</div>
+            <div class="price">$112.30/g</div>
+            <div class="value">$5,851.83</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Items Sold Table -->
+      <section class="section">
+        <h2 class="section-title">
+          <i class="fas fa-shopping-cart"></i> Items Sold
+        </h2>
+        <div class="filter-section">
+          <select class="filter-select">
+            <option>All Products</option>
+            <option>Rings</option>
+            <option>Necklaces</option>
+            <option>Bracelets</option>
+            <option>Earrings</option>
+          </select>
+          <select class="filter-select">
+            <option>Last 7 Days</option>
+            <option>Last 30 Days</option>
+            <option>Last 3 Months</option>
+            <option>Custom Range</option>
+          </select>
+          <select class="filter-select">
+            <option>All Karats</option>
+            <option>24K</option>
+            <option>22K</option>
+            <option>21K</option>
+            <option>18K</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Weight</th>
+                <th>Price per Gram</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Diamond Solitaire Ring</td>
+                <td>3</td>
+                <td>3.5g</td>
+                <td>$125.75</td>
+                <td>$125.75</td>
+                <td>$440.13</td>
+              </tr>
+              <tr>
+                <td>Gold Tennis Bracelet</td>
+                <td>2</td>
+                <td>8.2g</td>
+                <td>$112.30</td>
+                <td>$112.30</td>
+                <td>$920.68</td>
+              </tr>
+              <tr>
+                <td>Ruby Heart Pendant</td>
+                <td>4</td>
+                <td>5.1g</td>
+                <td>$142.90</td>
+                <td>$142.90</td>
+                <td>$728.79</td>
+              </tr>
+              <tr>
+                <td>Emerald Drop Earrings</td>
+                <td>1</td>
+                <td>4.2g</td>
+                <td>$132.50</td>
+                <td>$132.50</td>
+                <td>$556.50</td>
+              </tr>
+              <tr class="highlight">
+                <td><strong>Total</strong></td>
+                <td><strong>10</strong></td>
+                <td><strong>21.0g</strong></td>
+                <td></td>
+                <td></td>
+                <td><strong>$2,646.10</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Customers Sold To -->
+      <section class="section">
+        <h2 class="section-title">
+          <i class="fas fa-users"></i> Customers Sold To
+        </h2>
+        <div class="filter-section">
+          <input
+            type="text"
+            class="filter-select"
+            placeholder="Search by customer name..."
+          />
+          <select class="filter-select">
+            <option>All Customers</option>
+            <option>New Customers</option>
+            <option>Returning Customers</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Notes/Remarks</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John Doe</td>
+                <td>john.doe@example.com</td>
+                <td>(555) 123-4567</td>
+                <td>Birthday gift for spouse</td>
+                <td><button class="view-receipt-btn">View Receipt</button></td>
+              </tr>
+              <tr>
+                <td>Sarah Johnson</td>
+                <td>sarah.j@example.com</td>
+                <td>(555) 987-6543</td>
+                <td>Anniversary present</td>
+                <td><button class="view-receipt-btn">View Receipt</button></td>
+              </tr>
+              <tr>
+                <td>Michael Chen</td>
+                <td>m.chen@example.com</td>
+                <td>(555) 456-7890</td>
+                <td>Custom engraving requested</td>
+                <td><button class="view-receipt-btn">View Receipt</button></td>
+              </tr>
+              <tr>
+                <td>Emily Rodriguez</td>
+                <td>emily.rod@example.com</td>
+                <td>(555) 234-5678</td>
+                <td>Preferred customer - 10% discount applied</td>
+                <td><button class="view-receipt-btn">View Receipt</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Simple functionality for the date range and filters
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set default dates to current month
+        const now = new Date();
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        const dateInputs = document.querySelectorAll(".date-input");
+        if (dateInputs[0]) {
+          dateInputs[0].valueAsDate = firstDay;
+        }
+        if (dateInputs[1]) {
+          dateInputs[1].valueAsDate = lastDay;
+        }
+
+        // Add click handlers for receipt buttons
+        const receiptButtons = document.querySelectorAll(".view-receipt-btn");
+        receiptButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const customerName =
+              this.closest("tr").querySelector("td:first-child").textContent;
+            alert(`Viewing receipt for ${customerName}`);
+            // In a real application, this would open a modal or navigate to a receipt page
+          });
+        });
+
+        // Apply date range button
+        const applyBtn = document.querySelector(".apply-btn");
+        if (applyBtn) {
+          applyBtn.addEventListener("click", function () {
+            const startDate = document.querySelectorAll(".date-input")[0].value;
+            const endDate = document.querySelectorAll(".date-input")[1].value;
+            alert(`Loading sales data from ${startDate} to ${endDate}`);
+            // In a real application, this would fetch data for the selected date range
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

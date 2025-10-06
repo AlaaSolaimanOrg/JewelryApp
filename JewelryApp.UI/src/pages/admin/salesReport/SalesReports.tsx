@@ -1,158 +1,238 @@
-import { FaChartLine, FaDownload, FaFilter } from "react-icons/fa";
 import "./salesReports.scss";
 
 const SalesReports = () => {
   return (
     <div id="sales-reports" className="page">
-      <div className="page-header">
-        <h1 className="page-title">
-          <FaChartLine className="icon me-2" />
-          <span>Sales Reports</span>
-        </h1>
-        <div className="page-actions">
-          <button className="btn-md btn-gold">
-            <FaDownload className="me-1" /> Export Report
-          </button>
-        </div>
-      </div>
+      <div className="container">
+        <header className="header">
+          <div className="logo">
+            <i className="fas fa-chart-line"></i>
+            GoldCraft Sales Report
+          </div>
+          <div className="date-range">
+            <input type="date" className="date-input" value="2023-10-01" />
+            <span style={{ color: "white" }}>to</span>
+            <input type="date" className="date-input" value="2023-10-31" />
+            <button className="apply-btn">Apply</button>
+          </div>
+        </header>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Report Filters</h3>
-        </div>
-
-        <div className="form-row">
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Date Range</label>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <input
-                  type="date"
-                  className="form-control"
-                  defaultValue="2023-10-01"
-                />
-                <input
-                  type="date"
-                  className="form-control"
-                  defaultValue="2023-10-31"
-                />
-              </div>
+        <section className="section">
+          <h2 className="section-title">
+            <i className="fas fa-chart-bar"></i> Summary of Sales
+          </h2>
+          <div className="summary-cards">
+            <div className="summary-card">
+              <h3>Total Sales Amount</h3>
+              <div className="amount">$12,458.75</div>
+            </div>
+            <div className="summary-card">
+              <h3>Cash Amount Paid</h3>
+              <div className="amount">$7,325.50</div>
+            </div>
+            <div className="summary-card">
+              <h3>Card Amount Paid</h3>
+              <div className="amount">$5,133.25</div>
+            </div>
+            <div className="summary-card gold">
+              <h3>Discount Amount</h3>
+              <div className="amount">$625.40</div>
             </div>
           </div>
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Karat</label>
-              <select className="form-control">
-                <option>All Karats</option>
-                <option>18K</option>
-                <option>21K</option>
-                <option>22K</option>
-                <option>Platinum</option>
-              </select>
+        </section>
+
+        <section className="section">
+          <h2 className="section-title">
+            <i className="fas fa-weight-hanging"></i> Gold Sold by Karat
+          </h2>
+          <div className="karat-cards">
+            <div className="karat-card">
+              <h3>24K Gold</h3>
+              <div className="grams">42.5g</div>
+              <div className="price">$142.90/g</div>
+              <div className="value">$6,073.25</div>
+            </div>
+            <div className="karat-card">
+              <h3>22K Gold</h3>
+              <div className="grams">28.3g</div>
+              <div className="price">$132.50/g</div>
+              <div className="value">$3,749.75</div>
+            </div>
+            <div className="karat-card">
+              <h3>21K Gold</h3>
+              <div className="grams">35.7g</div>
+              <div className="price">$125.75/g</div>
+              <div className="value">$4,489.28</div>
+            </div>
+            <div className="karat-card">
+              <h3>18K Gold</h3>
+              <div className="grams">52.1g</div>
+              <div className="price">$112.30/g</div>
+              <div className="value">$5,851.83</div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="form-row">
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Product Category</label>
-              <select className="form-control">
-                <option>All Categories</option>
-                <option>Rings</option>
-                <option>Necklaces</option>
-                <option>Earrings</option>
-                <option>Bangles</option>
-              </select>
-            </div>
+        <section className="section">
+          <h2 className="section-title">
+            <i className="fas fa-shopping-cart"></i> Items Sold
+          </h2>
+          <div className="filter-section">
+            <select className="filter-select">
+              <option>All Products</option>
+              <option>Rings</option>
+              <option>Necklaces</option>
+              <option>Bracelets</option>
+              <option>Earrings</option>
+            </select>
+            <select className="filter-select">
+              <option>Last 7 Days</option>
+              <option>Last 30 Days</option>
+              <option>Last 3 Months</option>
+              <option>Custom Range</option>
+            </select>
+            <select className="filter-select">
+              <option>All Karats</option>
+              <option>24K</option>
+              <option>22K</option>
+              <option>21K</option>
+              <option>18K</option>
+            </select>
           </div>
-          <div className="form-col">
-            <div className="form-group">
-              <label className="form-label">Payment Method</label>
-              <select className="form-control">
-                <option>All Methods</option>
-                <option>Credit Card</option>
-                <option>Cash</option>
-                <option>Bank Transfer</option>
-              </select>
-            </div>
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Weight</th>
+                  <th>Price per Gram</th>
+                  <th>Unit Price</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Diamond Solitaire Ring</td>
+                  <td>3</td>
+                  <td>3.5g</td>
+                  <td>$125.75</td>
+                  <td>$125.75</td>
+                  <td>$440.13</td>
+                </tr>
+                <tr>
+                  <td>Gold Tennis Bracelet</td>
+                  <td>2</td>
+                  <td>8.2g</td>
+                  <td>$112.30</td>
+                  <td>$112.30</td>
+                  <td>$920.68</td>
+                </tr>
+                <tr>
+                  <td>Ruby Heart Pendant</td>
+                  <td>4</td>
+                  <td>5.1g</td>
+                  <td>$142.90</td>
+                  <td>$142.90</td>
+                  <td>$728.79</td>
+                </tr>
+                <tr>
+                  <td>Emerald Drop Earrings</td>
+                  <td>1</td>
+                  <td>4.2g</td>
+                  <td>$132.50</td>
+                  <td>$132.50</td>
+                  <td>$556.50</td>
+                </tr>
+                <tr className="highlight">
+                  <td>
+                    <strong>Total</strong>
+                  </td>
+                  <td>
+                    <strong>10</strong>
+                  </td>
+                  <td>
+                    <strong>21.0g</strong>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>
+                    <strong>$2,646.10</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
+        </section>
 
-        <div className="form-group" style={{ marginTop: "20px" }}>
-          <button className="btn-md btn-gold">
-            <FaFilter className="me-1" /> Apply Filters
-          </button>
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Sales Overview</h3>
-        </div>
-
-        <div className="chart-container">
-          <div className="chart-placeholder">
-            Monthly Sales Performance Chart
+        <section className="section">
+          <h2 className="section-title">
+            <i className="fas fa-users"></i> Customers Sold To
+          </h2>
+          <div className="filter-section">
+            <input
+              type="text"
+              className="filter-select"
+              placeholder="Search by customer name..."
+            />
+            <select className="filter-select">
+              <option>All Customers</option>
+              <option>New Customers</option>
+              <option>Returning Customers</option>
+            </select>
           </div>
-        </div>
-
-        <div className="table-container" style={{ marginTop: "25px" }}>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Amount</th>
-                <th>Payment Method</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Oct 28, 2023</td>
-                <td>#ORD-1024</td>
-                <td>Sarah Johnson</td>
-                <td>$1,890</td>
-                <td>Credit Card</td>
-                <td>
-                  <span className="tag tag-new">Completed</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Oct 27, 2023</td>
-                <td>#ORD-1023</td>
-                <td>Michael Chen</td>
-                <td>$2,450</td>
-                <td>Bank Transfer</td>
-                <td>
-                  <span className="tag tag-new">Completed</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Oct 25, 2023</td>
-                <td>#ORD-1021</td>
-                <td>Emma Rodriguez</td>
-                <td>$5,890</td>
-                <td>Cash</td>
-                <td>
-                  <span className="tag tag-premium">Delivered</span>
-                </td>
-              </tr>
-              <tr>
-                <td>Oct 24, 2023</td>
-                <td>#ORD-1020</td>
-                <td>David Wilson</td>
-                <td>$1,230</td>
-                <td>Credit Card</td>
-                <td>
-                  <span className="tag tag-featured">Pending</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div className="table-container">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Notes/Remarks</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>John Doe</td>
+                  <td>john.doe@example.com</td>
+                  <td>(555) 123-4567</td>
+                  <td>Birthday gift for spouse</td>
+                  <td>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Sarah Johnson</td>
+                  <td>sarah.j@example.com</td>
+                  <td>(555) 987-6543</td>
+                  <td>Anniversary present</td>
+                  <td>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Michael Chen</td>
+                  <td>m.chen@example.com</td>
+                  <td>(555) 456-7890</td>
+                  <td>Custom engraving requested</td>
+                  <td>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Emily Rodriguez</td>
+                  <td>emily.rod@example.com</td>
+                  <td>(555) 234-5678</td>
+                  <td>Preferred customer - 10% discount applied</td>
+                  <td>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   );

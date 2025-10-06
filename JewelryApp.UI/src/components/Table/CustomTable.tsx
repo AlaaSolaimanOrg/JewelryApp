@@ -37,7 +37,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
               <tr key={rowIndex}>
                 {headers.map((header, colIndex) => (
                   <td key={colIndex}>
-                    {row[header.key] ?? row[header.label.replace(/\s/g, "")]}
+                    {row[header.key] ?? row[header.label?.replace(/\s/g, "")]}
                   </td>
                 ))}
               </tr>
