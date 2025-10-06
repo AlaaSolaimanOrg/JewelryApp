@@ -147,6 +147,7 @@ const MainPosPage = () => {
     });
   };
 
+  
   return (
     <div id="mainPosPage" className="page-content">
       <header className="header">
