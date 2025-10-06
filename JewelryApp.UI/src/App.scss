@@ -7,6 +7,7 @@
   --gold-opacity-5: #d4af370d;
   --light-gold: #f1e6d0;
   --dark-gold: #b8860b;
+  --light-bg: #f5f7fa;
   --light: #f8f9fa;
   --dark: #212529;
   --dark-light: #343a40;
@@ -24,9 +25,13 @@
   --linear-blue-gold: linear-gradient(45deg, #e8f4ff 0%, #f8f0d7 100%);
   --border: #dee2e6;
   --shadow: rgba(0, 0, 0, 0.08);
+  --shadow-bottom: 0 4px 12px rgba(0, 0, 0, 0.08);
   --card-radius: 10px;
   --sidebar-width: 260px;
   --header-height: 70px;
+  --text-dark: #333333;
+
+
 }
 
 * {
@@ -303,7 +308,6 @@ body {
   font-weight: bold !important;
   background-color: rgba(212, 175, 55, 0.05) !important;
 }
-
 
 .temoporarylyHide {
   display: none;

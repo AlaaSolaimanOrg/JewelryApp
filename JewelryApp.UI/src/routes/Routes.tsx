@@ -25,6 +25,7 @@ import TransactionHistory from "../pages/pos/transactionHistory/TransactionHisto
 import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 import Login from "../pages/general/login/Login";
+import MainPosPage from "../pages/pos/mainPosPage/MainPosPage";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -59,6 +60,7 @@ const AppRoutes = () => {
           }
         >
           <Route path="/" element={<Home />} />
+          <Route path="/main" element={<MainPosPage />} />
           <Route path="/productLookup" element={<ProductLookup />} />
           <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/cartSummary" element={<CartSummary />} />
