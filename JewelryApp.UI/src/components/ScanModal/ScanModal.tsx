@@ -66,6 +66,7 @@ const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
+        <Button variant="primary">Confirm</Button>
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>

@@ -218,13 +218,7 @@ const MainPosPage = () => {
         <h2 className="section-title">
           <FaShoppingCart className="icon" /> Cart Summary
         </h2>
-        <button
-          className="manual-entry-btn"
-          id="manualEntryBtn"
-          onClick={handleManualEntry}
-        >
-          <FaPlusCircle style={{ marginRight: "8px" }} /> Manual Entry
-        </button>
+
         <table className="products-table">
           <thead>
             <tr>
@@ -240,6 +234,7 @@ const MainPosPage = () => {
           <tbody id="productsTableBody">
             {products.map((p, idx) => (
               <tr key={idx} className={p.manual ? "manual-row" : ""}>
+                {/* ...existing code for table row... */}
                 <td>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <div className="product-image">{p.icon}</div>
@@ -364,6 +359,33 @@ const MainPosPage = () => {
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td
+                colSpan={7}
+                style={{ textAlign: "center", padding: "12px 0" }}
+              >
+                <button
+                  className="manual-entry-btn"
+                  id="manualEntryBtn"
+                  onClick={handleManualEntry}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "2rem",
+                    color: "var(--primary-blue)",
+                  }}
+                  title="Add manual entry"
+                >
+                  <FaPlusCircle />
+                </button>
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </section>
 
