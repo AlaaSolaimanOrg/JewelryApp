@@ -7,23 +7,83 @@ import {
 } from "react-icons/fa";
 import "./salesReports.scss";
 import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import DatePicker from "react-datepicker";
+import { useState } from "react";
+import { addDays, endOfMonth, endOfWeek, endOfYear } from "date-fns";
+import { DatePillFilter } from "../../../types/enums";
 
 const SalesReports = () => {
+  const [startDate, setStartDate] = useState<any>(new Date());
+  const [endDate, setEndDate] = useState<any>(new Date());
+
+  const [dateFilterPill, setDateFilterPill] = useState<DatePillFilter | null>(
+    null
+  );
+
+  const today = new Date();
+
+  const pillOptions = [
+    {
+      label: "Today",
+      value: DatePillFilter.Today,
+      endDate: addDays(today, 1),
+    },
+    {
+      label: "This Week",
+      value: DatePillFilter.ThisWeek,
+      endDate: endOfWeek(today, { weekStartsOn: 1 }),
+    },
+    {
+      label: "This Month",
+      value: DatePillFilter.ThisMonth,
+      endDate: endOfMonth(today),
+    },
+    {
+      label: "This Year",
+      value: DatePillFilter.ThisYear,
+      endDate: endOfYear(today),
+    },
+  ];
+
   return (
     <div id="sales-reports" className="page">
       <header className="headerFilter">
         <div className="dateFilters">
           <Stack direction="horizontal" gap={2}>
-            <div className="dateFilterPill">Today</div>
-            <div className="dateFilterPill">This Week</div>
-            <div className="dateFilterPill">This Month</div>
+            {pillOptions.map((pill) => (
+              <div
+                key={pill.value}
+                className={`dateFilterPill ${
+                  dateFilterPill === pill.value ? " activePillFilter" : ""
+                }`}
+                onClick={() => setDateFilterPill(pill.value)}
+              >
+                {pill.label}
+              </div>
+            ))}
           </Stack>
         </div>
 
         <div className="date-range mt-3">
-          <input type="date" className="date-input" value="2023-10-01" />
+          <DatePicker
+            className="date-input"
+            selected={startDate}
+            onChange={(date) => {
+              if (!!date && date > endDate) {
+                const oneDayAfterDate = addDays(date, 1);
+                setEndDate(oneDayAfterDate);
+              }
+              setStartDate(date);
+            }}
+            minDate={new Date()}
+          />
           <span style={{ color: "white" }}>to</span>
-          <input type="date" className="date-input" value="2023-10-31" />
+          <DatePicker
+            className="date-input"
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            minDate={startDate}
+          />
           <button className="apply-btn">Apply</button>
         </div>
       </header>

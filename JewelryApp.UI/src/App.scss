@@ -321,3 +321,53 @@ body {
 .temoporarylyHide {
   display: none;
 }
+
+// react date-picker styling
+
+.react-datepicker {
+  font-family: inherit;
+  border: 1px solid var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+  .react-datepicker__header {
+    background-color: var(--primary);
+    border-bottom: 1px solid var(--gold);
+    color: #fff;
+  }
+
+  .react-datepicker__current-month,
+  .react-datepicker__day-name {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .react-datepicker__day {
+    color: var(--primary);
+
+    &:hover {
+      background-color: var(--gold);
+      color: #fff;
+    }
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background-color: var(--primary);
+    color: #fff;
+  }
+
+  .react-datepicker__day--today {
+    border: 1px solid var(--gold);
+  }
+
+  .react-datepicker__navigation-icon::before {
+    border-color: var(--gold);
+  }
+
+  .react-datepicker__day--disabled {
+    color: #ccc !important; // greyed out
+    cursor: not-allowed !important;
+    background-color: #f9f9f9 !important;
+    opacity: 0.6;
+  }
+}

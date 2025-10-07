@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaPrint, FaReceipt } from "react-icons/fa";
 import "./receiptModal.scss";

@@ -26,6 +26,12 @@
       border: 3px solid var(--primary);
     }
   }
+
+  .activePillFilter {
+    background-color: var(--primary);
+    color: white;
+  }
+
   .logo {
     font-size: 24px;
     font-weight: 700;

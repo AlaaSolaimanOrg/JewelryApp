@@ -38,3 +38,10 @@ export enum OrderDiscount {
   Percentage = 1,
   FixedAmount = 2,
 }
+
+export enum DatePillFilter{
+  Today,
+  ThisWeek,
+  ThisMonth,
+  ThisYear
+}
