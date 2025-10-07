@@ -3,9 +3,10 @@ import {
   FaChartBar,
   FaShoppingCart,
   FaUsers,
-  FaWeightHanging
+  FaWeightHanging,
 } from "react-icons/fa";
 import "./salesReports.scss";
+import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
 
 const SalesReports = () => {
   return (
@@ -18,7 +19,7 @@ const SalesReports = () => {
             <div className="dateFilterPill">This Month</div>
           </Stack>
         </div>
-        
+
         <div className="date-range mt-3">
           <input type="date" className="date-input" value="2023-10-01" />
           <span style={{ color: "white" }}>to</span>
@@ -213,7 +214,9 @@ const SalesReports = () => {
                 <td>(555) 123-4567</td>
                 <td>Birthday gift for spouse</td>
                 <td>
-                  <button className="view-receipt-btn">View Receipt</button>
+                  <ReceiptModal>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </ReceiptModal>
                 </td>
               </tr>
               <tr>
@@ -222,7 +225,9 @@ const SalesReports = () => {
                 <td>(555) 987-6543</td>
                 <td>Anniversary present</td>
                 <td>
-                  <button className="view-receipt-btn">View Receipt</button>
+                  <ReceiptModal>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </ReceiptModal>
                 </td>
               </tr>
               <tr>
@@ -231,7 +236,9 @@ const SalesReports = () => {
                 <td>(555) 456-7890</td>
                 <td>Custom engraving requested</td>
                 <td>
-                  <button className="view-receipt-btn">View Receipt</button>
+                  <ReceiptModal>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </ReceiptModal>
                 </td>
               </tr>
               <tr>
@@ -240,7 +247,9 @@ const SalesReports = () => {
                 <td>(555) 234-5678</td>
                 <td>Preferred customer - 10% discount applied</td>
                 <td>
-                  <button className="view-receipt-btn">View Receipt</button>
+                  <ReceiptModal>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </ReceiptModal>
                 </td>
               </tr>
             </tbody>
