@@ -1,21 +1,25 @@
+import { Stack } from "react-bootstrap";
 import {
-  FaChartLine,
   FaChartBar,
-  FaWeightHanging,
   FaShoppingCart,
   FaUsers,
+  FaWeightHanging
 } from "react-icons/fa";
 import "./salesReports.scss";
 
 const SalesReports = () => {
   return (
     <div id="sales-reports" className="page">
-      <header className="header">
-        <div className="logo">
-          <FaChartLine className="icon" style={{ marginRight: "8px" }} />
-          GoldCraft Sales Report
+      <header className="headerFilter">
+        <div className="dateFilters">
+          <Stack direction="horizontal" gap={2}>
+            <div className="dateFilterPill">Today</div>
+            <div className="dateFilterPill">This Week</div>
+            <div className="dateFilterPill">This Month</div>
+          </Stack>
         </div>
-        <div className="date-range">
+        
+        <div className="date-range mt-3">
           <input type="date" className="date-input" value="2023-10-01" />
           <span style={{ color: "white" }}>to</span>
           <input type="date" className="date-input" value="2023-10-31" />

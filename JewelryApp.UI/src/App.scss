@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 :root {
   --primary: #1a3a5f;
   --primary-dark: #b5942d;
@@ -30,8 +32,6 @@
   --sidebar-width: 260px;
   --header-height: 70px;
   --text-dark: #333333;
-
-
 }
 
 * {
@@ -67,7 +67,16 @@ body {
 }
 
 .adminLayoutContainer {
+  font-family: "Inter", sans-serif;
   height: 100vh;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", sans-serif;
+  }
 }
 .adminLayout-main {
   color: #333;

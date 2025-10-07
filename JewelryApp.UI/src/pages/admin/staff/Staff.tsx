@@ -5,7 +5,7 @@ import {
   softDeleteUser,
 } from "../../../apis/users.api/users.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable from "../../../components/Table/CustomTable";
+import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./staff.scss";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
