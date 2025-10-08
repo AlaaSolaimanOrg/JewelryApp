@@ -31,6 +31,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<PricingSetting> PricingSettings { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<CartProduct> CartProducts { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
 
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
