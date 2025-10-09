@@ -1,42 +1,15 @@
 import React, { useState } from "react";
 import "./posSale.scss";
 import ScanModal from "../../../components/ScanModal/ScanModal";
-import ProductsSection from "./ProductsSection";
-import CustomerSection from "./CustomerSection";
-import PaymentSummary from "./PaymentSummary";
-import { initialCustomer } from "./types";
-import type { Product } from "./types";
-// const initialProducts: Product[] = [
-//   {
-//     name: "Diamond Solitaire Ring",
-//     icon: <FaRing />,
-//     karatType: "21K",
-//     weight: "3.5",
-//     pricePerGram: "125.75",
-//     subtotal: "440.13",
-//   },
-//   {
-//     name: "Gold Tennis Bracelet",
-//     icon: <FaRing />,
-//     karatType: "18K",
-//     weight: "8.2",
-//     pricePerGram: "112.30",
-//     subtotal: "920.68",
-//   },
-//   {
-//     name: "Ruby Heart Pendant",
-//     icon: <FaHeart />,
-//     karatType: "24K",
-//     weight: "5.1",
-//     pricePerGram: "142.90",
-//     subtotal: "728.79",
-//   },
-// ];
+import ProductsSection from "./PosSale.sections/ProductsSection";
+import CustomerSection from "./PosSale.sections/CustomerSection";
+import PaymentSummary from "./PosSale.sections/PaymentSummary";
+import type { Customer, Product } from "./types";
 
 const MainPosPage: React.FC = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
-  const [customer, setCustomer] = useState(initialCustomer);
+  const [customer, setCustomer] = useState<Customer>({});
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
@@ -59,20 +32,6 @@ const MainPosPage: React.FC = () => {
     : 0;
   const tax = parseFloat((subtotal * 0.06).toFixed(4));
   const total = subtotal - discount + tax;
-
-  // Search input enter
-  const handleSearchKeyUp = (e: any) => {
-    if (e.key === "Enter" && searchInput.trim() !== "") {
-      // Simulate finding a customer
-      setCustomer({
-        name: "Sarah Johnson",
-        email: "sarah.j@example.com",
-        phone: "(555) 987-6543",
-        birthday: "August 22, 1990",
-      });
-      setCustomerInfoActive(true);
-    }
-  };
 
   // Manual entry
   const handleManualEntry = () => {
@@ -146,14 +105,15 @@ const MainPosPage: React.FC = () => {
     <div id="mainPosPage" className="page-content">
       <CustomerSection
         customer={customer}
+        setCustomer={setCustomer}
         customerInfoActive={customerInfoActive}
         searchInput={searchInput}
         setSearchInput={setSearchInput}
-        onSearchEnter={handleSearchKeyUp}
         onAddCustomerClick={() => setShowAddCustomerModal(true)}
         showAddCustomerModal={showAddCustomerModal}
         setShowAddCustomerModal={setShowAddCustomerModal}
         onOpenScanModal={() => setShowScanModal(true)}
+        setCustomerInfoActive={setCustomerInfoActive}
       />
 
       <ProductsSection
@@ -286,14 +246,11 @@ const MainPosPage: React.FC = () => {
         />
       </section>
 
-      {/* ScanModal props typed differently in project; cast to any to preserve runtime behavior */}
       <ScanModal
-        {...({
-          show: showScanModal,
-          onClose: () => setShowScanModal(false),
-          products,
-          setProducts,
-        } as any)}
+        show={showScanModal}
+        onClose={() => setShowScanModal(false)}
+        products={products}
+        setProducts={setProducts}
       />
     </div>
   );

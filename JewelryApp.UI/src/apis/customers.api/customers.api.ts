@@ -9,3 +9,7 @@ export const createCustomer = async (payload: {
 }) => {
   return requestApi("POST", apiRoutes.customers.createCustomer, payload);
 };
+
+export const getCustomer = async (payload: { searchBy: string }) => {
+  return requestApi("GET", apiRoutes.customers.getCustomer, payload);
+};

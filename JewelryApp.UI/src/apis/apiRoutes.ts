@@ -35,5 +35,6 @@ export const apiRoutes = {
   },
   customers: {
     createCustomer: "Customer/CreateCustomer",
+    getCustomer: "Customer/GetCustomer",
   },
 };

@@ -8,7 +8,7 @@ interface ScanModalProps {
   show: boolean;
   onClose: () => void;
   setProducts: Dispatch<SetStateAction<any>>;
-  product: any[];
+  products: any[];
 }
 
 const ScanModal: React.FC<ScanModalProps> = ({

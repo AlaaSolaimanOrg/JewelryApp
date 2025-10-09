@@ -17,11 +17,9 @@ export interface Product {
   subtotal?: string | number;
 }
 
-export const initialCustomer = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  phone: "(555) 123-4567",
-  birthday: "March 15, 1985",
-};
-
-export type Customer = typeof initialCustomer;
+export interface Customer {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  birthday: string;
+}

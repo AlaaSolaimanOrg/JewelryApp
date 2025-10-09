@@ -1,7 +1,7 @@
 import React from "react";
 import { FaPlusCircle, FaTimes } from "react-icons/fa";
-import type { Product } from "./types";
-import { API_URL } from "../../../config/config";
+import type { Product } from "../types";
+import { API_URL } from "../../../../config/config";
 
 interface Props {
   products: Product[];
