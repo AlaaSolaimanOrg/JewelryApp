@@ -488,20 +488,46 @@ const MainPosPage = () => {
             <label>Cash Amount</label>
             <input
               type="text"
+              inputMode="decimal"
               className="payment-input"
               placeholder="$0.00"
               value={cashAmount}
-              onChange={(e) => setCashAmount(e.target.value)}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^\d.]/g, "");
+                const parts = raw.split(".");
+                let intPart = parts[0] ?? "";
+                let fracPart = parts.slice(1).join("") ?? "";
+                intPart = intPart.slice(0, 10);
+                fracPart = fracPart.slice(0, 4);
+                let finalVal =
+                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
+                if (raw.endsWith(".") && fracPart.length === 0)
+                  finalVal = intPart + ".";
+                setCashAmount(finalVal);
+              }}
             />
           </div>
           <div className="payment-input-group">
             <label>Card Amount</label>
             <input
               type="text"
+              inputMode="decimal"
               className="payment-input"
               placeholder="$0.00"
               value={cardAmount}
-              onChange={(e) => setCardAmount(e.target.value)}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^\d.]/g, "");
+                const parts = raw.split(".");
+                let intPart = parts[0] ?? "";
+                let fracPart = parts.slice(1).join("") ?? "";
+                intPart = intPart.slice(0, 10);
+                fracPart = fracPart.slice(0, 4);
+                let finalVal =
+                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
+                if (raw.endsWith(".") && fracPart.length === 0)
+                  finalVal = intPart + ".";
+                setCardAmount(finalVal);
+              }}
             />
           </div>
         </div>

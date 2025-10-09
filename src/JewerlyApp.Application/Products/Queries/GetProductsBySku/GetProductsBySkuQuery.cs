@@ -1,10 +1,9 @@
-﻿using JewerlyApp.Application.Common.Queries;
-using JewerlyApp.Application.Common.Responses;
-using JewerlyApp.Domain.Enums;
+﻿using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Products.Queries.GetProducts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JewerlyApp.Application.Products.Queries.GetProducts
+namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
 {
     public class GetProductsBySkuQuery : IRequest<GenericResponse<List<GetProductsVM>>>
     {

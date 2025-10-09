@@ -1,17 +1,12 @@
 ﻿using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Domain.Entities;
+using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace JewerlyApp.Application.Products.Queries.GetProducts
+namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
 {
     public class GetProductsBySkuHandler : IRequestHandler<GetProductsBySkuQuery, GenericResponse<List<GetProductsVM>>>
     {

@@ -4,13 +4,10 @@ using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
+using JewerlyApp.Application.Products.Queries.GetProductsBySku;
 using JewerlyApp.Application.Products.Queries.GetQueryById;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.API.Controllers.Products
 {
