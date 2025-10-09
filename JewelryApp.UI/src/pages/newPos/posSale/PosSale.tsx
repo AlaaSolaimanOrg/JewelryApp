@@ -18,11 +18,12 @@ import {
 import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import ScanModal from "../../../components/ScanModal/ScanModal";
 import "./posSale.scss";
-import type {
+import {
   KaratType,
-  ProductCategory,
-  ProductType,
+  type ProductCategory,
+  type ProductType,
 } from "../../../types/enums";
+import { API_URL } from "../../../config/config";
 
 const initialCustomer = {
   name: "John Doe",
@@ -36,14 +37,14 @@ export interface Product {
   sku: string;
   name: string;
   quantity: number;
-  karatType: KaratType;
+  karatType?: KaratType;
   weight: number;
   category: ProductCategory;
   productType: ProductType;
   description: string;
   pricePerGram: number;
   price: number;
-  images: { ImageUrl: string }[];
+  images: { imageUrl: string }[];
   manual: boolean;
 }
 
@@ -121,11 +122,10 @@ const MainPosPage = () => {
       ...products,
       {
         name: "",
-        icon: <FaRing />,
-        karatType: "14K",
-        weight: "",
-        pricePerGram: "",
-        subtotal: "",
+        images: [],
+        karatType: KaratType.Karat18,
+        weight: 0,
+        pricePerGram: 0,
         manual: true,
       },
     ]);
@@ -145,7 +145,7 @@ const MainPosPage = () => {
       if (field === "weight" || field === "pricePerGram") {
         const w = parseFloat(updated[idx].weight) || 0;
         const ppg = parseFloat(updated[idx].pricePerGram) || 0;
-        updated[idx].price = ppg.toFixed(2);
+        updated[idx].pricePerGram = ppg;
         updated[idx].subtotal = (w * ppg).toFixed(2);
       }
       return updated;
@@ -236,12 +236,18 @@ const MainPosPage = () => {
             </tr>
           </thead>
           <tbody id="productsTableBody">
-            {products.map((product, idx) => (
+            {products?.map((product, idx) => (
               <tr key={idx} className={product.manual ? "manual-row" : ""}>
                 {/* ...existing code for table row... */}
                 <td>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="product-image">{product.icon}</div>
+                    {!product.manual && (
+                      <img
+                        className="product-image"
+                        src={`${API_URL}${product.images[0]?.imageUrl}`}
+                        alt=""
+                      />
+                    )}
                     <div style={{ marginLeft: "10px" }}>
                       {product.manual ? (
                         <input
@@ -268,7 +274,11 @@ const MainPosPage = () => {
                     <select
                       value={product.karatType}
                       onChange={(e) =>
-                        handleManualProductChange(idx, "karat", e.target.value)
+                        handleManualProductChange(
+                          idx,
+                          "karatType",
+                          e.target.value
+                        )
                       }
                       style={{
                         width: "100%",
@@ -292,17 +302,9 @@ const MainPosPage = () => {
                     className="weight-input"
                     placeholder={product.manual ? "0.0g" : ""}
                     value={product.weight}
-                    onChange={
-                      product.manual
-                        ? (e) =>
-                            handleManualProductChange(
-                              idx,
-                              "weight",
-                              e.target.value
-                            )
-                        : undefined
+                    onChange={(e) =>
+                      handleManualProductChange(idx, "weight", e.target.value)
                     }
-                    readOnly={!product.manual}
                   />
                 </td>
                 <td>
@@ -311,28 +313,18 @@ const MainPosPage = () => {
                     className="price-input"
                     placeholder={product.manual ? "$0.00" : ""}
                     value={product.pricePerGram}
-                    onChange={
-                      product.manual
-                        ? (e) =>
-                            handleManualProductChange(
-                              idx,
-                              "pricePerGram",
-                              e.target.value
-                            )
-                        : undefined
+                    onChange={(e) =>
+                      handleManualProductChange(
+                        idx,
+                        "pricePerGram",
+                        e.target.value
+                      )
                     }
-                    readOnly={!product.manual}
                   />
                 </td>
 
                 <td>
-                  <input
-                    type="text"
-                    className="subtotal-input"
-                    placeholder={product.manual ? "$0.00" : ""}
-                    value={product.pricePerGram * product.weight}
-                    readOnly
-                  />
+                  <span>{product.pricePerGram * product.weight}</span>
                 </td>
                 <td>
                   <button
