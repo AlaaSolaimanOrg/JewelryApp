@@ -13,4 +13,9 @@
     color: var(--primary);
     height: 40px;
   }
+  .error-text {
+    margin-top: 6px;
+    color: var(--danger, #dc3545);
+    font-size: 0.875rem;
+  }
 }

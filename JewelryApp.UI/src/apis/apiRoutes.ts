@@ -33,4 +33,7 @@ export const apiRoutes = {
     getUserById: "Users/GetUserById",
     getUserInfo: "Users/getUserInfo",
   },
+  customers: {
+    createCustomer: "Customer/CreateCustomer",
+  },
 };
