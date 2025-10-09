@@ -9,8 +9,8 @@ namespace JewerlyApp.Domain.Enums
     public enum DiscountType
     {
         None =1,
-        FixedAmounts,
-        Percentages
+        FixedAmount,
+        Percentage
 
     }
 }

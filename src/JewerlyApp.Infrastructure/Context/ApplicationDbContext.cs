@@ -5,13 +5,7 @@ using JewerlyApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Infrastructure.Context
 {
@@ -29,8 +23,9 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<ProductImage> ProductImages { get; set; }
         public virtual DbSet<SkuSequence> SkuSequences { get; set; }
         public virtual DbSet<PricingSetting> PricingSettings { get; set; }
-        public virtual DbSet<Cart> Carts { get; set; }
-        public virtual DbSet<CartProduct> CartProducts { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<Sale> Sales { get; set; }
+        public virtual DbSet<SaleItem> SaleItems { get; set; }
 
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

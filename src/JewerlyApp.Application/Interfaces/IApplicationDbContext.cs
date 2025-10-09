@@ -16,8 +16,12 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<ProductImage> ProductImages { get; set; }
         DbSet<SkuSequence> SkuSequences { get; }
         DbSet<PricingSetting> PricingSettings { get; }
-        DbSet<Cart> Carts { get; set; }
-        DbSet<CartProduct> CartProducts { get; set; }
+        DbSet<Customer> Customers { get; set; }
+        DbSet<Sale> Sales { get; set; }
+        DbSet<SaleItem> SaleItems { get; set; }
+        DbSet<ApplicationUser> Users { get; set; }
+        DbSet<ApplicationRole> Roles { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

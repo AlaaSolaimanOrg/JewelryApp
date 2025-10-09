@@ -15,7 +15,7 @@
             public int? Quantity { get; set; }
             public KaratType KaratType { get; set; }
             public decimal Weight { get; set; }
-            public ProductCategory Category { get; set; }
+            public ProductCategory? Category { get; set; }
             public ProductType ProductType { get; set; }
             public string? Description { get; set; }
             public decimal? PricePerGram { get; set; } = null;
