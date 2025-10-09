@@ -1,5 +1,7 @@
 ﻿using JewerlyApp.Domain.Entities.Common;
 using JewerlyApp.Domain.Enums;
+using Microsoft.AspNet.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JewerlyApp.Domain.Entities
 {
@@ -15,6 +17,9 @@ namespace JewerlyApp.Domain.Entities
         public decimal SubTotal { get; set; }
         public decimal Total { get; set; }
         public decimal Taxe { get; set; }
+
+        [ForeignKey("CreatedBy")]
+        public virtual ApplicationUser? CreatedByUser { get; set; }
         public Customer? Customer { get; set; }
         public List<SaleItem> SaleItems { get; set; } = new();
     }
