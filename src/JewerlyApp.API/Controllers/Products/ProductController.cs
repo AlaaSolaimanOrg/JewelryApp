@@ -79,6 +79,18 @@ namespace JewerlyApp.API.Controllers.Products
         }
 
         /// <summary>
+        /// Get all products with optional filters
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProductsBySku([FromQuery] GetProductsBySkuQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
         /// Delete product by ID
         /// </summary>
         /// <param name="id"></param>

@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -9,6 +9,10 @@ import {
 } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import {
+  addProductToCart,
+  getCartProducts,
+} from "../../../apis/cart.api/cart.api";
 import { getProductById } from "../../../apis/products.api/products.api";
 import { API_URL } from "../../../config/config";
 import useLocalApi from "../../../hooks/useLocalApi";
@@ -22,12 +26,8 @@ import {
   showSuccess,
 } from "../../../utils";
 import type { Product } from "../../admin/inventory/Inventory";
-import "./productLookup.scss";
-import {
-  addProductToCart,
-  getCartProducts,
-} from "../../../apis/cart.api/cart.api";
 import type { CartProduct } from "../cartSummary/CartSummary";
+import "./productLookup.scss";
 
 const ProductLookup = () => {
   const [searchInput, setSearchInput] = useState("");

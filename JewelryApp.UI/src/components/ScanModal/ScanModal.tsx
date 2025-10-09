@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import "./scanModal.scss";
 
 interface ScanModalProps {
@@ -7,29 +7,27 @@ interface ScanModalProps {
   onClose: () => void;
 }
 
-interface ScannedItem {
-  id: string;
-  data: string;
-}
-
 const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
   const [scanInput, setScanInput] = useState("");
-  const [scannedItems, setScannedItems] = useState<ScannedItem[]>([]);
+  const [scannedItems, setScannedItems] = useState<string[]>([]);
 
   // Simulate NFC scan (replace with actual NFC reader logic)
   const handleScanInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && scanInput.trim() !== "") {
-      const newItem: ScannedItem = {
-        id: Math.random().toString(36).substr(2, 9),
-        data: scanInput.trim(),
-      };
-      setScannedItems([...scannedItems, newItem]);
+    const addedSku = scanInput.trim();
+    const checkListHasAddedSku = scannedItems.some(
+      (scannedItem) => scannedItem == addedSku
+    );
+    if (e.key === "Enter" && addedSku !== "") {
+      if (checkListHasAddedSku) {
+        return;
+      }
+      setScannedItems([...scannedItems, addedSku]);
       setScanInput("");
     }
   };
 
-  const handleRemove = (id: string) => {
-    setScannedItems(scannedItems.filter((item) => item.id !== id));
+  const handleRemove = (sku: string) => {
+    setScannedItems(scannedItems.filter((scannedItem) => scannedItem !== sku));
   };
 
   return (
@@ -49,13 +47,13 @@ const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
             autoFocus
           />
           <ul className="scanned-list">
-            {scannedItems.map((item) => (
-              <li key={item.id} className="scanned-item">
-                <span className="item-data">{item.data}</span>
+            {scannedItems.map((scannedItem) => (
+              <li key={scannedItem} className="scanned-item">
+                <span className="item-data">{scannedItem}</span>
                 <Button
                   variant="danger"
                   size="sm"
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(scannedItem)}
                   className="remove-btn"
                 >
                   Remove

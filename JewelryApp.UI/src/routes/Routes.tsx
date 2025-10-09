@@ -15,11 +15,11 @@ import SideNav from "../pages/admin/sidenav/Sidenav";
 import Staff from "../pages/admin/staff/Staff";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Header from "../pages/pos/header/Header";
-import Home from "../pages/pos/home/Home";
-import MainPosPage from "../pages/pos/mainPosPage/MainPosPage";
-import ReceiptDelivery from "../pages/pos/ReceiptDelivery/ReceiptDelivery";
-import Receipt from "../pages/pos/receipt/Receipt";
+import Header from "../pages/newPos/header/Header";
+import Home from "../pages/newPos/home/Home";
+import MainPosPage from "../pages/newPos/posSale/PosSale";
+import ReceiptDelivery from "../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery";
+import Receipt from "../pages/newPos/receipt/Receipt";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -54,7 +54,7 @@ const AppRoutes = () => {
           }
         >
           <Route path="/" element={<Home />} />
-          <Route path="/main" element={<MainPosPage />} />
+          <Route path="/sale" element={<MainPosPage />} />
           {/* <Route path="/productLookup" element={<ProductLookup />} />
           <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/cartSummary" element={<CartSummary />} />

@@ -23,6 +23,7 @@ const Header = () => {
     "/payment": "Payment",
     "/receipt": "Receipt Preview",
     "/ReceiptDelivery": "Receipt Delivery",
+    "/sale": "Sale",
   };
 
   // Logout handler

@@ -18,7 +18,7 @@ import {
 } from "react-icons/fa";
 import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import ScanModal from "../../../components/ScanModal/ScanModal";
-import "./mainPosPage.scss";
+import "./posSale.scss";
 
 const initialCustomer = {
   name: "John Doe",
