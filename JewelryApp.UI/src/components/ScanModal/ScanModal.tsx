@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, type Dispatch, type SetStateAction } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
 import { getProductsBySku } from "../../apis/products.api/products.api";
@@ -7,11 +7,14 @@ import "./scanModal.scss";
 interface ScanModalProps {
   show: boolean;
   onClose: () => void;
+  setProducts: Dispatch<SetStateAction<any>>;
+  product: any[];
 }
 
 const ScanModal: React.FC<ScanModalProps> = ({
   show,
   onClose,
+  products,
   setProducts,
 }) => {
   const handleClearAll = () => {
@@ -26,6 +29,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
     const checkListHasAddedSku = scannedItems.some(
       (scannedItem) => scannedItem == addedSku
     );
+    
     if (e.key === "Enter" && addedSku !== "") {
       if (checkListHasAddedSku) {
         return;
@@ -40,11 +44,18 @@ const ScanModal: React.FC<ScanModalProps> = ({
   };
 
   async function getProductsBySkuApi(skus: string[]): Promise<any> {
-    const response = await getProductsBySku({ skus: skus });
-    const fetchedProducts = response?.data?.filter((fetchedProduct) => {
-      return { ...fetchedProduct, manual: false };
-    });
-    setProducts(fetchedProducts);
+    const response = await getProductsBySku({ skus });
+    // Only add products whose SKU is not already in products
+    const existingSkus = products.map((p) => p.sku);
+    const newProducts = response?.data
+      ?.filter((fetchedProduct) =>
+        !existingSkus.includes(fetchedProduct.sku)
+      )
+      .map((fetchedProduct) => ({ ...fetchedProduct, manual: false }));
+  // Place manual products at the end
+  const nonManual = [...products, ...(newProducts || [])].filter(p => !p.manual);
+  const manual = [...products, ...(newProducts || [])].filter(p => p.manual);
+  setProducts([...nonManual, ...manual]);
     setScannedItems([]);
     onClose();
   }

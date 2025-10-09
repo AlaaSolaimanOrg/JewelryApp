@@ -18,11 +18,7 @@ import {
 import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import ScanModal from "../../../components/ScanModal/ScanModal";
 import "./posSale.scss";
-import {
-  KaratType,
-  type ProductCategory,
-  type ProductType,
-} from "../../../types/enums";
+import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import { API_URL } from "../../../config/config";
 
 const initialCustomer = {
@@ -99,7 +95,7 @@ const MainPosPage = () => {
       ? (subtotal * parseFloat(discountAmount)) / 100
       : parseFloat(discountAmount)
     : 0;
-  const tax = parseFloat((subtotal * 0.06).toFixed(2));
+  const tax = parseFloat((subtotal * 0.06).toFixed(4));
   const total = subtotal - discount + tax;
 
   // Search input enter
@@ -127,6 +123,13 @@ const MainPosPage = () => {
         weight: 0,
         pricePerGram: 0,
         manual: true,
+        id: "",
+        sku: "",
+        quantity: 0,
+        category: ProductCategory.Necklaces,
+        productType: ProductType.Gold,
+        description: "",
+        price: 0,
       },
     ]);
   };
@@ -140,13 +143,34 @@ const MainPosPage = () => {
   const handleManualProductChange = (idx, field, value) => {
     setProducts((prev) => {
       const updated = [...prev];
-      updated[idx][field] = value;
+      let val = value;
+      // Only allow up to 4 digits after decimal
+      if (field === "weight" || field === "pricePerGram") {
+        // Remove non-numeric except dot
+        val = val.replace(/[^\d.]/g, "");
+        // Limit to one dot
+        const parts = val.split(".");
+        if (parts.length > 2) val = parts[0] + "." + parts.slice(1).join("");
+        // Limit decimal places
+        if (parts[1]) val = parts[0] + "." + parts[1].slice(0, 4);
+        // Prevent input if value exceeds max
+        if (parseFloat(val) > 9999.9999) return prev;
+      }
+      updated[idx][field] = val;
       // Calculate subtotal if possible
       if (field === "weight" || field === "pricePerGram") {
-        const w = parseFloat(updated[idx].weight) || 0;
-        const ppg = parseFloat(updated[idx].pricePerGram) || 0;
-        updated[idx].pricePerGram = ppg;
-        updated[idx].subtotal = (w * ppg).toFixed(2);
+        const w = parseFloat(updated[idx].weight?.toString() ?? "0") || 0;
+        const ppg =
+          parseFloat(updated[idx].pricePerGram?.toString() ?? "0") || 0;
+        let subtotal = w * ppg;
+        // Show up to 4 decimals, but no trailing zeroes
+        updated[idx].subtotal =
+          subtotal % 1 === 0
+            ? subtotal.toString()
+            : subtotal
+                .toFixed(4)
+                .replace(/\.?(0{1,4})$/, "")
+                .replace(/(\.\d{1,4})\d*$/, "$1");
       }
       return updated;
     });
@@ -305,6 +329,7 @@ const MainPosPage = () => {
                     onChange={(e) =>
                       handleManualProductChange(idx, "weight", e.target.value)
                     }
+                    maxLength={10}
                   />
                 </td>
                 <td>
@@ -320,11 +345,23 @@ const MainPosPage = () => {
                         e.target.value
                       )
                     }
+                    maxLength={10}
                   />
                 </td>
 
                 <td>
-                  <span>{product.pricePerGram * product.weight}</span>
+                  <span>
+                    {(() => {
+                      const subtotal =
+                        parseFloat(product.pricePerGram?.toString() ?? "0") *
+                        parseFloat(product.weight?.toString() ?? "0");
+                      if (subtotal % 1 === 0) return subtotal;
+                      return subtotal
+                        .toFixed(4)
+                        .replace(/\.?(0{1,4})$/, "")
+                        .replace(/(\.\d{1,4})\d*$/, "$1");
+                    })()}
+                  </span>
                 </td>
                 <td>
                   <button
@@ -432,19 +469,19 @@ const MainPosPage = () => {
         <div className="order-summary">
           <div className="summary-row">
             <span>Subtotal:</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>${subtotal.toFixed(4)}</span>
           </div>
           <div className="summary-row">
             <span>Discount:</span>
-            <span>${discount.toFixed(2)}</span>
+            <span>${discount.toFixed(4)}</span>
           </div>
           <div className="summary-row">
             <span>Tax:</span>
-            <span>${tax.toFixed(2)}</span>
+            <span>${tax.toFixed(4)}</span>
           </div>
           <div className="summary-row total">
             <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
+            <span>${total.toFixed(4)}</span>
           </div>
         </div>
 
@@ -461,6 +498,7 @@ const MainPosPage = () => {
       <ScanModal
         show={showScanModal}
         onClose={() => setShowScanModal(false)}
+        products={products}
         setProducts={setProducts}
       />
     </div>
