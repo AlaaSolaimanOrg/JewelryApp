@@ -48,6 +48,8 @@
     width: 100%;
     max-width: 350px;
     margin-top: 0.5rem;
+    max-height: 370px; /* 5 items x ~74px each + margin */
+    overflow-y: auto;
 
     .scanned-item {
       display: flex;

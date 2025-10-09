@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import "./scanModal.scss";
+import { showError } from "../../utils";
 
 interface ScanModalProps {
   show: boolean;
@@ -64,7 +65,7 @@ const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary">Confirm</Button>
+        <Button variant="primary" disabled={!scannedItems.length}>Confirm</Button>
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>
