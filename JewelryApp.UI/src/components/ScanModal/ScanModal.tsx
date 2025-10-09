@@ -29,7 +29,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
     const checkListHasAddedSku = scannedItems.some(
       (scannedItem) => scannedItem == addedSku
     );
-    
+
     if (e.key === "Enter" && addedSku !== "") {
       if (checkListHasAddedSku) {
         return;
@@ -48,14 +48,16 @@ const ScanModal: React.FC<ScanModalProps> = ({
     // Only add products whose SKU is not already in products
     const existingSkus = products.map((p) => p.sku);
     const newProducts = response?.data
-      ?.filter((fetchedProduct) =>
-        !existingSkus.includes(fetchedProduct.sku)
-      )
+      ?.filter((fetchedProduct) => !existingSkus.includes(fetchedProduct.sku))
       .map((fetchedProduct) => ({ ...fetchedProduct, manual: false }));
-  // Place manual products at the end
-  const nonManual = [...products, ...(newProducts || [])].filter(p => !p.manual);
-  const manual = [...products, ...(newProducts || [])].filter(p => p.manual);
-  setProducts([...nonManual, ...manual]);
+    // Place manual products at the end
+    const nonManual = [...products, ...(newProducts || [])].filter(
+      (p) => !p.manual
+    );
+    const manual = [...products, ...(newProducts || [])].filter(
+      (p) => p.manual
+    );
+    setProducts([...nonManual, ...manual]);
     setScannedItems([]);
     onClose();
   }

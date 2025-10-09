@@ -411,10 +411,50 @@ const MainPosPage = () => {
         <div className="discount-inputs">
           <input
             type="text"
+            inputMode="decimal"
             className="discount-amount"
             placeholder="Discount amount"
             value={discountAmount}
-            onChange={(e) => setDiscountAmount(e.target.value)}
+            onChange={(e) => {
+              // Allow only digits and at most one dot
+              let raw = e.target.value;
+              // Remove any characters except digits and dot
+              raw = raw.replace(/[^\d.]/g, "");
+              // If more than one dot, keep first and remove the rest
+              const allParts = raw.split(".");
+              let intPart = allParts[0] ?? "";
+              let fracPart = allParts.slice(1).join("") ?? ""; // join extra dots into frac
+
+              if (discountType === "percentage") {
+                // Limit to 2 decimal places for percentage
+                fracPart = fracPart.slice(0, 2);
+                // Build value; preserve trailing dot if user typed it
+                let val =
+                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
+                if (raw.endsWith(".") && fracPart.length === 0)
+                  val = intPart + ".";
+                // Enforce percentage bounds 0-100 when parseable
+                if (val !== "" && !val.endsWith(".")) {
+                  const num = parseFloat(val);
+                  if (!isNaN(num)) {
+                    if (num > 100) val = "100";
+                    if (num < 0) val = "0";
+                  }
+                }
+                setDiscountAmount(val);
+                return;
+              }
+
+              // Fixed value behavior: limit integer to 10 digits, fraction to 4
+              intPart = intPart.slice(0, 10);
+              fracPart = fracPart.slice(0, 4);
+              // If user typed a trailing dot, preserve it so they can enter decimals
+              let finalVal =
+                fracPart.length > 0 ? intPart + "." + fracPart : intPart;
+              if (raw.endsWith(".") && fracPart.length === 0)
+                finalVal = intPart + ".";
+              setDiscountAmount(finalVal);
+            }}
           />
           <select
             className="discount-type"

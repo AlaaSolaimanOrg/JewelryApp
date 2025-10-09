@@ -73,7 +73,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,
-                    }).ToList()
+                    })
+                    .ToList()
                 };
             });
 
