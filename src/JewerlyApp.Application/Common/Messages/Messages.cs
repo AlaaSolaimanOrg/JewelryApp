@@ -30,6 +30,8 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Success_Role_Updated = "Role updated successfully.";
         public const string Success_Role_Deleted = "Role deleted successfully.";
         public const string Success_Password_Reset = "Password reset successfully.";
+        public const string Success_Customer_Created = "Customer Successfully Created";
+        public const string Success_Customer_Updated = "Customer Updated Successfully";
 
         //Error Messages
         public const string ErrorGeneral = "An unexpected error occurred. Please try again.";
@@ -72,6 +74,8 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Percentage_Discount = "Percentage discount must be between 0 and 100.";
         public const string Error_Pricing_Settings = "Pricing settings for this type with this karat type is missing.";
         public const string Error_Invalid_Price = "Invalid Price";
+        public const string Error_Customer_Data_Exists = "A Customer with the following data already exists.";
+        public const string Error_Customer_Not_Found = "Customer Not Found.";
 
         //POS Messages
         public const string Pos_No_Cart = "No cart is found.";

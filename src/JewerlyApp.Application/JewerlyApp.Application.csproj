@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Customers\Commands\" />
     <Folder Include="Customers\Queries\" />
     <Folder Include="Shared\" />
   </ItemGroup>
