@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
+using JewerlyApp.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

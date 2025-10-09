@@ -1,16 +1,10 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Commands.CreateSale
 {
@@ -39,6 +33,29 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                         Message = "Customer not found"
                     };
 
+                var notManualItems = request.SaleItems.Where(i => !i.IsManualProduct).Select(i => new { i.ProductId, i.ProductName }).ToList();
+
+                var notManualItemIds = notManualItems.Select(i => i.ProductId).ToList();
+
+                var existingProductIds = await _context.Products
+                    .Where(x => notManualItemIds.Contains(x.Id))
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                var invalidProducts = notManualItems
+                    .Where(item => !existingProductIds.Contains((Guid)item.ProductId!))
+                    .Select(item => item.ProductName) // Return the names of invalid products
+                    .ToList();
+
+                if (invalidProducts.Any())
+                {
+                    return new GenericResponse<string>
+                    {
+                        Data = string.Join(", ", invalidProducts),
+                        StatusCode = ResponseStatusCode.BadRequest,
+                        Message = "Sale contains invalid products",
+                    };
+                }
 
                 // Create sale entity
                 var sale = new Sale
@@ -59,20 +76,15 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
                 foreach (var item in request.SaleItems)
                 {
-                    // Validate product exists and get current price
-                    var product = await _context.Products
-                        .FirstOrDefaultAsync(p => p.Id == item.ProductId, cancellationToken);
+                    var productId = item.ProductId;
+                    if (item.IsManualProduct)
+                    {
+                        productId = await AddManualProduct(item, cancellationToken);
+                    }
 
-                    if (product == null)
-                        return new GenericResponse<string>
-                        {
-                            Data = null,
-                            StatusCode = ResponseStatusCode.BadRequest,
-                            Message = "Product not found"
-                        };
 
                     // Use overridden price or get current price from product
-                    var pricePerGram = item.OverriddenPricePerGram ?? item.OriginalPricePerGram ;
+                    var pricePerGram = item.OverriddenPricePerGram ?? item.OriginalPricePerGram;
 
                     var itemSubTotal = Math.Round(item.Weight * pricePerGram, 2, MidpointRounding.AwayFromZero);
 
@@ -80,7 +92,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     {
                         Id = Guid.NewGuid(),
                         SaleId = sale.Id,
-                        ProductId = item.ProductId,
+                        ProductId = (Guid)productId!,
                         KaratType = item.KaratType,
                         Weight = item.Weight,
                         OriginalPricePerGram = item.OriginalPricePerGram,
@@ -160,6 +172,28 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         {
             var totalPaid = (sale.CashAmount ?? 0) + (sale.CardAmount ?? 0);
             return totalPaid >= sale.Total; // Allow overpayment
+        }
+
+        private async Task<Guid> AddManualProduct(SaleItemDto item, CancellationToken cancellationToken)
+        {
+            var product = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = item.ProductName,
+                KaratType = item.KaratType,
+                Sku = null,
+                Weight = item.Weight,
+                Category = null,
+                Type = ProductType.Gold,
+                Description = null,
+                Quantity = 1,
+                IsManualEntry = true,
+            };
+
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return product.Id;
         }
 
     }

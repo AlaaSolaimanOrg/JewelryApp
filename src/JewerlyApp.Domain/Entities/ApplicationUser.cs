@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JewerlyApp.Infrastructure.Identity
+namespace JewerlyApp.Domain.Entities
 {
     public class ApplicationUser : IdentityUser<int>
     {

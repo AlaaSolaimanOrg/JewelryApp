@@ -5,6 +5,7 @@ using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Application.Products.Queries.GetProducts;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using JewerlyApp.Infrastructure.Context;
 using JewerlyApp.Infrastructure.Identity;
