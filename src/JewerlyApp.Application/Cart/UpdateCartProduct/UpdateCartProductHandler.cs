@@ -60,7 +60,7 @@ namespace JewerlyApp.Application.Carts.Commands.UpdateCartProduct
             }
             decimal newOverriddenPricePerGram;
 
-            if (request.DiscountType == DiscountType.Percentages)
+            if (request.DiscountType == DiscountType.Percentage)
             {
                 if (request.Discount < 0 || request.Discount > 100)
                 {

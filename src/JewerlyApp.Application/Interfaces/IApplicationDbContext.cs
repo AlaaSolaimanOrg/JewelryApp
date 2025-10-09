@@ -19,6 +19,8 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<Cart> Carts { get; set; }
         DbSet<CartProduct> CartProducts { get; set; }
         DbSet<Customer> Customers { get; set; }
+        DbSet<Sale> Sales { get; set; }
+        DbSet<SaleItem> SaleItems { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
