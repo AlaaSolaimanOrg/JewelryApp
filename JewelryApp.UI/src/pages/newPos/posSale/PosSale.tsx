@@ -18,6 +18,11 @@ import {
 import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
 import ScanModal from "../../../components/ScanModal/ScanModal";
 import "./posSale.scss";
+import type {
+  KaratType,
+  ProductCategory,
+  ProductType,
+} from "../../../types/enums";
 
 const initialCustomer = {
   name: "John Doe",
@@ -26,43 +31,45 @@ const initialCustomer = {
   birthday: "March 15, 1985",
 };
 
-type Product = {
+export interface Product {
+  id: string;
+  sku: string;
   name: string;
-  icon: JSX.Element;
-  kraft: string;
-  weight: string;
-  pricePerGram: string;
-  unitPrice: string;
-  subtotal: string;
-  manual?: boolean;
-};
+  quantity: number;
+  karatType: KaratType;
+  weight: number;
+  category: ProductCategory;
+  productType: ProductType;
+  description: string;
+  pricePerGram: number;
+  price: number;
+  images: { ImageUrl: string }[];
+  manual: boolean;
+}
 
 // const initialProducts: Product[] = [
 //   {
 //     name: "Diamond Solitaire Ring",
 //     icon: <FaRing />,
-//     kraft: "21K",
+//     karatType: "21K",
 //     weight: "3.5",
 //     pricePerGram: "125.75",
-//     unitPrice: "125.75",
 //     subtotal: "440.13",
 //   },
 //   {
 //     name: "Gold Tennis Bracelet",
 //     icon: <FaRing />,
-//     kraft: "18K",
+//     karatType: "18K",
 //     weight: "8.2",
 //     pricePerGram: "112.30",
-//     unitPrice: "112.30",
 //     subtotal: "920.68",
 //   },
 //   {
 //     name: "Ruby Heart Pendant",
 //     icon: <FaHeart />,
-//     kraft: "24K",
+//     karatType: "24K",
 //     weight: "5.1",
 //     pricePerGram: "142.90",
-//     unitPrice: "142.90",
 //     subtotal: "728.79",
 //   },
 // ];
@@ -82,7 +89,10 @@ const MainPosPage = () => {
 
   console.log("products", products);
   // Calculate totals
-  const subtotal = products?.reduce((sum, p) => sum + parseFloat(p.subtotal), 0);
+  const subtotal = products?.reduce(
+    (sum, product) => sum + parseFloat(product.subtotal),
+    0
+  );
   const discount = discountAmount
     ? discountType === "percentage"
       ? (subtotal * parseFloat(discountAmount)) / 100
@@ -112,10 +122,9 @@ const MainPosPage = () => {
       {
         name: "",
         icon: <FaRing />,
-        kraft: "14K",
+        karatType: "14K",
         weight: "",
         pricePerGram: "",
-        unitPrice: "",
         subtotal: "",
         manual: true,
       },
@@ -133,14 +142,10 @@ const MainPosPage = () => {
       const updated = [...prev];
       updated[idx][field] = value;
       // Calculate subtotal if possible
-      if (
-        field === "weight" ||
-        field === "pricePerGram" ||
-        field === "unitPrice"
-      ) {
+      if (field === "weight" || field === "pricePerGram") {
         const w = parseFloat(updated[idx].weight) || 0;
         const ppg = parseFloat(updated[idx].pricePerGram) || 0;
-        updated[idx].unitPrice = ppg.toFixed(2);
+        updated[idx].price = ppg.toFixed(2);
         updated[idx].subtotal = (w * ppg).toFixed(2);
       }
       return updated;
@@ -223,28 +228,27 @@ const MainPosPage = () => {
           <thead>
             <tr>
               <th>Product</th>
-              <th>Kraft</th>
+              <th>karat</th>
               <th>Weight</th>
               <th>Price/Gram</th>
-              <th>Unit Price</th>
               <th>Subtotal</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="productsTableBody">
-            {products.map((p, idx) => (
-              <tr key={idx} className={p.manual ? "manual-row" : ""}>
+            {products.map((product, idx) => (
+              <tr key={idx} className={product.manual ? "manual-row" : ""}>
                 {/* ...existing code for table row... */}
                 <td>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <div className="product-image">{p.icon}</div>
+                    <div className="product-image">{product.icon}</div>
                     <div style={{ marginLeft: "10px" }}>
-                      {p.manual ? (
+                      {product.manual ? (
                         <input
                           type="text"
                           className="product-name-input"
                           placeholder="Product Name"
-                          value={p.name}
+                          value={product.name}
                           onChange={(e) =>
                             handleManualProductChange(
                               idx,
@@ -254,17 +258,17 @@ const MainPosPage = () => {
                           }
                         />
                       ) : (
-                        p.name
+                        product.name
                       )}
                     </div>
                   </div>
                 </td>
                 <td>
-                  {p.manual ? (
+                  {product.manual ? (
                     <select
-                      value={p.kraft}
+                      value={product.karatType}
                       onChange={(e) =>
-                        handleManualProductChange(idx, "kraft", e.target.value)
+                        handleManualProductChange(idx, "karat", e.target.value)
                       }
                       style={{
                         width: "100%",
@@ -279,17 +283,17 @@ const MainPosPage = () => {
                       <option>24K</option>
                     </select>
                   ) : (
-                    p.kraft
+                    product.karatType
                   )}
                 </td>
                 <td>
                   <input
                     type="text"
                     className="weight-input"
-                    placeholder={p.manual ? "0.0g" : ""}
-                    value={p.weight}
+                    placeholder={product.manual ? "0.0g" : ""}
+                    value={product.weight}
                     onChange={
-                      p.manual
+                      product.manual
                         ? (e) =>
                             handleManualProductChange(
                               idx,
@@ -298,17 +302,17 @@ const MainPosPage = () => {
                             )
                         : undefined
                     }
-                    readOnly={!p.manual}
+                    readOnly={!product.manual}
                   />
                 </td>
                 <td>
                   <input
                     type="text"
                     className="price-input"
-                    placeholder={p.manual ? "$0.00" : ""}
-                    value={p.pricePerGram}
+                    placeholder={product.manual ? "$0.00" : ""}
+                    value={product.pricePerGram}
                     onChange={
-                      p.manual
+                      product.manual
                         ? (e) =>
                             handleManualProductChange(
                               idx,
@@ -317,34 +321,16 @@ const MainPosPage = () => {
                             )
                         : undefined
                     }
-                    readOnly={!p.manual}
+                    readOnly={!product.manual}
                   />
                 </td>
-                <td>
-                  <input
-                    type="text"
-                    className="price-input"
-                    placeholder={p.manual ? "$0.00" : ""}
-                    value={p.unitPrice}
-                    onChange={
-                      p.manual
-                        ? (e) =>
-                            handleManualProductChange(
-                              idx,
-                              "unitPrice",
-                              e.target.value
-                            )
-                        : undefined
-                    }
-                    readOnly={!p.manual}
-                  />
-                </td>
+
                 <td>
                   <input
                     type="text"
                     className="subtotal-input"
-                    placeholder={p.manual ? "$0.00" : ""}
-                    value={p.subtotal}
+                    placeholder={product.manual ? "$0.00" : ""}
+                    value={product.pricePerGram * product.weight}
                     readOnly
                   />
                 </td>

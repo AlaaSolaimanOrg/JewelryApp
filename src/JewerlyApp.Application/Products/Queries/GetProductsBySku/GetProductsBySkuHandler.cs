@@ -44,9 +44,19 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     StatusCode = ResponseStatusCode.NoContent,
                 };
             }
+            var pricingSettings = await _context.PricingSettings.AsNoTracking()
+              .ToDictionaryAsync(
+                  ps => new { ps.KaratType, ps.ProductType },
+                  ps => ps.Price,
+                  cancellationToken
+              );
 
             var data = products.Select(product =>
             {
+
+                var pricePerGram = pricingSettings.GetValueOrDefault(
+                     new { KaratType = product.KaratType, ProductType = product.Type }, 0);
+
                 return new GetProductsVM
                 {
                     Id = product.Id,
@@ -58,8 +68,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Category = product.Category,
                     ProductType = product.Type,
                     Description = product.Description,
-                    //PricePerGram = pricePerGram,
-                    //Price = product.Weight * pricePerGram,
+                    PricePerGram = pricePerGram,
+                    Price = product.Weight * pricePerGram,
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,

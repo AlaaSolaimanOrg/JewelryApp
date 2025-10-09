@@ -41,9 +41,12 @@ const ScanModal: React.FC<ScanModalProps> = ({
 
   async function getProductsBySkuApi(skus: string[]): Promise<any> {
     const response = await getProductsBySku({ skus: skus });
-
-    setProducts(response?.data);
+    const fetchedProducts = response?.data?.filter((fetchedProduct) => {
+      return { ...fetchedProduct, manual: false };
+    });
+    setProducts(fetchedProducts);
     setScannedItems([]);
+    onClose();
   }
 
   return (
