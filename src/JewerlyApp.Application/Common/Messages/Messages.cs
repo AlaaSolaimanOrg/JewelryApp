@@ -32,6 +32,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Success_Password_Reset = "Password reset successfully.";
         public const string Success_Customer_Created = "Customer Successfully Created";
         public const string Success_Customer_Updated = "Customer Updated Successfully";
+        public const string Success_Customer_Deleted = "Customer Deleted.";
 
         //Error Messages
         public const string ErrorGeneral = "An unexpected error occurred. Please try again.";
