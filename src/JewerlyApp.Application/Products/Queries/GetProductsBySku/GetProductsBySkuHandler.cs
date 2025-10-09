@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Products.Queries.GetProducts
 {
-    public class GetProductsBySkuHandler : IRequestHandler<GetProductsBySkuQuery, GenericResponse<List<GetProductsBySkuVM>>>
+    public class GetProductsBySkuHandler : IRequestHandler<GetProductsBySkuQuery, GenericResponse<List<GetProductsVM>>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -22,7 +22,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
             _context = context;
         }
 
-        public async Task<GenericResponse<List<GetProductsBySkuVM>>> Handle(GetProductsBySkuQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<List<GetProductsVM>>> Handle(GetProductsBySkuQuery request, CancellationToken cancellationToken)
         {
             var productQuery = _context.Products.AsNoTracking()
                 .Include(p => p.Images)
@@ -38,20 +38,28 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
 
             if (!products.Any())
             {
-                return new GenericResponse<List<GetProductsBySkuVM>>
+                return new GenericResponse<List<GetProductsVM>>
                 {
-                    Data = new List<GetProductsBySkuVM>(),
+                    Data = new List<GetProductsVM>(),
                     StatusCode = ResponseStatusCode.NoContent,
                 };
             }
 
             var data = products.Select(product =>
             {
-                return new GetProductsBySkuVM
+                return new GetProductsVM
                 {
                     Id = product.Id,
                     Sku = product.Sku,
                     Name = product.Name,
+                    Quantity = product.Quantity,
+                    KaratType = product.KaratType,
+                    Weight = product.Weight,
+                    Category = product.Category,
+                    ProductType = product.Type,
+                    Description = product.Description,
+                    //PricePerGram = pricePerGram,
+                    //Price = product.Weight * pricePerGram,
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,
@@ -60,7 +68,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
             });
 
 
-            return new GenericResponse<List<GetProductsBySkuVM>>
+            return new GenericResponse<List<GetProductsVM>>
             {
                 Data = data.ToList(),
                 StatusCode = data.Any() ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,

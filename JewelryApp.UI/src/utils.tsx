@@ -19,7 +19,6 @@ export const requestApi = async (
   params: any = {},
   addParams: boolean = false
 ) => {
-  // Transform payload for GET requests if needed
   let finalPayload = payload;
   if (method === "GET" && addParams) {
     finalPayload = addParamsToObjKeys(payload);
@@ -31,18 +30,19 @@ export const requestApi = async (
     ...extraConfig,
   };
 
-  if (
-    method === "POST" ||
-    method === "PUT" ||
-    method === "PATCH" ||
-    method == "DELETE"
-  ) {
+  if (["POST", "PUT", "PATCH"].includes(method)) {
     config.data = finalPayload;
-  } else {
-    // For GET/DELETE requests, merge payload with params
+  } else if (method === "DELETE") {
+    // Some APIs accept body with DELETE, some only query params
+    // We'll support both:
+    if (Object.keys(finalPayload).length > 0) {
+      config.data = finalPayload;
+    }
+    config.params = { ...params };
+  } else if (method === "GET") {
     config.params = { ...params, ...finalPayload };
 
-    // Properly serialize arrays
+    // ✅ Arrays like skus: ["A", "B"] -> ?skus=A&skus=B
     config.paramsSerializer = (params) =>
       qs.stringify(params, { arrayFormat: "repeat" });
   }

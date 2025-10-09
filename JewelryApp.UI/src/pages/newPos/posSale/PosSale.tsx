@@ -5,7 +5,6 @@ import {
   FaCreditCard,
   FaEnvelope,
   FaGem,
-  FaHeart,
   FaPhone,
   FaPlusCircle,
   FaRing,
@@ -38,35 +37,35 @@ type Product = {
   manual?: boolean;
 };
 
-const initialProducts: Product[] = [
-  {
-    name: "Diamond Solitaire Ring",
-    icon: <FaRing />,
-    kraft: "21K",
-    weight: "3.5",
-    pricePerGram: "125.75",
-    unitPrice: "125.75",
-    subtotal: "440.13",
-  },
-  {
-    name: "Gold Tennis Bracelet",
-    icon: <FaRing />,
-    kraft: "18K",
-    weight: "8.2",
-    pricePerGram: "112.30",
-    unitPrice: "112.30",
-    subtotal: "920.68",
-  },
-  {
-    name: "Ruby Heart Pendant",
-    icon: <FaHeart />,
-    kraft: "24K",
-    weight: "5.1",
-    pricePerGram: "142.90",
-    unitPrice: "142.90",
-    subtotal: "728.79",
-  },
-];
+// const initialProducts: Product[] = [
+//   {
+//     name: "Diamond Solitaire Ring",
+//     icon: <FaRing />,
+//     kraft: "21K",
+//     weight: "3.5",
+//     pricePerGram: "125.75",
+//     unitPrice: "125.75",
+//     subtotal: "440.13",
+//   },
+//   {
+//     name: "Gold Tennis Bracelet",
+//     icon: <FaRing />,
+//     kraft: "18K",
+//     weight: "8.2",
+//     pricePerGram: "112.30",
+//     unitPrice: "112.30",
+//     subtotal: "920.68",
+//   },
+//   {
+//     name: "Ruby Heart Pendant",
+//     icon: <FaHeart />,
+//     kraft: "24K",
+//     weight: "5.1",
+//     pricePerGram: "142.90",
+//     unitPrice: "142.90",
+//     subtotal: "728.79",
+//   },
+// ];
 
 const MainPosPage = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
@@ -74,15 +73,16 @@ const MainPosPage = () => {
   const [customer, setCustomer] = useState(initialCustomer);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [discountAmount, setDiscountAmount] = useState("");
   const [discountType, setDiscountType] = useState("percentage");
   const [notes, setNotes] = useState("");
   const [cashAmount, setCashAmount] = useState("");
   const [cardAmount, setCardAmount] = useState("");
 
+  console.log("products", products);
   // Calculate totals
-  const subtotal = products.reduce((sum, p) => sum + parseFloat(p.subtotal), 0);
+  const subtotal = products?.reduce((sum, p) => sum + parseFloat(p.subtotal), 0);
   const discount = discountAmount
     ? discountType === "percentage"
       ? (subtotal * parseFloat(discountAmount)) / 100
@@ -480,7 +480,11 @@ const MainPosPage = () => {
         show={showAddCustomerModal}
         onClose={() => setShowAddCustomerModal(false)}
       />
-      <ScanModal show={showScanModal} onClose={() => setShowScanModal(false)} />
+      <ScanModal
+        show={showScanModal}
+        onClose={() => setShowScanModal(false)}
+        setProducts={setProducts}
+      />
     </div>
   );
 };

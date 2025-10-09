@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.Application.Products.Queries.GetProducts
 {
-    public class GetProductsBySkuQuery : IRequest<GenericResponse<List<GetProductsBySkuVM>>>
+    public class GetProductsBySkuQuery : IRequest<GenericResponse<List<GetProductsVM>>>
     {
         [FromQuery(Name = "skus")]
         public List<string> skus { get; set; }

@@ -22,6 +22,7 @@ export const apiRoutes = {
     getProducts: "Product/GetProducts",
     deleteProduct: "Product/DeleteProduct",
     getProductById: "Product/GetProductById",
+    getProductsBySku: "Product/GetProductsBySku",
   },
   users: {
     getAllUsers: "Users/GetAllUsers",

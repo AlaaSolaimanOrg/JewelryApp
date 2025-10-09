@@ -1,14 +1,22 @@
 import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
+import { BiTrash } from "react-icons/bi";
+import { getProductsBySku } from "../../apis/products.api/products.api";
 import "./scanModal.scss";
-import { showError } from "../../utils";
 
 interface ScanModalProps {
   show: boolean;
   onClose: () => void;
 }
 
-const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
+const ScanModal: React.FC<ScanModalProps> = ({
+  show,
+  onClose,
+  setProducts,
+}) => {
+  const handleClearAll = () => {
+    setScannedItems([]);
+  };
   const [scanInput, setScanInput] = useState("");
   const [scannedItems, setScannedItems] = useState<string[]>([]);
 
@@ -31,6 +39,13 @@ const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
     setScannedItems(scannedItems.filter((scannedItem) => scannedItem !== sku));
   };
 
+  async function getProductsBySkuApi(skus: string[]): Promise<any> {
+    const response = await getProductsBySku({ skus: skus });
+
+    setProducts(response?.data);
+    setScannedItems([]);
+  }
+
   return (
     <Modal show={show} onHide={onClose} centered className="scan-modal">
       <Modal.Header closeButton>
@@ -38,34 +53,73 @@ const ScanModal: React.FC<ScanModalProps> = ({ show, onClose }) => {
       </Modal.Header>
       <Modal.Body>
         <div className="scan-section">
-          <input
-            type="text"
-            className="scan-input"
-            placeholder="Scan NFC or enter code..."
-            value={scanInput}
-            onChange={(e) => setScanInput(e.target.value)}
-            onKeyUp={handleScanInput}
-            autoFocus
-          />
+          <div className="scan-input-row">
+            <input
+              type="text"
+              className="scan-input"
+              placeholder="Scan NFC or enter code..."
+              value={scanInput}
+              onChange={(e) => setScanInput(e.target.value)}
+              onKeyUp={handleScanInput}
+              autoFocus
+            />
+            {scannedItems.length > 0 && (
+              <button
+                className="clear-all-btn"
+                type="button"
+                onClick={handleClearAll}
+                title="Clear all scanned items"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
           <ul className="scanned-list">
-            {scannedItems.map((scannedItem) => (
-              <li key={scannedItem} className="scanned-item">
-                <span className="item-data">{scannedItem}</span>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleRemove(scannedItem)}
-                  className="remove-btn"
-                >
-                  Remove
-                </Button>
-              </li>
-            ))}
+            {scannedItems.length === 0 ? (
+              <div className="no-scan-message">
+                <span>No items have been scanned yet.</span>
+              </div>
+            ) : (
+              <>
+                <div className="sku-list-header">
+                  <span className="item-title">SKU</span>
+                </div>
+
+                {scannedItems.map((scannedItem, idx) => (
+                  <li key={scannedItem} className="scanned-item">
+                    <div className="scan-row-content">
+                      <span className="row-number">{idx + 1}.</span>
+                      <span className="item-data" title={scannedItem}>
+                        {scannedItem}
+                      </span>
+                      <span className="e-icon" title="Remove">
+                        <BiTrash
+                          style={{
+                            fontSize: "2rem",
+                            color: "var(--danger)",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleRemove(scannedItem)}
+                        />
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </>
+            )}
           </ul>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" disabled={!scannedItems.length}>Confirm</Button>
+        <Button
+          variant="primary"
+          disabled={!scannedItems.length}
+          onClick={() => {
+            getProductsBySkuApi(scannedItems);
+          }}
+        >
+          Confirm
+        </Button>
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>
