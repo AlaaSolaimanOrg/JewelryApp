@@ -5,10 +5,11 @@ using MediatR;
 
 namespace JewerlyApp.Application.Products.Queries.GetProducts
 {
-    public class GetProductsQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetProductsVM>>
+    public class GetProductsListQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetProductsVM>>
     {
+        public List<string>? Skus { get; set; }
         public string? SearchBy { get; set; }
-        public List<KaratType> KaratTypeFilter { get; set; }
+        public List<KaratType> KaratTypeFilter { get; set; } = new();
         public decimal? weightFromFilter { get; set; }
         public decimal? weightToFilter { get; set; }
         public decimal? PriceFromFilter { get; set; }

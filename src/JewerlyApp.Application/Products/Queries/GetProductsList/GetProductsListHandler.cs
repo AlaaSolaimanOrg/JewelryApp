@@ -13,26 +13,38 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Products.Queries.GetProducts
 {
-    public class GetProductsHandler : IRequestHandler<GetProductsQuery, PaginatedResponse<GetProductsVM>>
+    public class GetProductsListHandler : IRequestHandler<GetProductsListQuery, PaginatedResponse<GetProductsVM>>
     {
         private readonly IApplicationDbContext _context;
 
-        public GetProductsHandler(IApplicationDbContext context)
+        public GetProductsListHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<PaginatedResponse<GetProductsVM>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<GetProductsVM>> Handle(GetProductsListQuery request, CancellationToken cancellationToken)
         {
             // First, get the filtered products
             var productQuery = _context.Products.AsNoTracking()
                 .Include(p => p.Images)
                 .Where(x =>
-                    request.KaratTypeFilter.Contains(x.KaratType) &&
-                    x.Weight >= request.weightFromFilter &&
-                    x.Weight <= request.weightToFilter &&
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 );
+
+            if(request.Skus != null && request.Skus.Any())
+            {
+                productQuery = productQuery.Where(p => request.Skus.Contains(p.Sku!));
+            }
+
+            if (request.KaratTypeFilter.Any())
+            {
+                productQuery = productQuery.Where(p => request.KaratTypeFilter.Contains(p.KaratType));
+            }
+
+            if(request.weightFromFilter != null && request.weightToFilter != null)
+            {
+                productQuery = productQuery.Where(p => p.Weight >= request.weightFromFilter && p.Weight <= request.weightToFilter);
+            }
 
             if (!string.IsNullOrEmpty(request.SearchBy))
             {
