@@ -2,7 +2,7 @@ import type { DiscountType, KaratType } from "../../types/enums";
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
 
-export interface SaleItem {
+export interface SaleItemPayload {
   productId: string;
   productName: string;
   karatType: KaratType;
@@ -21,13 +21,13 @@ export interface CreateSalePayload {
   cashAmount: number;
   cardAmount: number;
   taxe: number;
-  saleItems: SaleItem[];
+  saleItems: SaleItemPayload[];
 }
 
 export const createSale = async (payload: CreateSalePayload) => {
   return requestApi("POST", apiRoutes.sales.createSale, payload);
 };
 
-export const getCustomer = async (payload: { searchBy: string }) => {
-  return requestApi("GET", apiRoutes.customers.getCustomer, payload);
+export const getSaleById = async (payload: { saleId: string }) => {
+  return requestApi("GET", apiRoutes.sales.getSaleById, payload);
 };

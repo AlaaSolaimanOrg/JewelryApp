@@ -6,6 +6,7 @@ interface Props {
   tax: number;
   total: number;
   handleCreateSale: () => void;
+  canSaveSale: boolean;
 }
 
 const PaymentSummary: React.FC<Props> = ({
@@ -14,6 +15,7 @@ const PaymentSummary: React.FC<Props> = ({
   tax,
   total,
   handleCreateSale,
+  canSaveSale,
 }) => {
   return (
     <section className="payment-section">
@@ -39,7 +41,8 @@ const PaymentSummary: React.FC<Props> = ({
 
       <div className="footer-buttons">
         <button
-          className="save-btn"
+          className={`save-btn ${!canSaveSale ? "disabled-button-gold" : ""}`}
+          disabled={!canSaveSale}
           onClick={() => {
             handleCreateSale();
           }}

@@ -125,7 +125,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
                 return new GenericResponse<string>
                 {
-                    Data = null,
+                    Data = sale.Id.ToString(),
                     StatusCode = ResponseStatusCode.Created,
                     Message = Messages.Success
                 };

@@ -104,3 +104,15 @@
     margin-top: 30px;
   }
 }
+
+@media print {
+  .receipt-actions {
+    display: none !important;
+  }
+  .receipt-container {
+    box-shadow: none !important;
+    border: none !important;
+    position: absolute;
+    top: 0;
+  }
+}

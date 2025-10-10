@@ -41,6 +41,11 @@ const MainPosPage: React.FC = () => {
   const tax = parseFloat((subtotal * 0.06).toFixed(4));
   const total = subtotal - discount + tax;
 
+  const canSaveSale =
+    !!customerSelectedId &&
+    products.length &&
+    (cardAmount > 0 || cashAmount > 0);
+
   // Manual entry
   const handleManualEntry = () => {
     setProducts([
@@ -305,6 +310,7 @@ const MainPosPage: React.FC = () => {
           tax={tax}
           total={total}
           handleCreateSale={handleCreateSale}
+          canSaveSale={canSaveSale}
         />
       </section>
 
