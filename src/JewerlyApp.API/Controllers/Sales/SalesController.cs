@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Sales.Commands.CreateSale;
 using JewerlyApp.Application.Sales.Queries.GetSaleById;
+using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,20 @@ namespace JewerlyApp.API.Controllers.Sales
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetSaleById([FromQuery] GetSaleByIdQuery command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+        
+        /// <summary>
+        /// get sale list
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetSalesList([FromQuery] GetSalesListQuery command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
