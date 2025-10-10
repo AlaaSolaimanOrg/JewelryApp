@@ -2,6 +2,7 @@ import React from "react";
 import { FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../types";
 import { API_URL } from "../../../../config/config";
+import { KaratType } from "../../../../types/enums";
 
 interface Props {
   products: Product[];
@@ -78,10 +79,10 @@ const ProductsSection: React.FC<Props> = ({
                       borderRadius: "6px",
                     }}
                   >
-                    <option>14K</option>
-                    <option>18K</option>
-                    <option>21K</option>
-                    <option>24K</option>
+                    <option value={KaratType.Karat18}>18K</option>
+                    <option value={KaratType.Karat21}>21K</option>
+                    <option value={KaratType.Karat22}>22K</option>
+                    <option value={KaratType.Karat24}>24K</option>
                   </select>
                 ) : (
                   product.karatType

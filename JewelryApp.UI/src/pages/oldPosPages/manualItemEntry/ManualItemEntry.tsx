@@ -1,6 +1,7 @@
 import { FaArrowLeft, FaCartPlus, FaPen } from "react-icons/fa";
 import "./manualItemEntry.scss";
 import { Link } from "react-router-dom";
+import { KaratType } from "../../../types/enums";
 
 const ManualItemEntry = () => {
   return (
@@ -20,9 +21,10 @@ const ManualItemEntry = () => {
             <label>Karat</label>
             <select>
               <option>Select Karat</option>
-              <option>18K</option>
-              <option>21K</option>
-              <option>24K</option>
+              <option value={KaratType.Karat18}>18K</option>
+              <option value={KaratType.Karat21}>21K</option>
+              <option value={KaratType.Karat22}>22K</option>
+              <option value={KaratType.Karat24}>24K</option>
             </select>
           </div>
         </div>

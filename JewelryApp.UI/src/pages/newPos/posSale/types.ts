@@ -1,8 +1,8 @@
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 
 export interface Product {
-  id: string;
-  sku: string;
+  id: string | null;
+  sku: string | null;
   name: string;
   quantity: number;
   karatType?: KaratType | string;

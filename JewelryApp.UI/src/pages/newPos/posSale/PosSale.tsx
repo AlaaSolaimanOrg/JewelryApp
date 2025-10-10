@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./posSale.scss";
 import ScanModal from "../../../components/ScanModal/ScanModal";
 import ProductsSection from "./PosSale.sections/ProductsSection";
@@ -41,10 +41,82 @@ const MainPosPage: React.FC = () => {
   const tax = parseFloat((subtotal * 0.06).toFixed(4));
   const total = subtotal - discount + tax;
 
+  const anyProductWithUnfilledField = products.some((product) => {
+    return (
+      !product.name ||
+      !product.karatType ||
+      !product.weight ||
+      Number(product.weight) <= 0 ||
+      !product.pricePerGram ||
+      Number(product.pricePerGram) <= 0
+    );
+  });
   const canSaveSale =
     !!customerSelectedId &&
     products.length &&
-    (cardAmount > 0 || cashAmount > 0);
+    (cardAmount > 0 || cashAmount > 0) &&
+    !anyProductWithUnfilledField;
+
+  // Set cash amount to total by default when total changes
+  useEffect(() => {
+    if (total > 0 && cashAmount === 0 && cardAmount === 0) {
+      setCashAmount(total);
+    }
+  }, [total, cashAmount, cardAmount]);
+
+  // Format number input value
+  const formatNumberInput = (value: string): string => {
+    const raw = value.replace(/[^\d.]/g, "");
+    const parts = raw.split(".");
+    let intPart = parts[0] ?? "";
+    let fracPart = parts.slice(1).join("") ?? "";
+    intPart = intPart.slice(0, 10);
+    fracPart = fracPart.slice(0, 4);
+    let finalVal = fracPart.length > 0 ? intPart + "." + fracPart : intPart;
+    if (raw.endsWith(".") && fracPart.length === 0) finalVal = intPart + ".";
+    return finalVal;
+  };
+
+  // Parse string to number
+  const parseAmount = (value: string | number): number => {
+    if (typeof value === "number") return value;
+    return parseFloat(value) || 0;
+  };
+
+  // Clamp value to not exceed total
+  const clampToTotal = (value: number): number => {
+    return Math.min(Math.max(0, value), total);
+  };
+
+  // Handle cash amount change
+  const handleCashAmountChange = (value: string) => {
+    const formattedValue = formatNumberInput(value);
+    let cashValue = parseAmount(formattedValue);
+
+    // Prevent cash amount from exceeding total
+    cashValue = clampToTotal(cashValue);
+
+    setCashAmount(cashValue);
+
+    // Calculate card amount as total - cash
+    const cardValue = total - cashValue;
+    setCardAmount(cardValue);
+  };
+
+  // Handle card amount change
+  const handleCardAmountChange = (value: string) => {
+    const formattedValue = formatNumberInput(value);
+    let cardValue = parseAmount(formattedValue);
+
+    // Prevent card amount from exceeding total
+    cardValue = clampToTotal(cardValue);
+
+    setCardAmount(cardValue);
+
+    // Calculate cash amount as total - card
+    const cashValue = total - cardValue;
+    setCashAmount(cashValue);
+  };
 
   // Manual entry
   const handleManualEntry = () => {
@@ -58,8 +130,8 @@ const MainPosPage: React.FC = () => {
         originalPricePerGram: 0,
         pricePerGram: 0,
         manual: true,
-        id: "",
-        sku: "",
+        id: null,
+        sku: null,
         quantity: 0,
         category: 0 as any,
         productType: 0 as any,
@@ -129,14 +201,14 @@ const MainPosPage: React.FC = () => {
           ? discountType
           : DiscountType.None,
       note: notes,
-      cashAmount: cashAmount,
-      cardAmount: cardAmount,
+      cashAmount: parseAmount(cashAmount),
+      cardAmount: parseAmount(cardAmount),
       taxe: tax,
       saleItems: products.map((product) => {
         return {
           productId: product.id,
           productName: product.name,
-          karatType: product.karatType,
+          karatType: Number(product.karatType),
           weight: product.weight,
           isManualProduct: product.manual,
           overriddenPricePerGram: product.pricePerGram,
@@ -264,19 +336,7 @@ const MainPosPage: React.FC = () => {
               className="payment-input"
               placeholder="$0.00"
               value={cashAmount}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^\d.]/g, "");
-                const parts = raw.split(".");
-                let intPart = parts[0] ?? "";
-                let fracPart = parts.slice(1).join("") ?? "";
-                intPart = intPart.slice(0, 10);
-                fracPart = fracPart.slice(0, 4);
-                let finalVal =
-                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
-                if (raw.endsWith(".") && fracPart.length === 0)
-                  finalVal = intPart + ".";
-                setCashAmount(finalVal);
-              }}
+              onChange={(e) => handleCashAmountChange(e.target.value)}
             />
           </div>
           <div className="payment-input-group">
@@ -287,19 +347,7 @@ const MainPosPage: React.FC = () => {
               className="payment-input"
               placeholder="$0.00"
               value={cardAmount}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^\d.]/g, "");
-                const parts = raw.split(".");
-                let intPart = parts[0] ?? "";
-                let fracPart = parts.slice(1).join("") ?? "";
-                intPart = intPart.slice(0, 10);
-                fracPart = fracPart.slice(0, 4);
-                let finalVal =
-                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
-                if (raw.endsWith(".") && fracPart.length === 0)
-                  finalVal = intPart + ".";
-                setCardAmount(finalVal);
-              }}
+              onChange={(e) => handleCardAmountChange(e.target.value)}
             />
           </div>
         </div>
