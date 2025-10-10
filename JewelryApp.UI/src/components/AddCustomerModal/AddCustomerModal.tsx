@@ -12,6 +12,9 @@ interface AddCustomerModalProps {
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   show,
   onClose,
+  callGetCustomerDetails,
+  setSearchInput,
+  setCustomerSearchValue
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -79,6 +82,11 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
+          if (!!setSearchInput && !!callGetCustomerDetails) {
+            setCustomerSearchValue(name)
+            setSearchInput(name);
+            callGetCustomerDetails();
+          }
         } else {
           showError(response?.message);
         }
@@ -93,6 +101,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         }, 3000);
       });
   };
+  
   const handleSave = () => {
     handleAddCustomer();
   };

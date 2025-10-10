@@ -1,4 +1,10 @@
-import React, { useEffect, type Dispatch, type SetStateAction } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   FaUser,
   FaEnvelope,
@@ -11,6 +17,7 @@ import type { Customer } from "../types";
 import { getCustomer } from "../../../../apis/customers.api/customers.api";
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { debounce } from "../../../../utils";
+import dateFormat from "date-format";
 
 interface Props {
   customer: Customer;
@@ -23,6 +30,7 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
+  setCustomerSelectedId:Dispatch<SetStateAction<string>>;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -36,26 +44,44 @@ const CustomerSection: React.FC<Props> = ({
   setShowAddCustomerModal,
   onOpenScanModal,
   setCustomerInfoActive,
+  setCustomerSelectedId
 }) => {
-  const { data: customerDetails } = useLocalApi({
-    apiToCall: (data) => getCustomer(data.payload),
-    payload: {
-      searchBy: searchInput,
-    },
-    dataInitalValue: null,
-    effectDependency: [searchInput],
-  }) as {
-    data: Customer;
-  };
+  const [customerSearchValue, setCustomerSearchValue] = useState("");
+  const { data: customerDetails, fetchData: callGetCustomerDetails } =
+    useLocalApi({
+      apiToCall: (data) => getCustomer(data.payload),
+      payload: {
+        searchBy: searchInput,
+      },
+      dataInitalValue: null,
+      effectDependency: [searchInput],
+    }) as {
+      data: Customer;
+      fetchData: () => void;
+    };
+
+  console.log("searchInput", searchInput);
 
   useEffect(() => {
     console.log("customerDetails", customerDetails);
     setCustomer(customerDetails);
-
     setCustomerInfoActive(!!customerDetails);
+    setCustomerSelectedId(customerDetails?.id ?? null)
   }, [customerDetails]);
 
   console.log("customerInfoActive", customerInfoActive);
+
+  // Create the debounced function once
+  const debouncedSetSearchInput = useCallback(
+    debounce((value) => setSearchInput(value), 500),
+    []
+  );
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setCustomerSearchValue(value);
+    debouncedSetSearchInput(value);
+  };
   return (
     <>
       <header className="header">
@@ -66,7 +92,8 @@ const CustomerSection: React.FC<Props> = ({
             className="search-input"
             placeholder={`Search customer by ...`}
             maxLength={40}
-            onChange={debounce((e) => setSearchInput(e.target.value), 500)}
+            value={customerSearchValue}
+            onChange={handleChange}
           />
           <button className="add-customer-btn" onClick={onAddCustomerClick}>
             Add New Customer
@@ -118,6 +145,9 @@ const CustomerSection: React.FC<Props> = ({
       <AddCustomerModal
         show={showAddCustomerModal}
         onClose={() => setShowAddCustomerModal(false)}
+        callGetCustomerDetails={callGetCustomerDetails}
+        setSearchInput={setSearchInput}
+        setCustomerSearchValue={setCustomerSearchValue}
       />
     </>
   );

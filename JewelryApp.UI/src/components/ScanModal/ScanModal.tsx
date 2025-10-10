@@ -43,21 +43,29 @@ const ScanModal: React.FC<ScanModalProps> = ({
     setScannedItems(scannedItems.filter((scannedItem) => scannedItem !== sku));
   };
 
-  async function getProductsBySkuApi(skus: string[]): Promise<any> {
+  async function getProductsBySkuApi(skus: string[]): Promise<void> {
     const response = await getProductsBySku({ skus });
-    // Only add products whose SKU is not already in products
+    const fetchedProducts = response?.data || [];
+
+    const updatedFetchedProducts = fetchedProducts.map((fetchedProduct) => {
+      return {
+        ...fetchedProduct,
+        originalPricePerGram: fetchedProduct.pricePerGram,
+      };
+    });
+
     const existingSkus = products.map((p) => p.sku);
-    const newProducts = response?.data
-      ?.filter((fetchedProduct) => !existingSkus.includes(fetchedProduct.sku))
-      .map((fetchedProduct) => ({ ...fetchedProduct, manual: false }));
-    // Place manual products at the end
-    const nonManual = [...products, ...(newProducts || [])].filter(
-      (p) => !p.manual
-    );
-    const manual = [...products, ...(newProducts || [])].filter(
-      (p) => p.manual
-    );
-    setProducts([...nonManual, ...manual]);
+    const newProducts = updatedFetchedProducts
+      .filter((p) => !existingSkus.includes(p.sku))
+      .map((p) => ({ ...p, manual: false }));
+
+    const updatedProducts = [...products, ...newProducts];
+    const sortedProducts = updatedProducts.sort((a, b) => {
+      if (a.manual === b.manual) return 0;
+      return a.manual ? 1 : -1;
+    });
+
+    setProducts(sortedProducts);
     setScannedItems([]);
     onClose();
   }

@@ -5,28 +5,36 @@ import ProductsSection from "./PosSale.sections/ProductsSection";
 import CustomerSection from "./PosSale.sections/CustomerSection";
 import PaymentSummary from "./PosSale.sections/PaymentSummary";
 import type { Customer, Product } from "./types";
+import { DiscountType } from "../../../types/enums";
+import { createSale } from "../../../apis/sales.api/sales.api";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { useNavigate } from "react-router-dom";
 
 const MainPosPage: React.FC = () => {
+  const navigate = useNavigate();
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
   const [customer, setCustomer] = useState<Customer>({});
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
+  const [customerSelectedId, setCustomerSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [discountAmount, setDiscountAmount] = useState("");
-  const [discountType, setDiscountType] = useState("percentage");
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountType, setDiscountType] = useState(DiscountType.Percentage);
   const [notes, setNotes] = useState("");
-  const [cashAmount, setCashAmount] = useState("");
-  const [cardAmount, setCardAmount] = useState("");
+  const [cashAmount, setCashAmount] = useState(0);
+  const [cardAmount, setCardAmount] = useState(0);
+  const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
 
+  console.log("products", products);
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
-    const s = parseFloat(product.subtotal as any) || 0;
+    const s = parseFloat((product.pricePerGram * product.weight) as any) || 0;
     return sum + s;
   }, 0);
 
   const discount = discountAmount
-    ? discountType === "percentage"
+    ? discountType === DiscountType.Percentage
       ? (subtotal * parseFloat(discountAmount)) / 100
       : parseFloat(discountAmount)
     : 0;
@@ -42,6 +50,7 @@ const MainPosPage: React.FC = () => {
         images: [],
         karatType: "18K",
         weight: 0,
+        originalPricePerGram: 0,
         pricePerGram: 0,
         manual: true,
         id: "",
@@ -101,6 +110,57 @@ const MainPosPage: React.FC = () => {
     });
   };
 
+  const handleCreateSale = () => {
+    setIsLoadingCreateSale(true);
+
+    console.log("discountAmount", discountAmount);
+
+    const payload = {
+      customerId: customerSelectedId,
+      discount: discountAmount,
+      discountPercentage: discountAmount,
+      discountType:
+        !!discountAmount && Number(discountAmount) > 0
+          ? discountType
+          : DiscountType.None,
+      note: notes,
+      cashAmount: cashAmount,
+      cardAmount: cardAmount,
+      taxe: tax,
+      saleItems: products.map((product) => {
+        return {
+          productId: product.id,
+          productName: product.name,
+          karatType: product.karatType,
+          weight: product.weight,
+          isManualProduct: product.manual,
+          overriddenPricePerGram: product.pricePerGram,
+          originalPricePerGram: product.originalPricePerGram,
+        };
+      }),
+    };
+
+    createSale(payload)
+      .then((response) => {
+        if (checkRequestSucceeded(response.statusCode)) {
+          showSuccess(response?.message);
+          setTimeout(() => {
+            navigate(`/receipt/${response.data}`);
+          }, 3000);
+        } else {
+          showError(response?.message);
+        }
+      })
+      .catch((e) => {
+        throw e;
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setIsLoadingCreateSale(false);
+        }, 3000);
+      });
+  };
+
   return (
     <div id="mainPosPage" className="page-content">
       <CustomerSection
@@ -114,6 +174,7 @@ const MainPosPage: React.FC = () => {
         setShowAddCustomerModal={setShowAddCustomerModal}
         onOpenScanModal={() => setShowScanModal(true)}
         setCustomerInfoActive={setCustomerInfoActive}
+        setCustomerSelectedId={setCustomerSelectedId}
       />
 
       <ProductsSection
@@ -140,7 +201,7 @@ const MainPosPage: React.FC = () => {
               let intPart = allParts[0] ?? "";
               let fracPart = allParts.slice(1).join("") ?? "";
 
-              if (discountType === "percentage") {
+              if (discountType === DiscountType.Percentage) {
                 fracPart = fracPart.slice(0, 2);
                 let val =
                   fracPart.length > 0 ? intPart + "." + fracPart : intPart;
@@ -169,10 +230,10 @@ const MainPosPage: React.FC = () => {
           <select
             className="discount-type"
             value={discountType}
-            onChange={(e) => setDiscountType(e.target.value)}
+            onChange={(e) => setDiscountType(Number(e.target.value))}
           >
-            <option value="percentage">Percentage (%)</option>
-            <option value="fixed">Fixed Value ($)</option>
+            <option value={DiscountType.Percentage}>Percentage (%)</option>
+            <option value={DiscountType.FixedAmount}>Fixed Value ($)</option>
           </select>
         </div>
       </section>
@@ -243,6 +304,7 @@ const MainPosPage: React.FC = () => {
           discount={discount}
           tax={tax}
           total={total}
+          handleCreateSale={handleCreateSale}
         />
       </section>
 

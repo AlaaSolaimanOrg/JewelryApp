@@ -39,9 +39,15 @@ export enum OrderDiscount {
   FixedAmount = 2,
 }
 
-export enum DatePillFilter{
+export enum DatePillFilter {
   Today,
   ThisWeek,
   ThisMonth,
-  ThisYear
+  ThisYear,
+}
+
+export enum DiscountType {
+  None = 1,
+  FixedAmount = 2,
+  Percentage = 3,
 }

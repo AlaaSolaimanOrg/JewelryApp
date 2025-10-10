@@ -61,7 +61,7 @@ const AppRoutes = () => {
           <Route path="/manualItemEntry" element={<ManualItemEntry />} />
           <Route path="/applyDiscount" element={<ApplyDiscount />} />
           <Route path="/payment" element={<Payment />} /> */}
-          <Route path="/receipt" element={<Receipt />} />
+          <Route path="/receipt/:saleId" element={<Receipt />} />
           <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
         </Route>
 

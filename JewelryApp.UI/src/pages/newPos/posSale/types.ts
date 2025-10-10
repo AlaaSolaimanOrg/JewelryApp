@@ -10,6 +10,7 @@ export interface Product {
   category: ProductCategory;
   productType: ProductType;
   description: string;
+  originalPricePerGram: number | string;
   pricePerGram: number | string;
   price: number;
   images: { imageUrl: string }[];
@@ -18,6 +19,7 @@ export interface Product {
 }
 
 export interface Customer {
+  id:string;
   name: string;
   email: string;
   phoneNumber: string;
