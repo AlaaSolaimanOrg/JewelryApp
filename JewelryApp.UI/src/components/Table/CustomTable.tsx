@@ -11,6 +11,7 @@ export type TableHeader = {
   key: string;
   label: string;
   width?: string;
+  onHeaderClick?: () => void;
 };
 
 type CustomTableProps = {
@@ -25,7 +26,7 @@ const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
         <thead>
           <tr>
             {headers.map((header, i) => (
-              <th key={i} style={{ width: header.width }}>
+              <th key={i} style={{ width: header.width }} onClick={() => {}}>
                 {header.label}
               </th>
             ))}

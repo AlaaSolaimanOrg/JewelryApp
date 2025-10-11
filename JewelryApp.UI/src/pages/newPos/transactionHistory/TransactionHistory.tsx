@@ -25,6 +25,7 @@ const TransactionHistory = () => {
     data: sales,
     isLoading: isLoadingSales,
     fetchData: recallGetSales,
+    onSortChange,
     onSearchChange,
     onPaginationChange,
     pagination,

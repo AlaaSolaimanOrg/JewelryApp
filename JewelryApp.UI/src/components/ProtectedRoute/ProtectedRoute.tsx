@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import React, { type JSX } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Spinner } from "react-bootstrap";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -22,7 +23,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (isLoading) {
-    return <div>Loading...</div>; // or a spinner
+    return (
+      <div>
+        <Spinner animation="border" variant="primary" />
+      </div>
+    );
   }
 
   try {
@@ -38,7 +43,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
     // ✅ Check role authorization
     if (allowedRoles && allowedRoles.length > 0) {
-      const hasRole = userInfo?.roles?.some((role) => allowedRoles.includes(role));
+      const hasRole = userInfo?.roles?.some((role) =>
+        allowedRoles.includes(role)
+      );
       if (!hasRole) {
         return <Navigate to="/unauthorized" replace />; // you can create this page
       }

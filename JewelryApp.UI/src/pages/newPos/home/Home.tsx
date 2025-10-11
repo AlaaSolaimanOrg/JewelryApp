@@ -5,6 +5,8 @@ import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSor
 import "./home.scss";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
 import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import { Spinner } from "react-bootstrap";
+import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 
 export interface Sale {
   id: string;
@@ -16,18 +18,12 @@ export interface Sale {
 }
 
 const Home = () => {
-  const {
-    data: sales,
-    isLoading: isLoadingProducts,
-    fetchData: recallGetProducts,
-    onSearchChange,
-    onPaginationChange,
-    pagination,
-  } = useLocalApiSearchSortPagination<Sale>({
-    apiToCall: (data) => getSalesList(data.payload),
-    extraPayload: {},
-    initialPageSize: 4,
-  });
+  const { data: sales, isLoading: isLoading } =
+    useLocalApiSearchSortPagination<Sale>({
+      apiToCall: (data) => getSalesList(data.payload),
+      extraPayload: {},
+      initialPageSize: 4,
+    });
 
   return (
     <div className="page-content active">
@@ -57,19 +53,23 @@ const Home = () => {
               </button>
             </Link>
           </div>
-          <ul className="transaction-list">
-            {sales.map((sale) => {
-              return (
-                <li className="transaction-item">
-                  <span className="transaction-id">{sale.serialNumber}</span>
-                  <span className="transaction-amount">{sale.total}</span>
-                  <ReceiptModal saleId={sale.id}>
-                    <button className="view-receipt-btn">View Receipt</button>
-                  </ReceiptModal>
-                </li>
-              );
-            })}
-          </ul>
+          {isLoading ? (
+            <CustomLoader />
+          ) : (
+            <ul className="transaction-list">
+              {sales.map((sale) => {
+                return (
+                  <li className="transaction-item">
+                    <span className="transaction-id">{sale.serialNumber}</span>
+                    <span className="transaction-amount">{sale.total}</span>
+                    <ReceiptModal saleId={sale.id}>
+                      <button className="view-receipt-btn">View Receipt</button>
+                    </ReceiptModal>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
     </div>
