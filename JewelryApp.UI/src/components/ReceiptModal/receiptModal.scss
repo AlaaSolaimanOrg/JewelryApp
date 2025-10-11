@@ -51,6 +51,7 @@
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid var(--gold);
+    width: 100%;
 
     .receipt-title {
       font-size: 1.8rem;
@@ -72,22 +73,50 @@
     color: var(--text-dark);
   }
 
-  .receipt-table {
-    width: 100%;
-    border-collapse: collapse;
+  .table-wrapper {
     margin-bottom: 30px;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
 
-    th {
-      background: #f1f5f9;
-      padding: 12px 15px;
-      text-align: left;
-      font-weight: 600;
-      color: var(--primary);
-      border-bottom: 2px solid #e0e0e0;
-    }
-    td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #eee;
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0;
+
+      thead {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+
+        tr {
+          background: #f1f5f9;
+
+          th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #e0e0e0;
+          }
+        }
+      }
+
+      .table-body-scrollable {
+        display: block;
+        max-height: 200px; // Height for ~4 rows
+        overflow-y: auto;
+
+        tr {
+          display: table;
+          width: 100%;
+          table-layout: fixed;
+
+          td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+          }
+        }
+      }
     }
   }
 
@@ -132,5 +161,115 @@
       padding-bottom: 15px;
       border-bottom: 1px dashed #ddd;
     }
+  }
+}
+
+// Custom scrollbar styling for better appearance
+.table-body-scrollable::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-body-scrollable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.table-body-scrollable::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.table-body-scrollable::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Print styles
+@media print {
+  .receipt-modal {
+    .modal-header,
+    .modal-footer {
+      display: none !important;
+    }
+
+    .modal-content {
+      border: none !important;
+      box-shadow: none !important;
+      background: white !important;
+    }
+
+    .modal-body {
+      padding: 0 !important;
+    }
+  }
+
+  .receipt-container {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+
+    .table-wrapper {
+      border: none !important;
+
+      .receipt-table {
+        // Reset the table structure for print
+        display: table !important;
+
+        thead {
+          display: table-header-group !important;
+          width: 100% !important;
+
+          tr {
+            display: table-row !important;
+
+            th {
+              display: table-cell !important;
+            }
+          }
+        }
+
+        .table-body-scrollable {
+          display: table-row-group !important;
+          max-height: none !important;
+          overflow-y: visible !important;
+
+          tr {
+            display: table-row !important;
+
+            td {
+              display: table-cell !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Hide scrollbars in print
+  .table-body-scrollable::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  // Ensure all content is visible
+  body,
+  html,
+  .modal,
+  .modal-dialog,
+  .modal-content,
+  .modal-body {
+    height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  // Force table to use proper table layout
+  table {
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
+
+  th,
+  td {
+    display: table-cell !important;
   }
 }

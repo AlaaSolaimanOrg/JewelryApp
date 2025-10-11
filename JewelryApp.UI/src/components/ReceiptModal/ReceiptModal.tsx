@@ -150,28 +150,30 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               </div>
 
               {/* Table */}
-              <table className="receipt-table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Karat</th>
-                    <th>Weight (g)</th>
-                    <th>Price/Gram</th>
-                    <th>Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {saleDetails.saleItems?.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.productName}</td>
-                      <td>{item.karat}</td>
-                      <td>{item.weight}g</td>
-                      <td>${item.pricePerGram}</td>
-                      <td>${item.subtotal}</td>
+              <div className="table-wrapper">
+                <table className="receipt-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: "40%" }}>Product</th>{" "}
+                      <th style={{ width: "12%" }}>Karat</th>
+                      <th style={{ width: "16%" }}>Weight (g)</th>
+                      <th style={{ width: "16%" }}>Price/Gram</th>
+                      <th style={{ width: "16%" }}>Subtotal</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="table-body-scrollable">
+                    {saleDetails.saleItems?.map((item, index) => (
+                      <tr key={index}>
+                        <td style={{ width: "40%" }}>{item.productName}</td>
+                        <td style={{ width: "12%" }}>{item.karat}</td>
+                        <td style={{ width: "16%" }}>{item.weight}g</td>
+                        <td style={{ width: "16%" }}>${item.pricePerGram}</td>
+                        <td style={{ width: "16%" }}>${item.subtotal}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               {/* Totals */}
               <div className="receipt-totals">
