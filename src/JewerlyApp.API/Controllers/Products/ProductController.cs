@@ -69,7 +69,7 @@ namespace JewerlyApp.API.Controllers.Products
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] GetProductsQuery query)
+        public async Task<IActionResult> GetProducts([FromQuery] GetProductsListQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
