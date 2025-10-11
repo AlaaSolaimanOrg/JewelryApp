@@ -76,12 +76,12 @@ namespace JewerlyApp.API.Controllers.Products
         }
 
         /// <summary>
-        /// Get all products with optional filters
+        /// Get products by nfc id
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProductsBySku([FromQuery] GetProductsBySkuQuery query)
+        public async Task<IActionResult> GetProductsByNfcIds([FromQuery] GetProductsByNfcIdsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

@@ -27,6 +27,16 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
         {
             var query = _context.SaleItems.AsQueryable();
 
+            if(request.CategoryFilter != null)
+            {
+                query = query.Where(s => s.Product!.Category == request.CategoryFilter);
+            }
+
+            if (request.KaratFilter != null)
+            {
+                query = query.Where(s => s.KaratType == request.KaratFilter);
+            }
+
             // Apply date range filter
             if (request.DateFrom.HasValue)
             {

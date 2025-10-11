@@ -31,6 +31,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Name = request.Name,
                 KaratType = request.KaratType,
                 Sku = request.Sku,
+                NFCId = request.NFCId,
                 Weight = request.Weight,
                 Category = request.Category,
                 Type = request.Type,
@@ -39,7 +40,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
-            //await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             // Upload images if any
             if (request.Images != null && request.Images.Count > 0)

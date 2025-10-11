@@ -8,21 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
 {
-    public class GetProductsBySkuHandler : IRequestHandler<GetProductsBySkuQuery, GenericResponse<List<GetProductsVM>>>
+    public class GetProductsByNfcIdsHandler : IRequestHandler<GetProductsByNfcIdsQuery, GenericResponse<List<GetProductsVM>>>
     {
         private readonly IApplicationDbContext _context;
 
-        public GetProductsBySkuHandler(IApplicationDbContext context)
+        public GetProductsByNfcIdsHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<GenericResponse<List<GetProductsVM>>> Handle(GetProductsBySkuQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<List<GetProductsVM>>> Handle(GetProductsByNfcIdsQuery request, CancellationToken cancellationToken)
         {
             var productQuery = _context.Products.AsNoTracking()
                 .Include(p => p.Images)
                 .Where(x =>
-                    request.skus.Contains(x.Sku)
+                    request.NFCIds.Contains(x.NFCId!)
                 );
 
 

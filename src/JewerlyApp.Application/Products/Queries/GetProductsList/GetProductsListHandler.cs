@@ -31,9 +31,9 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 );
 
-            if(request.Skus != null && request.Skus.Any())
+            if(request.NFCIds != null && request.NFCIds.Any())
             {
-                productQuery = productQuery.Where(p => request.Skus.Contains(p.Sku!));
+                productQuery = productQuery.Where(p => request.NFCIds.Contains(p.NFCId!));
             }
 
             if (request.KaratTypeFilter.Any())

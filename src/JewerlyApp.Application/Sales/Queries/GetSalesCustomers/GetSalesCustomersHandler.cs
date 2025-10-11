@@ -48,6 +48,33 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesCustomers
                 query = query.Where(s => s.CreatedDate <= request.DateTo.Value);
             }
 
+            if (request.CustomerFilter != null)
+            {
+                // First get customer IDs based on their sale count
+                var customerSaleCounts = _context.Sales
+                    .GroupBy(s => s.CustomerId)
+                    .Select(g => new { CustomerId = g.Key, SaleCount = g.Count() });
+
+                if (request.CustomerFilter == Domain.Enums.CustomerFilter.New)
+                {
+                    var newCustomerIds = await customerSaleCounts
+                        .Where(x => x.SaleCount == 1)
+                        .Select(x => x.CustomerId)
+                        .ToListAsync(cancellationToken);
+
+                    query = query.Where(s => newCustomerIds.Contains(s.CustomerId));
+                }
+                else if (request.CustomerFilter == Domain.Enums.CustomerFilter.Returning)
+                {
+                    var returningCustomerIds = await customerSaleCounts
+                        .Where(x => x.SaleCount > 1)
+                        .Select(x => x.CustomerId)
+                        .ToListAsync(cancellationToken);
+
+                    query = query.Where(s => returningCustomerIds.Contains(s.CustomerId));
+                }
+            }
+
             // Apply search filter
             if (!string.IsNullOrWhiteSpace(request.SearchBy))
             {

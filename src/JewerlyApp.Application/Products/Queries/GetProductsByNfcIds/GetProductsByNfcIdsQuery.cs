@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
 {
-    public class GetProductsBySkuQuery : IRequest<GenericResponse<List<GetProductsVM>>>
+    public class GetProductsByNfcIdsQuery : IRequest<GenericResponse<List<GetProductsVM>>>
     {
-        [FromQuery(Name = "skus")]
-        public List<string> skus { get; set; }
+        //[FromQuery(Name = "skus")]
+        public List<string> NFCIds { get; set; } = new();
     }
 }
