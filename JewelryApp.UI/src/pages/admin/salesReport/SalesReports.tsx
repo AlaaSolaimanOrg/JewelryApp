@@ -1,14 +1,3 @@
-import { Stack } from "react-bootstrap";
-import {
-  FaChartBar,
-  FaShoppingCart,
-  FaUsers,
-  FaWeightHanging,
-} from "react-icons/fa";
-import "./salesReports.scss";
-import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
-import DatePicker from "react-datepicker";
-import { useState } from "react";
 import {
   addDays,
   endOfDay,
@@ -20,14 +9,21 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
-import { DatePillFilter, KaratType } from "../../../types/enums";
+import { useState } from "react";
+import { Stack } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import { FaChartBar, FaShoppingCart, FaWeightHanging } from "react-icons/fa";
 import {
   getSalesInsights,
   getSoldItems,
 } from "../../../apis/sales.api/sales.api";
+import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import Paginator from "../../../components/Paginator/Paginator";
+import { DatePillFilter, KaratType } from "../../../types/enums";
+import CustomersSoldTo from "./customersSoldTo/CustomersSoldTo";
+import "./salesReports.scss";
+import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
 
 interface SalesInsights {
   totalSalesAmount: number;
@@ -40,16 +36,6 @@ interface SalesInsights {
     pricePerGram: number;
     totalValue: number;
   }[];
-}
-
-export interface SoldItem {
-  productName: string;
-  quantity: number;
-  unitWeight: number;
-  weightSummed: number;
-  pricePerGram: number;
-  subtotal: number;
-  latestSaleDate: Date;
 }
 
 const SalesReports = () => {
@@ -113,18 +99,6 @@ const SalesReports = () => {
   }) as {
     data: SalesInsights;
   };
-
-  const {
-    data: soldItems,
-    // isLoading: isLoadingUsers,
-    fetchData: recallGetUsers,
-    onSearchChange,
-    onPaginationChange,
-    pagination,
-  } = useLocalApiSearchSortPagination<SoldItem>({
-    apiToCall: (data) => getSoldItems(data.payload),
-    initialPageSize: 5,
-  });
 
   // Format currency function
   const formatCurrency = (amount: number) => {
@@ -270,163 +244,9 @@ const SalesReports = () => {
         </div>
       </section>
 
-      {/* Rest of your existing sections remain the same */}
-      <section className="section">
-        <h2 className="section-title">
-          <FaShoppingCart className="icon" style={{ marginRight: "8px" }} />{" "}
-          Items Sold
-        </h2>
-        <div className="filter-section">
-          <select className="filter-select">
-            <option>All Products</option>
-            <option>Rings</option>
-            <option>Necklaces</option>
-            <option>Bracelets</option>
-            <option>Earrings</option>
-          </select>
-          <select className="filter-select">
-            <option>Last 7 Days</option>
-            <option>Last 30 Days</option>
-            <option>Last 3 Months</option>
-          </select>
-          <select className="filter-select">
-            <option>All Karats</option>
-            <option>24K</option>
-            <option>22K</option>
-            <option>21K</option>
-            <option>18K</option>
-          </select>
-        </div>
+      <ItemsSoldTo />
 
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Weight</th>
-                <th>Price per Gram</th>
-                <th>Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              {soldItems.map((soldItem) => {
-                return (
-                  <tr>
-                    <td>{soldItem.productName}</td>
-                    <td>3</td>
-                    <td>{soldItem.weightSummed}</td>
-                    <td>{soldItem.pricePerGram}</td>
-                    <td>{soldItem.subtotal}</td>
-                  </tr>
-                );
-              })}
-
-              {/* <tr className="highlight">
-                <td>
-                  <strong>Total</strong>
-                </td>
-                <td>
-                  <strong>10</strong>
-                </td>
-                <td>
-                  <strong>21.0g</strong>
-                </td>
-                <td></td>
-                <td></td>
-                <td>
-                  <strong>$2,646.10</strong>
-                </td>
-              </tr> */}
-            </tbody>
-          </table>
-        </div>
-
-        <Paginator
-          totalRecords={pagination.totalRecords}
-          pageNumber={pagination.pageNumber}
-          pageSize={pagination.pageSize}
-          onPaginationChange={onPaginationChange}
-        />
-      </section>
-
-      <section className="section">
-        <h2 className="section-title">
-          <FaUsers className="icon" style={{ marginRight: "8px" }} /> Customers
-          Sold To
-        </h2>
-        <div className="filter-section">
-          <input
-            type="text"
-            className="filter-select"
-            placeholder="Search by customer name..."
-          />
-          <select className="filter-select">
-            <option>All Customers</option>
-            <option>New Customers</option>
-            <option>Returning Customers</option>
-          </select>
-        </div>
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Customer Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Notes/Remarks</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>John Doe</td>
-                <td>john.doe@example.com</td>
-                <td>(555) 123-4567</td>
-                <td>Birthday gift for spouse</td>
-                <td>
-                  <ReceiptModal>
-                    <button className="view-receipt-btn">View Receipt</button>
-                  </ReceiptModal>
-                </td>
-              </tr>
-              <tr>
-                <td>Sarah Johnson</td>
-                <td>sarah.j@example.com</td>
-                <td>(555) 987-6543</td>
-                <td>Anniversary present</td>
-                <td>
-                  <ReceiptModal>
-                    <button className="view-receipt-btn">View Receipt</button>
-                  </ReceiptModal>
-                </td>
-              </tr>
-              <tr>
-                <td>Michael Chen</td>
-                <td>m.chen@example.com</td>
-                <td>(555) 456-7890</td>
-                <td>Custom engraving requested</td>
-                <td>
-                  <ReceiptModal>
-                    <button className="view-receipt-btn">View Receipt</button>
-                  </ReceiptModal>
-                </td>
-              </tr>
-              <tr>
-                <td>Emily Rodriguez</td>
-                <td>emily.rod@example.com</td>
-                <td>(555) 234-5678</td>
-                <td>Preferred customer - 10% discount applied</td>
-                <td>
-                  <ReceiptModal>
-                    <button className="view-receipt-btn">View Receipt</button>
-                  </ReceiptModal>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <CustomersSoldTo />
     </div>
   );
 };
