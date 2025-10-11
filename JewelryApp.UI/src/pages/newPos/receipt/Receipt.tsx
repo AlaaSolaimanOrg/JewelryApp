@@ -7,7 +7,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
-export interface SaleItem {
+interface SaleItem {
   productName: string;
   karat: KaratType;
   weight: number;
@@ -15,7 +15,7 @@ export interface SaleItem {
   subtotal: number;
 }
 
-export interface Sale {
+interface Sale {
   id: string;
   serialNumber: number;
   createdDate: string;
@@ -51,21 +51,11 @@ const Receipt = () => {
     );
   }
 
-  const {
-    id,
-    serialNumber,
-    createdDate,
-    staffName,
-    customerName,
-    total,
-    cashAmount,
-    cardAmount,
-    saleItems,
-  } = saleDetails;
+
 
   const subtotal =
-    saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
-  const dateObj = new Date(createdDate);
+    saleDetails.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
+  const dateObj = new Date(saleDetails.createdDate);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({ contentRef });
@@ -91,7 +81,7 @@ const Receipt = () => {
         <div className="receipt-details">
           <div>
             <div>
-              <strong>Transaction ID:</strong> {serialNumber || id}
+              <strong>Transaction ID:</strong> {saleDetails.serialNumber || saleDetails.id}
             </div>
             <div>
               <strong>Date:</strong>{" "}
@@ -112,18 +102,18 @@ const Receipt = () => {
           </div>
           <div>
             <div>
-              <strong>Staff:</strong> {staffName || "N/A"}
+              <strong>Staff:</strong> {saleDetails.staffName || "N/A"}
             </div>
             <div>
-              <strong>Customer:</strong> {customerName || "Walk-in"}
+              <strong>Customer:</strong> {saleDetails.customerName || "Walk-in"}
             </div>
             <div>
               <strong>Payment Method:</strong>{" "}
-              {cashAmount && cardAmount
+              {saleDetails.cashAmount && saleDetails.cardAmount
                 ? "Cash & Card"
-                : cashAmount
+                : saleDetails.cashAmount
                 ? "Cash"
-                : cardAmount
+                : saleDetails.cardAmount
                 ? "Card"
                 : "N/A"}
             </div>
@@ -142,7 +132,7 @@ const Receipt = () => {
             </tr>
           </thead>
           <tbody>
-            {saleItems?.map((item, index) => (
+            {saleDetails.saleItems?.map((item, index) => (
               <tr key={index}>
                 <td>{item.productName}</td>
                 <td>{item.karat}</td>
@@ -162,7 +152,7 @@ const Receipt = () => {
           </div>
           <div className="receipt-total">
             <div className="total-label">Total</div>
-            <div className="total-value">${total}</div>
+            <div className="total-value">${saleDetails.total}</div>
           </div>
         </div>
 
@@ -170,17 +160,17 @@ const Receipt = () => {
         <div className="payment-breakdown">
           <h4>Payment Breakdown</h4>
 
-          {cashAmount > 0 && (
+          {saleDetails.cashAmount > 0 && (
             <div className="summary-item">
               <span>Cash Payment:</span>
-              <span>${cashAmount}</span>
+              <span>${saleDetails.cashAmount}</span>
             </div>
           )}
 
-          {cardAmount > 0 && (
+          {saleDetails.cardAmount > 0 && (
             <div className="summary-item">
               <span>Card Payment:</span>
-              <span>${cardAmount}</span>
+              <span>${saleDetails.cardAmount}</span>
             </div>
           )}
         </div>

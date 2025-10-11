@@ -1,8 +1,72 @@
 import { FaHistory, FaPrint, FaSearch, FaSms } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./transactionHistory.scss";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { getSalesList } from "../../../apis/sales.api/sales.api";
+import Paginator from "../../../components/Paginator/Paginator";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/Table/CustomTable";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import dateFormat from "dateformat";
+import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+
+export interface Sale {
+  id: string;
+  serialNumber: number;
+  createdDate: string;
+  total: number;
+  cardPayment: boolean;
+  cashPayment: boolean;
+}
 
 const TransactionHistory = () => {
+  const {
+    data: sales,
+    isLoading: isLoadingSales,
+    fetchData: recallGetSales,
+    onSearchChange,
+    onPaginationChange,
+    pagination,
+  } = useLocalApiSearchSortPagination<Sale>({
+    apiToCall: (data) => getSalesList(data.payload),
+    extraPayload: {},
+    initialPageSize: 5,
+  });
+
+  const headers: TableHeader[] = [
+    { key: "transactionId", label: "Transaction ID", width: "150px" },
+    { key: "dateTime", label: "Date & Time", width: "200px" },
+    { key: "totalAmount", label: "Total Amount", width: "150px" },
+    { key: "paymentType", label: "Payment Type", width: "150px" },
+    { key: "actions", label: "Actions", width: "150px" },
+  ];
+
+  const getPaymentType = (sale: Sale) => {
+    if (sale.cardPayment && sale.cashPayment) {
+      return "Cash & Card";
+    } else if (sale.cardPayment) {
+      return "Card";
+    } else if (sale.cashPayment) {
+      return "Cash";
+    }
+    return "Unknown";
+  };
+
+  const data = sales?.map((sale) => ({
+    transactionId: `${sale.serialNumber}`,
+    dateTime: dateFormat(sale.createdDate, "mmm d, yyyy, hh:MM TT"),
+    totalAmount: `$${sale.total.toFixed(2)}`,
+    paymentType: getPaymentType(sale),
+    actions: (
+      <>
+        <ReceiptModal saleId={sale.id}>
+          <button className="view-receipt-btn">View Receipt</button>
+        </ReceiptModal>
+      </>
+    ),
+  }));
+
   return (
     <div id="transaction-history-page" className="page-content">
       <h2>
@@ -11,85 +75,32 @@ const TransactionHistory = () => {
       <p className="subtitle">View previous sales records</p>
 
       <div className="search-container" style={{ marginBottom: "25px" }}>
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search transactions..."
-        />
-        <button className="search-btn">
-          <FaSearch /> Search
-        </button>
+        <div className="search-bar" style={{ width: "300px" }}>
+          <FaSearch className="icon me-1" />
+          <input
+            type="text"
+            placeholder="Search transactions..."
+            onChange={onSearchChange}
+          />
+        </div>
       </div>
 
-      <table className="cart-table">
-        <thead>
-          <tr>
-            <th>Transaction ID</th>
-            <th>Date & Time</th>
-            <th>Total Amount</th>
-            <th>Payment Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>TR-2023-0582</td>
-            <td>Jul 12, 2025 14:23</td>
-            <td>$1,850.75</td>
-            <td>Card</td>
-            <td>
-              <button className="btn btn-info btn-sm">
-                <FaPrint />
-              </button>
-              <button className="btn btn-success btn-sm">
-                <FaSms />
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>TR-2023-0581</td>
-            <td>Jul 12, 2025 11:45</td>
-            <td>$2,420.50</td>
-            <td>Cash</td>
-            <td>
-              <button className="btn btn-info btn-sm">
-                <FaPrint />
-              </button>
-              <button className="btn btn-success btn-sm">
-                <FaSms />
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>TR-2023-0580</td>
-            <td>Jul 11, 2025 16:12</td>
-            <td>$3,125.25</td>
-            <td>Card</td>
-            <td>
-              <button className="btn btn-info btn-sm">
-                <FaPrint />
-              </button>
-              <button className="btn btn-success btn-sm">
-                <FaSms />
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>TR-2023-0579</td>
-            <td>Jul 10, 2025 10:33</td>
-            <td>$980.30</td>
-            <td>Cash & Card</td>
-            <td>
-              <button className="btn btn-info btn-sm">
-                <FaPrint />
-              </button>
-              <button className="btn btn-success btn-sm">
-                <FaSms />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="transactionHistoryCard">
+        <div className="transactionHistoryCard-header">
+          <h3 className="transactionHistoryCard-title">
+            Transaction History ({pagination.totalRecords})
+          </h3>
+        </div>
+
+        <CustomTable data={data} headers={headers} />
+
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+        />
+      </div>
 
       <div className="footer-nav">
         <Link to={"/"} className="text-decoration-none">
@@ -98,6 +109,8 @@ const TransactionHistory = () => {
           </button>
         </Link>
       </div>
+
+      <LoadingScreen isLoading={isLoadingSales} />
     </div>
   );
 };

@@ -72,6 +72,23 @@
           color: var(--success);
           font-weight: 600;
         }
+
+        /* Button Styles */
+        .view-receipt-btn {
+          background-color: var(--gold);
+          color: var(--primary);
+          border: none;
+          border-radius: 6px;
+          padding: 8px 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+          font-size: 14px;
+        }
+
+        .view-receipt-btn:hover {
+          background-color: #e6c035;
+        }
       }
     }
   }

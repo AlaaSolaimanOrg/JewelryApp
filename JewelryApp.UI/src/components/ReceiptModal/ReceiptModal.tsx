@@ -1,13 +1,68 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaPrint, FaReceipt } from "react-icons/fa";
+import { useReactToPrint } from "react-to-print";
 import "./receiptModal.scss";
+import type { KaratType } from "../../types/enums";
+import { getSaleById } from "../../apis/sales.api/sales.api";
+import useLocalApi from "../../hooks/useLocalApi";
 
-const ReceiptModal = ({ children }) => {
+interface SaleItem {
+  productName: string;
+  karat: KaratType;
+  weight: number;
+  pricePerGram: number;
+  subtotal: number;
+}
+
+interface Sale {
+  id: string;
+  serialNumber: number;
+  createdDate: string;
+  staffName: string;
+  customerName: string;
+  total: number;
+  cashAmount: number;
+  cardAmount: number;
+  saleItems: SaleItem[];
+}
+
+interface ReceiptModalProps {
+  saleId: string;
+  children: React.ReactNode;
+}
+
+const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const { data: saleDetails } = useLocalApi({
+    apiToCall: (data) => getSaleById(data.payload),
+    payload: { saleId },
+    extraEffectCheck: !!saleId && !!showModal,
+    effectDependency: [saleId, showModal],
+  }) as {
+    data: Sale;
+    fetchData: () => void;
+  };
+
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: `Receipt-${
+      saleDetails?.serialNumber || saleDetails?.id || ""
+    }`,
+  });
+
   const onClose = () => {
     setShowModal(false);
   };
+
+  // Calculate subtotal from sale items
+  const subtotal =
+    saleDetails?.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
+
+  // Format date
+  const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
 
   return (
     <div>
@@ -15,14 +70,16 @@ const ReceiptModal = ({ children }) => {
         onClick={() => {
           setShowModal(true);
         }}
+        style={{ cursor: "pointer" }}
       >
         {children}
       </div>
-      
+
       <Modal
         show={showModal}
         onHide={onClose}
         centered
+        size="lg"
         className="receipt-modal"
       >
         <Modal.Header closeButton>
@@ -30,102 +87,131 @@ const ReceiptModal = ({ children }) => {
             <FaReceipt style={{ marginRight: "8px" }} /> Receipt Preview
           </Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
-          <div className="receipt-container">
-            <div className="receipt-header">
-              <div className="receipt-title">GoldCraft Jewelers</div>
-              <div className="receipt-subtitle">
-                123 Luxury Avenue, Diamond District
-              </div>
-              <div className="receipt-subtitle">Phone: (555) 123-4567</div>
+          {!saleDetails ? (
+            <div className="text-center py-4">
+              <p>Loading sale details...</p>
             </div>
+          ) : (
+            <div ref={contentRef} className="receipt-container">
+              {/* Header */}
+              <div className="receipt-header">
+                <div className="receipt-title">GoldCraft Jewelers</div>
+                <div className="receipt-subtitle">
+                  123 Luxury Avenue, Diamond District
+                </div>
+                <div className="receipt-subtitle">Phone: (555) 123-4567</div>
+              </div>
 
-            <div className="receipt-details">
-              <div>
+              {/* Details */}
+              <div className="receipt-details">
                 <div>
-                  <strong>Transaction ID:</strong> TR-2023-0583
+                  <div>
+                    <strong>Transaction ID:</strong>{" "}
+                    {saleDetails.serialNumber || saleDetails.id}
+                  </div>
+                  <div>
+                    <strong>Date:</strong>{" "}
+                    {dateObj.toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </div>
+                  <div>
+                    <strong>Time:</strong>{" "}
+                    {dateObj.toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                  </div>
                 </div>
                 <div>
-                  <strong>Date:</strong> July 13, 2025
-                </div>
-                <div>
-                  <strong>Time:</strong> 10:45:23 AM
+                  <div>
+                    <strong>Staff:</strong> {saleDetails.staffName || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Customer:</strong>{" "}
+                    {saleDetails.customerName || "Walk-in"}
+                  </div>
+                  <div>
+                    <strong>Payment Method:</strong>{" "}
+                    {saleDetails.cashAmount && saleDetails.cardAmount
+                      ? "Cash & Card"
+                      : saleDetails.cashAmount
+                      ? "Cash"
+                      : saleDetails.cardAmount
+                      ? "Card"
+                      : "N/A"}
+                  </div>
                 </div>
               </div>
-              <div>
-                <div>
-                  <strong>Staff:</strong> Sarah Johnson
+
+              {/* Table */}
+              <table className="receipt-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Karat</th>
+                    <th>Weight (g)</th>
+                    <th>Price/Gram</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {saleDetails.saleItems?.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.productName}</td>
+                      <td>{item.karat}</td>
+                      <td>{item.weight}g</td>
+                      <td>${item.pricePerGram}</td>
+                      <td>${item.subtotal}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Totals */}
+              <div className="receipt-totals">
+                <div className="receipt-total">
+                  <div className="total-label">Subtotal</div>
+                  <div className="total-value">${subtotal}</div>
                 </div>
-                <div>
-                  <strong>Customer:</strong> Walk-in
+                <div className="receipt-total">
+                  <div className="total-label">Total</div>
+                  <div className="total-value">${saleDetails.total}</div>
                 </div>
-                <div>
-                  <strong>Payment Method:</strong> Cash & Card
-                </div>
+              </div>
+
+              {/* Payment Breakdown */}
+              <div className="payment-breakdown">
+                <h4>Payment Breakdown</h4>
+
+                {saleDetails.cashAmount > 0 && (
+                  <div className="summary-item">
+                    <span>Cash Payment:</span>
+                    <span>${saleDetails.cashAmount}</span>
+                  </div>
+                )}
+
+                {saleDetails.cardAmount > 0 && (
+                  <div className="summary-item">
+                    <span>Card Payment:</span>
+                    <span>${saleDetails.cardAmount}</span>
+                  </div>
+                )}
               </div>
             </div>
-
-            <table className="receipt-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Karat</th>
-                  <th>Weight</th>
-                  <th>Price/Gram</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Diamond Solitaire Ring</td>
-                  <td>21K</td>
-                  <td>3.5g</td>
-                  <td>$125.75</td>
-                  <td>$440.13</td>
-                </tr>
-                <tr>
-                  <td>Gold Tennis Bracelet</td>
-                  <td>18K</td>
-                  <td>8.2g</td>
-                  <td>$112.30</td>
-                  <td>$920.86</td>
-                </tr>
-                <tr>
-                  <td>Ruby Heart Pendant</td>
-                  <td>24K</td>
-                  <td>5.1g</td>
-                  <td>$142.90</td>
-                  <td>$728.79</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <div className="receipt-totals">
-              <div className="receipt-total">
-                <div className="total-label">Subtotal</div>
-                <div className="total-value">$2,089.78</div>
-              </div>
-              <div className="receipt-total">
-                <div className="total-label">Total</div>
-                <div className="total-value">$2,215.17</div>
-              </div>
-            </div>
-
-            <div className="payment-breakdown">
-              <h4>Payment Breakdown</h4>
-              <div className="summary-item">
-                <span>Cash Payment:</span>
-                <span>$200.00</span>
-              </div>
-              <div className="summary-item">
-                <span>Card Payment:</span>
-                <span>$2,015.17</span>
-              </div>
-            </div>
-          </div>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary">
+          <Button
+            variant="primary"
+            onClick={handlePrint}
+            disabled={!saleDetails}
+          >
             <FaPrint /> Print Receipt
           </Button>
 

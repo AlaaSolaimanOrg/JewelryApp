@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./home.scss";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
+import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
 
 export interface Sale {
   id: string;
@@ -62,6 +63,9 @@ const Home = () => {
                 <li className="transaction-item">
                   <span className="transaction-id">{sale.serialNumber}</span>
                   <span className="transaction-amount">{sale.total}</span>
+                  <ReceiptModal saleId={sale.id}>
+                    <button className="view-receipt-btn">View Receipt</button>
+                  </ReceiptModal>
                 </li>
               );
             })}

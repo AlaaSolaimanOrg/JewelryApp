@@ -18,8 +18,9 @@ import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 import Header from "../pages/newPos/header/Header";
 import Home from "../pages/newPos/home/Home";
 import MainPosPage from "../pages/newPos/posSale/PosSale";
-import ReceiptDelivery from "../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery";
 import Receipt from "../pages/newPos/receipt/Receipt";
+import TransactionHistory from "../pages/newPos/transactionHistory/TransactionHistory";
+import ReceiptDelivery from "../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery";
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
@@ -56,11 +57,11 @@ const AppRoutes = () => {
           <Route path="/" element={<Home />} />
           <Route path="/sale" element={<MainPosPage />} />
           {/* <Route path="/productLookup" element={<ProductLookup />} />
-          <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/cartSummary" element={<CartSummary />} />
           <Route path="/manualItemEntry" element={<ManualItemEntry />} />
           <Route path="/applyDiscount" element={<ApplyDiscount />} />
           <Route path="/payment" element={<Payment />} /> */}
+          <Route path="/transactionHistory" element={<TransactionHistory />} />
           <Route path="/receipt/:saleId" element={<Receipt />} />
           <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
         </Route>
