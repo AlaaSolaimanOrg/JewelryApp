@@ -4,6 +4,7 @@ import Paginator from "../../../../components/Paginator/Paginator";
 import ReceiptModal from "../../../../components/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
+import "./customersSoldTo.scss"
 
 interface SaleCustomers {
   customerId: string;
@@ -27,7 +28,7 @@ const CustomersSoldTo = () => {
   });
 
   return (
-    <section className="section">
+    <section id="customersSoldTo">
       <h2 className="section-title">
         <FaUsers className="icon" style={{ marginRight: "8px" }} /> Customers
         Sold To
@@ -58,25 +59,33 @@ const CustomersSoldTo = () => {
             </tr>
           </thead>
           <tbody>
-            {salesCustomers.map((saleCustomer) => {
-              return (
-                <tr>
-                  <td>{saleCustomer.customerName}</td>
-                  <td>{saleCustomer.email}</td>
-                  <td>{saleCustomer.phoneNumber}</td>
-                  <td>
-                    {saleCustomer.notesRemarks && (
-                      <CommentTooltip comment={saleCustomer.notesRemarks} />
-                    )}
-                  </td>
-                  <td>
-                    <ReceiptModal saleId={saleCustomer.saleId}>
-                      <button className="view-receipt-btn">View Receipt</button>
-                    </ReceiptModal>
-                  </td>
-                </tr>
-              );
-            })}
+            {pagination.totalRecords ? (
+              salesCustomers.map((saleCustomer) => {
+                return (
+                  <tr>
+                    <td>{saleCustomer.customerName}</td>
+                    <td>{saleCustomer.email}</td>
+                    <td>{saleCustomer.phoneNumber}</td>
+                    <td>
+                      {saleCustomer.notesRemarks && (
+                        <CommentTooltip comment={saleCustomer.notesRemarks} />
+                      )}
+                    </td>
+                    <td>
+                      <ReceiptModal saleId={saleCustomer.saleId}>
+                        <button className="view-receipt-btn">
+                          View Receipt
+                        </button>
+                      </ReceiptModal>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr className="noResultsFound">
+                <td colSpan={5}>No results found</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

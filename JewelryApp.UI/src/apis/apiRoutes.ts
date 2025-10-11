@@ -22,7 +22,7 @@ export const apiRoutes = {
     getProducts: "Product/GetProducts",
     deleteProduct: "Product/DeleteProduct",
     getProductById: "Product/GetProductById",
-    getProductsBySku: "Product/GetProductsBySku",
+    getProductsByNfcIds: "Product/GetProductsByNfcIds",
   },
   users: {
     getAllUsers: "Users/GetAllUsers",
@@ -36,6 +36,9 @@ export const apiRoutes = {
   customers: {
     createCustomer: "Customer/CreateCustomer",
     getCustomer: "Customer/GetCustomer",
+    getCustomers: "Customer/GetCustomers",
+    deleteCustomer: "Customer/DeleteCustomer",
+    updateCustomer: "Customer/UpdateCustomer",
   },
   sales: {
     createSale: "Sales/CreateSale",

@@ -34,6 +34,7 @@ export const editProduct = async (payload: FormData) => {
 export const deleteProduct = async (payload: { id: string }) => {
   return requestApi("DELETE", apiRoutes.product.deleteProduct, payload);
 };
-export const getProductsBySku = async (payload: { skus: string[] }) => {
-  return requestApi("GET", apiRoutes.product.getProductsBySku, payload);
+
+export const getProductsByNfcIds = async (payload: { nfcIds: string[] }) => {
+  return requestApi("GET", apiRoutes.product.getProductsByNfcIds, payload);
 };

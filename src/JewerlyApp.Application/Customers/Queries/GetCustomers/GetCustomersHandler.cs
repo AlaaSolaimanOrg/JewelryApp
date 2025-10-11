@@ -13,7 +13,7 @@ using System;
 
 namespace JewerlyApp.Application.Customers.Queries.GetCustomers
 {
-    public class GetCustomersQueryHandler : IRequestHandler<GetCustomersQuery, GenericResponse<PaginatedResponse<GetCustomersVM>>>
+    public class GetCustomersQueryHandler : IRequestHandler<GetCustomersQuery, PaginatedResponse<GetCustomersVM>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IUserService _userService;
@@ -24,7 +24,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
             _userService = userService;
         }
 
-        public async Task<GenericResponse<PaginatedResponse<GetCustomersVM>>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<GetCustomersVM>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
         {
             var loggedInUser = await _userService.GetLoggedInUser();
 
@@ -37,12 +37,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                     Message = Messages.ErrorGeneral
                 };
 
-                return new GenericResponse<PaginatedResponse<GetCustomersVM>>
-                {
-                    Data = unauthorizedInnerResponse,
-                    StatusCode = ResponseStatusCode.Unauthorized,
-                    Message = Messages.ErrorGeneral
-                };
+                return unauthorizedInnerResponse;
             }
 
             IQueryable<Customer> customersQuery = _context.Customers.AsQueryable().AsNoTracking();
@@ -96,20 +91,16 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 })
                 .ToList();
 
-            var paginatedResponse = new PaginatedResponse<GetCustomersVM>
+          
+
+            return new PaginatedResponse<GetCustomersVM>
             {
+                Data = customerListItems,
+                StatusCode = totalRecords > 0 ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,
+                Message = Messages.Success,
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize,
-                TotalRecords = totalRecords,
-
-                Data = customerListItems
-            };
-
-            return new GenericResponse<PaginatedResponse<GetCustomersVM>>
-            {
-                Data = paginatedResponse,
-                StatusCode = totalRecords > 0 ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,
-                Message = Messages.Success
+                TotalRecords = totalRecords
             };
         }
     }

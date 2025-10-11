@@ -179,7 +179,7 @@ const SalesReports = () => {
           <div className="summary-card">
             <h3>Total Sales Amount</h3>
             <div className="amount">
-              {salesInsights
+              {salesInsights.totalSalesAmount
                 ? formatCurrency(salesInsights.totalSalesAmount)
                 : "$0.00"}
             </div>
@@ -187,7 +187,7 @@ const SalesReports = () => {
           <div className="summary-card">
             <h3>Cash Amount Paid</h3>
             <div className="amount">
-              {salesInsights
+              {salesInsights.cashAmountPaid
                 ? formatCurrency(salesInsights.cashAmountPaid)
                 : "$0.00"}
             </div>
@@ -195,7 +195,7 @@ const SalesReports = () => {
           <div className="summary-card">
             <h3>Card Amount Paid</h3>
             <div className="amount">
-              {salesInsights
+              {salesInsights.cardAmountPaid
                 ? formatCurrency(salesInsights.cardAmountPaid)
                 : "$0.00"}
             </div>
@@ -203,7 +203,7 @@ const SalesReports = () => {
           <div className="summary-card gold">
             <h3>Discount Amount</h3>
             <div className="amount">
-              {salesInsights
+              {salesInsights.discountAmount
                 ? formatCurrency(salesInsights.discountAmount)
                 : "$0.00"}
             </div>

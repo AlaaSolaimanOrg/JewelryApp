@@ -1,7 +1,7 @@
 import React, { useState, type Dispatch, type SetStateAction } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
-import { getProductsBySku } from "../../apis/products.api/products.api";
+import { getProductsByNfcIds } from "../../apis/products.api/products.api";
 import "./scanModal.scss";
 
 interface ScanModalProps {
@@ -25,27 +25,29 @@ const ScanModal: React.FC<ScanModalProps> = ({
 
   // Simulate NFC scan (replace with actual NFC reader logic)
   const handleScanInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const addedSku = scanInput.trim();
-    const checkListHasAddedSku = scannedItems.some(
-      (scannedItem) => scannedItem == addedSku
+    const addedNfcId = scanInput.trim();
+    const checkListHasAddedNfcId = scannedItems.some(
+      (scannedItem) => scannedItem == addedNfcId
     );
 
-    if (e.key === "Enter" && addedSku !== "") {
-      if (checkListHasAddedSku) {
+    if (e.key === "Enter" && addedNfcId !== "") {
+      if (checkListHasAddedNfcId) {
         setScanInput("");
         return;
       }
-      setScannedItems([...scannedItems, addedSku]);
+      setScannedItems([...scannedItems, addedNfcId]);
       setScanInput("");
     }
   };
 
-  const handleRemove = (sku: string) => {
-    setScannedItems(scannedItems.filter((scannedItem) => scannedItem !== sku));
+  const handleRemove = (nfcId: string) => {
+    setScannedItems(
+      scannedItems.filter((scannedItem) => scannedItem !== nfcId)
+    );
   };
 
-  async function getProductsBySkuApi(skus: string[]): Promise<void> {
-    const response = await getProductsBySku({ skus });
+  async function getProductsByNfcIdsApi(nfcIds: string[]): Promise<void> {
+    const response = await getProductsByNfcIds({ nfcIds });
     const fetchedProducts = response?.data || [];
 
     const updatedFetchedProducts = fetchedProducts.map((fetchedProduct) => {
@@ -55,9 +57,9 @@ const ScanModal: React.FC<ScanModalProps> = ({
       };
     });
 
-    const existingSkus = products.map((p) => p.sku);
+    const existingnfcIds = products.map((p) => p.nfcId);
     const newProducts = updatedFetchedProducts
-      .filter((p) => !existingSkus.includes(p.sku))
+      .filter((p) => !existingnfcIds.includes(p.nfcId))
       .map((p) => ({ ...p, manual: false }));
 
     const updatedProducts = [...products, ...newProducts];
@@ -140,7 +142,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
           variant="primary"
           disabled={!scannedItems.length}
           onClick={() => {
-            getProductsBySkuApi(scannedItems);
+            getProductsByNfcIdsApi(scannedItems);
           }}
         >
           Confirm

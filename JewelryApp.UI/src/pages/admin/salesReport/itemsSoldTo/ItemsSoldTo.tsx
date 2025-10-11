@@ -2,6 +2,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import Paginator from "../../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { getSoldItems } from "../../../../apis/sales.api/sales.api";
+import "./itemsSoldTo.scss"
 
 interface SoldItem {
   productName: string;
@@ -24,7 +25,7 @@ const ItemsSoldTo = () => {
   });
 
   return (
-    <section className="section">
+    <section id="itemsSoldTo">
       <h2 className="section-title">
         <FaShoppingCart className="icon" style={{ marginRight: "8px" }} /> Items
         Sold
@@ -63,17 +64,23 @@ const ItemsSoldTo = () => {
             </tr>
           </thead>
           <tbody>
-            {soldItems.map((soldItem) => {
-              return (
-                <tr>
-                  <td>{soldItem.productName}</td>
-                  <td>3</td>
-                  <td>{soldItem.weightSummed}</td>
-                  <td>{soldItem.pricePerGram}</td>
-                  <td>{soldItem.subtotal}</td>
-                </tr>
-              );
-            })}
+            {pagination.totalRecords ? (
+              soldItems.map((soldItem) => {
+                return (
+                  <tr>
+                    <td>{soldItem.productName}</td>
+                    <td>3</td>
+                    <td>{soldItem.weightSummed}</td>
+                    <td>{soldItem.pricePerGram}</td>
+                    <td>{soldItem.subtotal}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr className="noResultsFound">
+                <td colSpan={5}>No results found</td>
+              </tr>
+            )}
 
             {/* <tr className="highlight">
                 <td>
