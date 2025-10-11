@@ -1,4 +1,4 @@
-import type { DiscountType, KaratType } from "../../types/enums";
+import type { DiscountType, KaratType, SortDirection } from "../../types/enums";
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
 
@@ -31,6 +31,37 @@ export const createSale = async (payload: CreateSalePayload) => {
 export const getSaleById = async (payload: { saleId: string }) => {
   return requestApi("GET", apiRoutes.sales.getSaleById, payload);
 };
+
 export const getSalesList = async (payload: { saleId: string }) => {
   return requestApi("GET", apiRoutes.sales.getSalesList, payload);
+};
+
+export const getSalesInsights = async (payload: {
+  dateFrom: string;
+  dateTo: string;
+}) => {
+  return requestApi("GET", apiRoutes.sales.getSalesInsights, payload);
+};
+
+export const getSoldItems = async (payload: {
+  dateFrom: string;
+  dateTo: string;
+  pageSize: number;
+  pageNumber: number;
+  sortBy: string;
+  sortDirection: SortDirection;
+}) => {
+  return requestApi("GET", apiRoutes.sales.getSoldItems, payload);
+};
+
+export const getSalesCustomers = async (payload: {
+  dateFrom: string;
+  dateTo: string;
+  pageSize: number;
+  pageNumber: number;
+  sortBy: string;
+  sortDirection: SortDirection;
+  searchBy: string;
+}) => {
+  return requestApi("GET", apiRoutes.sales.getSalesCustomers, payload);
 };

@@ -29,7 +29,7 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
-  setCustomerSelectedId:Dispatch<SetStateAction<any>>;
+  setCustomerSelectedId: Dispatch<SetStateAction<any>>;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -43,7 +43,7 @@ const CustomerSection: React.FC<Props> = ({
   setShowAddCustomerModal,
   onOpenScanModal,
   setCustomerInfoActive,
-  setCustomerSelectedId
+  setCustomerSelectedId,
 }) => {
   const [customerSearchValue, setCustomerSearchValue] = useState("");
   const { data: customerDetails, fetchData: callGetCustomerDetails } =
@@ -65,7 +65,7 @@ const CustomerSection: React.FC<Props> = ({
     console.log("customerDetails", customerDetails);
     setCustomer(customerDetails);
     setCustomerInfoActive(!!customerDetails);
-    setCustomerSelectedId(customerDetails?.id ?? null)
+    setCustomerSelectedId(customerDetails?.id ?? null);
   }, [customerDetails]);
 
   console.log("customerInfoActive", customerInfoActive);

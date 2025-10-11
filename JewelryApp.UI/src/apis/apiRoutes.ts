@@ -41,5 +41,8 @@ export const apiRoutes = {
     createSale: "Sales/CreateSale",
     getSaleById: "Sales/GetSaleById",
     getSalesList: "Sales/GetSalesList",
+    getSalesInsights: "Sales/GetSalesInsights",
+    getSoldItems: "Sales/GetSoldItems",
+    getSalesCustomers: "Sales/GetSalesCustomers",
   },
 };

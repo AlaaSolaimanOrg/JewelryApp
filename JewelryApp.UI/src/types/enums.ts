@@ -40,10 +40,11 @@ export enum OrderDiscount {
 }
 
 export enum DatePillFilter {
-  Today,
-  ThisWeek,
-  ThisMonth,
-  ThisYear,
+  Today = 1,
+  ThisWeek = 2,
+  ThisMonth = 3,
+  ThisYear = 4,
+  All = 5,
 }
 
 export enum DiscountType {
