@@ -34,6 +34,7 @@ const productFieldsInitialState = {
   category: "",
   description: "",
   quantity: 1,
+  nfcId: "",
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -92,6 +93,7 @@ const AddEditProduct = ({ isEdit }) => {
         category: product.category,
         description: product.description,
         quantity: product.quantity,
+        nfcId: product.nfcId,
       });
 
       const loadFiles = async () => {
@@ -136,6 +138,7 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Description", productFields.description);
     formData.append("Weight", productFields.weight);
     formData.append("quantity", productFields.quantity?.toString());
+    formData.append("NfcId", productFields.nfcId);
 
     if (files && files.length > 0) {
       files.forEach((file) => {
@@ -256,6 +259,21 @@ const AddEditProduct = ({ isEdit }) => {
                     }
                   }}
                   required
+                />
+              </div>
+            </div>
+
+            {/* nfc id */}
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label">NFC ID</label>
+                <input
+                  type="text"
+                  maxLength={20}
+                  className="form-control"
+                  placeholder="Enter NFC ID"
+                  value={productFields.nfcId}
+                  onChange={(e) => handleProductField("nfcId", e.target.value)}
                 />
               </div>
             </div>

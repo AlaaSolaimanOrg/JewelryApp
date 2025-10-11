@@ -7,8 +7,6 @@
   padding: 40px 20px;
   height: calc(100% - 40px);
 
-
-
   .home-icon {
     font-size: 5rem;
     color: var(--gold);
@@ -94,6 +92,22 @@
           background-color: #e6c035;
         }
       }
+    }
+  }
+  .noResultsFound {
+    list-style: none;
+    padding: 0;
+    border-radius: var(--border-radius);
+    li {
+      height: 300px;
+      text-align: center !important;
+      color: var(--gold);
+      font-weight: bold;
+      font-size: 20px;
+      background-color: rgba(212, 175, 55, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

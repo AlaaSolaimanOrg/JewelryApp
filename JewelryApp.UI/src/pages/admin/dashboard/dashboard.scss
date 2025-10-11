@@ -95,6 +95,67 @@
     color: var(--danger);
   }
 
+  .stock-weight-section {
+    margin-bottom: 25px;
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--dark-light);
+      margin-bottom: 20px;
+    }
+
+    .stock-weight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .weight-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      box-shadow: 0 5px 15px var(--shadow);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      transition: var(--transition);
+    }
+
+    .weight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .weight-header {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      .icon {
+        color: var(--gold);
+        background: rgba(212, 175, 55, 0.15);
+        font-size: 40px;
+        padding: 10px;
+        border-radius: 8px;
+      }
+    }
+
+    .weight-title {
+      font-weight: 500;
+      color: var(--secondary);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      .karatType {
+        color: var(--gold);
+      }
+    }
+
+    .weight-value {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--dark-light);
+    }
+  }
+
   /* Card Styles */
   .card {
     background: white;

@@ -133,7 +133,7 @@ const TransactionHistory = () => {
 
       <div className="footer-nav">
         <Link to={"/"} className="text-decoration-none">
-          <button className="btn btn-secondary">
+          <button className="btn btn-secondary mt-3">
             <i className="fas fa-arrow-left"></i> Back to Dashboard
           </button>
         </Link>

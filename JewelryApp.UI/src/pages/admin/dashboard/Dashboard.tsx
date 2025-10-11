@@ -1,4 +1,9 @@
-import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
+import { getDashboardInsights } from "../../../apis/sales.api/sales.api";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/Table/CustomTable";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { KaratType } from "../../../types/enums";
 import "./dashboard.scss";
 
 // Import icons from react-icons/fa
@@ -14,7 +19,57 @@ import {
   FaDownload,
 } from "react-icons/fa";
 
+export interface DashboardInsights {
+  salesToday: {
+    amount: number;
+    changePercentage: number;
+    isIncrease: boolean;
+  };
+  stockValue: number;
+  customers: {
+    count: number;
+    changePercentage: number;
+    isIncrease: boolean;
+  };
+  itemsSold: {
+    count: number;
+    changePercentage: number;
+    isIncrease: boolean;
+  };
+  stockWeightByKarat: {
+    karatType: number;
+    weight: number;
+    displayName: string;
+  }[];
+}
+
 const Dashboard = () => {
+  const { data: dashboardInsights, fetchData } = useLocalApi({
+    apiToCall: (data) => getDashboardInsights(data.payload),
+  }) as {
+    data: DashboardInsights;
+    fetchData: () => void;
+  };
+
+  const handleRefresh = () => {
+    fetchData();
+  };
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  // Format number with commas
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat("en-US").format(num);
+  };
+
   const headers: TableHeader[] = [
     { key: "product", label: "Product", width: "200px" },
     { key: "category", label: "Category", width: "150px" },
@@ -25,41 +80,59 @@ const Dashboard = () => {
 
   const data = [
     {
-      Product: "Diamond Engagement Ring",
-      Category: "Rings",
-      Karat: "18K",
-      UnitsSold: 24,
-      Revenue: "$12,450",
+      product: "Diamond Engagement Ring",
+      category: "Rings",
+      karat: "18K",
+      unitsSold: 24,
+      revenue: "$12,450",
     },
     {
-      Product: "Gold Bangle Set",
-      Category: "Bangles",
-      Karat: "22K",
-      UnitsSold: 18,
-      Revenue: "$8,250",
+      product: "Gold Bangle Set",
+      category: "Bangles",
+      karat: "22K",
+      unitsSold: 18,
+      revenue: "$8,250",
     },
     {
-      Product: "Sapphire Pendant",
-      Category: "Necklaces",
-      Karat: "21K",
-      UnitsSold: 15,
-      Revenue: "$7,890",
+      product: "Sapphire Pendant",
+      category: "Necklaces",
+      karat: "21K",
+      unitsSold: 15,
+      revenue: "$7,890",
     },
     {
-      Product: "Emerald Earrings",
-      Category: "Earrings",
-      Karat: "18K",
-      UnitsSold: 12,
-      Revenue: "$5,670",
+      product: "Emerald Earrings",
+      category: "Earrings",
+      karat: "18K",
+      unitsSold: 12,
+      revenue: "$5,670",
     },
     {
-      Product: "Platinum Wedding Band",
-      Category: "Rings",
-      Karat: "Platinum",
-      UnitsSold: 10,
-      Revenue: "$4,320",
+      product: "Platinum Wedding Band",
+      category: "Rings",
+      karat: "Platinum",
+      unitsSold: 10,
+      revenue: "$4,320",
     },
   ];
+
+  // Loading state
+  if (!dashboardInsights) {
+    return (
+      <div id="dashboard" className="page active">
+        <div className="page-header">
+          <h1 className="page-title">
+            <FaHome className="icon me-2" />
+            <span>Admin Dashboard</span>
+          </h1>
+        </div>
+        <div className="loading">Loading dashboard data...</div>
+      </div>
+    );
+  }
+
+  const { salesToday, stockValue, customers, itemsSold, stockWeightByKarat } =
+    dashboardInsights;
 
   return (
     <div id="dashboard" className="page active">
@@ -69,7 +142,7 @@ const Dashboard = () => {
           <span>Admin Dashboard</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gold">
+          <button className="btn-md btn-gold" onClick={handleRefresh}>
             <FaSyncAlt className="icon me-1" /> Refresh
           </button>
         </div>
@@ -83,11 +156,17 @@ const Dashboard = () => {
               <FaShoppingBag className="icon" />
             </div>
           </div>
-          <div className="kpi-value">$24,560</div>
-          <div className="kpi-trend">
-            <FaArrowUp className="icon" /> 12.4% from yesterday
+          <div className="kpi-value">{formatCurrency(salesToday?.amount)}</div>
+          <div className={`kpi-trend ${salesToday?.isIncrease ? "" : "down"}`}>
+            {salesToday?.isIncrease ? (
+              <FaArrowUp className="icon" />
+            ) : (
+              <FaArrowDown className="icon" />
+            )}
+            {Math.abs(salesToday?.changePercentage).toFixed(1)}% from yesterday
           </div>
         </div>
+
         <div className="kpi-card">
           <div className="kpi-header">
             <div className="kpi-title">Stock Value</div>
@@ -95,11 +174,12 @@ const Dashboard = () => {
               <FaGem className="icon" />
             </div>
           </div>
-          <div className="kpi-value">$892,350</div>
+          <div className="kpi-value">{formatCurrency(stockValue)}</div>
           <div className="kpi-trend down">
             <FaArrowDown className="icon" /> 2.1% from last month
           </div>
         </div>
+
         <div className="kpi-card">
           <div className="kpi-header">
             <div className="kpi-title">Customers</div>
@@ -107,11 +187,17 @@ const Dashboard = () => {
               <FaUsers className="icon" />
             </div>
           </div>
-          <div className="kpi-value">1,248</div>
-          <div className="kpi-trend">
-            <FaArrowUp className="icon" /> 5.7% from last week
+          <div className="kpi-value">{formatNumber(customers?.count)}</div>
+          <div className={`kpi-trend ${customers?.isIncrease ? "" : "down"}`}>
+            {customers?.isIncrease ? (
+              <FaArrowUp className="icon" />
+            ) : (
+              <FaArrowDown className="icon" />
+            )}
+            {Math.abs(customers?.changePercentage).toFixed(1)}% from last week
           </div>
         </div>
+
         <div className="kpi-card">
           <div className="kpi-header">
             <div className="kpi-title">Items Sold</div>
@@ -119,25 +205,38 @@ const Dashboard = () => {
               <FaShoppingCart className="icon" />
             </div>
           </div>
-          <div className="kpi-value">142</div>
-          <div className="kpi-trend">
-            <FaArrowUp className="icon" /> 8.3% from yesterday
+          <div className="kpi-value">{formatNumber(itemsSold?.count)}</div>
+          <div className={`kpi-trend ${itemsSold?.isIncrease ? "" : "down"}`}>
+            {itemsSold?.isIncrease ? (
+              <FaArrowUp className="icon" />
+            ) : (
+              <FaArrowDown className="icon" />
+            )}
+            {Math.abs(itemsSold?.changePercentage).toFixed(1)}% from yesterday
           </div>
         </div>
       </div>
 
-      <div className="form-row">
-        <div className="form-col">
-          <div className="chart-container">
-            <div className="chart-placeholder">
-              Sales Trend Chart (Last 30 Days)
+      <div className="stock-weight-section">
+        <h3 className="section-title">Total Stock Weight</h3>
+        <div className="stock-weight-grid">
+          {stockWeightByKarat?.map((stockWeight) => (
+            <div key={stockWeight.karatType} className="weight-card">
+              <div className="weight-header">
+                <div className="weight-title">
+                  Total Stock Weight
+                  <span className="karatType">
+                    {KaratType[stockWeight?.karatType]}
+                  </span>
+                  K
+                </div>
+                <FaGem className="icon me-2" />
+              </div>
+              <div className="weight-value">
+                {formatNumber(stockWeight?.weight)} g
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="form-col">
-          <div className="chart-container">
-            <div className="chart-placeholder">Sales by Karat Distribution</div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -150,7 +249,7 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-        <CustomTable headers={headers} data={data} />;
+        <CustomTable headers={headers} data={data} />
       </div>
     </div>
   );

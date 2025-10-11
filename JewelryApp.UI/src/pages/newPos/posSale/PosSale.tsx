@@ -9,6 +9,7 @@ import CustomerSection from "./PosSale.sections/CustomerSection";
 import PaymentSummary from "./PosSale.sections/PaymentSummary";
 import ProductsSection from "./PosSale.sections/ProductsSection";
 import type { Customer, Product } from "./types";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
 const MainPosPage: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +56,8 @@ const MainPosPage: React.FC = () => {
     );
   });
 
-  const checkPaymentEqualTotal = total == cashAmount + cardAmount;
+  const checkPaymentEqualTotal =
+    Math.abs(total - (cashAmount + cardAmount)) < 0.001;
 
   const canSaveSale =
     !!customerSelectedId &&
@@ -68,18 +70,20 @@ const MainPosPage: React.FC = () => {
   // Sync payment amounts when total changes
   useEffect(() => {
     if (total > 0 && cashAmount === 0 && cardAmount === 0) {
-      // Initial setup - set cash to total
-      setCashAmount(total);
+      // Initial setup - set cash to total with proper precision
+      setCashAmount(parseFloat(total.toFixed(4)));
     } else if (total > 0 && (cashAmount > 0 || cardAmount > 0)) {
       // When total changes, adjust payments to maintain ratio or reset to cash
-      const currentPaymentTotal = cashAmount + cardAmount;
+      const currentPaymentTotal = parseFloat(
+        (cashAmount + cardAmount).toFixed(4)
+      );
 
       if (
         currentPaymentTotal > 0 &&
         Math.abs(currentPaymentTotal - total) > 0.01
       ) {
-        // If there's a significant difference, reset to cash payment
-        setCashAmount(total);
+        // If there's a significant difference, reset to cash payment with proper precision
+        setCashAmount(parseFloat(total.toFixed(4)));
         setCardAmount(0);
       }
     } else if (total === 0) {
@@ -102,10 +106,10 @@ const MainPosPage: React.FC = () => {
     return finalVal;
   };
 
-  // Parse string to number
+  // Parse string to number with fixed precision
   const parseAmount = (value: string | number): number => {
-    if (typeof value === "number") return value;
-    return parseFloat(value) || 0;
+    if (typeof value === "number") return parseFloat(value.toFixed(4));
+    return parseFloat(parseFloat(value || "0").toFixed(4));
   };
 
   // Clamp value to not exceed total
@@ -121,11 +125,14 @@ const MainPosPage: React.FC = () => {
     // Prevent cash amount from exceeding total
     cashValue = clampToTotal(cashValue);
 
+    // Fix precision issues by rounding to 4 decimal places
+    cashValue = parseFloat(cashValue.toFixed(4));
+
     setCashAmount(cashValue);
 
-    // Calculate card amount as total - cash
-    const cardValue = Math.max(0, total - cashValue);
-    setCardAmount(parseFloat(cardValue.toFixed(4)));
+    // Calculate card amount as total - cash, and fix precision
+    const cardValue = Math.max(0, parseFloat((total - cashValue).toFixed(4)));
+    setCardAmount(cardValue);
   };
 
   // Handle card amount change
@@ -136,13 +143,15 @@ const MainPosPage: React.FC = () => {
     // Prevent card amount from exceeding total
     cardValue = clampToTotal(cardValue);
 
+    // Fix precision issues by rounding to 4 decimal places
+    cardValue = parseFloat(cardValue.toFixed(4));
+
     setCardAmount(cardValue);
 
-    // Calculate cash amount as total - card
-    const cashValue = Math.max(0, total - cardValue);
-    setCashAmount(parseFloat(cashValue.toFixed(4)));
+    // Calculate cash amount as total - card, and fix precision
+    const cashValue = Math.max(0, parseFloat((total - cardValue).toFixed(4)));
+    setCashAmount(cashValue);
   };
-
   // Manual entry
   const handleManualEntry = () => {
     setProducts([
@@ -412,6 +421,7 @@ const MainPosPage: React.FC = () => {
         products={products}
         setProducts={setProducts}
       />
+      <LoadingScreen isLoading={isLoadingCreateSale} />
     </div>
   );
 };

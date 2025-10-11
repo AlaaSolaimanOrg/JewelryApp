@@ -47,5 +47,6 @@ export const apiRoutes = {
     getSalesInsights: "Sales/GetSalesInsights",
     getSoldItems: "Sales/GetSoldItems",
     getSalesCustomers: "Sales/GetSalesCustomers",
+    getDashboardInsights: "Sales/GetDashboardInsights",
   },
 };

@@ -19,14 +19,17 @@ export interface Sale {
 }
 
 const Home = () => {
-  const { data: sales, isLoading: isLoading } =
-    useLocalApiSearchSortPagination<Sale>({
-      apiToCall: (data) => getSalesList(data.payload),
-      extraPayload: {},
-      initialPageSize: 4,
-      initialSortBy: "createdDate",
-      initialSortDirection: SortDirection.Descending,
-    });
+  const {
+    data: sales,
+    pagination,
+    isLoading: isLoading,
+  } = useLocalApiSearchSortPagination<Sale>({
+    apiToCall: (data) => getSalesList(data.payload),
+    extraPayload: {},
+    initialPageSize: 4,
+    initialSortBy: "createdDate",
+    initialSortDirection: SortDirection.Descending,
+  });
 
   return (
     <div className="page-content active">
@@ -59,19 +62,33 @@ const Home = () => {
           {isLoading ? (
             <CustomLoader />
           ) : (
-            <ul className="transaction-list">
-              {sales.map((sale) => {
-                return (
-                  <li className="transaction-item">
-                    <span className="transaction-id">{sale.serialNumber}</span>
-                    <span className="transaction-amount">{sale.total}$</span>
-                    <ReceiptModal saleId={sale.id}>
-                      <button className="view-receipt-btn">View Receipt</button>
-                    </ReceiptModal>
-                  </li>
-                );
-              })}
-            </ul>
+            <>
+              {pagination.totalRecords ? (
+                <ul className="transaction-list">
+                  {sales?.map((sale) => {
+                    return (
+                      <li className="transaction-item">
+                        <span className="transaction-id">
+                          {sale.serialNumber}
+                        </span>
+                        <span className="transaction-amount">
+                          {sale.total}$
+                        </span>
+                        <ReceiptModal saleId={sale.id}>
+                          <button className="view-receipt-btn">
+                            View Receipt
+                          </button>
+                        </ReceiptModal>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <ul className="noResultsFound">
+                  <li>No results found</li>
+                </ul>
+              )}
+            </>
           )}
         </div>
       </div>

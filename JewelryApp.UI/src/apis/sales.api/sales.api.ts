@@ -65,3 +65,7 @@ export const getSalesCustomers = async (payload: {
 }) => {
   return requestApi("GET", apiRoutes.sales.getSalesCustomers, payload);
 };
+
+export const getDashboardInsights = async (payload: {}) => {
+  return requestApi("GET", apiRoutes.sales.getDashboardInsights, payload);
+};
