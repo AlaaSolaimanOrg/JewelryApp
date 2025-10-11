@@ -21,8 +21,13 @@ import {
   startOfYear,
 } from "date-fns";
 import { DatePillFilter, KaratType } from "../../../types/enums";
-import { getSalesInsights } from "../../../apis/sales.api/sales.api";
+import {
+  getSalesInsights,
+  getSoldItems,
+} from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import Paginator from "../../../components/Paginator/Paginator";
 
 interface SalesInsights {
   totalSalesAmount: number;
@@ -35,6 +40,16 @@ interface SalesInsights {
     pricePerGram: number;
     totalValue: number;
   }[];
+}
+
+export interface SoldItem {
+  productName: string;
+  quantity: number;
+  unitWeight: number;
+  weightSummed: number;
+  pricePerGram: number;
+  subtotal: number;
+  latestSaleDate: Date;
 }
 
 const SalesReports = () => {
@@ -98,6 +113,18 @@ const SalesReports = () => {
   }) as {
     data: SalesInsights;
   };
+
+  const {
+    data: soldItems,
+    // isLoading: isLoadingUsers,
+    fetchData: recallGetUsers,
+    onSearchChange,
+    onPaginationChange,
+    pagination,
+  } = useLocalApiSearchSortPagination<SoldItem>({
+    apiToCall: (data) => getSoldItems(data.payload),
+    initialPageSize: 5,
+  });
 
   // Format currency function
   const formatCurrency = (amount: number) => {
@@ -261,7 +288,6 @@ const SalesReports = () => {
             <option>Last 7 Days</option>
             <option>Last 30 Days</option>
             <option>Last 3 Months</option>
-            <option>Custom Range</option>
           </select>
           <select className="filter-select">
             <option>All Karats</option>
@@ -271,6 +297,7 @@ const SalesReports = () => {
             <option>18K</option>
           </select>
         </div>
+
         <div className="table-container">
           <table className="data-table">
             <thead>
@@ -279,44 +306,23 @@ const SalesReports = () => {
                 <th>Quantity</th>
                 <th>Weight</th>
                 <th>Price per Gram</th>
-                <th>Unit Price</th>
                 <th>Subtotal</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Diamond Solitaire Ring</td>
-                <td>3</td>
-                <td>3.5g</td>
-                <td>$125.75</td>
-                <td>$125.75</td>
-                <td>$440.13</td>
-              </tr>
-              <tr>
-                <td>Gold Tennis Bracelet</td>
-                <td>2</td>
-                <td>8.2g</td>
-                <td>$112.30</td>
-                <td>$112.30</td>
-                <td>$920.68</td>
-              </tr>
-              <tr>
-                <td>Ruby Heart Pendant</td>
-                <td>4</td>
-                <td>5.1g</td>
-                <td>$142.90</td>
-                <td>$142.90</td>
-                <td>$728.79</td>
-              </tr>
-              <tr>
-                <td>Emerald Drop Earrings</td>
-                <td>1</td>
-                <td>4.2g</td>
-                <td>$132.50</td>
-                <td>$132.50</td>
-                <td>$556.50</td>
-              </tr>
-              <tr className="highlight">
+              {soldItems.map((soldItem) => {
+                return (
+                  <tr>
+                    <td>{soldItem.productName}</td>
+                    <td>3</td>
+                    <td>{soldItem.weightSummed}</td>
+                    <td>{soldItem.pricePerGram}</td>
+                    <td>{soldItem.subtotal}</td>
+                  </tr>
+                );
+              })}
+
+              {/* <tr className="highlight">
                 <td>
                   <strong>Total</strong>
                 </td>
@@ -331,10 +337,17 @@ const SalesReports = () => {
                 <td>
                   <strong>$2,646.10</strong>
                 </td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
         </div>
+
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+        />
       </section>
 
       <section className="section">

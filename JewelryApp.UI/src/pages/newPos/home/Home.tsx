@@ -7,6 +7,7 @@ import { getSalesList } from "../../../apis/sales.api/sales.api";
 import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
 import { Spinner } from "react-bootstrap";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
+import { SortDirection } from "../../../types/enums";
 
 export interface Sale {
   id: string;
@@ -23,6 +24,8 @@ const Home = () => {
       apiToCall: (data) => getSalesList(data.payload),
       extraPayload: {},
       initialPageSize: 4,
+      initialSortBy: "createdDate",
+      initialSortDirection: SortDirection.Descending,
     });
 
   return (
@@ -61,7 +64,7 @@ const Home = () => {
                 return (
                   <li className="transaction-item">
                     <span className="transaction-id">{sale.serialNumber}</span>
-                    <span className="transaction-amount">{sale.total}</span>
+                    <span className="transaction-amount">{sale.total}$</span>
                     <ReceiptModal saleId={sale.id}>
                       <button className="view-receipt-btn">View Receipt</button>
                     </ReceiptModal>
