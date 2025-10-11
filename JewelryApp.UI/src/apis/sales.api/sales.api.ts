@@ -31,3 +31,6 @@ export const createSale = async (payload: CreateSalePayload) => {
 export const getSaleById = async (payload: { saleId: string }) => {
   return requestApi("GET", apiRoutes.sales.getSaleById, payload);
 };
+export const getSalesList = async (payload: { saleId: string }) => {
+  return requestApi("GET", apiRoutes.sales.getSalesList, payload);
+};

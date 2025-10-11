@@ -7,6 +7,9 @@ import "./addCustomerModal.scss";
 interface AddCustomerModalProps {
   show: boolean;
   onClose: () => void;
+  callGetCustomerDetails: () => void;
+  setSearchInput: (v) => void;
+  setCustomerSearchValue: (v) => void;
 }
 
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
@@ -14,7 +17,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   onClose,
   callGetCustomerDetails,
   setSearchInput,
-  setCustomerSearchValue
+  setCustomerSearchValue,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -83,7 +86,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           if (!!setSearchInput && !!callGetCustomerDetails) {
-            setCustomerSearchValue(name)
+            setCustomerSearchValue(name);
             setSearchInput(name);
             callGetCustomerDetails();
           }
@@ -101,7 +104,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         }, 3000);
       });
   };
-  
+
   const handleSave = () => {
     handleAddCustomer();
   };

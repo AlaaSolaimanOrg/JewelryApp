@@ -1,9 +1,33 @@
 import { FaCashRegister, FaPlusCircle } from "react-icons/fa";
 import { RiHistoryFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./home.scss";
+import { getSalesList } from "../../../apis/sales.api/sales.api";
+
+export interface Sale {
+  id: string;
+  serialNumber: number;
+  createdDate: string;
+  total: number;
+  cardPayment: boolean;
+  cashPayment: boolean;
+}
 
 const Home = () => {
+  const {
+    data: sales,
+    isLoading: isLoadingProducts,
+    fetchData: recallGetProducts,
+    onSearchChange,
+    onPaginationChange,
+    pagination,
+  } = useLocalApiSearchSortPagination<Sale>({
+    apiToCall: (data) => getSalesList(data.payload),
+    extraPayload: {},
+    initialPageSize: 4,
+  });
+
   return (
     <div className="page-content active">
       <div className="home-container">
@@ -33,22 +57,14 @@ const Home = () => {
             </Link>
           </div>
           <ul className="transaction-list">
-            <li className="transaction-item">
-              <span className="transaction-id">TR-2023-0582</span>
-              <span className="transaction-amount">$1,850.75</span>
-            </li>
-            <li className="transaction-item">
-              <span className="transaction-id">TR-2023-0581</span>
-              <span className="transaction-amount">$2,420.50</span>
-            </li>
-            <li className="transaction-item">
-              <span className="transaction-id">TR-2023-0580</span>
-              <span className="transaction-amount">$3,125.25</span>
-            </li>
-            <li className="transaction-item">
-              <span className="transaction-id">TR-2023-0579</span>
-              <span className="transaction-amount">$980.30</span>
-            </li>
+            {sales.map((sale) => {
+              return (
+                <li className="transaction-item">
+                  <span className="transaction-id">{sale.serialNumber}</span>
+                  <span className="transaction-amount">{sale.total}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

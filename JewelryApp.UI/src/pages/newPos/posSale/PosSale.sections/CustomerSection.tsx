@@ -6,22 +6,21 @@ import React, {
   type SetStateAction,
 } from "react";
 import {
-  FaUser,
+  FaBirthdayCake,
   FaEnvelope,
   FaPhone,
-  FaBirthdayCake,
+  FaUser,
   FaUserCircle,
 } from "react-icons/fa";
-import AddCustomerModal from "../../../../components/AddCustomerModal/AddCustomerModal";
-import type { Customer } from "../types";
 import { getCustomer } from "../../../../apis/customers.api/customers.api";
+import AddCustomerModal from "../../../../components/AddCustomerModal/AddCustomerModal";
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { debounce } from "../../../../utils";
-import dateFormat from "date-format";
+import type { Customer } from "../types";
 
 interface Props {
-  customer: Customer;
-  setCustomer: Dispatch<SetStateAction<Customer>>;
+  customer: Customer | null;
+  setCustomer: Dispatch<SetStateAction<Customer | null>>;
   customerInfoActive: boolean;
   searchInput: string;
   setSearchInput: (v: string) => void;
@@ -30,7 +29,7 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
-  setCustomerSelectedId:Dispatch<SetStateAction<string>>;
+  setCustomerSelectedId:Dispatch<SetStateAction<any>>;
 }
 
 const CustomerSection: React.FC<Props> = ({

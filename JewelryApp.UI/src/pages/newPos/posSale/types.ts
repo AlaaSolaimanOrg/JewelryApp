@@ -5,7 +5,7 @@ export interface Product {
   sku: string | null;
   name: string;
   quantity: number;
-  karatType?: KaratType | string;
+  karatType?: KaratType | null;
   weight: number | string;
   category: ProductCategory;
   productType: ProductType;

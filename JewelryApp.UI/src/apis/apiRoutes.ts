@@ -40,5 +40,6 @@ export const apiRoutes = {
   sales: {
     createSale: "Sales/CreateSale",
     getSaleById: "Sales/GetSaleById",
+    getSalesList: "Sales/GetSalesList",
   },
 };

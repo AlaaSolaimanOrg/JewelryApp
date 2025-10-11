@@ -13,17 +13,26 @@ const Header = () => {
   const { userInfo, setUserInfo } = useAuth();
 
   const location = useLocation();
-  const pagesTitles = {
-    "/": "POS Dashboard",
-    "/productLookup": "Product Lookup",
-    "/transactionHistory": "Transaction History",
-    "/cartSummary": "Cart Summary",
-    "/manualItemEntry": "Manual Item Entry",
-    "/applyDiscount": "Apply Dicount",
-    "/payment": "Payment",
-    "/receipt": "Receipt Preview",
-    "/ReceiptDelivery": "Receipt Delivery",
-    "/sale": "Sale",
+  const getPageTitle = (pathname: string) => {
+    const routeTitles = [
+      { path: "/productLookup", title: "Product Lookup" },
+      { path: "/transactionHistory", title: "Transaction History" },
+      { path: "/cartSummary", title: "Cart Summary" },
+      { path: "/manualItemEntry", title: "Manual Item Entry" },
+      { path: "/applyDiscount", title: "Apply Discount" },
+      { path: "/payment", title: "Payment" },
+      { path: "/receipt", title: "Receipt Preview" }, // This will match /receipt/*
+      { path: "/ReceiptDelivery", title: "Receipt Delivery" },
+      { path: "/sale", title: "Sale" },
+      { path: "/", title: "POS Dashboard" },
+    ];
+
+    const matchedRoute = routeTitles.find(
+      (route) =>
+        pathname === route.path || pathname.startsWith(route.path + "/")
+    );
+
+    return matchedRoute?.title || "POS Dashboard";
   };
 
   // Logout handler
@@ -70,9 +79,7 @@ const Header = () => {
       </header>
 
       <div className="posHeader-page-title">
-        <span id="posHeader-page-title">
-          {pagesTitles[location.pathname as keyof typeof pagesTitles]}
-        </span>
+        <span id="posHeader-page-title">{getPageTitle(location.pathname)}</span>
       </div>
     </>
   );

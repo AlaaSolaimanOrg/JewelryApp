@@ -32,6 +32,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
 
     if (e.key === "Enter" && addedSku !== "") {
       if (checkListHasAddedSku) {
+        setScanInput("");
         return;
       }
       setScannedItems([...scannedItems, addedSku]);

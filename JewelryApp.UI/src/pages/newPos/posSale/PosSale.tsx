@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import "./posSale.scss";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createSale } from "../../../apis/sales.api/sales.api";
 import ScanModal from "../../../components/ScanModal/ScanModal";
-import ProductsSection from "./PosSale.sections/ProductsSection";
+import { DiscountType, KaratType } from "../../../types/enums";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection";
 import PaymentSummary from "./PosSale.sections/PaymentSummary";
+import ProductsSection from "./PosSale.sections/ProductsSection";
 import type { Customer, Product } from "./types";
-import { DiscountType } from "../../../types/enums";
-import { createSale } from "../../../apis/sales.api/sales.api";
-import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { useNavigate } from "react-router-dom";
 
 const MainPosPage: React.FC = () => {
   const navigate = useNavigate();
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
-  const [customer, setCustomer] = useState<Customer>({});
+  const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [customerSelectedId, setCustomerSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
@@ -29,14 +29,17 @@ const MainPosPage: React.FC = () => {
   console.log("products", products);
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
-    const s = parseFloat((product.pricePerGram * product.weight) as any) || 0;
+    const s =
+      parseFloat(
+        (Number(product.pricePerGram) * Number(product.weight)) as any
+      ) || 0;
     return sum + s;
   }, 0);
 
   const discount = discountAmount
     ? discountType === DiscountType.Percentage
-      ? (subtotal * parseFloat(discountAmount)) / 100
-      : parseFloat(discountAmount)
+      ? (subtotal * parseFloat(discountAmount.toString())) / 100
+      : parseFloat(discountAmount.toString())
     : 0;
   const tax = parseFloat((subtotal * 0.06).toFixed(4));
   const total = subtotal - discount + tax;
@@ -51,18 +54,40 @@ const MainPosPage: React.FC = () => {
       Number(product.pricePerGram) <= 0
     );
   });
+
+  const checkPaymentEqualTotal = total == cashAmount + cardAmount;
+
   const canSaveSale =
     !!customerSelectedId &&
     products.length &&
     (cardAmount > 0 || cashAmount > 0) &&
-    !anyProductWithUnfilledField;
+    !anyProductWithUnfilledField &&
+    !isLoadingCreateSale &&
+    checkPaymentEqualTotal;
 
-  // Set cash amount to total by default when total changes
+  // Sync payment amounts when total changes
   useEffect(() => {
     if (total > 0 && cashAmount === 0 && cardAmount === 0) {
+      // Initial setup - set cash to total
       setCashAmount(total);
+    } else if (total > 0 && (cashAmount > 0 || cardAmount > 0)) {
+      // When total changes, adjust payments to maintain ratio or reset to cash
+      const currentPaymentTotal = cashAmount + cardAmount;
+
+      if (
+        currentPaymentTotal > 0 &&
+        Math.abs(currentPaymentTotal - total) > 0.01
+      ) {
+        // If there's a significant difference, reset to cash payment
+        setCashAmount(total);
+        setCardAmount(0);
+      }
+    } else if (total === 0) {
+      // Reset payments when no products
+      setCashAmount(0);
+      setCardAmount(0);
     }
-  }, [total, cashAmount, cardAmount]);
+  }, [total]); // This will run whenever total changes
 
   // Format number input value
   const formatNumberInput = (value: string): string => {
@@ -99,8 +124,8 @@ const MainPosPage: React.FC = () => {
     setCashAmount(cashValue);
 
     // Calculate card amount as total - cash
-    const cardValue = total - cashValue;
-    setCardAmount(cardValue);
+    const cardValue = Math.max(0, total - cashValue);
+    setCardAmount(parseFloat(cardValue.toFixed(4)));
   };
 
   // Handle card amount change
@@ -114,8 +139,8 @@ const MainPosPage: React.FC = () => {
     setCardAmount(cardValue);
 
     // Calculate cash amount as total - card
-    const cashValue = total - cardValue;
-    setCashAmount(cashValue);
+    const cashValue = Math.max(0, total - cardValue);
+    setCashAmount(parseFloat(cashValue.toFixed(4)));
   };
 
   // Manual entry
@@ -125,7 +150,7 @@ const MainPosPage: React.FC = () => {
       {
         name: "",
         images: [],
-        karatType: "18K",
+        karatType: KaratType.Karat18,
         weight: 0,
         originalPricePerGram: 0,
         pricePerGram: 0,
@@ -195,7 +220,10 @@ const MainPosPage: React.FC = () => {
     const payload = {
       customerId: customerSelectedId,
       discount: discountAmount,
-      discountPercentage: discountAmount,
+      discountPercentage:
+        discountType == DiscountType.Percentage
+          ? discountAmount
+          : (discountAmount / subtotal) * 100,
       discountType:
         !!discountAmount && Number(discountAmount) > 0
           ? discountType
@@ -238,6 +266,54 @@ const MainPosPage: React.FC = () => {
       });
   };
 
+  const handleDiscountChange = (rawValue: string) => {
+    // Clean input - remove non-digits and non-dots
+    const cleanValue = rawValue.replace(/[^\d.]/g, "");
+
+    // Split into integer and fractional parts
+    const [intPart = "", fracPart = ""] = cleanValue.split(".");
+
+    if (discountType === DiscountType.Percentage) {
+      // For percentages: limit to 100% and 2 decimal places
+      let value = intPart;
+
+      // Add fractional part if exists (max 2 decimals)
+      if (fracPart) {
+        value += "." + fracPart.slice(0, 2);
+      }
+
+      // Handle trailing dot
+      if (cleanValue.endsWith(".") && !fracPart) {
+        value += ".";
+      }
+
+      // Validate range (0-100)
+      if (value && !value.endsWith(".")) {
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue)) {
+          if (numValue > 100) value = "100";
+          if (numValue < 0) value = "0";
+        }
+      }
+
+      setDiscountAmount(Number(value));
+    } else {
+      // For fixed amount: limit to 10 integer digits and 4 decimal places
+      let value = intPart.slice(0, 10);
+
+      // Add fractional part if exists (max 4 decimals)
+      if (fracPart) {
+        value += "." + fracPart.slice(0, 4);
+      }
+
+      // Handle trailing dot
+      if (cleanValue.endsWith(".") && !fracPart) {
+        value += ".";
+      }
+
+      setDiscountAmount(Number(value));
+    }
+  };
   return (
     <div id="mainPosPage" className="page-content">
       <CustomerSection
@@ -270,39 +346,7 @@ const MainPosPage: React.FC = () => {
             className="discount-amount"
             placeholder="Discount amount"
             value={discountAmount}
-            onChange={(e) => {
-              // Allow only digits and at most one dot
-              let raw = e.target.value;
-              raw = raw.replace(/[^\d.]/g, "");
-              const allParts = raw.split(".");
-              let intPart = allParts[0] ?? "";
-              let fracPart = allParts.slice(1).join("") ?? "";
-
-              if (discountType === DiscountType.Percentage) {
-                fracPart = fracPart.slice(0, 2);
-                let val =
-                  fracPart.length > 0 ? intPart + "." + fracPart : intPart;
-                if (raw.endsWith(".") && fracPart.length === 0)
-                  val = intPart + ".";
-                if (val !== "" && !val.endsWith(".")) {
-                  const num = parseFloat(val);
-                  if (!isNaN(num)) {
-                    if (num > 100) val = "100";
-                    if (num < 0) val = "0";
-                  }
-                }
-                setDiscountAmount(val);
-                return;
-              }
-
-              intPart = intPart.slice(0, 10);
-              fracPart = fracPart.slice(0, 4);
-              let finalVal =
-                fracPart.length > 0 ? intPart + "." + fracPart : intPart;
-              if (raw.endsWith(".") && fracPart.length === 0)
-                finalVal = intPart + ".";
-              setDiscountAmount(finalVal);
-            }}
+            onChange={(e) => handleDiscountChange(e.target.value)}
           />
           <select
             className="discount-type"

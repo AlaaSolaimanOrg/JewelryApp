@@ -13,6 +13,7 @@ type ApiSortSearchPropsType<T> = {
   finallyCallback?: () => void;
   initialSortBy?: string;
   initialSortDirection?: SortDirection;
+  initialPageSize: number;
   showErrorAlert?: boolean;
 };
 
@@ -24,6 +25,7 @@ const useLocalApiSearchSortPagination = <T = any>({
   finallyCallback = () => {},
   initialSortBy = "",
   initialSortDirection = SortDirection.Ascending,
+  initialPageSize= 10,
   showErrorAlert = true,
   apiToCall,
   apiName,
@@ -33,7 +35,7 @@ const useLocalApiSearchSortPagination = <T = any>({
     pageSize: number;
     pageNumber: number;
     totalRecords: number;
-  }>({ pageSize: 10, pageNumber: 1, totalRecords: 0 });
+  }>({ pageSize: initialPageSize, pageNumber: 1, totalRecords: 0 });
 
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
     sortDirection: initialSortDirection,
@@ -152,7 +154,7 @@ const useLocalApiSearchSortPagination = <T = any>({
   };
 
   const resetFilters = () => {
-    setPagination({ pageSize: 10, pageNumber: 1, totalRecords: 0 });
+    setPagination({ pageSize: initialPageSize, pageNumber: 1, totalRecords: 0 });
     setSortCriteria({
       sortDirection: initialSortDirection,
       sortBy: initialSortBy,
