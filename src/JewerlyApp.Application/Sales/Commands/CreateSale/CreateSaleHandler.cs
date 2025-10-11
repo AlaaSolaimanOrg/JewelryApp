@@ -73,6 +73,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
                 // Process sale items and calculate totals
                 decimal subTotal = 0;
+                var productIds = new List<Guid>();
 
                 foreach (var item in request.SaleItems)
                 {
@@ -81,7 +82,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     {
                         productId = await AddManualProduct(item, cancellationToken);
                     }
-
+                    productIds.Add((Guid)productId!);
 
                     // Use overridden price or get current price from product
                     var pricePerGram = item.OverriddenPricePerGram ?? item.OriginalPricePerGram;
@@ -121,7 +122,13 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                 await _context.Sales.AddAsync(sale, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
-
+                // decrease from product quatities 1
+                await _context.Products
+                .Where(p => productIds.Contains(p.Id) && p.Quantity > 0)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.Quantity, p => p.Quantity - 1)
+                    .SetProperty(p => p.LastUpdatedDate, DateTime.UtcNow)
+                );
 
                 return new GenericResponse<string>
                 {
