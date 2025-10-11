@@ -1,6 +1,7 @@
 // CustomTable.tsx
 import React from "react";
 import "./customTable.scss";
+import CustomLoader from "../CustomLoader/CustomLoader";
 
 type TableRow = Record<
   string,
@@ -11,29 +12,43 @@ export type TableHeader = {
   key: string;
   label: string;
   width?: string;
+  sortable?: boolean;
   onHeaderClick?: () => void;
 };
 
 type CustomTableProps = {
   headers: TableHeader[];
   data: TableRow[];
+  isLoading?: boolean;
 };
 
-const CustomTable: React.FC<CustomTableProps> = ({ headers, data }) => {
+const CustomTable: React.FC<CustomTableProps> = ({
+  headers,
+  data,
+  isLoading = false,
+}) => {
   return (
     <div className="customTable">
       <table>
         <thead>
           <tr>
             {headers.map((header, i) => (
-              <th key={i} style={{ width: header.width }} onClick={() => {}}>
+              <th
+                key={i}
+                style={{ width: header.width }}
+                onClick={() => {
+                  !!header.onHeaderClick && header.onHeaderClick();
+                }}
+              >
                 {header.label}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data?.length ? (
+          {isLoading ? (
+            <CustomLoader />
+          ) : data?.length ? (
             data.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {headers.map((header, colIndex) => (

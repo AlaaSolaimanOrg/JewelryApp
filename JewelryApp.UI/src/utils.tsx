@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import qs from "qs";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import type React from "react";
+import { SortDirection } from "./types/enums";
 
 // Optional: helper to transform payload keys for GET params
 const addParamsToObjKeys = (obj: Record<string, any>) => {
@@ -168,4 +169,18 @@ export const isPositiveInteger = (value: string | number): boolean => {
     return Number.isInteger(value) && value > 0;
   }
   return /^[0-9]+$/.test(value);
+};
+
+export const handleSort = (sortKey: string, sortCriteria, onSortChange) => {
+  const toggleSortDirection =
+    sortCriteria.sortDirection === SortDirection.Ascending
+      ? SortDirection.Descending
+      : SortDirection.Ascending;
+
+  const newDirection =
+    sortCriteria.sortBy === sortKey
+      ? toggleSortDirection
+      : SortDirection.Descending;
+
+  onSortChange(sortKey, newDirection);
 };

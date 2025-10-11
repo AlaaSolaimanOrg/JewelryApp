@@ -10,6 +10,8 @@ import CustomTable, {
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import dateFormat from "dateformat";
 import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import { SortDirection } from "../../../types/enums";
+import { handleSort } from "../../../utils";
 
 export interface Sale {
   id: string;
@@ -23,11 +25,12 @@ export interface Sale {
 const TransactionHistory = () => {
   const {
     data: sales,
-    isLoading: isLoadingSales,
+    isLoading: isLoading,
     fetchData: recallGetSales,
     onSortChange,
     onSearchChange,
     onPaginationChange,
+    sortCriteria,
     pagination,
   } = useLocalApiSearchSortPagination<Sale>({
     apiToCall: (data) => getSalesList(data.payload),
@@ -36,10 +39,35 @@ const TransactionHistory = () => {
   });
 
   const headers: TableHeader[] = [
-    { key: "transactionId", label: "Transaction ID", width: "150px" },
-    { key: "dateTime", label: "Date & Time", width: "200px" },
-    { key: "totalAmount", label: "Total Amount", width: "150px" },
-    { key: "paymentType", label: "Payment Type", width: "150px" },
+    {
+      key: "transactionId",
+      label: "Transaction ID",
+      width: "150px",
+      onHeaderClick: () => {
+        handleSort("serialNumber", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "dateTime",
+      label: "Date & Time",
+      width: "200px",
+      onHeaderClick: () => {
+        handleSort("createdDate", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "totalAmount",
+      label: "Total Amount",
+      width: "150px",
+      onHeaderClick: () => {
+        handleSort("total", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "paymentType",
+      label: "Payment Type",
+      width: "150px",
+    },
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
@@ -93,7 +121,7 @@ const TransactionHistory = () => {
           </h3>
         </div>
 
-        <CustomTable data={data} headers={headers} />
+        <CustomTable data={data} headers={headers} isLoading={isLoading} />
 
         <Paginator
           totalRecords={pagination.totalRecords}
@@ -111,7 +139,7 @@ const TransactionHistory = () => {
         </Link>
       </div>
 
-      <LoadingScreen isLoading={isLoadingSales} />
+      <LoadingScreen isLoading={isLoading} />
     </div>
   );
 };
