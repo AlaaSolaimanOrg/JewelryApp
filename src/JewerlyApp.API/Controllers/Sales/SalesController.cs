@@ -1,10 +1,12 @@
 ﻿using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Sales.Commands.CreateSale;
+using JewerlyApp.Application.Sales.Queries.GetDashboardInsights;
 using JewerlyApp.Application.Sales.Queries.GetSaleById;
 using JewerlyApp.Application.Sales.Queries.GetSalesCustomers;
 using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using JewerlyApp.Application.Sales.Queries.GetSoldItems;
+using JewerlyApp.Application.Sales.Queries.GetTopSellingCategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -81,6 +83,30 @@ namespace JewerlyApp.API.Controllers.Sales
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetSalesCustomers([FromQuery] GetSalesCustomersQuery command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// get Dashboard Insights
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetDashboardInsights([FromQuery] GetDashboardInsightsQuery command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+        
+        /// <summary>
+        /// get top selling categories
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetTopSellingCategories([FromQuery] GetTopSellingCategoriesQuery command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
