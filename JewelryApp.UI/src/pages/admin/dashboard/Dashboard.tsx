@@ -1,23 +1,20 @@
 import { getDashboardInsights } from "../../../apis/sales.api/sales.api";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/Table/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType } from "../../../types/enums";
 import "./dashboard.scss";
 
 // Import icons from react-icons/fa
 import {
-  FaHome,
-  FaSyncAlt,
-  FaShoppingBag,
-  FaGem,
-  FaUsers,
-  FaShoppingCart,
-  FaArrowUp,
   FaArrowDown,
-  FaDownload,
+  FaArrowUp,
+  FaGem,
+  FaHome,
+  FaShoppingBag,
+  FaShoppingCart,
+  FaSyncAlt,
+  FaUsers,
 } from "react-icons/fa";
+import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
 
 export interface DashboardInsights {
   salesToday: {
@@ -44,15 +41,16 @@ export interface DashboardInsights {
 }
 
 const Dashboard = () => {
-  const { data: dashboardInsights, fetchData } = useLocalApi({
-    apiToCall: (data) => getDashboardInsights(data.payload),
-  }) as {
-    data: DashboardInsights;
-    fetchData: () => void;
-  };
+  const { data: dashboardInsights, fetchData: recallGetDashboardInsights } =
+    useLocalApi({
+      apiToCall: (data) => getDashboardInsights(data.payload),
+    }) as {
+      data: DashboardInsights;
+      fetchData: () => void;
+    };
 
   const handleRefresh = () => {
-    fetchData();
+    recallGetDashboardInsights();
   };
 
   // Format currency
@@ -69,52 +67,6 @@ const Dashboard = () => {
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat("en-US").format(num);
   };
-
-  const headers: TableHeader[] = [
-    { key: "product", label: "Product", width: "200px" },
-    { key: "category", label: "Category", width: "150px" },
-    { key: "karat", label: "Karat", width: "80px" },
-    { key: "unitsSold", label: "Units Sold", width: "120px" },
-    { key: "revenue", label: "Revenue", width: "150px" },
-  ];
-
-  const data = [
-    {
-      product: "Diamond Engagement Ring",
-      category: "Rings",
-      karat: "18K",
-      unitsSold: 24,
-      revenue: "$12,450",
-    },
-    {
-      product: "Gold Bangle Set",
-      category: "Bangles",
-      karat: "22K",
-      unitsSold: 18,
-      revenue: "$8,250",
-    },
-    {
-      product: "Sapphire Pendant",
-      category: "Necklaces",
-      karat: "21K",
-      unitsSold: 15,
-      revenue: "$7,890",
-    },
-    {
-      product: "Emerald Earrings",
-      category: "Earrings",
-      karat: "18K",
-      unitsSold: 12,
-      revenue: "$5,670",
-    },
-    {
-      product: "Platinum Wedding Band",
-      category: "Rings",
-      karat: "Platinum",
-      unitsSold: 10,
-      revenue: "$4,320",
-    },
-  ];
 
   // Loading state
   if (!dashboardInsights) {
@@ -224,11 +176,8 @@ const Dashboard = () => {
             <div key={stockWeight.karatType} className="weight-card">
               <div className="weight-header">
                 <div className="weight-title">
-                  Total Stock Weight
-                  <span className="karatType">
-                    {KaratType[stockWeight?.karatType]}
-                  </span>
-                  K
+                  <span className="mr-2">Total Stock Weight</span>
+                  <span className="karatType">{stockWeight?.karatType}K</span>
                 </div>
                 <FaGem className="icon me-2" />
               </div>
@@ -240,17 +189,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Top Selling Products</h3>
-          <div>
-            <button className="btn-md btn-gray">
-              <FaDownload className="icon me-1" /> Export
-            </button>
-          </div>
-        </div>
-        <CustomTable headers={headers} data={data} />
-      </div>
+      <TopSellingCategories />
     </div>
   );
 };
