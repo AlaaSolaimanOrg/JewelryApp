@@ -1,10 +1,12 @@
 import { FaUsers } from "react-icons/fa";
+import { useEffect, useState } from "react";
 import CommentTooltip from "../../../../components/CommentTooltip/CommentTooltip";
 import Paginator from "../../../../components/Paginator/Paginator";
 import ReceiptModal from "../../../../components/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
-import "./customersSoldTo.scss"
+import "./customersSoldTo.scss";
+import { CustomerFilter } from "../../../../types/enums";
 
 interface SaleCustomers {
   customerId: string;
@@ -17,6 +19,10 @@ interface SaleCustomers {
 }
 
 const CustomersSoldTo = () => {
+  const [customerFilter, setCustomerFilter] = useState<CustomerFilter | null>(
+    null
+  );
+
   const {
     data: salesCustomers,
     onSearchChange,
@@ -25,7 +31,16 @@ const CustomersSoldTo = () => {
   } = useLocalApiSearchSortPagination<SaleCustomers>({
     apiToCall: (data) => getSalesCustomers(data.payload),
     initialPageSize: 5,
+    extraPayload: {
+      customerFilter: customerFilter,
+    },
+    extraEffectDependency: [customerFilter],
   });
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setCustomerFilter(value ?? null);
+  };
 
   return (
     <section id="customersSoldTo">
@@ -40,10 +55,14 @@ const CustomersSoldTo = () => {
           placeholder="Search by customer name..."
           onChange={onSearchChange}
         />
-        <select className="filter-select">
-          <option>All Customers</option>
-          <option>New Customers</option>
-          <option>Returning Customers</option>
+        <select
+          className="filter-select"
+          value={customerFilter || ""}
+          onChange={handleFilterChange}
+        >
+          <option value="">All Customers</option>
+          <option value={CustomerFilter.New}>New Customers</option>
+          <option value={CustomerFilter.Returning}>Returning Customers</option>
         </select>
       </div>
 
@@ -61,8 +80,9 @@ const CustomersSoldTo = () => {
           <tbody>
             {pagination.totalRecords ? (
               salesCustomers.map((saleCustomer) => {
+                console.log("salesCustomers", salesCustomers);
                 return (
-                  <tr>
+                  <tr key={saleCustomer.saleId}>
                     <td>{saleCustomer.customerName}</td>
                     <td>{saleCustomer.email}</td>
                     <td>{saleCustomer.phoneNumber}</td>

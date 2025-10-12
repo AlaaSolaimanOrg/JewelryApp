@@ -52,3 +52,8 @@ export enum DiscountType {
   FixedAmount = 2,
   Percentage = 3,
 }
+
+export enum CustomerFilter {
+  New = 1,
+  Returning,
+}

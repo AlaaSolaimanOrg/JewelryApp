@@ -17,39 +17,13 @@
   }
   .header-actions {
     display: flex;
+    justify-content: end;
     align-items: center;
+    width: 100%;
     gap: 20px;
   }
 
   /*search Bar*/
-
-  .search-bar {
-    position: relative;
-  }
-
-  .search-bar input {
-    padding: 10px 15px 10px 40px;
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    width: 300px;
-    font-size: 14px;
-    transition: var(--transition);
-    background: var(--light);
-  }
-
-  .search-bar input:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-  }
-
-  .search-bar .icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--secondary);
-  }
 
   .user-profile {
     display: flex;

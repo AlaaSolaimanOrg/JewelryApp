@@ -13,6 +13,7 @@ import {
   FaShoppingCart,
   FaSyncAlt,
   FaUsers,
+  FaWeightHanging,
 } from "react-icons/fa";
 import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
 
@@ -127,9 +128,6 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="kpi-value">{formatCurrency(stockValue)}</div>
-          <div className="kpi-trend down">
-            <FaArrowDown className="icon" /> 2.1% from last month
-          </div>
         </div>
 
         <div className="kpi-card">
@@ -179,7 +177,7 @@ const Dashboard = () => {
                   <span className="mr-2">Total Stock Weight</span>
                   <span className="karatType">{stockWeight?.karatType}K</span>
                 </div>
-                <FaGem className="icon me-2" />
+                <FaWeightHanging className="icon me-2" />
               </div>
               <div className="weight-value">
                 {formatNumber(stockWeight?.weight)} g

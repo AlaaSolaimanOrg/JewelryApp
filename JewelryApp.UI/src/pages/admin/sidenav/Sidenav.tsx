@@ -47,24 +47,24 @@ const SideNav = () => {
       path: "/admin/customers",
     },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
-    {
-      label: "Settings",
-      icon: <FaCog className="icon" />,
-      path: "/admin/settings",
-    },
+    // {
+    //   label: "Settings",
+    //   icon: <FaCog className="icon" />,
+    //   path: "/admin/settings",
+    // },
   ];
 
   const operationItems = [
-    {
-      label: "Print Tags",
-      icon: <FaPrint className="icon" />,
-      path: "/admin/print-tags",
-    },
-    {
-      label: "Export Data",
-      icon: <FaFile className="icon" />,
-      path: "/admin/export-data",
-    },
+    // {
+    //   label: "Print Tags",
+    //   icon: <FaPrint className="icon" />,
+    //   path: "/admin/print-tags",
+    // },
+    // {
+    //   label: "Export Data",
+    //   icon: <FaFile className="icon" />,
+    //   path: "/admin/export-data",
+    // },
     {
       label: "Add Product",
       icon: <FaPlus className="icon" />,
