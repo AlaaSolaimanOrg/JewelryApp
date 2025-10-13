@@ -84,6 +84,7 @@
       padding: 0.5rem 1rem 0.3rem 1rem;
       border-bottom: 1px solid #eee;
       margin-bottom: 20px;
+
       .item-title {
         margin-left: 50px;
         font-size: 1.05rem;
@@ -107,9 +108,18 @@
       padding: 0.7rem 1rem;
       margin-bottom: 0.7rem;
       box-shadow: 0 2px 8px rgba(44, 108, 223, 0.08);
+
+      .error-warning {
+        .errorIcon {
+          color: var(--danger);
+          font-size: 25px;
+          margin-top: 6px;
+        }
+      }
       .scan-row-content {
         display: flex;
         align-items: flex-start;
+        align-items: center;
         gap: 0.7rem;
         width: 100%;
       }
@@ -147,6 +157,25 @@
           transform: scale(1.15);
         }
       }
+    }
+  }
+
+  .validation-error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: #fff5f5;
+    border: 1px solid #fed7d7;
+    border-radius: 8px;
+    color: #c53030;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 1rem;
+
+    .error-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
     }
   }
 }

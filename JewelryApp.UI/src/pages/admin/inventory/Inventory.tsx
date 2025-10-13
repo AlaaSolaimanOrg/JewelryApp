@@ -32,6 +32,8 @@ import {
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
+import ScanModal from "../../../components/ScanModal/ScanModal";
+import { Stack } from "react-bootstrap";
 
 export interface Product {
   id: string;
@@ -51,7 +53,9 @@ export interface Product {
 const Inventory = () => {
   const navigate = useNavigate();
 
+  const [scannedNfcIds, setScannedNfcIds] = useState([]);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+  const [showScanModal, setShowScanModal] = useState(false);
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
     karatTypes: [
@@ -80,6 +84,7 @@ const Inventory = () => {
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
+      nfcIds: scannedNfcIds,
       karatTypeFilter: appliedFilters?.karatTypes,
       weightFromFilter: appliedFilters?.weightFrom,
       weightToFilter: appliedFilters?.weightTo,
@@ -87,7 +92,7 @@ const Inventory = () => {
       priceToFilter: appliedFilters?.priceTo,
       productCategoryFilter: appliedFilters?.category,
     },
-    extraEffectDependency: [appliedFilters],
+    extraEffectDependency: [appliedFilters, scannedNfcIds],
   });
 
   const headers: TableHeader[] = [
@@ -187,7 +192,7 @@ const Inventory = () => {
           >
             <FaPlus className="me-1" /> Add Product
           </button>
-          <button className="btn-md btn-gray">
+          {/* <button className="btn-md btn-gray">
             <FaExchangeAlt className="me-1" /> Stock In/Out
           </button>
           <button className="btn-md btn-gray">
@@ -195,7 +200,7 @@ const Inventory = () => {
           </button>
           <button className="btn-md btn-gray">
             <FaFileExport className="me-1" /> Export
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -206,9 +211,9 @@ const Inventory = () => {
           <div className="card">
             <div className="card-header">
               <h3 className="card-title">
-                Inventory Items ({pagination.totalRecords})
+                Inventory Items ({pagination.totalRecords ?? 0})
               </h3>
-              <div>
+              <Stack direction="horizontal" gap={4}>
                 <div className="search-bar" style={{ width: "250px" }}>
                   <FaSearch className="icon me-1" />
                   <input
@@ -217,7 +222,27 @@ const Inventory = () => {
                     onChange={onSearchChange}
                   />
                 </div>
-              </div>
+
+                {scannedNfcIds.length ? (
+                  <button
+                    className="scan-btn"
+                    onClick={() => {
+                      setScannedNfcIds([]);
+                    }}
+                  >
+                    Reset Scanner
+                  </button>
+                ) : (
+                  <button
+                    className="scan-btn"
+                    onClick={() => {
+                      setShowScanModal(true);
+                    }}
+                  >
+                    Scan Product
+                  </button>
+                )}
+              </Stack>
             </div>
 
             <CustomTable data={data} headers={headers} />
@@ -232,6 +257,14 @@ const Inventory = () => {
         </div>
       </div>
 
+      <ScanModal
+        show={showScanModal}
+        onClose={() => setShowScanModal(false)}
+        products={products}
+        setProducts={() => {}}
+        scanOnly
+        setScannedNfcIds={setScannedNfcIds}
+      />
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>
   );

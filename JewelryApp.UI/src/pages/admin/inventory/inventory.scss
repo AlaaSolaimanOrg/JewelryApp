@@ -163,8 +163,6 @@
     gap: 20px;
   }
 
-
-
   .slider-values {
     display: flex;
     justify-content: space-between;
@@ -271,6 +269,27 @@
     color: var(--danger);
   }
 
+  .scan-btn {
+    background-color: var(--gold);
+    color: var(--primary);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    height: 40px;
+    i {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: #e6c035;
+    }
+  }
+
   /* Search Bar*/
   .search-bar {
     position: relative;
@@ -299,5 +318,4 @@
     transform: translateY(-50%);
     color: var(--secondary);
   }
-
 }

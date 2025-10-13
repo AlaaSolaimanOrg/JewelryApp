@@ -1,14 +1,23 @@
-import React, { useState, type Dispatch, type SetStateAction } from "react";
+import React, {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
 import { getProductsByNfcIds } from "../../apis/products.api/products.api";
 import "./scanModal.scss";
+import { MdError } from "react-icons/md";
+import { renderTooltip } from "../../utils";
 
 interface ScanModalProps {
   show: boolean;
   onClose: () => void;
   setProducts: Dispatch<SetStateAction<any>>;
   products: any[];
+  scanOnly: boolean;
+  setScannedNfcIds?: Dispatch<SetStateAction<any>>;
 }
 
 const ScanModal: React.FC<ScanModalProps> = ({
@@ -16,6 +25,8 @@ const ScanModal: React.FC<ScanModalProps> = ({
   onClose,
   products,
   setProducts,
+  scanOnly = false,
+  setScannedNfcIds,
 }) => {
   const handleClearAll = () => {
     setScannedItems([]);
@@ -36,6 +47,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
         setScanInput("");
         return;
       }
+      setValidationErrors([]);
       setScannedItems([...scannedItems, addedNfcId]);
       setScanInput("");
     }
@@ -112,6 +124,20 @@ const ScanModal: React.FC<ScanModalProps> = ({
     onClose();
   }
 
+  const saveFilters = () => {
+    if (setScannedNfcIds) {
+      setScannedNfcIds(scannedItems);
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    if (show) {
+      setScannedItems([]);
+      setScanInput("");
+    }
+  }, [show]);
+  
   return (
     <Modal show={show} onHide={onClose} centered className="scan-modal">
       <Modal.Header closeButton>
@@ -151,26 +177,53 @@ const ScanModal: React.FC<ScanModalProps> = ({
                   <span className="item-title">SKU</span>
                 </div>
 
-                {scannedItems.map((scannedItem, idx) => (
-                  <li key={scannedItem} className="scanned-item">
-                    <div className="scan-row-content">
-                      <span className="row-number">{idx + 1}.</span>
-                      <span className="item-data" title={scannedItem}>
-                        {scannedItem}
-                      </span>
-                      <span className="e-icon" title="Remove">
-                        <BiTrash
-                          style={{
-                            fontSize: "2rem",
-                            color: "var(--danger)",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleRemove(scannedItem)}
-                        />
-                      </span>
-                    </div>
-                  </li>
-                ))}
+                {scannedItems.map((scannedItem, idx) => {
+                  const error = validationErrors.find(
+                    (error: any) => error.nfcId === scannedItem
+                  );
+
+                  return (
+                    <li key={scannedItem} className="scanned-item">
+                      <div className="scan-row-content">
+                        <span className="row-number">{idx + 1}.</span>
+                        <span className="item-data" title={scannedItem}>
+                          {scannedItem}
+                        </span>
+                        <span className="e-icon" title="Remove">
+                          <BiTrash
+                            style={{
+                              fontSize: "1.5rem", // Reduced size to fit better
+                              color: "var(--danger)",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleRemove(scannedItem)}
+                          />
+                        </span>
+                        {!!error && (
+                          <div
+                            className="error-warning"
+                            title="Validation error"
+                          >
+                            {renderTooltip(
+                              <MdError className="errorIcon" />,
+                              error.errorMessage
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+
+                {validationErrors.length > 0 && (
+                  <div className="validation-error-message">
+                    <MdError className="error-icon" />
+                    <span>
+                      {validationErrors.length} item(s) have errors and will be
+                      excluded from the final list.
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </ul>
@@ -181,10 +234,14 @@ const ScanModal: React.FC<ScanModalProps> = ({
           variant="primary"
           disabled={!scannedItems.length}
           onClick={() => {
-            getProductsByNfcIdsApi(scannedItems);
+            if (scanOnly) {
+              saveFilters();
+            } else {
+              getProductsByNfcIdsApi(scannedItems);
+            }
           }}
         >
-          Confirm
+          {validationErrors.length ? "Proceed" : "Confirm"}
         </Button>
         <Button variant="secondary" onClick={onClose}>
           Close

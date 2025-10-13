@@ -5,7 +5,9 @@ import {
   softDeleteUser,
 } from "../../../apis/users.api/users.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./staff.scss";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
@@ -27,7 +29,6 @@ export interface User {
 
 const Staff = () => {
   const navigate = useNavigate();
-  const [isDeletingUser, setIsDeletingUser] = useState(false);
   const {
     data: users,
     // isLoading: isLoadingUsers,
@@ -45,22 +46,22 @@ const Staff = () => {
 
   // Table headers
   const staffMembersHeaders: TableHeader[] = [
-    { key: "name", label: "Name", width: "200px" },
-    { key: "roles", label: "Role(s)", width: "150px" },
-    { key: "email", label: "Email", width: "250px" },
-    { key: "phone", label: "Phone", width: "150px" },
-    { key: "createdAt", label: "Created At", width: "150px" },
-    { key: "status", label: "Status", width: "120px" },
-    { key: "actions", label: "Actions", width: "150px" },
+    { key: "name", label: "Name", width: "200px", sortable: false },
+    { key: "roles", label: "Role(s)", width: "150px", sortable: false },
+    { key: "email", label: "Email", width: "250px", sortable: false },
+    { key: "phone", label: "Phone", width: "150px", sortable: false },
+    { key: "createdAt", label: "Created At", width: "150px", sortable: false },
+    { key: "status", label: "Status", width: "120px", sortable: false },
+    { key: "actions", label: "Actions", width: "150px", sortable: false },
   ];
 
   // Dynamic data mapping
   const staffMembersData = users?.map((user) => ({
     Name: user.fullName ?? user.userName,
-    "Role(s)": user.roles?.join(", "),
+    roles: user.roles?.join(", "),
     Email: user.email,
     Phone: user.phoneNumber ?? "—",
-    "Created At": new Date(user.createdAt).toLocaleDateString(),
+    createdAt: new Date(user.createdAt).toLocaleDateString(),
     Status: user.isActive ? (
       <span className="tag tag-new">Active</span>
     ) : (
@@ -92,8 +93,6 @@ const Staff = () => {
   };
 
   const handleDeleteUser = (userId) => {
-    setIsDeletingUser(true);
-
     const payload = { userId: userId };
     softDeleteUser(payload)
       .then((response) => {
@@ -106,9 +105,6 @@ const Staff = () => {
       })
       .catch((e) => {
         throw e;
-      })
-      .finally(() => {
-        setIsDeletingUser(false);
       });
   };
   return (

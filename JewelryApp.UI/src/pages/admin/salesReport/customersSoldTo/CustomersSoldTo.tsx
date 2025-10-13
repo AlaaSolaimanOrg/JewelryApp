@@ -1,12 +1,12 @@
+import { useState } from "react";
 import { FaUsers } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
 import CommentTooltip from "../../../../components/CommentTooltip/CommentTooltip";
 import Paginator from "../../../../components/Paginator/Paginator";
 import ReceiptModal from "../../../../components/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
-import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
-import "./customersSoldTo.scss";
 import { CustomerFilter } from "../../../../types/enums";
+import "./customersSoldTo.scss";
 
 interface SaleCustomers {
   customerId: string;

@@ -14,11 +14,13 @@ import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import "./addEditStaff.scss";
 
 const staffFieldsInitialState = {
+  fullName: "",
   userName: "",
   email: "",
   password: "",
+  phoneNumber: "", // Added phone number field
   roles: [] as string[],
-  isActive: true, // default active
+  isActive: true,
 };
 
 const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
@@ -28,7 +30,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
 
-  // Fetch staff by id when editing
   const { data: staff } = useLocalApi({
     apiToCall: (data) => getUserById(data.payload),
     payload: { userId: userId },
@@ -36,21 +37,22 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     effectDependency: [userId],
   }) as { data: any };
 
-  // Fetch all roles from API
   const { data: allRoles = [] } = useLocalApi({
     apiToCall: () => getAllRoles(),
     payload: null,
-    effectDependency: [], // only once on mount
+    effectDependency: [],
   }) as { data: string[] };
 
   useEffect(() => {
     if (isEdit && staff) {
       setStaffFields({
+        fullName: staff.fullName || "",
         userName: staff.userName,
         email: staff.email,
-        password: "", // don't prefill password
+        password: "",
+        phoneNumber: staff.phoneNumber || "", // Added phone number field
         roles: staff.roles || [],
-        isActive: staff.isActive ?? true, // load isActive from API
+        isActive: staff.isActive ?? true,
       });
     } else if (!isEdit) {
       handleCancel();
@@ -75,15 +77,19 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const callSaveStaff = () => {
     setIsLoading(true);
     const createPayload = {
+      fullName: staffFields.fullName,
       userName: staffFields.userName,
       email: staffFields.email,
       password: staffFields.password,
+      phoneNumber: staffFields.phoneNumber, // Added phone number field
       roles: staffFields.roles,
     };
     const editPayload = {
       userId: userId,
+      fullName: staffFields.fullName,
       userName: staffFields.userName,
       email: staffFields.email,
+      phoneNumber: staffFields.phoneNumber, // Added phone number field
       isActive: staffFields.isActive,
       roles: staffFields.roles,
     };
@@ -96,7 +102,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
           if (!isEdit) {
             handleCancel();
           } else {
-            navigate("/admin/staff"); // go back to staff list
+            navigate("/admin/staff");
           }
         } else {
           showError(response?.message);
@@ -106,37 +112,34 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       .finally(() => setIsLoading(false));
   };
 
-  const checkAnyFieldMissing = Object.entries(staffFields).some(
-    ([key, value]) => {
-      if (key === "password" && isEdit) return false; // password optional on edit
-      if (Array.isArray(value)) return value.length === 0;
-      return !value;
-    }
-  );
-
   const validateFields = () => {
-    // Username
+    if (!staffFields.fullName?.trim()) return false;
+
     if (!staffFields.userName?.trim()) return false;
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(staffFields.email)) return false;
 
-    // Password required only when adding
+    // Added phone number validation (basic validation)
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/; // Basic international phone number validation
+    if (
+      !staffFields.phoneNumber?.trim() ||
+      !phoneRegex.test(staffFields.phoneNumber.replace(/[\s\-\(\)]/g, ""))
+    ) {
+      return false;
+    }
+
     if (!isEdit) {
       const password = staffFields.password;
       if (!password || password.length < 6) return false;
 
-      // Must contain at least one uppercase letter
       const uppercaseRegex = /[A-Z]/;
       if (!uppercaseRegex.test(password)) return false;
 
-      // Must contain at least one non-alphanumeric character
       const nonAlphaNumRegex = /[^a-zA-Z0-9]/;
       if (!nonAlphaNumRegex.test(password)) return false;
     }
 
-    // Roles must not be empty
     if (!staffFields.roles || staffFields.roles.length === 0) return false;
 
     return true;
@@ -169,15 +172,16 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
-                <label className="form-label required">Username</label>
+                <label className="form-label required">Full Name</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={staffFields.userName}
+                  value={staffFields.fullName}
+                  maxLength={50}
                   onChange={(e) =>
-                    handleFieldChange("userName", e.target.value)
+                    handleFieldChange("fullName", e.target.value)
                   }
-                  placeholder="Enter username"
+                  placeholder="Enter full name"
                   required
                 />
               </div>
@@ -185,13 +189,50 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
             <div className="form-col">
               <div className="form-group">
+                <label className="form-label required">Username</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={staffFields.userName}
+                  maxLength={50}
+                  onChange={(e) =>
+                    handleFieldChange("userName", e.target.value?.trim())
+                  }
+                  placeholder="Enter username"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-col">
+              <div className="form-group">
                 <label className="form-label required">Email</label>
                 <input
                   type="email"
                   className="form-control"
                   value={staffFields.email}
+                  maxLength={100}
                   onChange={(e) => handleFieldChange("email", e.target.value)}
                   placeholder="Enter email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-col">
+              <div className="form-group">
+                <label className="form-label required">Phone Number</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  value={staffFields.phoneNumber}
+                  maxLength={20}
+                  onChange={(e) =>
+                    handleFieldChange("phoneNumber", e.target.value)
+                  }
+                  placeholder="Enter phone number"
                   required
                 />
               </div>
@@ -207,6 +248,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                     type="password"
                     className="form-control"
                     value={staffFields.password}
+                    maxLength={50}
                     onChange={(e) =>
                       handleFieldChange("password", e.target.value)
                     }

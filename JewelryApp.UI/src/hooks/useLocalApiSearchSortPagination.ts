@@ -13,7 +13,7 @@ type ApiSortSearchPropsType<T> = {
   finallyCallback?: () => void;
   initialSortBy?: string;
   initialSortDirection?: SortDirection;
-  initialPageSize: number;
+  initialPageSize?: number;
   showErrorAlert?: boolean;
 };
 
