@@ -166,7 +166,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
       <div className="card">
         <form id="staff-form">
-          {/* Username */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -184,7 +183,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
               </div>
             </div>
 
-            {/* Email */}
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Email</label>
@@ -200,7 +198,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
             </div>
           </div>
 
-          {/* Password */}
           {!isEdit && (
             <div className="form-row">
               <div className="form-col">
@@ -221,7 +218,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
             </div>
           )}
 
-          {/* Roles */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -258,8 +254,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
               </div>
             </div>
           </div>
-
-          {/* is Active */}
 
           <div className="form-row">
             <div className="form-col">

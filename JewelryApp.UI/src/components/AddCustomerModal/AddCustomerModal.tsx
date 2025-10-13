@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { createCustomer, updateCustomer } from "../../apis/customers.api/customers.api";
+import {
+  createCustomer,
+  updateCustomer,
+} from "../../apis/customers.api/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../utils";
 import "./addCustomerModal.scss";
 
@@ -17,7 +20,8 @@ interface AddCustomerModalProps {
   onClose: () => void;
   callGetCustomerDetails?: () => void;
   setSearchInput?: (v: string) => void;
-  setCustomerSearchValue?: (v: string) => void;
+  setCustomer?: any;
+  setCustomerInfoActive?: any;
   isCustomersView?: boolean;
   mode?: "add" | "edit" | "view";
   customerData?: Customer | null;
@@ -28,7 +32,8 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   onClose,
   callGetCustomerDetails,
   setSearchInput,
-  setCustomerSearchValue,
+  setCustomer,
+  setCustomerInfoActive,
   isCustomersView = false,
   mode = "add",
   customerData = null,
@@ -124,7 +129,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          handleSuccess();
+          handleSuccess(response.data);
         } else {
           showError(response?.message);
         }
@@ -158,7 +163,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message || "Customer updated successfully");
-          handleSuccess();
+          handleSuccess(customerData.id);
         } else {
           showError(response?.message);
         }
@@ -175,12 +180,19 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       });
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = (customerId) => {
     if (isCustomersView && !!callGetCustomerDetails) {
       callGetCustomerDetails();
     }
     if (!isCustomersView && !!setSearchInput && !!callGetCustomerDetails) {
-      setCustomerSearchValue?.(name);
+      setCustomer({
+        id: customerId,
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        birthday: birthday,
+      });
+      setCustomerInfoActive(true);
       setSearchInput?.(name);
       callGetCustomerDetails();
     }

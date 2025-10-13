@@ -1,4 +1,6 @@
-import CustomTable, { type TableHeader } from "../../../components/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/Table/CustomTable";
 import "./tagPrinting.scss";
 import { FaPrint, FaSearch, FaRedo, FaGem, FaHeart } from "react-icons/fa";
 
@@ -60,7 +62,6 @@ const TagPrinting = () => {
         </div>
       </div>
 
-      {/* Product Selection */}
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Select Products</h3>
@@ -75,7 +76,6 @@ const TagPrinting = () => {
         <CustomTable headers={productsHeaders} data={productsData} />
       </div>
 
-      {/* Tag Preview */}
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Tag Preview</h3>

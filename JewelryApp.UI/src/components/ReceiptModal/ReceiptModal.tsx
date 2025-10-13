@@ -95,7 +95,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             </div>
           ) : (
             <div ref={contentRef} className="receipt-container">
-              {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">GoldCraft Jewelers</div>
                 <div className="receipt-subtitle">
@@ -104,7 +103,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 <div className="receipt-subtitle">Phone: (555) 123-4567</div>
               </div>
 
-              {/* Details */}
               <div className="receipt-details">
                 <div>
                   <div>
@@ -149,7 +147,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </div>
               </div>
 
-              {/* Table */}
               <div className="table-wrapper">
                 <table className="receipt-table">
                   <thead>
@@ -175,7 +172,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </table>
               </div>
 
-              {/* Totals */}
               <div className="receipt-totals">
                 <div className="receipt-total">
                   <div className="total-label">Subtotal</div>
@@ -187,7 +183,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </div>
               </div>
 
-              {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
 

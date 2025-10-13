@@ -129,7 +129,7 @@ const SideNav = () => {
             <span>{item.label}</span>
           </button>
         ))}
-        {/* Logout button */}
+
         <button
           className="nav-item logout-btn"
           onClick={handleLogout}

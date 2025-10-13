@@ -14,7 +14,11 @@ export const getCustomer = async (payload: { searchBy: string }) => {
   return requestApi("GET", apiRoutes.customers.getCustomer, payload);
 };
 
-export const getCustomers = async (payload: { searchBy: string }) => {
+export const getCustomers = async (payload: {
+  searchBy: string;
+  pageSize: number;
+  pageNumber: number;
+}) => {
   return requestApi("GET", apiRoutes.customers.getCustomers, payload);
 };
 

@@ -16,7 +16,10 @@ const Login = () => {
   const [isloading, setIsLoading] = useState(false);
 
   const redirectAfterLogin = () => {
-    if (userInfo?.roles?.includes("Admin") || userInfo?.roles?.includes("Admin2")) {
+    if (
+      userInfo?.roles?.includes("Admin") ||
+      userInfo?.roles?.includes("Admin2")
+    ) {
       navigate("/admin/dashboard");
     } else if (userInfo?.roles?.includes("PosRole")) {
       navigate("/");
@@ -84,7 +87,6 @@ const Login = () => {
         <h2>Login</h2>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          {/* Email */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -98,7 +100,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -112,7 +113,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Options */}
           <div className="form-options">
             <label className="remember-me">
               <input

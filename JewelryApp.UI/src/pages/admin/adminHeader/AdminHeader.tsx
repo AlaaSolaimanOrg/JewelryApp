@@ -18,7 +18,6 @@ const AdminHeader = () => {
           <div className="user-avatar">AM</div>
           <div className="user-info">
             <div className="user-name">{userInfo?.userName}</div>
-            {/* <div className="user-role">Store Admin</div> */}
           </div>
         </div>
       </div>

@@ -24,6 +24,8 @@ interface Sale {
   total: number;
   cashAmount: number;
   cardAmount: number;
+  discount: number;
+  tax: number;
   saleItems: SaleItem[];
 }
 
@@ -51,8 +53,6 @@ const Receipt = () => {
     );
   }
 
-
-
   const subtotal =
     saleDetails.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
   const dateObj = new Date(saleDetails.createdDate);
@@ -68,7 +68,6 @@ const Receipt = () => {
       <p className="subtitle">Review receipt before finalizing</p>
 
       <div ref={contentRef} className="receipt-container">
-        {/* Header */}
         <div className="receipt-header">
           <div className="receipt-title">GoldCraft Jewelers</div>
           <div className="receipt-subtitle">
@@ -77,11 +76,11 @@ const Receipt = () => {
           <div className="receipt-subtitle">Phone: (555) 123-4567</div>
         </div>
 
-        {/* Details */}
         <div className="receipt-details">
           <div>
             <div>
-              <strong>Transaction ID:</strong> {saleDetails.serialNumber || saleDetails.id}
+              <strong>Transaction ID:</strong>{" "}
+              {saleDetails.serialNumber || saleDetails.id}
             </div>
             <div>
               <strong>Date:</strong>{" "}
@@ -120,7 +119,6 @@ const Receipt = () => {
           </div>
         </div>
 
-        {/* Table */}
         <table className="receipt-table">
           <thead>
             <tr>
@@ -144,19 +142,6 @@ const Receipt = () => {
           </tbody>
         </table>
 
-        {/* Totals */}
-        <div className="receipt-totals">
-          <div className="receipt-total">
-            <div className="total-label">Subtotal</div>
-            <div className="total-value">${subtotal}</div>
-          </div>
-          <div className="receipt-total">
-            <div className="total-label">Total</div>
-            <div className="total-value">${saleDetails.total}</div>
-          </div>
-        </div>
-
-        {/* Payment Breakdown */}
         <div className="payment-breakdown">
           <h4>Payment Breakdown</h4>
 
@@ -173,6 +158,26 @@ const Receipt = () => {
               <span>${saleDetails.cardAmount}</span>
             </div>
           )}
+
+          <div className="summary-item">
+            <span>Discount:</span>
+            <span>${saleDetails.discount}</span>
+          </div>
+          <div className="summary-item">
+            <span>Tax:</span>
+            <span>${saleDetails.tax}</span>
+          </div>
+        </div>
+
+        <div className="receipt-totals">
+          <div className="receipt-total">
+            <div className="total-label">Subtotal</div>
+            <div className="total-value">${subtotal}</div>
+          </div>
+          <div className="receipt-total">
+            <div className="total-label">Total</div>
+            <div className="total-value">${saleDetails.total}</div>
+          </div>
         </div>
 
         <div className="receipt-actions">

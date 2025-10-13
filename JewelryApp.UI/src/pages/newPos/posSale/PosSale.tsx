@@ -17,7 +17,6 @@ const MainPosPage: React.FC = () => {
   const [showScanModal, setShowScanModal] = useState(false);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
-  const [customerSelectedId, setCustomerSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -60,7 +59,7 @@ const MainPosPage: React.FC = () => {
     Math.abs(total - (cashAmount + cardAmount)) < 0.001;
 
   const canSaveSale =
-    !!customerSelectedId &&
+    !!customer?.id &&
     products.length &&
     (cardAmount > 0 || cashAmount > 0) &&
     !anyProductWithUnfilledField &&
@@ -227,7 +226,7 @@ const MainPosPage: React.FC = () => {
     console.log("discountAmount", discountAmount);
 
     const payload = {
-      customerId: customerSelectedId,
+      customerId: customer?.id,
       discount: discountAmount,
       discountPercentage:
         discountType == DiscountType.Percentage
@@ -336,7 +335,6 @@ const MainPosPage: React.FC = () => {
         setShowAddCustomerModal={setShowAddCustomerModal}
         onOpenScanModal={() => setShowScanModal(true)}
         setCustomerInfoActive={setCustomerInfoActive}
-        setCustomerSelectedId={setCustomerSelectedId}
       />
 
       <ProductsSection

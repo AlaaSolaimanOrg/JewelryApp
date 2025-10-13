@@ -38,7 +38,6 @@ const Payment = () => {
 
       <div className="payment-container">
         <div className="payment-methods">
-          {/* Cash Payment */}
           <div className="payment-card">
             <h3>
               <FaMoneyBill /> Cash Payment
@@ -49,9 +48,7 @@ const Payment = () => {
                 type="number"
                 step="0.01"
                 value={cashAmount}
-                onChange={(e) =>
-                  setCashAmount(parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => setCashAmount(parseFloat(e.target.value) || 0)}
               />
             </div>
             <button className="btn btn-success">
@@ -59,7 +56,6 @@ const Payment = () => {
             </button>
           </div>
 
-          {/* Card Payment */}
           <div className="payment-card">
             <h3>
               <FaCreditCard /> Card Payment
@@ -70,9 +66,7 @@ const Payment = () => {
                 type="number"
                 step="0.01"
                 value={cardAmount}
-                onChange={(e) =>
-                  setCardAmount(parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => setCardAmount(parseFloat(e.target.value) || 0)}
               />
             </div>
             <button className="btn btn-info text-white">
@@ -80,7 +74,6 @@ const Payment = () => {
             </button>
           </div>
 
-          {/* Additional Card */}
           <div className="payment-card">
             <h3>
               <FaCreditCard /> Additional Card
@@ -102,7 +95,6 @@ const Payment = () => {
           </div>
         </div>
 
-        {/* Payment Summary */}
         <div className="payment-summary">
           <h3>Payment Summary</h3>
 

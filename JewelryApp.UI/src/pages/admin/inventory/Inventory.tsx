@@ -200,10 +200,8 @@ const Inventory = () => {
       </div>
 
       <div className="inventory-grid">
-        {/* Sidebar */}
         <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
 
-        {/* Inventory Content */}
         <div className="inventory-content">
           <div className="card">
             <div className="card-header">

@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import React, { useCallback, type Dispatch, type SetStateAction } from "react";
 import {
   FaBirthdayCake,
   FaEnvelope,
@@ -12,11 +6,11 @@ import {
   FaUser,
   FaUserCircle,
 } from "react-icons/fa";
-import { getCustomer } from "../../../../apis/customers.api/customers.api";
+import AsyncSelect from "react-select/async";
+import { getCustomers } from "../../../../apis/customers.api/customers.api";
 import AddCustomerModal from "../../../../components/AddCustomerModal/AddCustomerModal";
-import useLocalApi from "../../../../hooks/useLocalApi";
-import { debounce } from "../../../../utils";
 import type { Customer } from "../types";
+import "./customerSection.scss";
 
 interface Props {
   customer: Customer | null;
@@ -29,7 +23,6 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
-  setCustomerSelectedId: Dispatch<SetStateAction<any>>;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -43,63 +36,113 @@ const CustomerSection: React.FC<Props> = ({
   setShowAddCustomerModal,
   onOpenScanModal,
   setCustomerInfoActive,
-  setCustomerSelectedId,
 }) => {
-  const [customerSearchValue, setCustomerSearchValue] = useState("");
-  const { data: customerDetails, fetchData: callGetCustomerDetails } =
-    useLocalApi({
-      apiToCall: (data) => getCustomer(data.payload),
-      payload: {
-        searchBy: searchInput,
-      },
-      dataInitalValue: null,
-      effectDependency: [searchInput],
-    }) as {
-      data: Customer;
-      fetchData: () => void;
-    };
-
   console.log("searchInput", searchInput);
 
-  useEffect(() => {
-    console.log("customerDetails", customerDetails);
-    setCustomer(customerDetails);
-    setCustomerInfoActive(!!customerDetails);
-    setCustomerSelectedId(customerDetails?.id ?? null);
-  }, [customerDetails]);
+  const loadOptions = useCallback(async (inputValue: string) => {
+    if (!inputValue) return [];
 
-  console.log("customerInfoActive", customerInfoActive);
+    try {
+      const response = await getCustomers({
+        searchBy: inputValue,
+        pageSize: 5,
+        pageNumber: 1,
+      });
 
-  // Create the debounced function once
-  const debouncedSetSearchInput = useCallback(
-    debounce((value) => setSearchInput(value), 500),
-    []
-  );
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-    setCustomerSearchValue(value);
-    debouncedSetSearchInput(value);
-  };
+      return response.data?.map((customer: Customer) => ({
+        label: customer.name,
+        value: customer.id,
+        data: customer, // Include full customer data
+      }));
+    } catch (error) {
+      console.error("Search failed:", error);
+      return [];
+    }
+  }, []);
   return (
-    <>
+    <div id="customerSection">
       <header className="header">
         <div className="logo">GoldCraft POS</div>
         <div className="search-section">
-          <input
-            type="text"
-            className="search-input"
-            placeholder={`Search customer by ...`}
-            maxLength={40}
-            value={customerSearchValue}
-            onChange={handleChange}
+          <AsyncSelect
+            className="customerSearch"
+            cacheOptions
+            loadOptions={loadOptions}
+            defaultOptions
+            placeholder="Search customer by name..."
+            noOptionsMessage={({ inputValue }) =>
+              inputValue ? "No customers found" : "Type to search customers"
+            }
+            loadingMessage={() => "Searching..."}
+            onChange={(selected) => {
+              if (selected) {
+                setCustomerInfoActive(true);
+                setCustomer(selected.data);
+              } else {
+                // Handle clear action
+                setCustomerInfoActive(false);
+                setCustomer(null);
+                setSearchInput(""); // If you want to clear search input
+              }
+            }}
+            value={
+              customer
+                ? { label: customer.name, value: customer.id, data: customer }
+                : null
+            }
+            isClearable
+            styles={{
+              control: (base, state) => ({
+                ...base,
+                width: "100%",
+                border: "none",
+                backgroundColor: "transparent",
+                boxShadow: "none",
+                "&:hover": {
+                  border: "none",
+                  boxShadow: "none",
+                },
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: "gray", // Changed to gray
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "white !important",
+              }),
+              input: (base) => ({
+                ...base,
+                color: "white",
+                width: "100%",
+              }),
+              container: (base) => ({
+                ...base,
+                width: "100%",
+              }),
+              menu: (base) => ({
+                ...base,
+                marginTop: "20px",
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isFocused
+                  ? "var(--primary, #1a3a5f)"
+                  : "white",
+                color: state.isFocused ? "white" : "var(--primary, #1a3a5f)",
+                "&:hover": {
+                  backgroundColor: "var(--primary, #1a3a5f)",
+                  color: "white",
+                },
+              }),
+            }}
           />
+
           <button className="add-customer-btn" onClick={onAddCustomerClick}>
             Add New Customer
           </button>
         </div>
         <button className="scan-btn" onClick={onOpenScanModal}>
-          {/* kept icon placement to avoid changing styles */}
           Scan Product
         </button>
       </header>
@@ -144,11 +187,12 @@ const CustomerSection: React.FC<Props> = ({
       <AddCustomerModal
         show={showAddCustomerModal}
         onClose={() => setShowAddCustomerModal(false)}
-        callGetCustomerDetails={callGetCustomerDetails}
+        callGetCustomerDetails={() => {}}
         setSearchInput={setSearchInput}
-        setCustomerSearchValue={setCustomerSearchValue}
+        setCustomer={setCustomer}
+        setCustomerInfoActive={setCustomerInfoActive}
       />
-    </>
+    </div>
   );
 };
 

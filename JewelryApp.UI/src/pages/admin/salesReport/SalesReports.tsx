@@ -135,7 +135,7 @@ const SalesReports = () => {
           </Stack>
         </div>
 
-        <div className="date-range mt-3">
+        <div className="date-range">
           <DatePicker
             className="date-input"
             selected={startDate}
@@ -169,7 +169,6 @@ const SalesReports = () => {
         </div>
       </header>
 
-      {/* Summary of Sales Section - Integrated with API Data */}
       <section className="section">
         <h2 className="section-title">
           <FaChartBar className="icon" style={{ marginRight: "8px" }} /> Summary
@@ -211,7 +210,6 @@ const SalesReports = () => {
         </div>
       </section>
 
-      {/* Gold Sold by Karat Section - Integrated with API Data */}
       <section className="section">
         <h2 className="section-title">
           <FaWeightHanging className="icon" style={{ marginRight: "8px" }} />{" "}
@@ -231,7 +229,6 @@ const SalesReports = () => {
             </div>
           ))}
 
-          {/* Fallback if no data */}
           {(!salesInsights?.goldByKarat ||
             salesInsights.goldByKarat.length === 0) && (
             <div className="karat-card">

@@ -1,0 +1,23 @@
+#customerSection {
+  .customerSearch {
+    .css-1m3pubq-control {
+      .css-1u9des2-indicatorSeparator {
+        display: none;
+      }
+      .css-1xc3v61-indicatorContainer {
+        display: none;
+      }
+      &:focus {
+        .css-1u9des2-indicatorSeparator {
+          display: none;
+        }
+        .css-1xc3v61-indicatorContainer {
+          display: none;
+        }
+      }
+    }
+  }
+  .add-customer-btn {
+    min-width: fit-content;
+  }
+}

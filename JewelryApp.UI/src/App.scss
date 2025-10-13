@@ -80,11 +80,10 @@ body {
 }
 .adminLayout-main {
   color: #333;
-  padding-left: 290px;
-  padding-top: 30px;
-  padding-right: 40px;
+  padding: 30px 40px 30px 290px;
   background-color: #fafafa;
-  height: calc(100% - 70px);
+  min-height: calc(100% - 70px);
+  height: fit-content;
 }
 
 /* Page Content */

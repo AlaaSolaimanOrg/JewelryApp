@@ -22,6 +22,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
   };
   const [scanInput, setScanInput] = useState("");
   const [scannedItems, setScannedItems] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   // Simulate NFC scan (replace with actual NFC reader logic)
   const handleScanInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -46,20 +47,58 @@ const ScanModal: React.FC<ScanModalProps> = ({
     );
   };
 
+  // Helper function for validation
+  function validateProducts(nfcIds: string[], fetchedProducts: any[]) {
+    const productsWithNoQuantity = fetchedProducts.filter(
+      (product) => !product.quantity || product.quantity <= 0
+    );
+
+    const nonExistentNfcIds = nfcIds.filter(
+      (nfcId) => !fetchedProducts.some((product) => product.nfcId === nfcId)
+    );
+
+    const quantityErrors = productsWithNoQuantity.map((product) => ({
+      nfcId: product.nfcId,
+      errorMessage: "This product has no quantity",
+    }));
+
+    const notFoundErrors = nonExistentNfcIds.map((nfcId) => ({
+      nfcId,
+      errorMessage: "Product not found",
+    }));
+
+    const allErrors = [...quantityErrors, ...notFoundErrors];
+    return allErrors;
+  }
+
   async function getProductsByNfcIdsApi(nfcIds: string[]): Promise<void> {
     const response = await getProductsByNfcIds({ nfcIds });
     const fetchedProducts = response?.data || [];
 
-    const updatedFetchedProducts = fetchedProducts.map((fetchedProduct) => {
-      return {
-        ...fetchedProduct,
-        originalPricePerGram: fetchedProduct.pricePerGram,
-      };
-    });
+    console.log("nfcIds", nfcIds);
+    console.log("fetchedProducts", fetchedProducts);
 
-    const existingnfcIds = products.map((p) => p.nfcId);
+    const newValidationErrors = validateProducts(nfcIds, fetchedProducts);
+
+    console.log("newValidationErrors", newValidationErrors);
+    console.log("validationErrors", validationErrors);
+    if (newValidationErrors.length && !validationErrors.length) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
+
+    if (validationErrors.length > 0) {
+      console.log("Products with errors:", validationErrors);
+    }
+
+    const updatedFetchedProducts = fetchedProducts.map((fetchedProduct) => ({
+      ...fetchedProduct,
+      originalPricePerGram: fetchedProduct.pricePerGram,
+    }));
+
+    const existingNfcIds = products.map((p) => p.nfcId);
     const newProducts = updatedFetchedProducts
-      .filter((p) => !existingnfcIds.includes(p.nfcId))
+      .filter((p) => !existingNfcIds.includes(p.nfcId) && p.quantity > 0)
       .map((p) => ({ ...p, manual: false }));
 
     const updatedProducts = [...products, ...newProducts];

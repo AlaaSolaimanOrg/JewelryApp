@@ -10,6 +10,8 @@
         public class GetProductsVM
         {
             public Guid Id { get; set; }
+            public string? NFCId { get; set; } = string.Empty;
+
             public string Sku { get; set; }
             public string? Name { get; set; }
             public int? Quantity { get; set; }

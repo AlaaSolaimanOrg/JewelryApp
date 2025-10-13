@@ -18,7 +18,6 @@ const ExportData = () => {
       </div>
 
       <div className="export-options">
-        {/* Export Inventory */}
         <div className="export-card">
           <h3>
             <FaBox /> Export Inventory
@@ -54,7 +53,6 @@ const ExportData = () => {
           </button>
         </div>
 
-        {/* Export Sales */}
         <div className="export-card">
           <h3>
             <FaChartLine /> Export Sales Reports
@@ -94,7 +92,6 @@ const ExportData = () => {
           </button>
         </div>
 
-        {/* Export Customers */}
         <div className="export-card">
           <h3>
             <FaUsers /> Export Customers

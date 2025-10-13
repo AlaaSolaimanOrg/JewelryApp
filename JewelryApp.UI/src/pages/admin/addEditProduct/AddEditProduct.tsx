@@ -201,7 +201,6 @@ const AddEditProduct = ({ isEdit }) => {
 
       <div className="card">
         <form id="product-form">
-          {/* Product Name */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -220,7 +219,6 @@ const AddEditProduct = ({ isEdit }) => {
               </div>
             </div>
 
-            {/* SKU */}
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label">SKU</label>
@@ -238,7 +236,6 @@ const AddEditProduct = ({ isEdit }) => {
           </div>
 
           <div className="form-row">
-            {/* Quantity */}
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Quantity</label>
@@ -263,7 +260,6 @@ const AddEditProduct = ({ isEdit }) => {
               </div>
             </div>
 
-            {/* nfc id */}
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label">NFC ID</label>
@@ -279,7 +275,6 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
-          {/* Karat */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -321,8 +316,6 @@ const AddEditProduct = ({ isEdit }) => {
           </div>
 
           <div className="form-row">
-            {/* Category  */}
-
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Category</label>
@@ -345,8 +338,6 @@ const AddEditProduct = ({ isEdit }) => {
               </div>
             </div>
 
-            {/* Product Type  */}
-
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Product Type</label>
@@ -366,7 +357,6 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
-          {/* Description */}
           <div className="form-row">
             <div className="form-col">
               <div className="form-group">
@@ -399,7 +389,6 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           )}
 
-          {/* Tags */}
           {/* <div className="form-group">
             <label className="form-label">Tags</label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -449,7 +438,6 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div> */}
 
-          {/* Product Image */}
           {/* <div className="form-group">
             <label className="form-label">Product Image</label>
             <input

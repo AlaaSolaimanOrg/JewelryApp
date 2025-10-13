@@ -23,7 +23,6 @@ const Settings = () => {
       </div>
 
       <div className="settings-grid">
-        {/* Pricing Settings */}
         <div className="setting-card">
           <h3>
             <FaMoneyBillWave /> Pricing Settings
@@ -57,7 +56,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* SMS Settings */}
         <div className="setting-card">
           <h3>
             <FaCommentAlt /> SMS Settings
@@ -84,7 +82,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Payment Settings */}
         <div className="setting-card">
           <h3>
             <FaCreditCard /> Payment Settings
@@ -116,7 +113,6 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* General Settings */}
         <div className="setting-card">
           <h3>
             <FaGlobe /> General Settings

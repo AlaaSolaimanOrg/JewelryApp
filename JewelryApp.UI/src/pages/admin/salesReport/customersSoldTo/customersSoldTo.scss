@@ -1,4 +1,9 @@
 #customersSoldTo {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow-bottom);
   .noResultsFound {
     td {
       height: 300px;

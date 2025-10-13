@@ -35,6 +35,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     Total = x.Total,
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,
+                    Discount = x.Discount,
+                    Tax = x.Taxe,
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {
                         ProductName = i.Product!.Name!,

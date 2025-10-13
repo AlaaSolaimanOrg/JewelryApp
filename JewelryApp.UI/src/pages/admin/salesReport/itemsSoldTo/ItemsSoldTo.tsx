@@ -98,9 +98,7 @@ const ItemsSoldTo = () => {
         Items Sold
       </h2>
 
-      {/* Filter Section */}
       <div className="filter-section">
-        {/* Product Category Filter */}
         <select
           className="filter-select"
           value={productCategoryFilter}
@@ -117,7 +115,6 @@ const ItemsSoldTo = () => {
           <option value={ProductCategory.Bullion}>Bullion</option>
         </select>
 
-        {/* Time Range Filter */}
         <select
           className="filter-select"
           value={timeRangeFilter}
@@ -130,7 +127,6 @@ const ItemsSoldTo = () => {
           <option value="custom">Custom Range</option>
         </select>
 
-        {/* Custom Date Range - Only show when custom is selected */}
         {timeRangeFilter === "custom" && (
           <div className="date-range-picker">
             <DatePicker
@@ -155,7 +151,6 @@ const ItemsSoldTo = () => {
           </div>
         )}
 
-        {/* Karat Filter */}
         <select
           className="filter-select"
           value={karatTypeFilter}
@@ -168,13 +163,11 @@ const ItemsSoldTo = () => {
           <option value={KaratType.Karat18}>18K</option>
         </select>
 
-        {/* Clear Filters Button */}
         <button className="clear-filters-btn" onClick={clearFilters}>
           Clear Filters
         </button>
       </div>
 
-      {/* Results Count */}
       <div className="results-info">
         <p>
           Showing {soldItems.length} of {pagination.totalRecords} results
@@ -183,7 +176,6 @@ const ItemsSoldTo = () => {
         </p>
       </div>
 
-      {/* Table */}
       <div className="table-container">
         <table className="data-table">
           <thead>

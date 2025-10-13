@@ -75,7 +75,6 @@ const InventoryFilterSideBar = ({
         <FaFilter className="me-2" /> Filter Inventory
       </h3>
 
-      {/* Karat */}
       <div className="filter-group">
         <span className="filter-group-title">Karat</span>
         {karatOptions.map((karatOption) => (
@@ -93,7 +92,6 @@ const InventoryFilterSideBar = ({
         ))}
       </div>
 
-      {/* Weight */}
       <div className="filter-group">
         <span className="filter-group-title">Weight (grams)</span>
         <div className="form-row">
@@ -131,7 +129,6 @@ const InventoryFilterSideBar = ({
         </div>
       </div>
 
-      {/* Price */}
       <div className="filter-group">
         <span className="filter-group-title">Price</span>
         <div className="form-row">
@@ -169,7 +166,6 @@ const InventoryFilterSideBar = ({
         </div>
       </div>
 
-      {/* Category */}
       <div className="filter-group">
         <span className="filter-group-title">Category</span>
         <select
@@ -193,7 +189,6 @@ const InventoryFilterSideBar = ({
         </select>
       </div>
 
-      {/* Buttons */}
       <div className="form-group" style={{ marginTop: "20px" }}>
         <button
           className="btn-md btn-gold"
