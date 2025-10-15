@@ -1,19 +1,31 @@
-using JewerlyApp.Infrastructure;
 using JewerlyApp.Application;
-using JewerlyApp.Infrastructure.Context;
-using JewerlyApp.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
 using JewerlyApp.Domain.Entities;
+using JewerlyApp.Infrastructure;
+using JewerlyApp.Infrastructure.Context;
+using JewerlyApp.Infrastructure.HealthChecks;
+using JewerlyApp.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
+
+builder.Services.AddHttpClient();
+
+
+// Add Health Checks
+builder.Services.AddHealthChecks()
+    .AddCheck<CustomHealthCheck>("Custom API Check")
+    .AddCheck<InternalResourcesHealthCheck>("Internal health check")
+    .AddCheck<SqlServerHealthCheck>("SQL Server");
 
 
 builder.Services.AddApplicationServices();
@@ -106,12 +118,10 @@ using (var scope = app.Services.CreateScope())
     await IdentitySeeder.SeedUsersAsync(services);
 }
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -131,6 +141,12 @@ app.UseAuthentication(); // ? must come before
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map Health Checks endpoint with JSON response
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = CustomHealthCheckResponseWriter.WriteResponse
+});
 
 
 app.Run();
