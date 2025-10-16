@@ -118,7 +118,6 @@ using (var scope = app.Services.CreateScope())
     await IdentitySeeder.SeedUsersAsync(services);
 }
 
-app.UsePathBase("/api");
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
