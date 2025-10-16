@@ -121,8 +121,11 @@ using (var scope = app.Services.CreateScope())
 app.UsePathBase("/api");
 
 app.UseSwagger();
-app.UseSwaggerUI();
-
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "JewerlyApp.API v1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseStaticFiles(new StaticFileOptions
 {
