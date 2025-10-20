@@ -1,5 +1,5 @@
 {
-  "API_URL": "https://77.37.62.142/api",
+  "API_URL": "http://77.37.62.142/api",
   "API_TIMEOUT": 10000,
   "APP_NAME": "MyViteApp"
 }
