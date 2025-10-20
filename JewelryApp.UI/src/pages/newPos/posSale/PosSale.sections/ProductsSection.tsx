@@ -1,4 +1,3 @@
-import React from "react";
 import { FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../types";
 import { API_URL } from "../../../../config/config";
@@ -64,7 +63,7 @@ const ProductsSection: React.FC<Props> = ({
               <td>
                 {product.manual ? (
                   <select
-                    value={product.karatType}
+                    value={product.karatType as any}
                     onChange={(e) =>
                       handleManualProductChange(
                         idx,

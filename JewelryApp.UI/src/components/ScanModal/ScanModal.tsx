@@ -6,17 +6,17 @@ import React, {
 } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
-import { getProductsByNfcIds } from "../../apis/products.api/products.api";
-import "./scanModal.scss";
 import { MdError } from "react-icons/md";
+import { getProductsByNfcIds } from "../../apis/products.api/products.api";
 import { renderTooltip } from "../../utils";
+import "./scanModal.scss";
 
 interface ScanModalProps {
   show: boolean;
   onClose: () => void;
   setProducts: Dispatch<SetStateAction<any>>;
   products: any[];
-  scanOnly: boolean;
+  scanOnly?: boolean;
   setScannedNfcIds?: Dispatch<SetStateAction<any>>;
 }
 
@@ -33,7 +33,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
   };
   const [scanInput, setScanInput] = useState("");
   const [scannedItems, setScannedItems] = useState<string[]>([]);
-  const [validationErrors, setValidationErrors] = useState([]);
+  const [validationErrors, setValidationErrors] = useState<any>([]);
 
   // Simulate NFC scan (replace with actual NFC reader logic)
   const handleScanInput = (e: React.KeyboardEvent<HTMLInputElement>) => {

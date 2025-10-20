@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useContext } from "react";
 import { getUserInfo } from "../apis/users.api/users.api";
 import useLocalApi from "../hooks/useLocalApi";
@@ -20,7 +19,7 @@ interface AuthContextType {
   userInfo: User | null;
   setUserInfo: any;
   isLoading: boolean;
-  callGetUserInfo: () => Promise<string[]>;
+  callGetUserInfo: any;
 }
 
 const AuthContext = createContext<AuthContextType>({

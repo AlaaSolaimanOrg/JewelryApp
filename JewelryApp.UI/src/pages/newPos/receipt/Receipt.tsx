@@ -1,11 +1,11 @@
+import { useRef } from "react";
+import { FaCheck, FaPrint, FaReceipt } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import "./receipt.scss";
-import { FaCheck, FaPrint, FaReceipt, FaSms } from "react-icons/fa";
-import type { KaratType } from "../../../types/enums";
+import { useReactToPrint } from "react-to-print";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { useRef } from "react";
-import { useReactToPrint } from "react-to-print";
+import type { KaratType } from "../../../types/enums";
+import "./receipt.scss";
 
 interface SaleItem {
   productName: string;

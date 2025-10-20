@@ -1,5 +1,5 @@
 // CustomTable.tsx
-import React from "react";
+
 import "./customTable.scss";
 import CustomLoader from "../CustomLoader/CustomLoader";
 

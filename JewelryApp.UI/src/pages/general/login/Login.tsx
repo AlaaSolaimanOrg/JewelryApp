@@ -13,7 +13,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const [isloading, setIsLoading] = useState(false);
 
   const redirectAfterLogin = () => {
     if (
@@ -36,8 +35,6 @@ const Login = () => {
   }, [userInfo]);
 
   const callLogin = () => {
-    setIsLoading(true);
-
     const payload = { email: email, password: password };
     login(payload)
       .then((response) => {
@@ -59,9 +56,6 @@ const Login = () => {
       })
       .catch((e) => {
         throw e;
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
   };
 
@@ -69,11 +63,6 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
-      email,
-      password,
-      remember,
-    };
     callLogin();
   };
 

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   FaCreditCard,
   FaPlus,
@@ -13,10 +12,10 @@ import {
   getCartProducts,
   removeProductFromCart,
 } from "../../../apis/cart.api/cart.api";
+import type { TableHeader } from "../../../components/Table/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./cartSummary.scss";
-import type { TableHeader } from "../../../components/Table/CustomTable";
 
 export interface CartProduct {
   productId: string;
@@ -31,8 +30,6 @@ const CartSummary = () => {
   const location = useLocation();
 
   const navigate = useNavigate();
-
-  const [isDeletingCart, setIsDeletingCart] = useState(false);
 
   const { totalDiscount } = location.state || { totalDiscount: 0 };
 
@@ -54,8 +51,6 @@ const CartSummary = () => {
   const total = subtotal - totalDiscount + tax;
 
   const handleCancelSale = () => {
-    setIsDeletingCart(true);
-
     deleteCart()
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
@@ -67,9 +62,6 @@ const CartSummary = () => {
       })
       .catch((e) => {
         throw e;
-      })
-      .finally(() => {
-        setIsDeletingCart(false);
       });
   };
   const handleRemoveProductFromCart = (productId) => {

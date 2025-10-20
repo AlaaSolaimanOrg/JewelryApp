@@ -1,17 +1,16 @@
-import { FaHistory, FaPrint, FaSearch, FaSms } from "react-icons/fa";
+import dateFormat from "dateformat";
+import { FaHistory, FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import "./transactionHistory.scss";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
+import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
-import dateFormat from "dateformat";
-import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
-import { SortDirection } from "../../../types/enums";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { handleSort } from "../../../utils";
+import "./transactionHistory.scss";
 
 export interface Sale {
   id: string;
@@ -26,7 +25,6 @@ const TransactionHistory = () => {
   const {
     data: sales,
     isLoading: isLoading,
-    fetchData: recallGetSales,
     onSortChange,
     onSearchChange,
     onPaginationChange,
