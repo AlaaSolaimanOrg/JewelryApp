@@ -59,6 +59,13 @@ builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerial
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Jewelry API",
+        Version = "v1",
+        Description = "API for Jewelry Application"
+    });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -80,9 +87,11 @@ builder.Services.AddSwaggerGen(options =>
                     }
                 },
                 Array.Empty<string>()
-
         }
         });
+
+    // Add this line for API prefix support
+    options.DocInclusionPredicate((docName, apiDesc) => true);
 });
 
 builder.Services.AddAuthentication(options =>
@@ -111,6 +120,9 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UsePathBase("/api");
+app.UseRouting();
+
 // Seed Admin user
 using (var scope = app.Services.CreateScope())
 {
@@ -119,8 +131,23 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwagger(c =>
+{
+    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+    c.PreSerializeFilters.Add((swagger, httpReq) =>
+    {
+        swagger.Servers = new List<OpenApiServer>
+        {
+            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
+        };
+    });
+});
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Jewelry API v1");
+    c.RoutePrefix = "swagger";
+});
 
 app.UseStaticFiles(new StaticFileOptions
 {
