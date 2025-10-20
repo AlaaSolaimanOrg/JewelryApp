@@ -19,9 +19,7 @@ interface SaleCustomers {
 }
 
 const CustomersSoldTo = () => {
-  const [customerFilter, setCustomerFilter] = useState<CustomerFilter | null>(
-    null
-  );
+  const [customerFilter, setCustomerFilter] = useState<any>(null);
 
   const {
     data: salesCustomers,

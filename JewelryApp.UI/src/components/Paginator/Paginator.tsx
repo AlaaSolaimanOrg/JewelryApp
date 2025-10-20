@@ -22,7 +22,7 @@ const Paginator = ({
       startPage = Math.max(endPage - maxPages + 1, 1);
     }
 
-    const pages = [];
+    const pages = [] as any;
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }

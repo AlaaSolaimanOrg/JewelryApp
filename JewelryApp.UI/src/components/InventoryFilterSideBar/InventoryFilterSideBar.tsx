@@ -10,9 +10,6 @@ export interface InventoryFilters {
   priceFrom: number;
   priceTo: number;
   category: ProductCategory | null;
-  // ringSize: string;
-  // necklaceLength: string;
-  // tags: string[];
 }
 
 const filtersInitialState: InventoryFilters = {
@@ -27,9 +24,6 @@ const filtersInitialState: InventoryFilters = {
   priceFrom: 0,
   priceTo: 999999,
   category: null,
-  // ringSize: "Any",
-  // necklaceLength: "Any",
-  // tags: [],
 };
 
 const InventoryFilterSideBar = ({
@@ -47,7 +41,7 @@ const InventoryFilterSideBar = ({
 
   const handleFilterChange = (key: keyof InventoryFilters, value: any) => {
     setFilters((prev) => {
-      if (key === "karatTypes" || key === "tags") {
+      if (key === "karatTypes") {
         return {
           ...prev,
           [key]: toggleValueInArray(prev[key] as any[], value),

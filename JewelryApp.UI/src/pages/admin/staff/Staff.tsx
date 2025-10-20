@@ -1,4 +1,5 @@
 import { FaEdit, FaPlus, FaTrash, FaUserShield } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getAllRoles,
   getAllUsers,
@@ -9,10 +10,8 @@ import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import "./staff.scss";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import "./staff.scss";
 
 export interface User {
   id: number;

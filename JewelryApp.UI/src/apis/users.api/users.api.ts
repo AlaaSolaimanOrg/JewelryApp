@@ -16,21 +16,11 @@ export const softDeleteUser = async (payload: { userId: string }) => {
   );
 };
 
-export const createUser = async (payload: {
-  userName: string;
-  email: string;
-  password: string;
-  roles: string[];
-}) => {
+export const createUser = async (payload) => {
   return requestApi("POST", apiRoutes.users.createUser, payload);
 };
 
-export const updateUser = async (payload: {
-  userId: string;
-  userName: string;
-  isactive: boolean;
-  roles: string[];
-}) => {
+export const updateUser = async (payload) => {
   return requestApi(
     "PUT",
     `${apiRoutes.users.updateUser}/${payload.userId}`,

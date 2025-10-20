@@ -6,7 +6,6 @@ import type { PriceItem } from "../../pages/admin/pricing/Pricing";
 const PricingCard = ({
   cardTitle,
   prices = [],
-  globalPrices = [],
   productType,
   handlePriceChange,
   recallGlobalPrices,
@@ -15,7 +14,6 @@ const PricingCard = ({
 }: {
   cardTitle: string;
   prices: PriceItem[];
-  globalPrices: PriceItem[];
   productType: ProductType;
   handlePriceChange?: any;
   recallGlobalPrices?: any;

@@ -1,5 +1,4 @@
 import "./customLoader.scss";
-import { Spinner } from "react-bootstrap";
 
 const CustomLoader = ({
   size = "default",

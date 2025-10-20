@@ -1,12 +1,12 @@
-import { FaShoppingCart } from "react-icons/fa";
-import Paginator from "../../../../components/Paginator/Paginator";
-import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
-import { getSoldItems } from "../../../../apis/sales.api/sales.api";
-import "./itemsSoldTo.scss";
-import { KaratType, ProductCategory } from "../../../../types/enums";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { FaShoppingCart } from "react-icons/fa";
+import { getSoldItems } from "../../../../apis/sales.api/sales.api";
+import Paginator from "../../../../components/Paginator/Paginator";
+import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
+import { KaratType, ProductCategory } from "../../../../types/enums";
+import "./itemsSoldTo.scss";
 
 interface SoldItem {
   productName: string;
@@ -18,20 +18,13 @@ interface SoldItem {
   latestSaleDate: Date;
 }
 
-interface FilterPayload {
-  CategoryFilter?: ProductCategory;
-  KaratFilter?: KaratType;
-  DateFrom?: Date;
-  DateTo?: Date;
-}
-
 const ItemsSoldTo = () => {
   const [productCategoryFilter, setProductCategoryFilter] = useState<
     ProductCategory | ""
   >("");
   const [karatTypeFilter, setKaratTypeFilter] = useState<KaratType | "">("");
-  const [dateFrom, setDateFrom] = useState<Date | null>(null);
-  const [dateTo, setDateTo] = useState<Date | null>(null);
+  const [dateFrom, setDateFrom] = useState<any>(null);
+  const [dateTo, setDateTo] = useState<any>(null);
   const [timeRangeFilter, setTimeRangeFilter] = useState<string>("");
 
   // Handle time range selection

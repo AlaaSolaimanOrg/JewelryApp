@@ -1,4 +1,4 @@
-import type { DiscountType, KaratType, SortDirection } from "../../types/enums";
+import type { KaratType, SortDirection } from "../../types/enums";
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
 
@@ -12,19 +12,7 @@ export interface SaleItemPayload {
   overriddenPricePerGram: number;
 }
 
-export interface CreateSalePayload {
-  customerId: string;
-  discount: number;
-  discountPercentage: number;
-  discountType: DiscountType;
-  note: string;
-  cashAmount: number;
-  cardAmount: number;
-  taxe: number;
-  saleItems: SaleItemPayload[];
-}
-
-export const createSale = async (payload: CreateSalePayload) => {
+export const createSale = async (payload: any) => {
   return requestApi("POST", apiRoutes.sales.createSale, payload);
 };
 
@@ -66,10 +54,10 @@ export const getSalesCustomers = async (payload: {
   return requestApi("GET", apiRoutes.sales.getSalesCustomers, payload);
 };
 
-export const getDashboardInsights = async (payload: {}) => {
-  return requestApi("GET", apiRoutes.sales.getDashboardInsights, payload);
+export const getDashboardInsights = async () => {
+  return requestApi("GET", apiRoutes.sales.getDashboardInsights, {});
 };
 
-export const getTopSellingCategories = async (payload: {}) => {
-  return requestApi("GET", apiRoutes.sales.getTopSellingCategories, payload);
+export const getTopSellingCategories = async () => {
+  return requestApi("GET", apiRoutes.sales.getTopSellingCategories, {});
 };

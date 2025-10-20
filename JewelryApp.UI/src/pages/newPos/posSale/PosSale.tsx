@@ -60,7 +60,7 @@ const MainPosPage: React.FC = () => {
 
   const canSaveSale =
     !!customer?.id &&
-    products.length &&
+    !!products.length &&
     (cardAmount > 0 || cashAmount > 0) &&
     !anyProductWithUnfilledField &&
     !isLoadingCreateSale &&

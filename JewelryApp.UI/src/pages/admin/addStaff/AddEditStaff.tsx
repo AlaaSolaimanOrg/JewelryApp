@@ -81,7 +81,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       userName: staffFields.userName,
       email: staffFields.email,
       password: staffFields.password,
-      phoneNumber: staffFields.phoneNumber, // Added phone number field
+      phoneNumber: staffFields.phoneNumber,
       roles: staffFields.roles,
     };
     const editPayload = {
@@ -89,7 +89,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       fullName: staffFields.fullName,
       userName: staffFields.userName,
       email: staffFields.email,
-      phoneNumber: staffFields.phoneNumber, // Added phone number field
+      phoneNumber: staffFields.phoneNumber,
       isActive: staffFields.isActive,
       roles: staffFields.roles,
     };

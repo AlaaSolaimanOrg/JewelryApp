@@ -1,13 +1,12 @@
 import { FaCashRegister, FaPlusCircle } from "react-icons/fa";
 import { RiHistoryFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import "./home.scss";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
-import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
-import { Spinner } from "react-bootstrap";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
+import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
+import "./home.scss";
 
 export interface Sale {
   id: string;

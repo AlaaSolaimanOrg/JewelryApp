@@ -1,15 +1,9 @@
-import { FaHome, FaSearch } from "react-icons/fa";
-import "./adminHeader.scss";
-import { useLocation } from "react-router-dom";
-import { TbCirclePlusFilled } from "react-icons/tb";
-import type { JSX } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import "./adminHeader.scss";
 
 const AdminHeader = () => {
-  const location = useLocation();
   const { userInfo } = useAuth();
 
-  const pathName = location.pathname;
 
   return (
     <header className="adminHeader">

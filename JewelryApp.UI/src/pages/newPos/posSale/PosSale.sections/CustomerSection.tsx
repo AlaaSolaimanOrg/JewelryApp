@@ -92,7 +92,7 @@ const CustomerSection: React.FC<Props> = ({
             }
             isClearable
             styles={{
-              control: (base, state) => ({
+              control: (base) => ({
                 ...base,
                 width: "100%",
                 border: "none",

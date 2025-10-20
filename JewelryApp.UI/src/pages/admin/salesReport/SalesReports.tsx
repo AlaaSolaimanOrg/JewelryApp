@@ -12,18 +12,15 @@ import {
 import { useState } from "react";
 import { Stack } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import { FaChartBar, FaShoppingCart, FaWeightHanging } from "react-icons/fa";
+import { FaChartBar, FaWeightHanging } from "react-icons/fa";
 import {
-  getSalesInsights,
-  getSoldItems,
+  getSalesInsights
 } from "../../../apis/sales.api/sales.api";
-import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApi from "../../../hooks/useLocalApi";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { DatePillFilter, KaratType } from "../../../types/enums";
 import CustomersSoldTo from "./customersSoldTo/CustomersSoldTo";
-import "./salesReports.scss";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
+import "./salesReports.scss";
 
 interface SalesInsights {
   totalSalesAmount: number;

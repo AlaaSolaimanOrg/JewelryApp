@@ -1,14 +1,12 @@
 import { useState } from "react";
+import { Stack } from "react-bootstrap";
 import {
   FaBox,
   FaEdit,
-  FaExchangeAlt,
-  FaFileExport,
   FaPlus,
   FaSearch,
   FaTag,
-  FaTags,
-  FaTrash,
+  FaTrash
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,6 +18,7 @@ import InventoryFilterSideBar, {
 } from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
+import ScanModal from "../../../components/ScanModal/ScanModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
@@ -32,8 +31,6 @@ import {
 } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./inventory.scss";
-import ScanModal from "../../../components/ScanModal/ScanModal";
-import { Stack } from "react-bootstrap";
 
 export interface Product {
   id: string;

@@ -36,7 +36,6 @@ interface MetalPricing {
 }
 
 const Pricing = () => {
-  const [isEditingPrices, setIsEditingPrices] = useState(false);
   const [prices, setPrices] = useState<PriceItem[]>([
     {
       productType: ProductType.Gold,
@@ -103,29 +102,6 @@ const Pricing = () => {
     },
   ]);
 
-  const [globalSilverPrices, setGlobalSilverPrices] = useState<PriceItem[]>([
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat18,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat21,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat22,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat24,
-      pricePerGram: 0,
-    },
-  ]);
-
   const handlePriceChange = (productType, karatType, value) => {
     setPrices((prev) =>
       prev.map((price) =>
@@ -140,9 +116,8 @@ const Pricing = () => {
     const removedOldPrices = prices.filter(
       (price) => price.productType != productType
     );
-    const globalPrices =
-      productType == ProductType.Gold ? globalGoldPrices : globalSilverPrices;
-    setPrices([...removedOldPrices, ...globalPrices]);
+
+    setPrices([...removedOldPrices, ...globalGoldPrices]);
   };
 
   const { data: pricingSettings } = useLocalApi({
@@ -166,21 +141,6 @@ const Pricing = () => {
     fetchData: any;
     setData: any;
   };
-
-  // const {
-  //   data: silverGlobalPricingSettings,
-  //   fetchData: recallSilverGlobalPricingSettings,
-  // } = useLocalApi({
-  //   apiToCall: (data) => getGlobalPricingSettings(data.payload),
-  //   payload: {
-  //     productType: ProductType.Silver,
-  //     currency: Currency.USD,
-  //   },
-  // }) as {
-  //   data: MetalPricing;
-  //   fetchData: any;
-  //   setData: any;
-  // };
 
   useEffect(() => {
     const newPrices = prices.map((oldPrice) => {
@@ -246,8 +206,6 @@ const Pricing = () => {
   // }, [silverGlobalPricingSettings]);
 
   const callEditPrice = (prices) => {
-    setIsEditingPrices(true);
-
     const payload = {
       pricingSettings: prices,
     };
@@ -261,9 +219,6 @@ const Pricing = () => {
       })
       .catch((e) => {
         throw e;
-      })
-      .finally(() => {
-        setIsEditingPrices(false);
       });
   };
 
@@ -293,7 +248,6 @@ const Pricing = () => {
             prices={prices.filter(
               (price) => price.productType == ProductType.Gold
             )}
-            globalPrices={goldGlobalPricingSettings}
             handlePriceChange={handlePriceChange}
             handleProductTypePrices={handleProductTypePrices}
           />
@@ -308,30 +262,6 @@ const Pricing = () => {
           />
         </Col>
       </Row>
-
-      {/* <Row >
-        <Col sm={6}>
-          <PricingCard
-            cardTitle="Silver Pricing"
-            productType={ProductType.Silver}
-            prices={prices.filter(
-              (price) => price.productType == ProductType.Silver
-            )}
-            globalPrices={silverGlobalPricingSettings}
-            handlePriceChange={handlePriceChange}
-            handleProductTypePrices={handleProductTypePrices}
-          />
-        </Col>
-        <Col sm={6}>
-          <PricingCard
-            cardTitle="Global Silver Pricing"
-            productType={ProductType.Silver}
-            prices={globalSilverPrices}
-            isGlobal
-            recallGlobalPrices={recallSilverGlobalPricingSettings}
-          />
-        </Col>
-      </Row> */}
     </div>
   );
 };

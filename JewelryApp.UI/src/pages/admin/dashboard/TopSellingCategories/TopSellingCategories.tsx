@@ -15,8 +15,8 @@ interface TopSellingCategory {
 }
 
 const TopSellingCategories = () => {
-  const { data: topSellingCategories ,fetchData, recallGetTopCategories} = useLocalApi({
-    apiToCall: (data) => getTopSellingCategories(data.payload),
+  const { data: topSellingCategories } = useLocalApi({
+    apiToCall: () => getTopSellingCategories(),
     payload: {
       topCount: 5,
     },
@@ -64,7 +64,6 @@ const TopSellingCategories = () => {
       <CustomTable
         headers={headers}
         data={tableData}
-        emptyMessage="No top selling categories data available"
       />
     </div>
   );

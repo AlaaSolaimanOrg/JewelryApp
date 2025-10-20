@@ -1,6 +1,5 @@
 import { getDashboardInsights } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { KaratType } from "../../../types/enums";
 import "./dashboard.scss";
 
 // Import icons from react-icons/fa
@@ -44,7 +43,7 @@ export interface DashboardInsights {
 const Dashboard = () => {
   const { data: dashboardInsights, fetchData: recallGetDashboardInsights } =
     useLocalApi({
-      apiToCall: (data) => getDashboardInsights(data.payload),
+      apiToCall: () => getDashboardInsights(),
     }) as {
       data: DashboardInsights;
       fetchData: () => void;

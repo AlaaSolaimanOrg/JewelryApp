@@ -2,18 +2,15 @@ import { AiFillHome } from "react-icons/ai";
 import {
   FaBox,
   FaChartLine,
-  FaCog,
-  FaFile,
   FaGem,
   FaPlus,
-  FaPrint,
   FaTag,
   FaUser,
-  FaUsers,
+  FaUsers
 } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
-import "./sidenav.scss";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import "./sidenav.scss";
 
 const SideNav = () => {
   const navigate = useNavigate();

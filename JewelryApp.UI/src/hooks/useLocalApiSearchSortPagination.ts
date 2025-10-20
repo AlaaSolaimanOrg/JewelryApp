@@ -3,7 +3,7 @@ import { SortDirection } from "../types/enums";
 import type { SortCriteria } from "../types/general";
 import { checkRequestSucceeded, debounce, showError } from "../utils";
 
-type ApiSortSearchPropsType<T> = {
+type ApiSortSearchPropsType = {
   extraPayload?: any;
   extraEffectCheck?: boolean;
   extraEffectDependency?: any[];
@@ -29,7 +29,7 @@ const useLocalApiSearchSortPagination = <T = any>({
   showErrorAlert = true,
   apiToCall,
   apiName,
-}: ApiSortSearchPropsType<T>) => {
+}: ApiSortSearchPropsType) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<{
     pageSize: number;
