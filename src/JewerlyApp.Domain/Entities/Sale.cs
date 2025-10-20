@@ -1,6 +1,5 @@
 ﻿using JewerlyApp.Domain.Entities.Common;
 using JewerlyApp.Domain.Enums;
-using Microsoft.AspNet.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JewerlyApp.Domain.Entities
