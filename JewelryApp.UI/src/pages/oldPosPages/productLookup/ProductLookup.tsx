@@ -14,7 +14,6 @@ import {
   getCartProducts,
 } from "../../../apis/cart.api/cart.api";
 import { getProductById } from "../../../apis/products.api/products.api";
-import { API_URL } from "../../../config/config";
 import useLocalApi from "../../../hooks/useLocalApi";
 import {
   checkRequestSucceeded,
@@ -129,7 +128,7 @@ const ProductLookup = () => {
         <div className="result-panel active">
           <Row className="product-details">
             <Col xs={6} lg={4} className="product-image">
-              <img src={`${API_URL}${product?.images?.[0]?.imageUrl}`} alt="" />
+              <img src={`${import.meta.env.VITE_API_URL}${product?.images?.[0]?.imageUrl}`} alt="" />
             </Col>
             <Col className="product-info" xs={6} lg={8}>
               <h3 className="product-name">{product.name}</h3>

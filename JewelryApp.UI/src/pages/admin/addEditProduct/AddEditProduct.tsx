@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
 import { FaSave, FaTimes } from "react-icons/fa";
@@ -13,7 +13,6 @@ import {
 } from "../../../apis/products.api/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
-import { API_URL } from "../../../config/config";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import {
@@ -24,6 +23,7 @@ import {
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
+import { useReactToPrint } from "react-to-print";
 
 const productFieldsInitialState = {
   productName: "",
@@ -40,10 +40,14 @@ const productFieldsInitialState = {
 const AddEditProduct = ({ isEdit }) => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
+  const [files, setFiles] = useState([]);
 
   const { productId } = useParams();
 
-  const [files, setFiles] = useState([]);
+  const barCodeRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({ contentRef: barCodeRef });
+
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
       return {
@@ -99,7 +103,7 @@ const AddEditProduct = ({ isEdit }) => {
       const loadFiles = async () => {
         const apiFiles: any = await Promise.all(
           product?.images?.map(async (file, index) => {
-            const fullUrl = `${API_URL}${file.imageUrl}`;
+            const fullUrl = `${import.meta.env.VITE_API_URL}${file.imageUrl}`;
             const fetchedFile = await urlToFile(fullUrl, `image-${index}.jpg`);
             return Object.assign(fetchedFile, { preview: fullUrl });
           })
@@ -269,7 +273,10 @@ const AddEditProduct = ({ isEdit }) => {
                   className="form-control"
                   placeholder="Enter NFC ID"
                   value={productFields.nfcId}
-                  onChange={(e) => handleProductField("nfcId", e.target.value)}
+                  onChange={(e) => {
+                    const noSpaces = e.target.value.replace(/\s/g, "");
+                    handleProductField("nfcId", noSpaces);
+                  }}
                 />
               </div>
             </div>
@@ -381,10 +388,17 @@ const AddEditProduct = ({ isEdit }) => {
                 <span className="title">Barcode</span>
               </div>
 
-              <Barcode className="barCode " value={generatedSKU} />
+              <div ref={barCodeRef} className="barCodeWrapper">
+                <Barcode className="barCode" value={generatedSKU} />
+              </div>
 
               <div className="actionsContainer">
-                <AiFillPrinter />
+                <AiFillPrinter
+                  className="icon"
+                  onClick={() => {
+                    handlePrint();
+                  }}
+                />
               </div>
             </div>
           )}

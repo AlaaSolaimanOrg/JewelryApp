@@ -1,14 +1,16 @@
 // axiosConfig.js
 import axios from "axios";
-import { API_HEADERS, API_TIMEOUT, API_URL } from "../config/config";
 import { callRefreshToken } from "../apis/login.api/login.api";
 import { checkRequestSucceeded, showError } from "../utils";
 
+console.log("import.meta.env.VITE_API_URL",import.meta.env.VITE_API_URL)
 export const axiosInstance = axios.create({
-  baseURL: API_URL,
-  timeout: API_TIMEOUT,
-  headers: API_HEADERS,
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: import.meta.env.VITE_API_TIMEOUT,
+  headers: { "Content-Type": "application/json" },
 });
+
+console.log("import.meta.env.MODE", import.meta.env.MODE);
 
 // Attach access token from localStorage/sessionStorage to all requests
 axiosInstance.interceptors.request.use(

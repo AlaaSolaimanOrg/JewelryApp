@@ -45,7 +45,7 @@ const AdminLayout = () => (
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.VITE_ROUTE_PREFIX }>
       <Routes>
         <Route
           element={

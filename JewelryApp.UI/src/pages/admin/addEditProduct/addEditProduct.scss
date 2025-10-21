@@ -215,6 +215,19 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      .icon {
+        font-size: 40px;
+        color: var(--gold);
+        cursor: pointer;
+      }
     }
+  }
+}
+
+@media print {
+  .barCodeWrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }

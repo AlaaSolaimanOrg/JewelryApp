@@ -6,7 +6,7 @@ import {
   FaPlus,
   FaSearch,
   FaTag,
-  FaTrash
+  FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,7 +22,6 @@ import ScanModal from "../../../components/ScanModal/ScanModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
-import { API_URL } from "../../../config/config";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   KaratType,
@@ -38,6 +37,7 @@ export interface Product {
   name?: string;
   karatType: KaratType;
   weight: number;
+  nfcId: string;
   category: ProductCategory;
   productType: ProductType;
   description?: string;
@@ -66,9 +66,6 @@ const Inventory = () => {
     priceFrom: 0,
     priceTo: 999999,
     category: null,
-    // ringSize: "Any",
-    // necklaceLength: "Any",
-    // tags: [],
   });
 
   const {
@@ -98,17 +95,17 @@ const Inventory = () => {
     { key: "price", label: "Price", width: "100px" },
     { key: "quantity", label: "Quantity", width: "100px" },
     { key: "sku", label: "SKU", width: "120px" },
+    { key: "nfcId", label: "NFC Id", width: "150px" },
     { key: "karat", label: "Karat", width: "80px" },
     { key: "weight", label: "Weight", width: "100px" },
     { key: "category", label: "Category", width: "150px" },
-    { key: "tags", label: "Tags", width: "150px" },
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
   const data = products?.map((product) => ({
     Image: (
       <img
-        src={`${API_URL}${product.images[0]?.imageUrl}`}
+        src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
         alt={product.name ?? ""}
         style={{
           width: "40px",
@@ -122,6 +119,7 @@ const Inventory = () => {
     Price: product.price,
     ProductName: product.name,
     SKU: product.sku,
+    nfcId: product.nfcId,
     Karat: `${product.karatType}K`,
     Weight: `${product.weight}g`,
     Category: ProductCategory[product.category],
@@ -189,15 +187,6 @@ const Inventory = () => {
           >
             <FaPlus className="me-1" /> Add Product
           </button>
-          {/* <button className="btn-md btn-gray">
-            <FaExchangeAlt className="me-1" /> Stock In/Out
-          </button>
-          <button className="btn-md btn-gray">
-            <FaTags className="me-1" /> Print Tags
-          </button>
-          <button className="btn-md btn-gray">
-            <FaFileExport className="me-1" /> Export
-          </button> */}
         </div>
       </div>
 

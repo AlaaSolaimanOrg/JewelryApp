@@ -32,8 +32,6 @@ interface Customer {
   email: string;
   phoneNumber: string;
   birthday: string;
-  totalSpent: number;
-  lastPurchase: string;
 }
 const Customers = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
@@ -81,8 +79,14 @@ const Customers = () => {
         handleSort("email", sortCriteria, onSortChange);
       },
     },
-    { key: "totalSpent", label: "Total Spent", width: "120px" },
-    { key: "lastPurchase", label: "Last Purchase", width: "150px" },
+    {
+      key: "birthday",
+      label: "birthday",
+      width: "250px",
+      onHeaderClick: () => {
+        handleSort("birthday", sortCriteria, onSortChange);
+      },
+    },
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
@@ -115,12 +119,7 @@ const Customers = () => {
       name: customer.name,
       phoneNumber: customer.phoneNumber,
       email: customer.email || "—",
-      totalSpent: customer.totalSpent
-        ? `$${customer.totalSpent.toFixed(2)}`
-        : "-",
-      lastPurchase: customer.lastPurchase
-        ? new Date(customer.lastPurchase).toLocaleDateString()
-        : "-",
+      birthday: customer.birthday || "—",
       actions: (
         <>
           <button
