@@ -19,6 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
+var basePath = configuration["BasePath"] ?? "/api";
+
 builder.Services.AddHttpClient();
 
 
@@ -123,7 +125,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UsePathBase("/api");
+app.UsePathBase(basePath);
 app.UseRouting();
 
 // Seed Admin user
@@ -141,14 +143,14 @@ app.UseSwagger(c =>
     {
         swagger.Servers = new List<OpenApiServer>
         {
-            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}/api" }
+            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" }
         };
     });
 });
 
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Jewelry API v1");
+    c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", "Jewelry API v1");
     c.RoutePrefix = "swagger";
 });
 
