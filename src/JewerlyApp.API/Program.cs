@@ -7,6 +7,7 @@ using JewerlyApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -25,7 +26,9 @@ builder.Services.AddHttpClient();
 builder.Services.AddHealthChecks()
     .AddCheck<CustomHealthCheck>("Custom API Check")
     .AddCheck<InternalResourcesHealthCheck>("Internal health check")
-    .AddCheck<SqlServerHealthCheck>("SQL Server");
+    .AddCheck<SqlServerHealthCheck>("SQL Server")
+    .AddCheck("Environment", () =>
+        HealthCheckResult.Healthy($"Environment: {builder.Environment.EnvironmentName}"));
 
 
 builder.Services.AddApplicationServices();
