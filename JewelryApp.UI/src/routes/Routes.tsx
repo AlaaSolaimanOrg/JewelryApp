@@ -1,31 +1,43 @@
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import AddEditProduct from "../pages/admin/addEditProduct/AddEditProduct";
-import AddEditStaff from "../pages/admin/addStaff/AddEditStaff";
-import AdminHeader from "../pages/admin/adminHeader/AdminHeader";
-import Customers from "../pages/admin/customers/Customers";
-import Dashboard from "../pages/admin/dashboard/Dashboard";
-import ExportData from "../pages/admin/exportData/ExportData";
-import Inventory from "../pages/admin/inventory/Inventory";
-import Pricing from "../pages/admin/pricing/Pricing";
-import TagPrinting from "../pages/admin/printTags/TagPrinting";
-import SalesReports from "../pages/admin/salesReport/SalesReports";
-import Settings from "../pages/admin/settings/Settings";
-import SideNav from "../pages/admin/sidenav/Sidenav";
-import Staff from "../pages/admin/staff/Staff";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Header from "../pages/newPos/header/Header";
-import Home from "../pages/newPos/home/Home";
-import MainPosPage from "../pages/newPos/posSale/PosSale";
-import Receipt from "../pages/newPos/receipt/Receipt";
-import TransactionHistory from "../pages/newPos/transactionHistory/TransactionHistory";
-import ReceiptDelivery from "../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery";
+
+// Lazy load all components
+const AddEditProduct = lazy(() => import("../pages/admin/addEditProduct/AddEditProduct"));
+const AddEditStaff = lazy(() => import("../pages/admin/addStaff/AddEditStaff"));
+const AdminHeader = lazy(() => import("../pages/admin/adminHeader/AdminHeader"));
+const Customers = lazy(() => import("../pages/admin/customers/Customers"));
+const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
+const ExportData = lazy(() => import("../pages/admin/exportData/ExportData"));
+const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
+const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
+const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
+const SalesReports = lazy(() => import("../pages/admin/salesReport/SalesReports"));
+const Settings = lazy(() => import("../pages/admin/settings/Settings"));
+const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
+const Staff = lazy(() => import("../pages/admin/staff/Staff"));
+const Header = lazy(() => import("../pages/newPos/header/Header"));
+const Home = lazy(() => import("../pages/newPos/home/Home"));
+const MainPosPage = lazy(() => import("../pages/newPos/posSale/PosSale"));
+const Receipt = lazy(() => import("../pages/newPos/receipt/Receipt"));
+const TransactionHistory = lazy(() => import("../pages/newPos/transactionHistory/TransactionHistory"));
+const ReceiptDelivery = lazy(() => import("../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery"));
+
+// Loading component for Suspense fallback
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="text-lg">Loading...</div>
+  </div>
+);
 
 // POS Layout (includes POS Header)
 const POSLayout = () => (
   <>
-    <Header />
+    <Suspense fallback={<LoadingFallback />}>
+      <Header />
+    </Suspense>
     <main>
       <Outlet />
     </main>
@@ -35,8 +47,10 @@ const POSLayout = () => (
 // Admin Layout (can add AdminHeader/Sidebar if needed)
 const AdminLayout = () => (
   <div className="adminLayoutContainer">
-    <SideNav />
-    <AdminHeader />
+    <Suspense fallback={<LoadingFallback />}>
+      <SideNav />
+      <AdminHeader />
+    </Suspense>
     <main className="adminLayout-main">
       <Outlet />
     </main>
@@ -45,65 +59,62 @@ const AdminLayout = () => (
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter basename={import.meta.env.VITE_ROUTE_PREFIX }>
-      <Routes>
-        <Route
-          element={
-            <ProtectedRoute allowedRoles={["PosRole"]}>
-              <POSLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/" element={<Home />} />
-          <Route path="/sale" element={<MainPosPage />} />
-          {/* <Route path="/productLookup" element={<ProductLookup />} />
-          <Route path="/cartSummary" element={<CartSummary />} />
-          <Route path="/manualItemEntry" element={<ManualItemEntry />} />
-          <Route path="/applyDiscount" element={<ApplyDiscount />} />
-          <Route path="/payment" element={<Payment />} /> */}
-          <Route path="/transactionHistory" element={<TransactionHistory />} />
-          <Route path="/receipt/:saleId" element={<Receipt />} />
-          <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
-        </Route>
+    <BrowserRouter basename={import.meta.env.VITE_ROUTE_PREFIX}>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["PosRole"]}>
+                <POSLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/" element={<Home />} />
+            <Route path="/sale" element={<MainPosPage />} />
+            <Route path="/transactionHistory" element={<TransactionHistory />} />
+            <Route path="/receipt/:saleId" element={<Receipt />} />
+            <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
+          </Route>
 
-        <Route
-          element={
-            <ProtectedRoute allowedRoles={["Admin", "Admin2"]}>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="admin/dashboard" element={<Dashboard />} />
-          <Route path="admin/inventory" element={<Inventory />} />
-          <Route path="admin/pricing" element={<Pricing />} />
-          <Route path="admin/sales-reports" element={<SalesReports />} />
-          <Route path="admin/customers" element={<Customers />} />
-          <Route path="admin/staff" element={<Staff />} />
-          <Route path="admin/settings" element={<Settings />} />
-          <Route path="admin/print-tags" element={<TagPrinting />} />
-          <Route path="admin/export-data" element={<ExportData />} />
           <Route
-            path="admin/addProduct"
-            element={<AddEditProduct isEdit={false} />}
-          />
-          <Route
-            path="admin/editProduct/:productId"
-            element={<AddEditProduct isEdit={true} />}
-          />
-          <Route
-            path="admin/addStaff"
-            element={<AddEditStaff isEdit={false} />}
-          />
-          <Route
-            path="admin/editStaff/:userId"
-            element={<AddEditStaff isEdit={true} />}
-          />
-        </Route>
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Admin2"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="admin/dashboard" element={<Dashboard />} />
+            <Route path="admin/inventory" element={<Inventory />} />
+            <Route path="admin/pricing" element={<Pricing />} />
+            <Route path="admin/sales-reports" element={<SalesReports />} />
+            <Route path="admin/customers" element={<Customers />} />
+            <Route path="admin/staff" element={<Staff />} />
+            <Route path="admin/settings" element={<Settings />} />
+            <Route path="admin/print-tags" element={<TagPrinting />} />
+            <Route path="admin/export-data" element={<ExportData />} />
+            <Route
+              path="admin/addProduct"
+              element={<AddEditProduct isEdit={false} />}
+            />
+            <Route
+              path="admin/editProduct/:productId"
+              element={<AddEditProduct isEdit={true} />}
+            />
+            <Route
+              path="admin/addStaff"
+              element={<AddEditStaff isEdit={false} />}
+            />
+            <Route
+              path="admin/editStaff/:userId"
+              element={<AddEditStaff isEdit={true} />}
+            />
+          </Route>
 
-        <Route path="admin/" element={<Login />} />
-        <Route path="login" element={<Login />} />
-        <Route path="unauthorized" element={<Unauthorized />} />
-      </Routes>
+          <Route path="admin/" element={<Login />} />
+          <Route path="login" element={<Login />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };

@@ -11,7 +11,7 @@ const Unauthorized = () => {
           style={{ marginBottom: "1.5rem" }}
         >
           <img src={logo} alt="Logo" width={36} height={32} />
-          <h1>GoldCraft POS</h1>
+          <h1>Adi Jewelary POS</h1>
         </div>
         <h2>Unauthorized Access</h2>
         <p>You do not have permission to view this page.</p>

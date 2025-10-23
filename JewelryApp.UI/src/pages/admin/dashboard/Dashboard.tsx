@@ -15,6 +15,7 @@ import {
   FaWeightHanging,
 } from "react-icons/fa";
 import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
+import { KaratType } from "../../../types/enums";
 
 export interface DashboardInsights {
   salesToday: {
@@ -86,6 +87,9 @@ const Dashboard = () => {
   const { salesToday, stockValue, customers, itemsSold, stockWeightByKarat } =
     dashboardInsights;
 
+  console.log("stockWeightByKarat", stockWeightByKarat);
+  console.log("Object.values(KaratType)", Object.values(KaratType));
+
   return (
     <div id="dashboard" className="page active">
       <div className="page-header">
@@ -108,14 +112,17 @@ const Dashboard = () => {
               <FaShoppingBag className="icon" />
             </div>
           </div>
-          <div className="kpi-value">{formatCurrency(salesToday?.amount)}</div>
+          <div className="kpi-value">
+            {formatCurrency(salesToday?.amount ?? 0)}
+          </div>
           <div className={`kpi-trend ${salesToday?.isIncrease ? "" : "down"}`}>
             {salesToday?.isIncrease ? (
               <FaArrowUp className="icon" />
             ) : (
               <FaArrowDown className="icon" />
             )}
-            {Math.abs(salesToday?.changePercentage).toFixed(1)}% from yesterday
+            {Math.abs(salesToday?.changePercentage ?? 0).toFixed(1)}% from
+            yesterday
           </div>
         </div>
 
@@ -126,7 +133,7 @@ const Dashboard = () => {
               <FaGem className="icon" />
             </div>
           </div>
-          <div className="kpi-value">{formatCurrency(stockValue)}</div>
+          <div className="kpi-value">{formatCurrency(stockValue ?? 0)}</div>
         </div>
 
         <div className="kpi-card">
@@ -136,14 +143,15 @@ const Dashboard = () => {
               <FaUsers className="icon" />
             </div>
           </div>
-          <div className="kpi-value">{formatNumber(customers?.count)}</div>
+          <div className="kpi-value">{formatNumber(customers?.count ?? 0)}</div>
           <div className={`kpi-trend ${customers?.isIncrease ? "" : "down"}`}>
             {customers?.isIncrease ? (
               <FaArrowUp className="icon" />
             ) : (
               <FaArrowDown className="icon" />
             )}
-            {Math.abs(customers?.changePercentage).toFixed(1)}% from last week
+            {Math.abs(customers?.changePercentage ?? 0).toFixed(1)}% from last
+            week
           </div>
         </div>
 
@@ -154,14 +162,15 @@ const Dashboard = () => {
               <FaShoppingCart className="icon" />
             </div>
           </div>
-          <div className="kpi-value">{formatNumber(itemsSold?.count)}</div>
+          <div className="kpi-value">{formatNumber(itemsSold?.count ?? 0)}</div>
           <div className={`kpi-trend ${itemsSold?.isIncrease ? "" : "down"}`}>
             {itemsSold?.isIncrease ? (
               <FaArrowUp className="icon" />
             ) : (
               <FaArrowDown className="icon" />
             )}
-            {Math.abs(itemsSold?.changePercentage).toFixed(1)}% from yesterday
+            {Math.abs(itemsSold?.changePercentage ?? 0).toFixed(1)}% from
+            yesterday
           </div>
         </div>
       </div>
@@ -169,20 +178,31 @@ const Dashboard = () => {
       <div className="stock-weight-section">
         <h3 className="section-title">Total Stock Weight</h3>
         <div className="stock-weight-grid">
-          {stockWeightByKarat?.map((stockWeight) => (
-            <div key={stockWeight.karatType} className="weight-card">
-              <div className="weight-header">
-                <div className="weight-title">
-                  <span className="mr-2">Total Stock Weight</span>
-                  <span className="karatType">{stockWeight?.karatType}K</span>
+          {Object.values(KaratType)
+            ?.filter((v) => typeof v === "number")
+            ?.map((karatType) => {
+              console.log("karatType", karatType);
+              const stockWeight = stockWeightByKarat?.find(
+                (stockWeight) => stockWeight.karatType == karatType
+              );
+
+              return (
+                <div key={karatType} className="weight-card">
+                  <div className="weight-header">
+                    <div className="weight-title">
+                      <span className="mr-2">Total Stock Weight</span>
+                      <span className="karatType">
+                        {karatType}K
+                      </span>
+                    </div>
+                    <FaWeightHanging className="icon me-2" />
+                  </div>
+                  <div className="weight-value">
+                    {formatNumber(stockWeight?.weight ?? 0)} g
+                  </div>
                 </div>
-                <FaWeightHanging className="icon me-2" />
-              </div>
-              <div className="weight-value">
-                {formatNumber(stockWeight?.weight)} g
-              </div>
-            </div>
-          ))}
+              );
+            })}
         </div>
       </div>
 
