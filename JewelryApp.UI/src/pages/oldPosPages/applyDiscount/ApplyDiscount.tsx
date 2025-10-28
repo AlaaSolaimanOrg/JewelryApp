@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaRing, FaTag, FaTimes } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import "./applyDiscount.scss";
-import type { CartProduct } from "../cartSummary/CartSummary";
-import useLocalApi from "../../../hooks/useLocalApi";
 import { getCartProducts } from "../../../apis/cart.api/cart.api";
-import { OrderDiscount } from "../../../types/enums";
 import type { TableHeader } from "../../../components/Table/CustomTable";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { OrderDiscount } from "../../../types/enums";
+import type { CartProduct } from "../cartSummary/CartSummary";
+import "./applyDiscount.scss";
 
 interface EditableCartProduct {
   productId: string;

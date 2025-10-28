@@ -5,8 +5,7 @@ import {
   FaEdit,
   FaPlus,
   FaSearch,
-  FaTag,
-  FaTrash,
+  FaTrash
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
