@@ -122,7 +122,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       name: name,
       email: email,
       phoneNumber: phoneNumber,
-      birthday: birthday,
+      birthday: birthday ? birthday : null,
     };
 
     createCustomer(payload)

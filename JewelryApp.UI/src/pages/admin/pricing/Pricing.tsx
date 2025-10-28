@@ -8,7 +8,7 @@ import {
 import PricingCard from "../../../components/PricingCard/PricingCard";
 import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Currency, KaratType, ProductType } from "../../../types/enums";
 import {
   checkRequestSucceeded,
@@ -36,7 +36,7 @@ interface MetalPricing {
 }
 
 const Pricing = () => {
-  const [prices, setPrices] = useState<PriceItem[]>([
+  const [initialPrices, setInitialPrices] = useState<PriceItem[]>([
     {
       productType: ProductType.Gold,
       karatType: KaratType.Karat18,
@@ -79,6 +79,8 @@ const Pricing = () => {
     },
   ]);
 
+  const [prices, setPrices] = useState<PriceItem[]>([...initialPrices]);
+
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {
       productType: ProductType.Gold,
@@ -101,6 +103,20 @@ const Pricing = () => {
       pricePerGram: 0,
     },
   ]);
+
+  // Check if prices have changed
+  const hasChanges = useMemo(() => {
+    if (initialPrices.length !== prices.length) return true;
+    
+    return prices.some((currentPrice, index) => {
+      const initialPrice = initialPrices[index];
+      return (
+        currentPrice.pricePerGram !== initialPrice.pricePerGram ||
+        currentPrice.productType !== initialPrice.productType ||
+        currentPrice.karatType !== initialPrice.karatType
+      );
+    });
+  }, [prices, initialPrices]);
 
   const handlePriceChange = (productType, karatType, value) => {
     setPrices((prev) =>
@@ -143,67 +159,49 @@ const Pricing = () => {
   };
 
   useEffect(() => {
-    const newPrices = prices.map((oldPrice) => {
-      const newPriceSetting = pricingSettings.find(
-        (priceSetting) =>
-          priceSetting.productType == oldPrice.productType &&
-          priceSetting.karatType == oldPrice.karatType
-      );
+    if (pricingSettings && pricingSettings.length > 0) {
+      const newPrices = initialPrices.map((oldPrice) => {
+        const newPriceSetting = pricingSettings.find(
+          (priceSetting) =>
+            priceSetting.productType == oldPrice.productType &&
+            priceSetting.karatType == oldPrice.karatType
+        );
 
-      return newPriceSetting ?? oldPrice;
-    });
-    setPrices(newPrices);
+        return newPriceSetting ?? oldPrice;
+      });
+      
+      setPrices(newPrices);
+      setInitialPrices(newPrices); // Set both current and initial prices
+    }
   }, [pricingSettings]);
 
   useEffect(() => {
-    setGlobalGoldPrices([
-      {
-        productType: ProductType.Gold,
-        karatType: KaratType.Karat18,
-        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_18k, 0),
-      },
-      {
-        productType: ProductType.Gold,
-        karatType: KaratType.Karat21,
-        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_21k, 0),
-      },
-      {
-        productType: ProductType.Gold,
-        karatType: KaratType.Karat22,
-        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_22k, 0),
-      },
-      {
-        productType: ProductType.Gold,
-        karatType: KaratType.Karat24,
-        pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_24k, 0),
-      },
-    ]);
+    if (goldGlobalPricingSettings) {
+      const newGlobalPrices = [
+        {
+          productType: ProductType.Gold,
+          karatType: KaratType.Karat18,
+          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_18k, 0),
+        },
+        {
+          productType: ProductType.Gold,
+          karatType: KaratType.Karat21,
+          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_21k, 0),
+        },
+        {
+          productType: ProductType.Gold,
+          karatType: KaratType.Karat22,
+          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_22k, 0),
+        },
+        {
+          productType: ProductType.Gold,
+          karatType: KaratType.Karat24,
+          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_24k, 0),
+        },
+      ];
+      setGlobalGoldPrices(newGlobalPrices);
+    }
   }, [goldGlobalPricingSettings]);
-
-  // useEffect(() => {
-  //   setGlobalSilverPrices([
-  //     {
-  //       productType: ProductType.Silver,
-  //       karatType: KaratType.Karat18,
-  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_18k, 0),
-  //     },
-  //     {
-  //       productType: ProductType.Silver,
-  //       karatType: KaratType.Karat21,
-  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_21k, 0),
-  //     },
-  //     {
-  //       productType: ProductType.Silver,
-  //       karatType: KaratType.Karat22,
-  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_22k, 0),
-  //     },
-  //     {
-  //       productType: ProductType.Silver,
-  //       karatType: KaratType.Karat24,
-  //       pricePerGram: safeValue(silverGlobalPricingSettings.price_gram_24k, 0),
-  //     },
-  //   ]);
-  // }, [silverGlobalPricingSettings]);
 
   const callEditPrice = (prices) => {
     const payload = {
@@ -213,6 +211,7 @@ const Pricing = () => {
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
+          setInitialPrices(prices); // Update initial prices after successful save
         } else {
           showError(response?.message);
         }
@@ -234,8 +233,13 @@ const Pricing = () => {
           <span>Pricing Control</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gold" onClick={handleApplyPrices}>
-            <FaSyncAlt className="me-1" /> Apply Prices
+          <button 
+            className={`btn-md ${hasChanges ? 'btn-gold' : 'btn-dark'}`} 
+            onClick={handleApplyPrices}
+            disabled={!hasChanges}
+          >
+            <FaSyncAlt className="me-1" /> 
+            {hasChanges ? 'Apply Prices' : 'No Changes'}
           </button>
         </div>
       </div>

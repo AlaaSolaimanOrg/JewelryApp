@@ -5,7 +5,7 @@ export const createCustomer = async (payload: {
   name: string;
   email: string;
   phoneNumber: string;
-  birthday: string;
+  birthday: string | null;
 }) => {
   return requestApi("POST", apiRoutes.customers.createCustomer, payload);
 };
