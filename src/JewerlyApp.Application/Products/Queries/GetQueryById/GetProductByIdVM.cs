@@ -12,6 +12,8 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
     {
         public Guid Id { get; set; }
         public string Sku { get; set; }
+        public string? NFCId { get; set; } = string.Empty;
+
         public string? Name { get; set; }
         public int? Quantity { get; set; }
         public KaratType KaratType { get; set; }

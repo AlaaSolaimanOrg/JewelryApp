@@ -4,7 +4,7 @@ import { AiFillPrinter } from "react-icons/ai";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { IoBarcodeSharp } from "react-icons/io5";
 import { TbCirclePlusFilled } from "react-icons/tb";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   createProduct,
   editProduct,
@@ -38,6 +38,7 @@ const productFieldsInitialState = {
 };
 
 const AddEditProduct = ({ isEdit }) => {
+  const navigate = useNavigate();
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
@@ -120,6 +121,9 @@ const AddEditProduct = ({ isEdit }) => {
   }, [generatedSKU]);
 
   const handleCancelAddProduct = () => {
+    if (isEdit) {
+      navigate("/admin/addProduct");
+    }
     setProductFields(productFieldsInitialState);
     setFiles([]);
     setGeneratedSKU(null);

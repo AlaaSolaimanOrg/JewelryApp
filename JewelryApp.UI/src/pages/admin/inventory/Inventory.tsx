@@ -28,7 +28,12 @@ import {
   ProductCategory,
   type ProductType,
 } from "../../../types/enums";
-import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import {
+  checkRequestSucceeded,
+  handleSort,
+  showError,
+  showSuccess,
+} from "../../../utils";
 import "./inventory.scss";
 
 export interface Product {
@@ -72,6 +77,8 @@ const Inventory = () => {
     data: products,
     isLoading: isLoadingProducts,
     fetchData: recallGetProducts,
+    sortCriteria,
+    onSortChange,
     onSearchChange,
     onPaginationChange,
     pagination,
@@ -91,14 +98,68 @@ const Inventory = () => {
 
   const headers: TableHeader[] = [
     { key: "image", label: "Image", width: "100px" },
-    { key: "productName", label: "Product Name", width: "250px" },
-    { key: "price", label: "Price", width: "100px" },
-    { key: "quantity", label: "Quantity", width: "100px" },
-    { key: "sku", label: "SKU", width: "120px" },
-    { key: "nfcId", label: "NFC Id", width: "150px" },
-    { key: "karat", label: "Karat", width: "80px" },
-    { key: "weight", label: "Weight", width: "100px" },
-    { key: "category", label: "Category", width: "150px" },
+    {
+      key: "productName",
+      label: "Product Name",
+      width: "250px",
+      onHeaderClick: () => {
+        handleSort("Name", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "price",
+      label: "Price",
+      width: "100px",
+      sortable: false,
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+      width: "100px",
+      onHeaderClick: () => {
+        handleSort("quantity", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "sku",
+      label: "SKU",
+      width: "120px",
+      onHeaderClick: () => {
+        handleSort("sku", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "nfcId",
+      label: "NFC Id",
+      width: "150px",
+      onHeaderClick: () => {
+        handleSort("nfcId", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "karat",
+      label: "Karat",
+      width: "80px",
+      onHeaderClick: () => {
+        handleSort("KaratType", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "weight",
+      label: "Weight",
+      width: "100px",
+      onHeaderClick: () => {
+        handleSort("weight", sortCriteria, onSortChange);
+      },
+    },
+    {
+      key: "category",
+      label: "Category",
+      width: "150px",
+      onHeaderClick: () => {
+        handleSort("category", sortCriteria, onSortChange);
+      },
+    },
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
@@ -131,9 +192,6 @@ const Inventory = () => {
           onClick={() => handleEditProduct(product.id)}
         >
           <FaEdit />
-        </button>
-        <button className="action-btn" title="Print Tag">
-          <FaTag />
         </button>
         <button
           className="action-btn danger"

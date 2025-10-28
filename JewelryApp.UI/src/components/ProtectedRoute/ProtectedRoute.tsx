@@ -3,6 +3,7 @@ import React, { type JSX } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Spinner } from "react-bootstrap";
+import Loader from "../Loader/Loader";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -25,7 +26,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (isLoading) {
     return (
       <div>
-        <Spinner animation="border" variant="primary" />
+        <Loader size="large" text="Loading..." className="loader-fullpage" />
       </div>
     );
   }

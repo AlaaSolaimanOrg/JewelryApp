@@ -162,24 +162,30 @@ const CustomerSection: React.FC<Props> = ({
               />
               <span id="customerName">{customer.name}</span>
             </div>
-            <div className="customer-detail">
-              <FaEnvelope
-                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
-              />
-              <span id="customerEmail">{customer.email ?? "-"}</span>
-            </div>
-            <div className="customer-detail">
-              <FaPhone
-                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
-              />
-              <span id="customerPhone">{customer.phoneNumber ?? "-"}</span>
-            </div>
-            <div className="customer-detail">
-              <FaBirthdayCake
-                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
-              />
-              <span id="customerBirthday">{customer.birthday ?? "-"}</span>
-            </div>
+            {customer.email && (
+              <div className="customer-detail">
+                <FaEnvelope
+                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                />
+                <span id="customerEmail">{customer.email ?? "-"}</span>
+              </div>
+            )}
+            {customer.phoneNumber && (
+              <div className="customer-detail">
+                <FaPhone
+                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                />
+                <span id="customerPhone">{customer.phoneNumber ?? "-"}</span>
+              </div>
+            )}
+            {customer.birthday && (
+              <div className="customer-detail">
+                <FaBirthdayCake
+                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                />
+                <span id="customerBirthday">{customer.birthday ?? "-"}</span>
+              </div>
+            )}
           </div>
         </div>
       )}

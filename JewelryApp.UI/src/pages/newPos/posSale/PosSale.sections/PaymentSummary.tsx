@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 interface Props {
   subtotal: number;
   discount: number;
@@ -15,6 +17,7 @@ const PaymentSummary: React.FC<Props> = ({
   handleCreateSale,
   canSaveSale,
 }) => {
+  const navigate = useNavigate();
   return (
     <section className="payment-section">
       <h2 className="section-title">Payment</h2>
@@ -47,7 +50,14 @@ const PaymentSummary: React.FC<Props> = ({
         >
           Save Sale
         </button>
-        <button className="cancel-btn">Cancel</button>
+        <button
+          className="cancel-btn"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          Cancel
+        </button>
       </div>
     </section>
   );
