@@ -109,6 +109,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Quantity = product.Quantity,
                     KaratType = product.KaratType,
                     Weight = product.Weight,
+                    NFCId = product.NFCId,
                     Category = product.Category,
                     ProductType = product.Type,
                     Description = product.Description,

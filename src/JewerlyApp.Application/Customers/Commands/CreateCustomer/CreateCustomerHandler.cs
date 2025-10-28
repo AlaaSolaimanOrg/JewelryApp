@@ -23,8 +23,10 @@ namespace JewerlyApp.Application.Customers.Commands.CreateCustomer
         public async Task<GenericResponse<Guid>> Handle(CreateCustomerCommand request, CancellationToken cancellationToken)
         {
             var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.Email == request.Email || c.PhoneNumber == request.PhoneNumber, cancellationToken);
-
+                  .FirstOrDefaultAsync(c =>
+        (!string.IsNullOrEmpty(request.Email) && c.Email == request.Email) ||
+        (!string.IsNullOrEmpty(request.PhoneNumber) && c.PhoneNumber == request.PhoneNumber),
+        cancellationToken);
             if (existingCustomer != null)
             {
                 return new GenericResponse<Guid>
