@@ -29,7 +29,7 @@ const productFieldsInitialState = {
   productName: "",
   SKU: "",
   karat: "",
-  productType: "",
+  productType: ProductType.Gold,
   weight: "",
   category: "",
   description: "",

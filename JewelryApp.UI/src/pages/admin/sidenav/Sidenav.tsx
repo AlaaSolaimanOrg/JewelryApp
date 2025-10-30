@@ -3,11 +3,12 @@ import {
   FaBox,
   FaChartLine,
   FaGem,
-  FaPlus,
   FaTag,
   FaUser,
-  FaUsers
+  FaUsers,
 } from "react-icons/fa";
+import { MdOutlineAddShoppingCart } from "react-icons/md";
+import { TiUserAdd } from "react-icons/ti";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import "./sidenav.scss";
@@ -64,12 +65,12 @@ const SideNav = () => {
     // },
     {
       label: "Add Product",
-      icon: <FaPlus className="icon" />,
+      icon: <MdOutlineAddShoppingCart className="icon addIcon" />,
       path: "/admin/addProduct",
     },
     {
       label: "Add Staff",
-      icon: <FaPlus className="icon" />,
+      icon: <TiUserAdd className="icon addIcon" />,
       path: "/admin/addStaff",
     },
   ];
