@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { FaSave, FaTimes } from "react-icons/fa";
-import { TbCirclePlusFilled } from "react-icons/tb";
+import { TiUserAdd } from "react-icons/ti";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   createUser,
-  updateUser,
-  getUserById,
   getAllRoles,
+  getUserById,
+  updateUser,
 } from "../../../apis/users.api/users.api";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { useNavigate, useParams } from "react-router-dom";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import "./addEditStaff.scss";
 
 const staffFieldsInitialState = {
@@ -149,7 +149,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     <div id="add-staff-page" className="page">
       <div className="page-header">
         <h1 className="page-title ">
-          <TbCirclePlusFilled className="icon" />
+          <TiUserAdd className="icon" />
           {isEdit ? <span>Edit Staff Member</span> : <span>Add New Staff</span>}
         </h1>
         <div className="page-actions">

@@ -3,8 +3,9 @@ import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { IoBarcodeSharp } from "react-icons/io5";
-import { TbCirclePlusFilled } from "react-icons/tb";
+import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import {
   createProduct,
   editProduct,
@@ -23,7 +24,6 @@ import {
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
-import { useReactToPrint } from "react-to-print";
 
 const productFieldsInitialState = {
   productName: "",
@@ -188,7 +188,7 @@ const AddEditProduct = ({ isEdit }) => {
     <div id="add-product-page" className="page">
       <div className="page-header">
         <h1 className="page-title ">
-          <TbCirclePlusFilled className="icon" />
+          <MdOutlineAddShoppingCart className="icon" />
           {isEdit ? <span>Edit Product</span> : <span>Add New Product</span>}
         </h1>
         <div className="page-actions">
