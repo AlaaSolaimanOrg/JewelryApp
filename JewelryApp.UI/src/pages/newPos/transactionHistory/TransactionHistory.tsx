@@ -115,7 +115,7 @@ const TransactionHistory = () => {
       <div className="transactionHistoryCard">
         <div className="transactionHistoryCard-header">
           <h3 className="transactionHistoryCard-title">
-            Transaction History ({pagination.totalRecords})
+            Transaction History ({pagination.totalRecords ?? 0})
           </h3>
         </div>
 

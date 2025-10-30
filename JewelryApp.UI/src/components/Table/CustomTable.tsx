@@ -47,7 +47,11 @@ const CustomTable: React.FC<CustomTableProps> = ({
         </thead>
         <tbody>
           {isLoading ? (
-            <CustomLoader />
+            <tr>
+              <td colSpan={headers.length}>
+                <CustomLoader />
+              </td>
+            </tr>
           ) : data?.length ? (
             data.map((row, rowIndex) => (
               <tr key={rowIndex}>

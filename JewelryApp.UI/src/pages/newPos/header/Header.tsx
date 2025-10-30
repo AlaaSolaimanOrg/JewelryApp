@@ -53,7 +53,7 @@ const Header = () => {
         <Link to={"/"} className="logo text-decoration-none">
           <img src={logo} alt="Logo" width={36} height={32} />
 
-          <h1>Adi Jewelary POS</h1>
+          <h1>Adi Jewelry POS</h1>
         </Link>
         <div className="nav-controls">
           <div className="user-info">

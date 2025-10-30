@@ -97,7 +97,7 @@ const SideNav = () => {
         </div>
         <div className="logo-text">
           <h1>
-            Gem<span>Luxe</span>
+            Adi<span> Jewelary</span>
           </h1>
           <small>Inventory System</small>
         </div>

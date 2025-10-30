@@ -36,7 +36,7 @@ const Home = () => {
         <div className="home-icon">
           <FaCashRegister />
         </div>
-        <h1 className="home-title">Adi Jewelary Point of Sale</h1>
+        <h1 className="home-title">Adi Jewelry Point of Sale</h1>
         <p className="home-subtitle">
           Efficiently manage your jewelry store sales with our specialized POS
           system. Scan gold items, calculate prices by weight, and process

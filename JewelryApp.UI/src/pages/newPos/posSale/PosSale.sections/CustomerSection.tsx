@@ -62,7 +62,7 @@ const CustomerSection: React.FC<Props> = ({
   return (
     <div id="customerSection">
       <header className="header">
-        <div className="logo">Adi Jewelary POS</div>
+        <div className="logo">Adi Jewelry POS</div>
         <div className="search-section">
           <AsyncSelect
             className="customerSearch"

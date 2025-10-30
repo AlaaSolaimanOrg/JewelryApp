@@ -71,7 +71,7 @@ const Login = () => {
       <div className="login-container">
         <div className="logo text-decoration-none">
           <img src={logo} alt="Logo" width={36} height={32} />
-          <h2>Adi Jewelary POS</h2>
+          <h2>Adi Jewelry POS</h2>
         </div>
         <h2>Login</h2>
 

@@ -69,7 +69,7 @@ const Receipt = () => {
 
       <div ref={contentRef} className="receipt-container">
         <div className="receipt-header">
-          <div className="receipt-title">Adi Jewelary</div>
+          <div className="receipt-title">Adi Jewelry</div>
           <div className="receipt-subtitle">
             123 Luxury Avenue, Diamond District
           </div>
