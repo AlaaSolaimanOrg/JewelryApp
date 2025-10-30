@@ -1,12 +1,6 @@
 import { useState } from "react";
-import { Stack } from "react-bootstrap";
-import {
-  FaBox,
-  FaEdit,
-  FaPlus,
-  FaSearch,
-  FaTrash
-} from "react-icons/fa";
+import { Col, Row, Stack } from "react-bootstrap";
+import { FaBox, FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   deleteProduct,
@@ -247,57 +241,63 @@ const Inventory = () => {
         </div>
       </div>
 
-      <div className="inventory-grid">
-        <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
+      <div>
+        <Row>
+          <Col md={12} lg={4} xl={3}>
+            <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
+          </Col>
 
-        <div className="inventory-content">
-          <div className="card">
-            <div className="card-header">
-              <h3 className="card-title">
-                Inventory Items ({pagination.totalRecords ?? 0})
-              </h3>
-              <Stack direction="horizontal" gap={4}>
-                <div className="search-bar" style={{ width: "250px" }}>
-                  <FaSearch className="icon me-1" />
-                  <input
-                    type="text"
-                    placeholder="Search inventory..."
-                    onChange={onSearchChange}
-                  />
+          <Col md={12} lg={8} xl={9}>
+            <div className="inventory-content">
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">
+                    Inventory Items ({pagination.totalRecords ?? 0})
+                  </h3>
+                  <Stack direction="horizontal" gap={4}>
+                    <div className="search-bar" style={{ width: "250px" }}>
+                      <FaSearch className="icon me-1" />
+                      <input
+                        type="text"
+                        placeholder="Search inventory..."
+                        onChange={onSearchChange}
+                      />
+                    </div>
+
+                    {scannedNfcIds.length ? (
+                      <button
+                        className="scan-btn"
+                        onClick={() => {
+                          setScannedNfcIds([]);
+                        }}
+                      >
+                        Reset Scanner
+                      </button>
+                    ) : (
+                      <button
+                        className="scan-btn"
+                        onClick={() => {
+                          setShowScanModal(true);
+                        }}
+                      >
+                        Scan Product
+                      </button>
+                    )}
+                  </Stack>
                 </div>
 
-                {scannedNfcIds.length ? (
-                  <button
-                    className="scan-btn"
-                    onClick={() => {
-                      setScannedNfcIds([]);
-                    }}
-                  >
-                    Reset Scanner
-                  </button>
-                ) : (
-                  <button
-                    className="scan-btn"
-                    onClick={() => {
-                      setShowScanModal(true);
-                    }}
-                  >
-                    Scan Product
-                  </button>
-                )}
-              </Stack>
+                <CustomTable data={data} headers={headers} />
+
+                <Paginator
+                  totalRecords={pagination.totalRecords}
+                  pageNumber={pagination.pageNumber}
+                  pageSize={pagination.pageSize}
+                  onPaginationChange={onPaginationChange}
+                />
+              </div>
             </div>
-
-            <CustomTable data={data} headers={headers} />
-
-            <Paginator
-              totalRecords={pagination.totalRecords}
-              pageNumber={pagination.pageNumber}
-              pageSize={pagination.pageSize}
-              onPaginationChange={onPaginationChange}
-            />
-          </div>
-        </div>
+          </Col>
+        </Row>
       </div>
 
       <ScanModal

@@ -245,7 +245,7 @@ const Pricing = () => {
       </div>
 
       <Row>
-        <Col sm={6}>
+        <Col sm={12} lg={6}>
           <PricingCard
             cardTitle="Gold Pricing"
             productType={ProductType.Gold}
@@ -256,7 +256,7 @@ const Pricing = () => {
             handleProductTypePrices={handleProductTypePrices}
           />
         </Col>
-        <Col sm={6}>
+        <Col sm={12} lg={6}>
           <PricingCard
             cardTitle="Global Gold Pricing"
             productType={ProductType.Gold}

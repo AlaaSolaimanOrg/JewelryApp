@@ -1,11 +1,17 @@
 /* Table Styles */
 .customTable {
+  width: 100%;
   overflow-x: auto;
+  overflow-y: hidden; // optional, keeps vertical stable
   border-radius: var(--card-radius);
   border: 1px solid var(--border);
 
+  // Enable scroll on mobile and tablets
+  -webkit-overflow-scrolling: touch;
+
   table {
     width: 100%;
+    min-width: 600px; // ✅ makes sure wide tables can scroll horizontally
     border-collapse: separate;
     border-spacing: 0;
   }
@@ -129,6 +135,15 @@
       font-weight: bold;
       font-size: 20px;
       background-color: rgba(212, 175, 55, 0.05);
+    }
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+
+    &-thumb {
+      background-color: var(--gold);
+      border-radius: 4px;
     }
   }
 }
