@@ -6,17 +6,21 @@ import {
   FaTag,
   FaUser,
   FaUsers,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useState, useEffect } from "react";
 import "./sidenav.scss";
 
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { setUserInfo } = useAuth();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navItems = [
     {
@@ -45,24 +49,9 @@ const SideNav = () => {
       path: "/admin/customers",
     },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
-    // {
-    //   label: "Settings",
-    //   icon: <FaCog className="icon" />,
-    //   path: "/admin/settings",
-    // },
   ];
 
   const operationItems = [
-    // {
-    //   label: "Print Tags",
-    //   icon: <FaPrint className="icon" />,
-    //   path: "/admin/print-tags",
-    // },
-    // {
-    //   label: "Export Data",
-    //   icon: <FaFile className="icon" />,
-    //   path: "/admin/export-data",
-    // },
     {
       label: "Add Product",
       icon: <MdOutlineAddShoppingCart className="icon addIcon" />,
@@ -75,7 +64,25 @@ const SideNav = () => {
     },
   ];
 
-  // Logout handler
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [location.pathname]);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMobileOpen && !event.target.closest(".sidebar")) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobileOpen]);
+
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -89,55 +96,82 @@ const SideNav = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleNavClick = (path) => {
+    navigate(path);
+  };
+
   return (
-    <aside className="sidebar">
-      <div className="logo">
-        <div className="logo-icon">
-          <FaGem className="icon" />
-        </div>
-        <div className="logo-text">
-          <h1>
-            Adi<span> Jewelary</span>
-          </h1>
-          <small>Inventory System</small>
-        </div>
-      </div>
-
-      <div className="nav-links">
-        <div className="nav-section">Inventory</div>
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
-        ))}
-
-        <div className="nav-section">Operations</div>
-        {operationItems.map((item) => (
-          <button
-            key={item.label}
-            className={`nav-item ${isActive(item.path) ? "active" : ""}`}
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
-        ))}
-
+    <>
+      {/* Mobile Toggle Button */}
+      {!isMobileOpen && (
         <button
-          className="nav-item logout-btn"
-          onClick={handleLogout}
-          style={{ marginTop: "16px", color: "#d9534f" }}
+          className="mobile-toggle-btn"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
         >
-          <FaUser className="icon" />
-          <span>Logout</span>
+          <FaBars />
         </button>
-      </div>
-    </aside>
+      )}
+
+      {/* Overlay for mobile */}
+      {isMobileOpen && <div className="sidebar-overlay" />}
+
+      <aside className={`sidebar ${isMobileOpen ? "mobile-open" : ""}`}>
+        <div className="sidebar-header">
+          <div className="logo">
+            <div className="logo-icon">
+              <FaGem className="icon" />
+            </div>
+            <div className="logo-text">
+              <h1>
+                Adi<span> Jewelry</span>
+              </h1>
+              <small>Inventory System</small>
+            </div>
+          </div>
+          <button
+            className="close-sidebar-mobile"
+            onClick={() => setIsMobileOpen(false)}
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="nav-links">
+          <div className="nav-section">Inventory</div>
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+              onClick={() => handleNavClick(item.path)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
+
+          <div className="nav-section">Operations</div>
+          {operationItems.map((item) => (
+            <button
+              key={item.label}
+              className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+              onClick={() => handleNavClick(item.path)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
+
+          <button
+            className="nav-item logout-btn"
+            onClick={handleLogout}
+            style={{ marginTop: "16px", color: "#d9534f" }}
+          >
+            <FaUser className="icon" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
 

@@ -79,8 +79,12 @@
 
 @media (max-width: 768px) {
   .adminLayout-main {
-    margin-left: 100px;
-    padding-left: 0;
+    margin-left: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .adminHeader {
+    margin-left: 0px;
   }
   .header {
     padding: 0 15px;
