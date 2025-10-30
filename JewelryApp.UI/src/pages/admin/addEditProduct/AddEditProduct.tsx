@@ -141,7 +141,7 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Name", productFields.productName);
     formData.append("Sku", productFields.SKU);
     formData.append("Category", productFields.category);
-    formData.append("Type", productFields.productType);
+    formData.append("Type", productFields.productType.toString());
     formData.append("KaratType", productFields.karat);
     formData.append("Description", productFields.description);
     formData.append("Weight", productFields.weight);
