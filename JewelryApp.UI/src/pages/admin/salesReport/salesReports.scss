@@ -1,30 +1,100 @@
 #sales-reports {
   /* Header Styles */
   .headerFilter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     color: var(--primary);
-    padding: 15px 25px;
+    padding: 15px;
     border-radius: var(--border-radius);
     margin-bottom: 25px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
+  .filters-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    @media (min-width: 1025px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  /* Pills Row - Horizontal with scroll on tablet */
+  .pills-row {
+    flex: 1;
+    
+    @media (min-width: 1025px) {
+      max-width: 60%;
+    }
+  }
+
+  .pills-scroll-container {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: #e6c035;
+    }
+    
+    @media (min-width: 1025px) {
+      overflow-x: visible;
+      padding-bottom: 0;
+    }
+  }
+
+  .pill-stack {
+    flex-wrap: nowrap;
+    min-width: min-content;
+    padding: 5px 0;
+    
+    @media (min-width: 1025px) {
+      flex-wrap: wrap;
+    }
+  }
+
   .dateFilterPill {
     border-radius: 50px;
-    min-width: 130px;
-    min-height: 44px;
+    min-width: 110px;
+    min-height: 40px;
     background-color: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: var(--primary);
     cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    
     &:hover {
       border: 3px solid var(--primary);
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 480px) {
+      min-width: 90px;
+      min-height: 36px;
+      font-size: 12px;
+    }
+    
+    @media (min-width: 1025px) {
+      flex-shrink: 1;
     }
   }
 
@@ -33,22 +103,45 @@
     color: white;
   }
 
-  .logo {
-    font-size: 24px;
-    font-weight: 700;
+  /* Date Range Row - Below pills on tablet/mobile */
+  .date-range-row {
+    @media (min-width: 1025px) {
+      flex: 0 0 auto;
+    }
+  }
+
+  .date-inputs-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    
+    @media (max-width: 768px) {
+      justify-content: center;
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      justify-content: flex-start;
+    }
+    
+    @media (min-width: 1025px) {
+      flex-wrap: nowrap;
+    }
+  }
+
+  .date-input-group {
     display: flex;
     align-items: center;
   }
 
-  .logo i {
-    color: var(--gold);
-    margin-right: 10px;
-  }
-
-  .date-range {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  .date-separator {
+    color: white;
+    font-weight: 500;
+    flex-shrink: 0;
+    
+    @media (max-width: 480px) {
+      display: none;
+    }
   }
 
   .date-input {
@@ -59,6 +152,19 @@
     color: var(--primary);
     box-shadow: var(--shadow-bottom);
     cursor: pointer;
+    width: 140px;
+    
+    @media (max-width: 480px) {
+      width: 130px;
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      width: 140px;
+    }
+    
+    @media (min-width: 1025px) {
+      width: 150px;
+    }
   }
 
   .date-input::placeholder {
@@ -70,14 +176,26 @@
     color: var(--primary);
     border: none;
     border-radius: 6px;
-    padding: 8px 15px;
+    padding: 8px 20px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
-  }
-
-  .apply-btn:hover {
-    background-color: #e6c035;
+    height: fit-content;
+    flex-shrink: 0;
+    
+    &:hover {
+      background-color: #e6c035;
+      transform: translateY(-1px);
+    }
+    
+    @media (max-width: 480px) {
+      width: 100%;
+      margin-top: 8px;
+    }
+    
+    @media (min-width: 481px) and (max-width: 1024px) {
+      margin-left: auto;
+    }
   }
 
   /* Section Styles */
@@ -107,16 +225,30 @@
   .summary-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    gap: 15px;
     margin-top: 15px;
+    
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
   }
 
   .summary-card {
     background-color: #f9f9f9;
     border-radius: var(--border-radius);
-    padding: 40px;
+    padding: 25px 20px;
     text-align: center;
     border-left: 4px solid var(--primary);
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 480px) {
+      padding: 20px 15px;
+    }
   }
 
   .summary-card.gold {
@@ -127,105 +259,64 @@
     font-size: 16px;
     color: var(--primary);
     margin-bottom: 10px;
+    
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
   }
 
   .summary-card .amount {
     font-size: 28px;
     font-weight: 700;
     color: var(--primary);
+    
+    @media (max-width: 480px) {
+      font-size: 24px;
+    }
   }
 
   .summary-card.gold .amount {
     color: var(--gold);
   }
 
-  /* Table Styles */
-  .table-container {
-    overflow-x: auto;
-    margin-top: 15px;
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .data-table th {
-    text-align: left;
-    padding: 12px 15px;
-    border-bottom: 2px solid var(--primary);
-    color: var(--primary);
-    font-weight: 600;
-  }
-
-  .data-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eaeaea;
-  }
-
-  .data-table tr:last-child td {
-    border-bottom: none;
-  }
-
-  .highlight {
-    background-color: rgba(212, 175, 55, 0.1);
-    font-weight: 600;
-  }
-
-  /* Filter Section */
-  .filter-section {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-  }
-
-  .filter-select {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: white;
-    font-size: 14px;
-    min-width: 150px;
-  }
-
-  /* Button Styles */
-  .view-receipt-btn {
-    background-color: var(--gold);
-    color: var(--primary);
-    border: none;
-    border-radius: 6px;
-    padding: 8px 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 14px;
-  }
-
-  .view-receipt-btn:hover {
-    background-color: #e6c035;
-  }
-
   /* Karat Cards */
   .karat-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    gap: 15px;
     margin-top: 15px;
+    
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
   }
 
   .karat-card {
     background-color: #f9f9f9;
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 20px 15px;
     text-align: center;
     border-top: 4px solid var(--gold);
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 480px) {
+      padding: 15px 10px;
+    }
   }
 
   .karat-card h3 {
     font-size: 18px;
     color: var(--primary);
     margin-bottom: 10px;
+    
+    @media (max-width: 480px) {
+      font-size: 16px;
+    }
   }
 
   .karat-card .grams {
@@ -233,11 +324,19 @@
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 5px;
+    
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
   }
 
   .karat-card .price {
     font-size: 16px;
     color: #666;
+    
+    @media (max-width: 480px) {
+      font-size: 14px;
+    }
   }
 
   .karat-card .value {
@@ -245,23 +344,93 @@
     font-weight: 600;
     color: var(--gold);
     margin-top: 10px;
+    
+    @media (max-width: 480px) {
+      font-size: 16px;
+    }
   }
 
-  /* Responsive adjustments */
+  /* Enhanced responsive breakpoints */
   @media (max-width: 768px) {
-    .header {
-      flex-direction: column;
-      gap: 15px;
+    .headerFilter {
+      padding: 12px;
     }
 
-    .date-range {
-      width: 100%;
+    .section {
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+    }
+
+    .date-inputs-container {
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .headerFilter {
+      padding: 10px;
+    }
+
+    .section {
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-size: 16px;
+    }
+
+    .date-inputs-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .date-input-group {
       justify-content: center;
     }
+  }
 
-    .summary-cards,
+  /* Tablet specific styles */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .pills-scroll-container {
+      margin-bottom: 10px;
+    }
+
+    .dateFilterPill {
+      min-width: 100px;
+      min-height: 38px;
+      font-size: 13px;
+    }
+
+    .summary-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .karat-cards {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .date-inputs-container {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Desktop styles */
+  @media (min-width: 1025px) {
+    .filters-container {
+      align-items: center;
+    }
+
+    .pills-row {
+      margin-right: 20px;
+    }
+
+    .date-range-row {
+      align-self: flex-start;
     }
   }
 }

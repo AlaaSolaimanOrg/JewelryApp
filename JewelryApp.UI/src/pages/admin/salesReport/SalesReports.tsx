@@ -113,56 +113,73 @@ const SalesReports = () => {
   return (
     <div id="sales-reports" className="page">
       <header className="headerFilter">
-        <div className="dateFilters">
-          <Stack direction="horizontal" gap={2}>
-            {pillOptions.map((pill) => (
-              <div
-                key={pill.value}
-                className={`dateFilterPill ${
-                  dateFilterPill === pill.value ? " activePillFilter" : ""
-                }`}
+        <div className="filters-container">
+          {/* Pills Row - Always horizontal with scroll on tablet */}
+          <div className="pills-row">
+            <div className="pills-scroll-container">
+              <Stack direction="horizontal" gap={2} className="pill-stack">
+                {pillOptions.map((pill) => (
+                  <div
+                    key={pill.value}
+                    className={`dateFilterPill ${
+                      dateFilterPill === pill.value ? " activePillFilter" : ""
+                    }`}
+                    onClick={() => {
+                      setAppliedDateFilter(null);
+                      setDateFilterPill(pill.value);
+                    }}
+                  >
+                    {pill.label}
+                  </div>
+                ))}
+              </Stack>
+            </div>
+          </div>
+
+          {/* Date Range Row - Below pills on tablet/mobile */}
+          <div className="date-range-row">
+            <div className="date-inputs-container">
+              <div className="date-input-group">
+                <DatePicker
+                  className="date-input"
+                  selected={startDate}
+                  onChange={(date) => {
+                    if (!!date && date > endDate) {
+                      const oneDayAfterDate = addDays(date, 1);
+                      setEndDate(oneDayAfterDate);
+                    }
+                    setStartDate(date);
+                  }}
+                  placeholderText="Start Date"
+                />
+              </div>
+              
+              <span className="date-separator">to</span>
+              
+              <div className="date-input-group">
+                <DatePicker
+                  className="date-input"
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  minDate={addDays(startDate, 1)}
+                  placeholderText="End Date"
+                />
+              </div>
+              
+              <button
+                className="apply-btn"
                 onClick={() => {
-                  setAppliedDateFilter(null);
-                  setDateFilterPill(pill.value);
+                  setAppliedDateFilter({
+                    startDate: startDate,
+                    endDate: endDate,
+                  });
+                  setDateFilterPill(null);
                 }}
               >
-                {pill.label}
-              </div>
-            ))}
-          </Stack>
-        </div>
-
-        <div className="date-range">
-          <DatePicker
-            className="date-input"
-            selected={startDate}
-            onChange={(date) => {
-              if (!!date && date > endDate) {
-                const oneDayAfterDate = addDays(date, 1);
-                setEndDate(oneDayAfterDate);
-              }
-              setStartDate(date);
-            }}
-          />
-          <span style={{ color: "white" }}>to</span>
-          <DatePicker
-            className="date-input"
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            minDate={addDays(startDate, 1)}
-          />
-          <button
-            className="apply-btn"
-            onClick={() => {
-              setAppliedDateFilter({
-                startDate: startDate,
-                endDate: endDate,
-              });
-              setDateFilterPill(null);
-            }}
-          >
-            Apply
-          </button>
+                Apply
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
