@@ -125,7 +125,6 @@ const CustomersSoldTo = () => {
         </p>
       </div>
 
-      {/* Replace the table with CustomTable */}
       <CustomTable
         headers={tableHeaders}
         data={tableData}

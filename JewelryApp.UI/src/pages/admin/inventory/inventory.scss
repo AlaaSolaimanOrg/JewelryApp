@@ -32,7 +32,6 @@
     gap: 12px;
   }
 
-  /* Table Styles */
   .table-container {
     overflow-x: auto;
     border-radius: var(--card-radius);
@@ -163,7 +162,6 @@
     color: var(--secondary);
   }
 
-  /* Card Styles */
   .card {
     background: white;
     border-radius: var(--card-radius);
@@ -209,7 +207,6 @@
       }
     }
   }
-  /*kpi*/
 
   .kpi-grid {
     display: grid;
@@ -298,7 +295,6 @@
     }
   }
 
-  /* Search Bar*/
   .search-bar {
     position: relative;
   }

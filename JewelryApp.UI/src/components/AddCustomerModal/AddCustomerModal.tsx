@@ -50,17 +50,14 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     birthday?: string;
   }>({});
 
-  // Reset form when modal opens/closes or mode/customerData changes
   useEffect(() => {
     if (show) {
       if (mode === "edit" || mode === "view") {
-        // Populate form with existing customer data
         setName(customerData?.name || "");
         setEmail(customerData?.email || "");
         setPhoneNumber(customerData?.phoneNumber || "");
         setBirthday(customerData?.birthday || "");
       } else {
-        // Reset form for add mode
         resetForm();
       }
       setErrors({});
@@ -88,14 +85,12 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       newErrors.name = "Name must be at least 2 characters.";
 
     if (email) {
-      // simple email regex
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email))
         newErrors.email = "Please enter a valid email address.";
     }
 
     if (phoneNumber) {
-      // allow digits, spaces, dashes, parentheses, plus sign
       const phoneRegex = /^[0-9()+\-\s]{6,20}$/;
       if (!phoneRegex.test(phoneNumber))
         newErrors.phoneNumber = "Please enter a valid phone number.";

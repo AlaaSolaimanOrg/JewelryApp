@@ -13,9 +13,7 @@ import { useState } from "react";
 import { Stack } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { FaChartBar, FaWeightHanging } from "react-icons/fa";
-import {
-  getSalesInsights
-} from "../../../apis/sales.api/sales.api";
+import { getSalesInsights } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { DatePillFilter, KaratType } from "../../../types/enums";
 import CustomersSoldTo from "./customersSoldTo/CustomersSoldTo";
@@ -114,7 +112,6 @@ const SalesReports = () => {
     <div id="sales-reports" className="page">
       <header className="headerFilter">
         <div className="filters-container">
-          {/* Pills Row - Always horizontal with scroll on tablet */}
           <div className="pills-row">
             <div className="pills-scroll-container">
               <Stack direction="horizontal" gap={2} className="pill-stack">
@@ -136,7 +133,6 @@ const SalesReports = () => {
             </div>
           </div>
 
-          {/* Date Range Row - Below pills on tablet/mobile */}
           <div className="date-range-row">
             <div className="date-inputs-container">
               <div className="date-input-group">
@@ -153,9 +149,9 @@ const SalesReports = () => {
                   placeholderText="Start Date"
                 />
               </div>
-              
+
               <span className="date-separator">to</span>
-              
+
               <div className="date-input-group">
                 <DatePicker
                   className="date-input"
@@ -165,7 +161,7 @@ const SalesReports = () => {
                   placeholderText="End Date"
                 />
               </div>
-              
+
               <button
                 className="apply-btn"
                 onClick={() => {

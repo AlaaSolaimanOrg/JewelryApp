@@ -68,13 +68,9 @@
     line-height: 1.4;
     color: var(--white);
     word-wrap: break-word;
-
-    // Add smooth animation for text appearance
     animation: fadeInUp 0.3s ease;
   }
 }
-
-// Animation for tooltip content
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -85,8 +81,6 @@
     transform: translateY(0);
   }
 }
-
-// Optional: Add some responsive adjustments
 @media (max-width: 768px) {
   .custom-comment-tooltip .tooltip-inner {
     max-width: 250px;

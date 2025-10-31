@@ -20,4 +20,33 @@
   .add-customer-btn {
     min-width: fit-content;
   }
+
+  .search-section {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .add-customer-btn {
+      min-width: 0;
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .customerSearch {
+      flex: 1 1 200px;
+      min-width: 150px;
+    }
+  }
+
+  /* Optional: mobile tweak */
+  @media (max-width: 576px) {
+    .search-section {
+      max-height: 300px !important;
+      .add-customer-btn {
+        width: 100%;
+      }
+    }
+  }
 }

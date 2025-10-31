@@ -8,7 +8,9 @@ import Paginator from "../../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
-import CustomTable, { type TableHeader } from "../../../../components/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../../components/Table/CustomTable";
 
 interface SoldItem {
   productName: string;
@@ -89,35 +91,35 @@ const ItemsSoldTo = () => {
 
   // Define table headers
   const tableHeaders: TableHeader[] = [
-    { 
-      key: "productName", 
-      label: "Product Name", 
+    {
+      key: "productName",
+      label: "Product Name",
       width: "25%",
-      sortable: true 
+      sortable: true,
     },
-    { 
-      key: "quantity", 
-      label: "Quantity", 
+    {
+      key: "quantity",
+      label: "Quantity",
       width: "15%",
-      sortable: true 
+      sortable: true,
     },
-    { 
-      key: "weightSummed", 
-      label: "Weight", 
+    {
+      key: "weightSummed",
+      label: "Weight",
       width: "15%",
-      sortable: true 
+      sortable: true,
     },
-    { 
-      key: "pricePerGram", 
-      label: "Price per Gram", 
+    {
+      key: "pricePerGram",
+      label: "Price per Gram",
       width: "20%",
-      sortable: true 
+      sortable: true,
     },
-    { 
-      key: "subtotal", 
-      label: "Subtotal", 
+    {
+      key: "subtotal",
+      label: "Subtotal",
       width: "25%",
-      sortable: true 
+      sortable: true,
     },
   ];
 
@@ -215,7 +217,6 @@ const ItemsSoldTo = () => {
         </p>
       </div>
 
-      {/* Replace the table with CustomTable */}
       <CustomTable
         headers={tableHeaders}
         data={tableData}

@@ -4,8 +4,6 @@
   padding: 20px;
   margin-bottom: 25px;
   box-shadow: var(--shadow-bottom);
-
-  // Ensure filter section styles are preserved
   .filter-section {
     display: flex;
     gap: 15px;
@@ -37,8 +35,6 @@
       font-size: 14px;
     }
   }
-
-  // Style the view receipt button
   .view-receipt-btn {
     background-color: var(--gold);
     color: white;

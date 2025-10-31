@@ -32,7 +32,6 @@
     gap: 12px;
   }
 
-  /*search Bar*/
   .search-bar {
     position: relative;
   }
@@ -63,7 +62,6 @@
     color: var(--secondary);
   }
 
-  /* Card Styles */
   .card {
     background: white;
     border-radius: var(--card-radius);
@@ -94,7 +92,6 @@
     color: var(--dark-light);
   }
 
-  /* Tag Preview */
   .tag-preview-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

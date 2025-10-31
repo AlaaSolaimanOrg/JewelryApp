@@ -1,5 +1,4 @@
 #sales-reports {
-  /* Header Styles */
   .headerFilter {
     color: var(--primary);
     padding: 15px;
@@ -12,7 +11,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    
+
     @media (min-width: 1025px) {
       flex-direction: row;
       justify-content: space-between;
@@ -20,10 +19,9 @@
     }
   }
 
-  /* Pills Row - Horizontal with scroll on tablet */
   .pills-row {
     flex: 1;
-    
+
     @media (min-width: 1025px) {
       max-width: 60%;
     }
@@ -32,25 +30,25 @@
   .pills-scroll-container {
     overflow-x: auto;
     padding-bottom: 8px;
-    
+
     &::-webkit-scrollbar {
       height: 6px;
     }
-    
+
     &::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.1);
       border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       background: var(--gold);
       border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb:hover {
       background: #e6c035;
     }
-    
+
     @media (min-width: 1025px) {
       overflow-x: visible;
       padding-bottom: 0;
@@ -61,7 +59,7 @@
     flex-wrap: nowrap;
     min-width: min-content;
     padding: 5px 0;
-    
+
     @media (min-width: 1025px) {
       flex-wrap: wrap;
     }
@@ -81,18 +79,18 @@
     cursor: pointer;
     transition: all 0.3s ease;
     flex-shrink: 0;
-    
+
     &:hover {
       border: 3px solid var(--primary);
       transform: translateY(-2px);
     }
-    
+
     @media (max-width: 480px) {
       min-width: 90px;
       min-height: 36px;
       font-size: 12px;
     }
-    
+
     @media (min-width: 1025px) {
       flex-shrink: 1;
     }
@@ -103,7 +101,6 @@
     color: white;
   }
 
-  /* Date Range Row - Below pills on tablet/mobile */
   .date-range-row {
     @media (min-width: 1025px) {
       flex: 0 0 auto;
@@ -115,15 +112,15 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    
+
     @media (max-width: 768px) {
       justify-content: center;
     }
-    
+
     @media (min-width: 769px) and (max-width: 1024px) {
       justify-content: flex-start;
     }
-    
+
     @media (min-width: 1025px) {
       flex-wrap: nowrap;
     }
@@ -138,7 +135,7 @@
     color: white;
     font-weight: 500;
     flex-shrink: 0;
-    
+
     @media (max-width: 480px) {
       display: none;
     }
@@ -153,15 +150,15 @@
     box-shadow: var(--shadow-bottom);
     cursor: pointer;
     width: 140px;
-    
+
     @media (max-width: 480px) {
       width: 130px;
     }
-    
+
     @media (min-width: 769px) and (max-width: 1024px) {
       width: 140px;
     }
-    
+
     @media (min-width: 1025px) {
       width: 150px;
     }
@@ -182,23 +179,22 @@
     transition: all 0.3s;
     height: fit-content;
     flex-shrink: 0;
-    
+
     &:hover {
       background-color: #e6c035;
       transform: translateY(-1px);
     }
-    
+
     @media (max-width: 480px) {
       width: 100%;
       margin-top: 8px;
     }
-    
+
     @media (min-width: 481px) and (max-width: 1024px) {
       margin-left: auto;
     }
   }
 
-  /* Section Styles */
   .section {
     background-color: white;
     border-radius: var(--border-radius);
@@ -221,13 +217,12 @@
     color: var(--gold);
   }
 
-  /* Summary Cards */
   .summary-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
     margin-top: 15px;
-    
+
     @media (max-width: 480px) {
       grid-template-columns: 1fr;
       gap: 12px;
@@ -241,11 +236,11 @@
     text-align: center;
     border-left: 4px solid var(--primary);
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-2px);
     }
-    
+
     @media (max-width: 480px) {
       padding: 20px 15px;
     }
@@ -259,7 +254,7 @@
     font-size: 16px;
     color: var(--primary);
     margin-bottom: 10px;
-    
+
     @media (max-width: 480px) {
       font-size: 14px;
     }
@@ -269,7 +264,7 @@
     font-size: 28px;
     font-weight: 700;
     color: var(--primary);
-    
+
     @media (max-width: 480px) {
       font-size: 24px;
     }
@@ -279,13 +274,12 @@
     color: var(--gold);
   }
 
-  /* Karat Cards */
   .karat-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-top: 15px;
-    
+
     @media (max-width: 480px) {
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
@@ -299,11 +293,11 @@
     text-align: center;
     border-top: 4px solid var(--gold);
     transition: transform 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-2px);
     }
-    
+
     @media (max-width: 480px) {
       padding: 15px 10px;
     }
@@ -313,7 +307,7 @@
     font-size: 18px;
     color: var(--primary);
     margin-bottom: 10px;
-    
+
     @media (max-width: 480px) {
       font-size: 16px;
     }
@@ -324,7 +318,7 @@
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 5px;
-    
+
     @media (max-width: 480px) {
       font-size: 20px;
     }
@@ -333,7 +327,7 @@
   .karat-card .price {
     font-size: 16px;
     color: #666;
-    
+
     @media (max-width: 480px) {
       font-size: 14px;
     }
@@ -344,13 +338,12 @@
     font-weight: 600;
     color: var(--gold);
     margin-top: 10px;
-    
+
     @media (max-width: 480px) {
       font-size: 16px;
     }
   }
 
-  /* Enhanced responsive breakpoints */
   @media (max-width: 768px) {
     .headerFilter {
       padding: 12px;
@@ -394,7 +387,6 @@
     }
   }
 
-  /* Tablet specific styles */
   @media (min-width: 769px) and (max-width: 1024px) {
     .pills-scroll-container {
       margin-bottom: 10px;
@@ -419,7 +411,6 @@
     }
   }
 
-  /* Desktop styles */
   @media (min-width: 1025px) {
     .filters-container {
       align-items: center;

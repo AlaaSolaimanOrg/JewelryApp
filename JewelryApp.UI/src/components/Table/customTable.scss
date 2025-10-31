@@ -1,17 +1,14 @@
-/* Table Styles */
 .customTable {
   width: 100%;
   overflow-x: auto;
-  overflow-y: hidden; // optional, keeps vertical stable
+  overflow-y: hidden;
   border-radius: var(--card-radius);
   border: 1px solid var(--border);
-
-  // Enable scroll on mobile and tablets
   -webkit-overflow-scrolling: touch;
 
   table {
     width: 100%;
-    min-width: 600px; // ✅ makes sure wide tables can scroll horizontally
+    min-width: 600px;
     border-collapse: separate;
     border-spacing: 0;
   }

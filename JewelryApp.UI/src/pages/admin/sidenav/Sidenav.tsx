@@ -102,7 +102,6 @@ const SideNav = () => {
 
   return (
     <>
-      {/* Mobile Toggle Button */}
       {!isMobileOpen && (
         <button
           className="mobile-toggle-btn"
@@ -112,7 +111,6 @@ const SideNav = () => {
         </button>
       )}
 
-      {/* Overlay for mobile */}
       {isMobileOpen && <div className="sidebar-overlay" />}
 
       <aside className={`sidebar ${isMobileOpen ? "mobile-open" : ""}`}>

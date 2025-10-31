@@ -1,5 +1,4 @@
 #staff {
-  /* Card Styles */
   .card {
     background: white;
     border-radius: var(--card-radius);
@@ -22,15 +21,11 @@
     padding-bottom: 15px;
     border-bottom: 1px solid var(--border);
     background-color: white !important;
-
-    // Tablet styles
     @media (max-width: 768px) {
       flex-direction: column;
       align-items: flex-start;
       gap: 15px;
     }
-
-    // Mobile styles
     @media (max-width: 480px) {
       gap: 12px;
     }
@@ -40,14 +35,11 @@
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--dark-light);
-
-    // Mobile styles
     @media (max-width: 480px) {
       font-size: 1.1rem;
     }
   }
 
-  /* Search Bar*/
   .search-bar {
     position: relative;
   }
@@ -62,13 +54,9 @@
     background: var(--light);
     color: var(--dark);
     -webkit-text-fill-color: var(--dark);
-
-    // Tablet and mobile styles
     @media (max-width: 768px) {
       width: 100%;
     }
-
-    // Mobile styles
     @media (max-width: 480px) {
       padding: 8px 12px 8px 35px;
       font-size: 13px;
@@ -98,7 +86,6 @@
     }
   }
 
-  /* Table Styles */
   .table-container {
     overflow-x: auto;
     border-radius: var(--card-radius);

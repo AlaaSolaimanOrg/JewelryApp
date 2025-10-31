@@ -87,7 +87,6 @@ body {
   margin-top: var(--header-height);
 }
 
-/* Page Content */
 .admin-page-content {
   padding: 30px;
 }
@@ -285,7 +284,6 @@ body {
   color: var(--gold);
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: 20px;
 }
@@ -342,8 +340,6 @@ body {
   display: none;
 }
 
-// react date-picker styling
-
 .react-datepicker {
   font-family: inherit;
   border: 1px solid var(--primary);
@@ -385,7 +381,7 @@ body {
   }
 
   .react-datepicker__day--disabled {
-    color: #ccc !important; // greyed out
+    color: #ccc !important;
     cursor: not-allowed !important;
     background-color: #f9f9f9 !important;
     opacity: 0.6;

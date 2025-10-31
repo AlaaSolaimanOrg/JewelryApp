@@ -1,13 +1,12 @@
-/* loadingScreen.scss */
 .loadingScreen {
-  position: fixed; /* Cover the entire viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4); /* semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
-  justify-content: center; /* center horizontally */
-  align-items: center; /* center vertically */
-  z-index: 9999; /* make sure it stays on top */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }

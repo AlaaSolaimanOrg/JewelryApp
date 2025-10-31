@@ -50,7 +50,6 @@
           gap: 8px;
           color: var(--primary);
         }
- 
       }
     }
 
@@ -61,16 +60,14 @@
       font-size: 12px !important;
     }
 
-    /*Tablet view */
     @media (max-width: 1024px) {
       width: 70%;
       padding: 70px 30px;
     }
 
-    /*Mobile view */
     @media (max-width: 768px) {
       width: 80%;
-      padding: 50px 20px; // optional: reduce padding on smaller screens
+      padding: 50px 20px;
     }
   }
 }

@@ -6,9 +6,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import type React from "react";
 import { SortDirection } from "./types/enums";
 
-// Optional: helper to transform payload keys for GET params
 const addParamsToObjKeys = (obj: Record<string, any>) => {
-  // Example: prefix keys or modify as needed
   return obj;
 };
 
@@ -34,8 +32,6 @@ export const requestApi = async (
   if (["POST", "PUT", "PATCH"].includes(method)) {
     config.data = finalPayload;
   } else if (method === "DELETE") {
-    // Some APIs accept body with DELETE, some only query params
-    // We'll support both:
     if (Object.keys(finalPayload).length > 0) {
       config.data = finalPayload;
     }
@@ -43,7 +39,6 @@ export const requestApi = async (
   } else if (method === "GET") {
     config.params = { ...params, ...finalPayload };
 
-    // ✅ Arrays like skus: ["A", "B"] -> ?skus=A&skus=B
     config.paramsSerializer = (params) =>
       qs.stringify(params, { arrayFormat: "repeat" });
   }
@@ -142,14 +137,11 @@ export const renderLongDescription = (
   maxLength = 15
 ): string | React.JSX.Element => {
   if (!description) return "";
-  // Create a DOMParser to parse the HTML string
   const parser = new DOMParser();
   const doc = parser.parseFromString(description, "text/html");
 
-  // Extract the text content without HTML tags
   const cleanedString = doc.body.textContent || "";
 
-  // Return the first 50 characters if the string is longer than that
   if (cleanedString?.length > maxLength) {
     const isArabic = containsArabic(cleanedString.slice(0, maxLength).trim());
     const trimmedText = isArabic

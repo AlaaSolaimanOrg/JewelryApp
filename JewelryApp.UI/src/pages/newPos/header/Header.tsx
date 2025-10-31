@@ -13,7 +13,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const location = useLocation();
-  
+
   const getPageTitle = (pathname: string) => {
     const routeTitles = [
       { path: "/productLookup", title: "Product Lookup" },
@@ -56,21 +56,23 @@ const Header = () => {
     <>
       <header id="posHeader">
         <div className="header-left">
-          <button 
+          <button
             className="mobile-menu-toggle"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
             <FaBars size={20} />
           </button>
-          
+
           <Link to={"/"} className="logo text-decoration-none">
             <img src={logo} alt="Logo" width={36} height={32} />
             <h1>Adi Jewelry POS</h1>
           </Link>
         </div>
 
-        <div className={`nav-controls ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div
+          className={`nav-controls ${isMobileMenuOpen ? "mobile-open" : ""}`}
+        >
           <div className="nav-controls-top">
             <div className="user-info">
               <FaUser />
@@ -88,12 +90,8 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile menu overlay */}
         {isMobileMenuOpen && (
-          <div 
-            className="mobile-menu-overlay"
-            onClick={toggleMobileMenu}
-          />
+          <div className="mobile-menu-overlay" onClick={toggleMobileMenu} />
         )}
       </header>
 

@@ -103,7 +103,7 @@
 
       .table-body-scrollable {
         display: block;
-        max-height: 200px; // Height for ~4 rows
+        max-height: 200px;
         overflow-y: auto;
 
         tr {
@@ -163,8 +163,6 @@
     }
   }
 }
-
-// Custom scrollbar styling for better appearance
 .table-body-scrollable::-webkit-scrollbar {
   width: 6px;
 }
@@ -182,8 +180,6 @@
 .table-body-scrollable::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
-
-// Print styles
 @media print {
   .receipt-modal {
     .modal-header,
@@ -212,7 +208,6 @@
       border: none !important;
 
       .receipt-table {
-        // Reset the table structure for print
         display: table !important;
 
         thead {
@@ -244,13 +239,9 @@
       }
     }
   }
-
-  // Hide scrollbars in print
   .table-body-scrollable::-webkit-scrollbar {
     display: none !important;
   }
-
-  // Ensure all content is visible
   body,
   html,
   .modal,
@@ -261,8 +252,6 @@
     overflow: visible !important;
     width: 100% !important;
   }
-
-  // Force table to use proper table layout
   table {
     table-layout: fixed !important;
     width: 100% !important;
