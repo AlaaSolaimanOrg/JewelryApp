@@ -191,52 +191,52 @@
     display: block !important;
   }
 
-  // Keep the collapsed style for tablet
-  @media (min-width: 768px) and (max-width: 992px) {
-    .sidebar:not(.mobile-open) {
-      width: var(--sidebar-width-collapsed);
-      transform: translateX(0);
+  // // Keep the collapsed style for tablet
+  // @media (min-width: 768px) and (max-width: 992px) {
+  //   .sidebar:not(.mobile-open) {
+  //     width: var(--sidebar-width-collapsed);
+  //     transform: translateX(0);
 
-      .logo-text,
-      .nav-item span,
-      .nav-section {
-        display: none;
-      }
+  //     .logo-text,
+  //     .nav-item span,
+  //     .nav-section {
+  //       display: none;
+  //     }
 
-      .sidebar-header {
-        justify-content: center;
-        padding: 0;
-      }
+  //     .sidebar-header {
+  //       justify-content: center;
+  //       padding: 0;
+  //     }
 
-      .logo {
-        justify-content: center;
-      }
+  //     .logo {
+  //       justify-content: center;
+  //     }
 
-      .nav-item {
-        justify-content: center;
-        padding: 15px;
-        margin: 4px;
-        width: calc(100% - 8px);
-      }
+  //     .nav-item {
+  //       justify-content: center;
+  //       padding: 15px;
+  //       margin: 4px;
+  //       width: calc(100% - 8px);
+  //     }
 
-      .nav-item .icon {
-        margin-right: 0;
-        font-size: 20px;
-      }
+  //     .nav-item .icon {
+  //       margin-right: 0;
+  //       font-size: 20px;
+  //     }
 
-      .close-sidebar-mobile {
-        display: none !important;
-      }
-    }
+  //     .close-sidebar-mobile {
+  //       display: none !important;
+  //     }
+  //   }
 
-    .mobile-toggle-btn {
-      display: none;
-    }
+  //   .mobile-toggle-btn {
+  //     display: none;
+  //   }
 
-    .sidebar-overlay {
-      display: none;
-    }
-  }
+  //   .sidebar-overlay {
+  //     display: none;
+  //   }
+  // }
 }
 
 @media (min-width: 993px) {

@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 30px;
-  position: sticky;
+  position: fixed;
+  width: calc(100% - 290px);
   top: 0;
   z-index: 99;
   margin-left: var(--sidebar-width);
@@ -61,23 +62,7 @@
   }
 }
 
-/* Responsive Design */
 @media (max-width: 992px) {
-  .search-bar input {
-    width: 200px;
-  }
-  .adminHeader {
-    margin-left: 100px;
-    padding-left: 0;
-  }
-
-  .adminLayout-main {
-    margin-left: 100px;
-    padding-left: 0;
-  }
-}
-
-@media (max-width: 768px) {
   .adminLayout-main {
     margin-left: 0px;
     padding-left: 10px;
@@ -85,6 +70,7 @@
   }
   .adminHeader {
     margin-left: 0px;
+    width: 100%;
   }
   .header {
     padding: 0 15px;
