@@ -2,7 +2,7 @@
 #posHeader {
   background: var(--primary);
   color: white;
-  padding: 15px 25px;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -10,12 +10,28 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  gap: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   color: white;
 }
 
@@ -28,6 +44,7 @@
   font-weight: 600;
   font-size: 1.6rem;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .nav-controls {
@@ -36,20 +53,59 @@
   gap: 20px;
 }
 
+.nav-controls-top {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  white-space: nowrap;
 }
 
 .user-info i {
   font-size: 1.2rem;
 }
 
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.logout-text {
+  display: inline;
+}
+
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
 .posHeader-page-title {
   background: var(--gold);
   color: white;
-  padding: 15px 25px;
+  padding: 12px 20px;
   font-size: 1.4rem;
   font-weight: 600;
 }
@@ -62,4 +118,148 @@
   display: flex;
   flex-direction: column;
   min-height: var(--page-height);
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  #posHeader {
+    padding: 12px 20px;
+  }
+
+  .logo h1 {
+    font-size: 1.4rem;
+  }
+
+  .nav-controls-top {
+    gap: 15px;
+  }
+
+  .user-info span {
+    font-size: 0.9rem;
+  }
+
+  .posHeader-page-title {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  #posHeader {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .logo img {
+    width: 30px;
+    height: 26px;
+  }
+
+  .logo h1 {
+    font-size: 1.2rem;
+  }
+
+  .nav-controls {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 280px;
+    background: var(--primary);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 80px 20px 20px;
+    transition: right 0.3s ease;
+    z-index: 101;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+
+    &.mobile-open {
+      right: 0;
+    }
+  }
+
+  .nav-controls-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .user-info {
+    justify-content: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .logout-btn {
+    justify-content: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .mobile-menu-overlay {
+    display: block;
+  }
+
+  .posHeader-page-title {
+    padding: 8px 15px;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  #posHeader {
+    padding: 8px 12px;
+  }
+
+  .logo h1 {
+    font-size: 1.1rem;
+  }
+
+  .logo img {
+    width: 28px;
+    height: 24px;
+  }
+
+  .nav-controls {
+    width: 250px;
+  }
+
+  .posHeader-page-title {
+    font-size: 1rem;
+    padding: 8px 12px;
+  }
+
+  .logout-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1600px) {
+  #posHeader {
+    padding: 20px 40px;
+  }
+
+  .posHeader-page-title {
+    padding: 18px 40px;
+    font-size: 1.5rem;
+  }
 }

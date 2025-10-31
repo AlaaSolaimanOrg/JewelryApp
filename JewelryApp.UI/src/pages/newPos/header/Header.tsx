@@ -1,18 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import Clock from "../../../components/Clock/Clock";
-
-import { FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaBars } from "react-icons/fa";
 import "./header.scss";
-
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const location = useLocation();
+  
   const getPageTitle = (pathname: string) => {
     const routeTitles = [
       { path: "/productLookup", title: "Product Lookup" },
@@ -21,7 +22,7 @@ const Header = () => {
       { path: "/manualItemEntry", title: "Manual Item Entry" },
       { path: "/applyDiscount", title: "Apply Discount" },
       { path: "/payment", title: "Payment" },
-      { path: "/receipt", title: "Receipt Preview" }, // This will match /receipt/*
+      { path: "/receipt", title: "Receipt Preview" },
       { path: "/ReceiptDelivery", title: "Receipt Delivery" },
       { path: "/sale", title: "Sale" },
       { path: "/", title: "POS Dashboard" },
@@ -47,35 +48,53 @@ const Header = () => {
     navigate("/login");
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <>
       <header id="posHeader">
-        <Link to={"/"} className="logo text-decoration-none">
-          <img src={logo} alt="Logo" width={36} height={32} />
-
-          <h1>Adi Jewelry POS</h1>
-        </Link>
-        <div className="nav-controls">
-          <div className="user-info">
-            <FaUser />
-            <span>{userInfo?.userName}</span>
-          </div>
-          <Clock />
-          <button
-            className="logout-btn"
-            title="Logout"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              marginLeft: 12,
-              color: "white",
-            }}
-            onClick={handleLogout}
+        <div className="header-left">
+          <button 
+            className="mobile-menu-toggle"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
           >
-            <FaSignOutAlt size={20} />
+            <FaBars size={20} />
           </button>
+          
+          <Link to={"/"} className="logo text-decoration-none">
+            <img src={logo} alt="Logo" width={36} height={32} />
+            <h1>Adi Jewelry POS</h1>
+          </Link>
         </div>
+
+        <div className={`nav-controls ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <div className="nav-controls-top">
+            <div className="user-info">
+              <FaUser />
+              <span>{userInfo?.userName}</span>
+            </div>
+            <Clock />
+            <button
+              className="logout-btn"
+              title="Logout"
+              onClick={handleLogout}
+            >
+              <FaSignOutAlt size={20} />
+              <span className="logout-text">Logout</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="mobile-menu-overlay"
+            onClick={toggleMobileMenu}
+          />
+        )}
       </header>
 
       <div className="posHeader-page-title">
