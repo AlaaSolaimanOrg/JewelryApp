@@ -12,6 +12,8 @@
       font-size: 14px;
       transition: var(--transition);
       background: var(--light);
+      color: var(--dark);
+      -webkit-text-fill-color: var(--dark);
     }
 
     .search-bar input:focus {
