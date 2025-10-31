@@ -3,7 +3,7 @@ import axios from "axios";
 import { callRefreshToken } from "../apis/login.api/login.api";
 import { checkRequestSucceeded, showError } from "../utils";
 
-console.log("import.meta.env.VITE_API_URL",import.meta.env.VITE_API_URL)
+console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: import.meta.env.VITE_API_TIMEOUT,
@@ -31,6 +31,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Prevent infinite retry loop
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -38,44 +39,53 @@ axiosInstance.interceptors.response.use(
         localStorage.getItem("refreshToken") ||
         sessionStorage.getItem("refreshToken");
 
-      if (refreshToken) {
-        try {
-          callRefreshToken({ refreshToken })
-            .then((response) => {
-              if (checkRequestSucceeded(response.statusCode)) {
-                const newAccessToken = response.data.accessToken;
-                // Save new token
-                if (localStorage.getItem("refreshToken")) {
-                  localStorage.setItem("accessToken", newAccessToken);
-                } else {
-                  sessionStorage.setItem("accessToken", newAccessToken);
-                }
+      if (!refreshToken) {
+        // No refresh token available, redirect to login
+        redirectToLogin();
+        return Promise.reject(error);
+      }
 
-                // Retry original request with new token
-                originalRequest.headers[
-                  "Authorization"
-                ] = `Bearer ${newAccessToken}`;
-                return axiosInstance(originalRequest);
-              } else {
-                showError(response?.message);
-              }
-            })
-            .catch((e) => {
-              throw e;
-            });
-        } catch (error) {
-          console.error(error);
-          console.error("Refresh token expired or invalid. Logging out.");
-          localStorage.clear();
-          sessionStorage.clear();
+      try {
+        // Use await instead of .then() for better control flow
+        const response = await callRefreshToken({ refreshToken });
 
-          window.location.href = "/login";
+        if (checkRequestSucceeded(response.statusCode)) {
+          const newAccessToken = response.data.accessToken;
+
+          // Save new token
+          if (localStorage.getItem("refreshToken")) {
+            localStorage.setItem("accessToken", newAccessToken);
+          } else {
+            sessionStorage.setItem("accessToken", newAccessToken);
+          }
+
+          // Retry original request with new token
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return axiosInstance(originalRequest);
+        } else {
+          // Refresh token failed, logout user
+          showError(response?.message || "Session expired");
+          redirectToLogin();
+          return Promise.reject(error);
         }
+      } catch (error) {
+        console.error("Refresh token failed:", error);
+        console.error("Refresh token expired or invalid. Logging out.");
+        redirectToLogin();
+        return Promise.reject(error);
       }
     }
 
-    return error?.response;
+    // If it's a 401 and we've already retried, or it's not a 401, just return the error
+    return Promise.reject(error?.response || error);
   }
 );
+
+// Helper function to handle logout and redirect
+function redirectToLogin() {
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.href = "/login";
+}
 
 export default axiosInstance;
