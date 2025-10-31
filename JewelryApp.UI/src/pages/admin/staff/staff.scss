@@ -22,12 +22,29 @@
     padding-bottom: 15px;
     border-bottom: 1px solid var(--border);
     background-color: white !important;
+
+    // Tablet styles
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    // Mobile styles
+    @media (max-width: 480px) {
+      gap: 12px;
+    }
   }
 
   .card-title {
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--dark-light);
+
+    // Mobile styles
+    @media (max-width: 480px) {
+      font-size: 1.1rem;
+    }
   }
 
   /* Search Bar*/
@@ -43,8 +60,18 @@
     font-size: 14px;
     transition: var(--transition);
     background: var(--light);
-  }
 
+    // Tablet and mobile styles
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+
+    // Mobile styles
+    @media (max-width: 480px) {
+      padding: 8px 12px 8px 35px;
+      font-size: 13px;
+    }
+  }
   .search-bar input:focus {
     outline: none;
     border-color: var(--gold);
