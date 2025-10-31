@@ -391,3 +391,16 @@ body {
     opacity: 0.6;
   }
 }
+
+.filter-select,
+input[type="text"],
+input[type="search"],
+select {
+  color: var(--dark);
+  -webkit-text-fill-color: var(--dark);
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+}
