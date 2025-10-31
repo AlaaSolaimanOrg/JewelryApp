@@ -3,10 +3,13 @@ import { FaUsers } from "react-icons/fa";
 import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
 import CommentTooltip from "../../../../components/CommentTooltip/CommentTooltip";
 import Paginator from "../../../../components/Paginator/Paginator";
+
 import ReceiptModal from "../../../../components/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { CustomerFilter } from "../../../../types/enums";
 import "./customersSoldTo.scss";
+import type { TableHeader } from "../../../../components/Table/CustomTable";
+import CustomTable from "../../../../components/Table/CustomTable";
 
 interface SaleCustomers {
   customerId: string;
@@ -26,6 +29,7 @@ const CustomersSoldTo = () => {
     onSearchChange,
     onPaginationChange,
     pagination,
+    isLoading, // Assuming your hook returns isLoading
   } = useLocalApiSearchSortPagination<SaleCustomers>({
     apiToCall: (data) => getSalesCustomers(data.payload),
     initialPageSize: 5,
@@ -40,12 +44,62 @@ const CustomersSoldTo = () => {
     setCustomerFilter(value ?? null);
   };
 
+  // Define table headers
+  const tableHeaders: TableHeader[] = [
+    {
+      key: "customerName",
+      label: "Customer Name",
+      width: "20%",
+      sortable: true,
+    },
+    {
+      key: "email",
+      label: "Email",
+      width: "25%",
+      sortable: true,
+    },
+    {
+      key: "phoneNumber",
+      label: "Phone Number",
+      width: "15%",
+      sortable: true,
+    },
+    {
+      key: "notesRemarks",
+      label: "Notes/Remarks",
+      width: "20%",
+      sortable: false,
+    },
+    {
+      key: "action",
+      label: "Action",
+      width: "20%",
+      sortable: false,
+    },
+  ];
+
+  // Transform salesCustomers data for CustomTable
+  const tableData = salesCustomers.map((saleCustomer) => ({
+    customerName: saleCustomer.customerName,
+    email: saleCustomer.email,
+    phoneNumber: saleCustomer.phoneNumber,
+    notesRemarks: saleCustomer.notesRemarks ? (
+      <CommentTooltip comment={saleCustomer.notesRemarks} />
+    ) : null,
+    action: (
+      <ReceiptModal saleId={saleCustomer.saleId}>
+        <button className="view-receipt-btn">View Receipt</button>
+      </ReceiptModal>
+    ),
+  }));
+
   return (
     <section id="customersSoldTo">
       <h2 className="section-title">
         <FaUsers className="icon" style={{ marginRight: "8px" }} /> Customers
         Sold To
       </h2>
+
       <div className="filter-section">
         <input
           type="text"
@@ -64,49 +118,19 @@ const CustomersSoldTo = () => {
         </select>
       </div>
 
-      <div className="table-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Email</th>
-              <th>Phone Number</th>
-              <th>Notes/Remarks</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pagination.totalRecords ? (
-              salesCustomers.map((saleCustomer) => {
-                console.log("salesCustomers", salesCustomers);
-                return (
-                  <tr key={saleCustomer.saleId}>
-                    <td>{saleCustomer.customerName}</td>
-                    <td>{saleCustomer.email}</td>
-                    <td>{saleCustomer.phoneNumber}</td>
-                    <td>
-                      {saleCustomer.notesRemarks && (
-                        <CommentTooltip comment={saleCustomer.notesRemarks} />
-                      )}
-                    </td>
-                    <td>
-                      <ReceiptModal saleId={saleCustomer.saleId}>
-                        <button className="view-receipt-btn">
-                          View Receipt
-                        </button>
-                      </ReceiptModal>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr className="noResultsFound">
-                <td colSpan={5}>No results found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="results-info">
+        <p>
+          Showing {salesCustomers.length} of {pagination.totalRecords} results
+          {customerFilter && " (filtered)"}
+        </p>
       </div>
+
+      {/* Replace the table with CustomTable */}
+      <CustomTable
+        headers={tableHeaders}
+        data={tableData}
+        isLoading={isLoading}
+      />
 
       <Paginator
         totalRecords={pagination.totalRecords}

@@ -4,9 +4,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FaShoppingCart } from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
+
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
+import CustomTable, { type TableHeader } from "../../../../components/Table/CustomTable";
 
 interface SoldItem {
   productName: string;
@@ -66,6 +68,7 @@ const ItemsSoldTo = () => {
     data: soldItems,
     onPaginationChange,
     pagination,
+    isLoading, // Assuming your hook returns isLoading
   } = useLocalApiSearchSortPagination<SoldItem>({
     apiToCall: (data) => getSoldItems(data.payload),
     initialPageSize: 5,
@@ -83,6 +86,49 @@ const ItemsSoldTo = () => {
       dateTo,
     ],
   });
+
+  // Define table headers
+  const tableHeaders: TableHeader[] = [
+    { 
+      key: "productName", 
+      label: "Product Name", 
+      width: "25%",
+      sortable: true 
+    },
+    { 
+      key: "quantity", 
+      label: "Quantity", 
+      width: "15%",
+      sortable: true 
+    },
+    { 
+      key: "weightSummed", 
+      label: "Weight", 
+      width: "15%",
+      sortable: true 
+    },
+    { 
+      key: "pricePerGram", 
+      label: "Price per Gram", 
+      width: "20%",
+      sortable: true 
+    },
+    { 
+      key: "subtotal", 
+      label: "Subtotal", 
+      width: "25%",
+      sortable: true 
+    },
+  ];
+
+  // Transform soldItems data for CustomTable
+  const tableData = soldItems.map((item) => ({
+    productName: item.productName,
+    quantity: item.quantity,
+    weightSummed: `${item.weightSummed}g`,
+    pricePerGram: `$${item.pricePerGram}`,
+    subtotal: `$${item.subtotal}`,
+  }));
 
   return (
     <section id="itemsSoldTo">
@@ -169,36 +215,12 @@ const ItemsSoldTo = () => {
         </p>
       </div>
 
-      <div className="table-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Product Name</th>
-              <th>Quantity</th>
-              <th>Weight</th>
-              <th>Price per Gram</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pagination.totalRecords ? (
-              soldItems.map((soldItem, index) => (
-                <tr key={index}>
-                  <td>{soldItem.productName}</td>
-                  <td>{soldItem.quantity}</td>
-                  <td>{soldItem.weightSummed}g</td>
-                  <td>${soldItem.pricePerGram}</td>
-                  <td>${soldItem.subtotal}</td>
-                </tr>
-              ))
-            ) : (
-              <tr className="noResultsFound">
-                <td colSpan={5}>No results found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* Replace the table with CustomTable */}
+      <CustomTable
+        headers={tableHeaders}
+        data={tableData}
+        isLoading={isLoading}
+      />
 
       <Paginator
         totalRecords={pagination.totalRecords}
