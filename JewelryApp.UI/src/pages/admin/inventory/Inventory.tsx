@@ -251,39 +251,49 @@ const Inventory = () => {
             <div className="inventory-content">
               <div className="card">
                 <div className="card-header">
-                  <h3 className="card-title">
-                    Inventory Items ({pagination.totalRecords ?? 0})
-                  </h3>
-                  <Stack direction="horizontal" gap={4}>
-                    <div className="search-bar" style={{ width: "250px" }}>
-                      <FaSearch className="icon me-1" />
-                      <input
-                        type="text"
-                        placeholder="Search inventory..."
-                        onChange={onSearchChange}
-                      />
-                    </div>
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 w-100">
+                    <h3 className="card-title mb-0">
+                      Inventory Items ({pagination.totalRecords ?? 0})
+                    </h3>
 
-                    {scannedNfcIds.length ? (
-                      <button
-                        className="scan-btn"
-                        onClick={() => {
-                          setScannedNfcIds([]);
-                        }}
+                    <Stack
+                      direction="horizontal"
+                      gap={4}
+                      className="flex-wrap justify-content-end"
+                    >
+                      <div
+                        className="search-bar"
+                        style={{ minWidth: "250px", flex: "1 1 auto" }}
                       >
-                        Reset Scanner
-                      </button>
-                    ) : (
-                      <button
-                        className="scan-btn"
-                        onClick={() => {
-                          setShowScanModal(true);
-                        }}
-                      >
-                        Scan Product
-                      </button>
-                    )}
-                  </Stack>
+                        <FaSearch className="icon me-1" />
+                        <input
+                          type="text"
+                          placeholder="Search inventory..."
+                          onChange={onSearchChange}
+                        />
+                      </div>
+
+                      {scannedNfcIds.length ? (
+                        <button
+                          className="scan-btn flex-shrink-0"
+                          onClick={() => {
+                            setScannedNfcIds([]);
+                          }}
+                        >
+                          Reset Scanner
+                        </button>
+                      ) : (
+                        <button
+                          className="scan-btn flex-shrink-0"
+                          onClick={() => {
+                            setShowScanModal(true);
+                          }}
+                        >
+                          Scan Product
+                        </button>
+                      )}
+                    </Stack>
+                  </div>
                 </div>
 
                 <CustomTable data={data} headers={headers} />

@@ -156,8 +156,6 @@
     color: var(--danger);
   }
 
-
-
   .slider-values {
     display: flex;
     justify-content: space-between;
@@ -196,6 +194,21 @@
     color: var(--dark-light);
   }
 
+  .card-header {
+    .d-flex {
+      @media (max-width: 768px) {
+        .search-bar {
+          min-width: 100% !important;
+          margin-bottom: 12px;
+        }
+
+        .scan-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
   /*kpi*/
 
   .kpi-grid {
@@ -313,6 +326,4 @@
     transform: translateY(-50%);
     color: var(--secondary);
   }
-  
-  
 }

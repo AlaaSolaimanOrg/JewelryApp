@@ -84,6 +84,7 @@ body {
   background-color: #fafafa;
   min-height: calc(100% - 70px);
   height: fit-content;
+  margin-top: var(--header-height);
 }
 
 /* Page Content */
