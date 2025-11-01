@@ -169,8 +169,8 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // Add tax (already rounded)
             total += Math.Round(sale.Taxe, 2, MidpointRounding.AwayFromZero);
 
-            // Final round
-            total = Math.Round(total, 2, MidpointRounding.AwayFromZero);
+            total = Math.Round(total, 0, MidpointRounding.AwayFromZero);
+
 
             return Math.Max(0, total);
         }
