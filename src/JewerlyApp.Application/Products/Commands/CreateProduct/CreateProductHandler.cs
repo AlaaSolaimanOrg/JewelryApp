@@ -37,15 +37,14 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Type = request.Type,
                 Description = request.Description,
                 Quantity = request.Quantity,
+                Tags = request.Tags ?? new List<string>()
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Upload images if any
             if (request.Images != null && request.Images.Count > 0)
-            {                
-
+            {
                 await _fileService.UploadProductImagesAsync(product.Id, request.KaratType, request.Images);
             }
 
@@ -56,5 +55,6 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Message = Messages.SuccessItemAdded
             };
         }
+
     }
 }
