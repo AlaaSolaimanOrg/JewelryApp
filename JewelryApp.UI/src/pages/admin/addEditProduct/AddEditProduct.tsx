@@ -35,7 +35,7 @@ const productFieldsInitialState = {
   description: "",
   quantity: 1,
   nfcId: "",
-  tags: [], // Added tags array
+  tags: [] as string[], // Explicitly type tags as string array
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -63,6 +63,9 @@ const AddEditProduct = ({ isEdit }) => {
   // Add a new tag
   const handleAddTag = () => {
     if (tagInput.trim() && !productFields.tags.includes(tagInput.trim())) {
+ 
+ 
+ 
       setProductFields((prev) => ({
         ...prev,
         tags: [...prev.tags, tagInput.trim()],

@@ -7,27 +7,26 @@ import {
   FaTrash,
   FaUsers,
 } from "react-icons/fa";
+import { LuHistory } from "react-icons/lu";
 import {
   deleteCustomer,
   getCustomers,
 } from "../../../apis/customers.api/customers.api";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
+import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
+import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import "./customers.scss";
-import Paginator from "../../../components/Paginator/Paginator";
 import {
   checkRequestSucceeded,
   handleSort,
   showError,
   showSuccess,
 } from "../../../utils";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
-import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
-import { Button } from "react-bootstrap";
-import { LuHistory } from "react-icons/lu";
+import "./customers.scss";
 
 interface Customer {
   id: string;
@@ -119,25 +118,7 @@ const Customers = () => {
           >
             <FaEye />
           </button>
-          <ReceiptHistoryModal
-            customerId={customer.id}
-            sales={[
-              {
-                id: "1",
-                serialNumber: 1001,
-                createdDate: "2024-01-15T10:30:00Z",
-                total: 1500,
-                customerName: "John Doe",
-              },
-              {
-                id: "2",
-                serialNumber: 1002,
-                createdDate: "2024-01-16T14:45:00Z",
-                total: 2300,
-                customerName: "Jane Smith",
-              },
-            ]}
-          >
+          <ReceiptHistoryModal customerId={customer.id}>
             <button className="action-btn" title="View">
               <LuHistory />
             </button>
