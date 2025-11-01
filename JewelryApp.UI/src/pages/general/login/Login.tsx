@@ -15,13 +15,13 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
 
   const redirectAfterLogin = () => {
-    if (
+    if (userInfo?.roles?.includes("PosRole")) {
+      navigate("/");
+    } else if (
       userInfo?.roles?.includes("Admin") ||
       userInfo?.roles?.includes("Admin2")
     ) {
       navigate("/admin/dashboard");
-    } else if (userInfo?.roles?.includes("PosRole")) {
-      navigate("/");
     } else {
       // Default redirect if no roles match
       navigate("/unauthorized");

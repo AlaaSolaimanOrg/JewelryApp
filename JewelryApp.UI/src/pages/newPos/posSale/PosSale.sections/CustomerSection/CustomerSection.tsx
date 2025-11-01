@@ -7,9 +7,9 @@ import {
   FaUserCircle,
 } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
-import { getCustomers } from "../../../../apis/customers.api/customers.api";
-import AddCustomerModal from "../../../../components/AddCustomerModal/AddCustomerModal";
-import type { Customer } from "../types";
+import { getCustomers } from "../../../../../apis/customers.api/customers.api";
+import AddCustomerModal from "../../../../../components/AddCustomerModal/AddCustomerModal";
+import type { Customer } from "../../types";
 import "./customerSection.scss";
 
 interface Props {

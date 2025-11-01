@@ -1,0 +1,107 @@
+/* ========= PRODUCTS SECTION ========= */
+.products-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow-bottom);
+  overflow-x: auto;
+
+  .manual-entry-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: #152a45;
+    }
+  }
+
+  .products-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      border-bottom: 2px solid var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      border-bottom: 1px solid #eaeaea;
+    }
+  }
+
+  .product-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .product-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .product-name {
+    flex: 1;
+  }
+
+  .product-name-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .karat-select,
+  .weight-input,
+  .price-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .subtotal {
+    font-weight: 600;
+  }
+
+  .manual-row {
+    background-color: #f9f9f9;
+  }
+
+  .remove-btn {
+    color: #ff4d4f;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}

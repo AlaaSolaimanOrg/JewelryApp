@@ -58,6 +58,27 @@
   gap: 20px;
 }
 
+.admin-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.admin-text {
+  display: inline;
+}
+
 .user-info {
   display: flex;
   align-items: center;
@@ -191,6 +212,17 @@
     width: 100%;
   }
 
+  .admin-btn {
+    justify-content: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
   .user-info {
     justify-content: center;
     padding: 15px 0;
@@ -242,6 +274,7 @@
     padding: 8px 12px;
   }
 
+  .admin-text,
   .logout-text {
     font-size: 0.9rem;
   }

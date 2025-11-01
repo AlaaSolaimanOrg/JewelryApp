@@ -83,7 +83,7 @@ const AddEditProduct = ({ isEdit }) => {
 
   useEffect(() => {
     if (!isEdit) {
-      handleCancelAddProduct();
+      handleClearClick();
     }
   }, [isEdit]);
 
@@ -120,10 +120,7 @@ const AddEditProduct = ({ isEdit }) => {
     handleProductField("SKU", generatedSKU);
   }, [generatedSKU]);
 
-  const handleCancelAddProduct = () => {
-    if (isEdit) {
-      navigate("/admin/addProduct");
-    }
+  const handleClearClick = () => {
     setProductFields(productFieldsInitialState);
     setFiles([]);
     setGeneratedSKU(null);
@@ -140,6 +137,7 @@ const AddEditProduct = ({ isEdit }) => {
 
     formData.append("Name", productFields.productName);
     formData.append("Sku", productFields.SKU);
+    formData.append("NFCId", productFields.nfcId);
     formData.append("Category", productFields.category);
     formData.append("Type", productFields.productType.toString());
     formData.append("KaratType", productFields.karat);
@@ -159,8 +157,10 @@ const AddEditProduct = ({ isEdit }) => {
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          if (!isEdit) {
-            handleCancelAddProduct();
+          if (isEdit) {
+            navigate("/admin/inventory");
+          } else {
+            handleClearClick();
           }
         } else {
           showError(response?.message);
@@ -192,9 +192,18 @@ const AddEditProduct = ({ isEdit }) => {
           {isEdit ? <span>Edit Product</span> : <span>Add New Product</span>}
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gray" onClick={handleCancelAddProduct}>
+          <button className="btn-md btn-gray" onClick={handleClearClick}>
             <FaTimes className="icon" />
-            Cancel
+            clear
+          </button>
+          <button
+            className="btn-md btn-info"
+            onClick={() => {
+              navigate("/admin/inventory");
+            }}
+          >
+            <FaTimes className="icon" />
+            Back To Inventory
           </button>
 
           <button

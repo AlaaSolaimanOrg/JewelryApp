@@ -41,14 +41,13 @@ const CartSummary = () => {
     setData: any;
   };
 
-  // Calculate subtotal, tax, and total
+  // Calculate subtotal,  and total
   const subtotal =
     cartProducts?.reduce(
       (sum, item) => sum + item.weight * item.pricePerGram,
       0
     ) || 0;
-  const tax = subtotal * 0.05; // Example: 5% tax
-  const total = subtotal - totalDiscount + tax;
+  const total = subtotal - totalDiscount;
 
   const handleCancelSale = () => {
     deleteCart()
@@ -167,10 +166,6 @@ const CartSummary = () => {
             <span>Discount:</span>
             <span>${totalDiscount.toFixed(2)}</span>
           </div>
-          <div className="summary-item">
-            <span>Tax:</span>
-            <span>${tax.toFixed(2)}</span>
-          </div>
 
           <div className="summary-total">
             <span>Total:</span>
@@ -183,7 +178,7 @@ const CartSummary = () => {
               disabled={!cartProducts.length}
               onClick={() => {
                 navigate("/payment", {
-                  state: { totalDiscount, total, tax },
+                  state: { totalDiscount, total },
                   replace: true,
                 });
               }}

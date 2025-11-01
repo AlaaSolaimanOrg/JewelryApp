@@ -1,6 +1,6 @@
 #mainPosPage {
-  margin-top: 20px;
-  padding: 0 15px;
+  margin-block: 20px;
+  padding: 15px;
 
   /* ========= HEADER ========= */
   .header {
@@ -128,71 +128,6 @@
       display: flex;
       gap: 30px;
       flex-wrap: wrap;
-    }
-  }
-
-  /* ========= PRODUCTS SECTION ========= */
-  .products-section {
-    background-color: white;
-    border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: var(--shadow-bottom);
-    overflow-x: auto;
-
-    .manual-entry-btn {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      transition: all 0.3s;
-
-      i {
-        margin-right: 8px;
-      }
-
-      &:hover {
-        background-color: #152a45;
-      }
-    }
-
-    .products-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-
-      th {
-        text-align: left;
-        padding: 12px 15px;
-        border-bottom: 2px solid var(--primary);
-        color: var(--primary);
-        font-weight: 600;
-        white-space: nowrap;
-      }
-
-      td {
-        padding: 15px;
-        border-bottom: 1px solid #eaeaea;
-        text-align: center;
-      }
-    }
-
-    .manual-row {
-      background-color: #f9f9f9;
-    }
-
-    .remove-btn {
-      color: #ff4d4f;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
     }
   }
 

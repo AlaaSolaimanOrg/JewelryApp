@@ -25,7 +25,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
         {
             var product = await _context.Products
                 .Include(p => p.Images)
-                .FirstOrDefaultAsync(p => p.Id == request.Id || p.Sku == request.SearchBy, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == request.Id || (!string.IsNullOrEmpty(p.Sku) && p.Sku == request.SearchBy), cancellationToken);
 
             if (product == null)
             {

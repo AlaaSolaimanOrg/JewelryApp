@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import Clock from "../../../components/Clock/Clock";
-import { FaUser, FaSignOutAlt, FaBars } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaBars, FaCog } from "react-icons/fa";
 import "./header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -11,6 +11,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isAdminUser = userInfo?.roles?.includes("Admin");
 
   const location = useLocation();
 
@@ -48,9 +50,16 @@ const Header = () => {
     navigate("/login");
   };
 
+  // Admin panel handler
+  const handleAdminPanel = () => {
+    navigate("/admin/dashboard"); // Adjust the route as needed
+  };
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  console.log("userInfo", userInfo);
 
   return (
     <>
@@ -74,11 +83,24 @@ const Header = () => {
           className={`nav-controls ${isMobileMenuOpen ? "mobile-open" : ""}`}
         >
           <div className="nav-controls-top">
+            {isAdminUser && (
+              <button
+                className="admin-btn"
+                title="Admin Panel"
+                onClick={handleAdminPanel}
+              >
+                <FaCog size={18} />
+                <span className="admin-text">Admin Panel</span>
+              </button>
+            )}
+
             <div className="user-info">
               <FaUser />
               <span>{userInfo?.userName}</span>
             </div>
+
             <Clock />
+
             <button
               className="logout-btn"
               title="Logout"

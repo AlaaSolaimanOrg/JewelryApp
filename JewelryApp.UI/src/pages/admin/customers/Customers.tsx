@@ -71,22 +71,7 @@ const Customers = () => {
         handleSort("phoneNumber", sortCriteria, onSortChange);
       },
     },
-    {
-      key: "email",
-      label: "Email",
-      width: "250px",
-      onHeaderClick: () => {
-        handleSort("email", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "birthday",
-      label: "birthday",
-      width: "250px",
-      onHeaderClick: () => {
-        handleSort("birthday", sortCriteria, onSortChange);
-      },
-    },
+
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
@@ -118,8 +103,6 @@ const Customers = () => {
     return {
       name: customer.name,
       phoneNumber: customer.phoneNumber,
-      email: customer.email || "—",
-      birthday: customer.birthday || "—",
       actions: (
         <>
           <button

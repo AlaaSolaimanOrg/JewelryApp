@@ -1,0 +1,105 @@
+.payment-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--shadow-bottom);
+  margin-top: 25px;
+
+  .section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+      margin-right: 10px;
+      color: var(--gold);
+    }
+  }
+
+  .order-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #ddd;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      span {
+        font-size: 16px;
+        font-weight: 500;
+
+        &:first-child {
+          color: var(--primary);
+        }
+
+        &:last-child {
+          font-weight: 600;
+          color: var(--primary);
+        }
+      }
+
+      &.total {
+        margin-top: 10px;
+        padding-top: 15px;
+        border-top: 2px solid var(--gold);
+
+        span {
+          font-size: 18px;
+          font-weight: 700;
+
+          &:last-child {
+            color: var(--primary);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ========= RESPONSIVE BREAKPOINTS ========= */
+@media (max-width: 768px) {
+  .payment-section {
+    .section-title {
+      font-size: 20px;
+    }
+
+    .order-summary {
+      .summary-row {
+        span {
+          font-size: 15px;
+        }
+
+        &.total span {
+          font-size: 17px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .payment-section {
+    .order-summary {
+      .summary-row {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+        padding: 10px 0;
+      }
+    }
+  }
+}

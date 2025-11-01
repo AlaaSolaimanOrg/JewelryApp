@@ -5,9 +5,9 @@ import ScanModal from "../../../components/ScanModal/ScanModal";
 import { DiscountType, KaratType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
-import CustomerSection from "./PosSale.sections/CustomerSection";
-import PaymentSummary from "./PosSale.sections/PaymentSummary";
-import ProductsSection from "./PosSale.sections/ProductsSection";
+import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
+import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
+import ProductsSection from "./PosSale.sections/ProductsSection/ProductsSection";
 import type { Customer, Product } from "./types";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
@@ -41,8 +41,7 @@ const MainPosPage: React.FC = () => {
       ? (subtotal * parseFloat(discountAmount.toString())) / 100
       : parseFloat(discountAmount.toString())
     : 0;
-  const tax = parseFloat((subtotal * 0.06).toFixed(4));
-  const total = subtotal - discount + tax;
+  const total = subtotal - discount;
 
   const anyProductWithUnfilledField = products.some((product) => {
     return (
@@ -239,7 +238,6 @@ const MainPosPage: React.FC = () => {
       note: notes,
       cashAmount: parseAmount(cashAmount),
       cardAmount: parseAmount(cardAmount),
-      taxe: tax,
       saleItems: products.map((product) => {
         return {
           productId: product.id,
@@ -403,15 +401,14 @@ const MainPosPage: React.FC = () => {
           </div>
         </div>
 
+      </section>
         <PaymentSummary
           subtotal={subtotal}
           discount={discount}
-          tax={tax}
           total={total}
           handleCreateSale={handleCreateSale}
           canSaveSale={canSaveSale}
         />
-      </section>
 
       <ScanModal
         show={showScanModal}

@@ -1,6 +1,7 @@
 import { FaPlusCircle, FaTimes } from "react-icons/fa";
-import type { Product } from "../types";
-import { KaratType } from "../../../../types/enums";
+import type { Product } from "../../types";
+import { KaratType } from "../../../../../types/enums";
+import "./productsSection.scss";
 
 interface Props {
   products: Product[];
@@ -38,8 +39,9 @@ const ProductsSection: React.FC<Props> = ({
                   {!product.manual && (
                     <img
                       className="product-image"
-                      src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
-                      alt=""
+                      src={`${import.meta.env.VITE_API_URL}${
+                        product.images[0]?.imageUrl
+                      }`}
                     />
                   )}
                   <div style={{ marginLeft: "10px" }}>

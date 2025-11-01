@@ -25,7 +25,6 @@ interface Sale {
   cashAmount: number;
   cardAmount: number;
   discount: number;
-  tax: number;
   saleItems: SaleItem[];
 }
 
@@ -162,10 +161,6 @@ const Receipt = () => {
           <div className="summary-item">
             <span>Discount:</span>
             <span>${saleDetails.discount}</span>
-          </div>
-          <div className="summary-item">
-            <span>Tax:</span>
-            <span>${saleDetails.tax}</span>
           </div>
         </div>
 

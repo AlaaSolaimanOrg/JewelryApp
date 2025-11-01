@@ -13,6 +13,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Sku { get; set; }
+        public string NFCId { get; set; }
         public ProductCategory Category { get; set; }
         public ProductType Type { get; set; }
         public KaratType KaratType { get; set; }

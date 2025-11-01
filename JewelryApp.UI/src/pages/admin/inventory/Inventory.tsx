@@ -157,7 +157,7 @@ const Inventory = () => {
   ];
 
   const data = products?.map((product) => ({
-    Image: (
+    Image: !!product.images[0]?.imageUrl && (
       <img
         src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
         alt={product.name ?? ""}
