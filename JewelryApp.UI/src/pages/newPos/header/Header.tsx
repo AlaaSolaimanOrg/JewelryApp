@@ -59,8 +59,6 @@ const Header = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  console.log("userInfo", userInfo);
-
   return (
     <>
       <header id="posHeader">

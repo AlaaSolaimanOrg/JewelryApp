@@ -87,9 +87,6 @@ const Dashboard = () => {
   const { salesToday, stockValue, customers, itemsSold, stockWeightByKarat } =
     dashboardInsights;
 
-  console.log("stockWeightByKarat", stockWeightByKarat);
-  console.log("Object.values(KaratType)", Object.values(KaratType));
-
   return (
     <div id="dashboard" className="page active">
       <div className="page-header">
@@ -181,7 +178,6 @@ const Dashboard = () => {
           {Object.values(KaratType)
             ?.filter((v) => typeof v === "number")
             ?.map((karatType) => {
-              console.log("karatType", karatType);
               const stockWeight = stockWeightByKarat?.find(
                 (stockWeight) => stockWeight.karatType == karatType
               );
@@ -191,9 +187,7 @@ const Dashboard = () => {
                   <div className="weight-header">
                     <div className="weight-title">
                       <span className="mr-2">Total Stock Weight</span>
-                      <span className="karatType">
-                        {karatType}K
-                      </span>
+                      <span className="karatType">{karatType}K</span>
                     </div>
                     <FaWeightHanging className="icon me-2" />
                   </div>

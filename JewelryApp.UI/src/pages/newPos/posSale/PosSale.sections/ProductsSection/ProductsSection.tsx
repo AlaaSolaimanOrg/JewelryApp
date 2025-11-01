@@ -2,6 +2,7 @@ import { FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../../types";
 import { KaratType } from "../../../../../types/enums";
 import "./productsSection.scss";
+import preventSignOnKeyDown from "../../../../../utils";
 
 interface Props {
   products: Product[];
@@ -16,6 +17,21 @@ const ProductsSection: React.FC<Props> = ({
   handleRemoveProduct,
   handleManualProductChange,
 }) => {
+  
+  const handleQuantityChange = (idx: number, value: string) => {
+    // Prevent negative numbers and ensure it's a valid number
+    const numValue = Math.max(0, parseInt(value) || 0);
+    
+    // Ensure quantity doesn't exceed available stock for non-manual products
+    if (!products[idx].manual && numValue > products[idx].quantity) {
+      return; // Don't update if exceeding available quantity
+    }
+    
+    handleManualProductChange(idx, "quantityForSale", numValue);
+  };
+
+  console.log("products",products)
+
   return (
     <section className="products-section">
       <h2 className="section-title">Cart Summary</h2>
@@ -24,7 +40,9 @@ const ProductsSection: React.FC<Props> = ({
         <thead>
           <tr>
             <th>Product</th>
-            <th>karat</th>
+            <th>Karat</th>
+            <th>Quantity</th>
+            <th>Quantity Available</th>
             <th>Weight</th>
             <th>Price/Gram</th>
             <th>Subtotal</th>
@@ -36,12 +54,13 @@ const ProductsSection: React.FC<Props> = ({
             <tr key={idx} className={product.manual ? "manual-row" : ""}>
               <td>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  {!product.manual && (
+                  {!product.manual && product.images?.[0] && (
                     <img
                       className="product-image"
                       src={`${import.meta.env.VITE_API_URL}${
                         product.images[0]?.imageUrl
                       }`}
+                      alt={product.name}
                     />
                   )}
                   <div style={{ marginLeft: "10px" }}>
@@ -90,6 +109,25 @@ const ProductsSection: React.FC<Props> = ({
               </td>
               <td>
                 <input
+                  type="number"
+                  className="weight-input"
+                  placeholder="Qty"
+                  value={product.quantityForSale || 0}
+                  min="1"
+                  max={product.manual ? undefined : product.quantity}
+                  onKeyDown={preventSignOnKeyDown}
+                  onChange={(e) => handleQuantityChange(idx, e.target.value)}
+                  style={{ width: "70px" }}
+                />
+                {!product.manual && product.quantityForSale > product.quantity && (
+                  <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                    Exceeds available stock
+                  </div>
+                )}
+              </td>
+              <td>{product.quantity}</td>
+              <td>
+                <input
                   type="text"
                   className="weight-input"
                   placeholder={product.manual ? "0.0g" : ""}
@@ -119,9 +157,11 @@ const ProductsSection: React.FC<Props> = ({
               <td>
                 <span>
                   {(() => {
+                    const quantity = product.quantityForSale || 1;
                     const subtotal =
                       parseFloat(product.pricePerGram?.toString() ?? "0") *
-                      parseFloat(product.weight?.toString() ?? "0");
+                      parseFloat(product.weight?.toString() ?? "0") *
+                      quantity;
                     if (subtotal % 1 === 0) return subtotal;
                     return subtotal
                       .toFixed(4)
@@ -143,7 +183,7 @@ const ProductsSection: React.FC<Props> = ({
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan={7} style={{ textAlign: "center", padding: "12px 0" }}>
+            <td colSpan={8} style={{ textAlign: "center", padding: "12px 0" }}>
               <button
                 className="manual-entry-btn"
                 id="manualEntryBtn"

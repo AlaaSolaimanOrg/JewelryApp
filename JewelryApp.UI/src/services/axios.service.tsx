@@ -3,14 +3,11 @@ import axios from "axios";
 import { callRefreshToken } from "../apis/login.api/login.api";
 import { checkRequestSucceeded, showError } from "../utils";
 
-console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: import.meta.env.VITE_API_TIMEOUT,
   headers: { "Content-Type": "application/json" },
 });
-
-console.log("import.meta.env.MODE", import.meta.env.MODE);
 
 // Attach access token from localStorage/sessionStorage to all requests
 axiosInstance.interceptors.request.use(
@@ -69,8 +66,6 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
       } catch (error) {
-        console.error("Refresh token failed:", error);
-        console.error("Refresh token expired or invalid. Logging out.");
         redirectToLogin();
         return Promise.reject(error);
       }

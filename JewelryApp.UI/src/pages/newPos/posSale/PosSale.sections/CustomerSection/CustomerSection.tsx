@@ -37,8 +37,6 @@ const CustomerSection: React.FC<Props> = ({
   onOpenScanModal,
   setCustomerInfoActive,
 }) => {
-  console.log("searchInput", searchInput);
-
   const loadOptions = useCallback(async (inputValue: string) => {
     if (!inputValue) return [];
 
@@ -55,7 +53,6 @@ const CustomerSection: React.FC<Props> = ({
         data: customer, // Include full customer data
       }));
     } catch (error) {
-      console.error("Search failed:", error);
       return [];
     }
   }, []);

@@ -17,6 +17,7 @@ namespace JewerlyApp.Domain.Entities
         public decimal? OriginalPricePerGram { get; set; }
         public decimal? OverriddenPricePerGram { get; set; }
         public decimal SubTotal { get; set; }
+        public int Quantity { get; set; }
         public Product? Product { get; set; }
         public Sale? Sale { get; set; }
 

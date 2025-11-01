@@ -77,8 +77,6 @@ const Customers = () => {
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
-  console.log("customers", customers);
-
   const handleDeleteCustomer = (customerId: string) => {
     setIsDeletingCustomer(true);
 
@@ -93,7 +91,6 @@ const Customers = () => {
         }
       })
       .catch((error) => {
-        console.error(error);
         showError("An error occurred while deleting the customer");
       })
       .finally(() => {

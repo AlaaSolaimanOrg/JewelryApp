@@ -25,7 +25,6 @@ const ReceiptHistoryModal = ({
 }: ReceiptHistoryModalProps) => {
   const [showModal, setShowModal] = useState(false);
 
-  console.log("customerId", customerId);
   const { data: customerPurhcaseHistory } = useLocalApi({
     apiToCall: (data) => getCustomerPurhcaseHistory(data.payload),
     payload: { customerId: customerId },

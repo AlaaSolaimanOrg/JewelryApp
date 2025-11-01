@@ -91,6 +91,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                         Weight = item.Weight,
                         OriginalPricePerGram = item.OriginalPricePerGram,
                         OverriddenPricePerGram = item.OverriddenPricePerGram,
+                        Quantity = item.Quantity,
                         SubTotal = itemTotal
                     };
 

@@ -43,8 +43,6 @@ const SalesReports = () => {
 
   const today = new Date();
 
-  console.log("appliedDateFilter", appliedDateFilter);
-
   const pillOptions = [
     {
       label: "All",

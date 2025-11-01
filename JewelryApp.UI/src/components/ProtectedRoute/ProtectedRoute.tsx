@@ -51,7 +51,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
     }
   } catch (error) {
-    console.error(error);
     localStorage.clear();
     sessionStorage.clear();
     return <Navigate to="/login" replace />;

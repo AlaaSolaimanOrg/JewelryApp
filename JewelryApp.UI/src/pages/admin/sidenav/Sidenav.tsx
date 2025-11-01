@@ -9,7 +9,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { MdOutlineAddShoppingCart } from "react-icons/md";
+import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -19,7 +19,7 @@ import "./sidenav.scss";
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setUserInfo } = useAuth();
+  const { setUserInfo, userInfo } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const navItems = [
@@ -100,6 +100,12 @@ const SideNav = () => {
     navigate(path);
   };
 
+  const hasPosRole = userInfo?.roles?.includes("PosRole");
+
+  const handlePosRedirect = () => {
+    // Redirect to your POS page
+    navigate("/"); // Adjust the route as needed
+  };
   return (
     <>
       {!isMobileOpen && (
@@ -147,6 +153,17 @@ const SideNav = () => {
             </button>
           ))}
 
+          {hasPosRole && (
+            <div>
+              <div className="nav-section">System</div>
+
+              <button className="nav-item " onClick={handlePosRedirect}>
+                <MdOutlinePointOfSale className="icon" />
+                <span>POS</span>
+              </button>
+            </div>
+          )}
+
           <div className="nav-section">Operations</div>
           {operationItems.map((item) => (
             <button
@@ -160,7 +177,7 @@ const SideNav = () => {
           ))}
 
           <button
-            className="nav-item logout-btn"
+            className="nav-item"
             onClick={handleLogout}
             style={{ marginTop: "16px", color: "#d9534f" }}
           >

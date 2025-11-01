@@ -87,25 +87,17 @@ const ScanModal: React.FC<ScanModalProps> = ({
     const response = await getProductsByNfcIds({ nfcIds });
     const fetchedProducts = response?.data || [];
 
-    console.log("nfcIds", nfcIds);
-    console.log("fetchedProducts", fetchedProducts);
-
     const newValidationErrors = validateProducts(nfcIds, fetchedProducts);
 
-    console.log("newValidationErrors", newValidationErrors);
-    console.log("validationErrors", validationErrors);
     if (newValidationErrors.length && !validationErrors.length) {
       setValidationErrors(newValidationErrors);
       return;
     }
 
-    if (validationErrors.length > 0) {
-      console.log("Products with errors:", validationErrors);
-    }
-
     const updatedFetchedProducts = fetchedProducts.map((fetchedProduct) => ({
       ...fetchedProduct,
       originalPricePerGram: fetchedProduct.pricePerGram,
+      quantityForSale: 1,
     }));
 
     const existingNfcIds = products.map((p) => p.nfcId);

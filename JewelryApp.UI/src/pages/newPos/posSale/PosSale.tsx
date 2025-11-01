@@ -26,12 +26,14 @@ const MainPosPage: React.FC = () => {
   const [cardAmount, setCardAmount] = useState(0);
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
 
-  console.log("products", products);
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
+    const quantity = product.quantityForSale || 1;
     const s =
       parseFloat(
-        (Number(product.pricePerGram) * Number(product.weight)) as any
+        (Number(product.pricePerGram) *
+          Number(product.weight) *
+          quantity) as any
       ) || 0;
     return sum + s;
   }, 0);
@@ -41,16 +43,19 @@ const MainPosPage: React.FC = () => {
       ? (subtotal * parseFloat(discountAmount.toString())) / 100
       : parseFloat(discountAmount.toString())
     : 0;
-  const total = subtotal - discount;
+  const total = Math.round(subtotal - discount);
 
   const anyProductWithUnfilledField = products.some((product) => {
+    const quantity = product.quantityForSale || 0;
     return (
       !product.name ||
       !product.karatType ||
       !product.weight ||
       Number(product.weight) <= 0 ||
       !product.pricePerGram ||
-      Number(product.pricePerGram) <= 0
+      Number(product.pricePerGram) <= 0 ||
+      quantity <= 0 ||
+      (!product.manual && quantity > product.quantity) // Check stock for non-manual products
     );
   });
 
@@ -63,7 +68,8 @@ const MainPosPage: React.FC = () => {
     (cardAmount > 0 || cashAmount > 0) &&
     !anyProductWithUnfilledField &&
     !isLoadingCreateSale &&
-    checkPaymentEqualTotal;
+    checkPaymentEqualTotal &&
+    products.every((p) => p.quantityForSale && p.quantityForSale > 0);
 
   // Sync payment amounts when total changes
   useEffect(() => {
@@ -151,6 +157,7 @@ const MainPosPage: React.FC = () => {
     setCashAmount(cashValue);
   };
   // Manual entry
+  // In handleManualEntry function:
   const handleManualEntry = () => {
     setProducts([
       ...products,
@@ -165,6 +172,7 @@ const MainPosPage: React.FC = () => {
         id: null,
         sku: null,
         quantity: 0,
+        quantityForSale: 1, // Add default quantity
         category: 0 as any,
         productType: 0 as any,
         description: "",
@@ -172,7 +180,6 @@ const MainPosPage: React.FC = () => {
       },
     ]);
   };
-
   // Remove product
   const handleRemoveProduct = (idx: number) => {
     setProducts(products.filter((_, i) => i !== idx));
@@ -222,8 +229,6 @@ const MainPosPage: React.FC = () => {
   const handleCreateSale = () => {
     setIsLoadingCreateSale(true);
 
-    console.log("discountAmount", discountAmount);
-
     const payload = {
       customerId: customer?.id,
       discount: discountAmount,
@@ -244,6 +249,7 @@ const MainPosPage: React.FC = () => {
           productName: product.name,
           karatType: Number(product.karatType),
           weight: product.weight,
+          quantity: product.quantityForSale || 1, // Include quantity here
           isManualProduct: product.manual,
           overriddenPricePerGram: product.pricePerGram,
           originalPricePerGram: product.originalPricePerGram,

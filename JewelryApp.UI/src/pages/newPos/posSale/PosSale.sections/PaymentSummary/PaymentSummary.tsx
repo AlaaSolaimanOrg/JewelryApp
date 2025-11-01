@@ -9,6 +9,10 @@ interface Props {
   canSaveSale: boolean;
 }
 
+const formatAmount = (value: number) => {
+  return parseFloat(value.toFixed(2)).toString();
+};
+
 const PaymentSummary: React.FC<Props> = ({
   subtotal,
   discount,
@@ -17,22 +21,22 @@ const PaymentSummary: React.FC<Props> = ({
   canSaveSale,
 }) => {
   const navigate = useNavigate();
+
   return (
     <section className="payment-section">
       <h2 className="section-title">Payment Summary</h2>
       <div className="order-summary">
         <div className="summary-row">
           <span>Subtotal:</span>
-          <span>${subtotal}</span>
+          <span>${formatAmount(subtotal)}</span>
         </div>
         <div className="summary-row">
           <span>Discount:</span>
-          <span>${discount}</span>
+          <span>${formatAmount(discount)}</span>
         </div>
-
         <div className="summary-row total">
           <span>Total:</span>
-          <span>${total}</span>
+          <span>${formatAmount(total)}</span>
         </div>
       </div>
 
@@ -40,18 +44,11 @@ const PaymentSummary: React.FC<Props> = ({
         <button
           className={`save-btn ${!canSaveSale ? "disabled-button-gold" : ""}`}
           disabled={!canSaveSale}
-          onClick={() => {
-            handleCreateSale();
-          }}
+          onClick={handleCreateSale}
         >
           Save Sale
         </button>
-        <button
-          className="cancel-btn"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
+        <button className="cancel-btn" onClick={() => navigate("/")}>
           Cancel
         </button>
       </div>

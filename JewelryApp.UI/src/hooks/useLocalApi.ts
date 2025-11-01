@@ -56,7 +56,6 @@ const useLocalApi = ({
 
       if (!checkRequestSucceeded(response?.statusCode)) {
         // setError(message);
-        console.error(message);
         return;
       }
 
@@ -72,8 +71,6 @@ const useLocalApi = ({
       }
     } catch (error: any) {
       // if (setError) setError(e?.message);
-
-      console.error(error?.message);
     } finally {
       setIsLoading(false);
       finallyCallback();

@@ -178,7 +178,6 @@ export const handleSort = (sortKey: string, sortCriteria, onSortChange) => {
 };
 
 export default function preventSignOnKeyDown(event, extraUnAllowedDigits = []) {
-  console.log("key", event);
   const notAllowedDigits = ["-", "+", "e", "E", ...extraUnAllowedDigits];
   if (notAllowedDigits.includes(event.key)) {
     event.preventDefault();
