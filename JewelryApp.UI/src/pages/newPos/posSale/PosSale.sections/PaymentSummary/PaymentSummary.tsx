@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "./paymentSummary.scss"
+import "./paymentSummary.scss";
 
 interface Props {
   subtotal: number;

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
-import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";

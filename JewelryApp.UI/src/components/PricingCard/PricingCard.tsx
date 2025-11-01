@@ -2,6 +2,7 @@ import { FaRedo } from "react-icons/fa";
 import "./pricingCard.scss";
 import { KaratType, ProductType } from "../../types/enums";
 import type { PriceItem } from "../../pages/admin/pricing/Pricing";
+import preventSignOnKeyDown from "../../utils";
 
 const PricingCard = ({
   cardTitle,
@@ -50,13 +51,16 @@ const PricingCard = ({
                   isGlobal ? "disabled-gold-input" : ""
                 }`}
                 value={price.pricePerGram}
-                onChange={(event) =>
+                min={0}
+                onKeyDown={preventSignOnKeyDown}
+                onChange={(event) => {
+                  const value = event.target.value;
                   handlePriceChange(
                     productType,
                     price.karatType,
-                    Number(event.target.value)
-                  )
-                }
+                    value ? Number(value) : null
+                  );
+                }}
                 disabled={isGlobal}
               />
             </div>

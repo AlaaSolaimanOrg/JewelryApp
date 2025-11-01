@@ -107,7 +107,7 @@ const Pricing = () => {
   // Check if prices have changed
   const hasChanges = useMemo(() => {
     if (initialPrices.length !== prices.length) return true;
-    
+
     return prices.some((currentPrice, index) => {
       const initialPrice = initialPrices[index];
       return (
@@ -117,6 +117,11 @@ const Pricing = () => {
       );
     });
   }, [prices, initialPrices]);
+
+  const anyPriceHasNoValue = prices.some(
+    (price) =>
+      price.productType == ProductType.Gold && price.pricePerGram == null
+  );
 
   const handlePriceChange = (productType, karatType, value) => {
     setPrices((prev) =>
@@ -169,7 +174,7 @@ const Pricing = () => {
 
         return newPriceSetting ?? oldPrice;
       });
-      
+
       setPrices(newPrices);
       setInitialPrices(newPrices); // Set both current and initial prices
     }
@@ -233,13 +238,13 @@ const Pricing = () => {
           <span>Pricing Control</span>
         </h1>
         <div className="page-actions">
-          <button 
-            className={`btn-md ${hasChanges ? 'btn-gold' : 'btn-dark'}`} 
+          <button
+            className={`btn-md ${hasChanges ? "btn-gold" : "btn-dark"}`}
             onClick={handleApplyPrices}
-            disabled={!hasChanges}
+            disabled={!hasChanges || anyPriceHasNoValue}
           >
-            <FaSyncAlt className="me-1" /> 
-            {hasChanges ? 'Apply Prices' : 'No Changes'}
+            <FaSyncAlt className="me-1" />
+            {hasChanges ? "Apply Prices" : "No Changes"}
           </button>
         </div>
       </div>

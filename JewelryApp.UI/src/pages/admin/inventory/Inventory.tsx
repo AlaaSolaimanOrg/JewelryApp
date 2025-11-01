@@ -11,7 +11,7 @@ import InventoryFilterSideBar, {
 } from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
-import ScanModal from "../../../components/ScanModal/ScanModal";
+import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";

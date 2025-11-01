@@ -3,9 +3,9 @@ import { Button, Modal } from "react-bootstrap";
 import { FaPrint, FaReceipt } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import "./receiptModal.scss";
-import type { KaratType } from "../../types/enums";
-import { getSaleById } from "../../apis/sales.api/sales.api";
-import useLocalApi from "../../hooks/useLocalApi";
+import type { KaratType } from "../../../types/enums";
+import { getSaleById } from "../../../apis/sales.api/sales.api";
+import useLocalApi from "../../../hooks/useLocalApi";
 
 interface SaleItem {
   productName: string;

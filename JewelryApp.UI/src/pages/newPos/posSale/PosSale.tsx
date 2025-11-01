@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createSale } from "../../../apis/sales.api/sales.api";
-import ScanModal from "../../../components/ScanModal/ScanModal";
+import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import { DiscountType, KaratType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
@@ -400,15 +400,14 @@ const MainPosPage: React.FC = () => {
             />
           </div>
         </div>
-
       </section>
-        <PaymentSummary
-          subtotal={subtotal}
-          discount={discount}
-          total={total}
-          handleCreateSale={handleCreateSale}
-          canSaveSale={canSaveSale}
-        />
+      <PaymentSummary
+        subtotal={subtotal}
+        discount={discount}
+        total={total}
+        handleCreateSale={handleCreateSale}
+        canSaveSale={canSaveSale}
+      />
 
       <ScanModal
         show={showScanModal}

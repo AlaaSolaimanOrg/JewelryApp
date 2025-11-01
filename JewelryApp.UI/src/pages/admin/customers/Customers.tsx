@@ -11,7 +11,7 @@ import {
   deleteCustomer,
   getCustomers,
 } from "../../../apis/customers.api/customers.api";
-import AddCustomerModal from "../../../components/AddCustomerModal/AddCustomerModal";
+import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/Table/CustomTable";
@@ -25,6 +25,9 @@ import {
   showSuccess,
 } from "../../../utils";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
+import { Button } from "react-bootstrap";
+import { LuHistory } from "react-icons/lu";
 
 interface Customer {
   id: string;
@@ -104,7 +107,7 @@ const Customers = () => {
       name: customer.name,
       phoneNumber: customer.phoneNumber,
       actions: (
-        <>
+        <div className="action-buttons">
           <button
             className="action-btn"
             title="View"
@@ -116,6 +119,28 @@ const Customers = () => {
           >
             <FaEye />
           </button>
+          <ReceiptHistoryModal
+            sales={[
+              {
+                id: "1",
+                serialNumber: 1001,
+                createdDate: "2024-01-15T10:30:00Z",
+                total: 1500,
+                customerName: "John Doe",
+              },
+              {
+                id: "2",
+                serialNumber: 1002,
+                createdDate: "2024-01-16T14:45:00Z",
+                total: 2300,
+                customerName: "Jane Smith",
+              },
+            ]}
+          >
+            <button className="action-btn" title="View">
+              <LuHistory />
+            </button>
+          </ReceiptHistoryModal>
           <button
             className="action-btn"
             title="Edit"
@@ -136,7 +161,7 @@ const Customers = () => {
           >
             <FaTrash />
           </button>
-        </>
+        </div>
       ),
     };
   });

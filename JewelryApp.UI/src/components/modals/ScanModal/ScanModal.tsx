@@ -7,8 +7,8 @@ import React, {
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
 import { MdError } from "react-icons/md";
-import { getProductsByNfcIds } from "../../apis/products.api/products.api";
-import { renderTooltip } from "../../utils";
+import { getProductsByNfcIds } from "../../../apis/products.api/products.api";
+import { renderTooltip } from "../../../utils";
 import "./scanModal.scss";
 
 interface ScanModalProps {
@@ -137,7 +137,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
       setScanInput("");
     }
   }, [show]);
-  
+
   return (
     <Modal show={show} onHide={onClose} centered className="scan-modal">
       <Modal.Header closeButton>

@@ -4,7 +4,7 @@ import { getSalesCustomers } from "../../../../apis/sales.api/sales.api";
 import CommentTooltip from "../../../../components/CommentTooltip/CommentTooltip";
 import Paginator from "../../../../components/Paginator/Paginator";
 
-import ReceiptModal from "../../../../components/ReceiptModal/ReceiptModal";
+import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { CustomerFilter } from "../../../../types/enums";
 import "./customersSoldTo.scss";

@@ -3,8 +3,8 @@ import { Button, Form, Modal } from "react-bootstrap";
 import {
   createCustomer,
   updateCustomer,
-} from "../../apis/customers.api/customers.api";
-import { checkRequestSucceeded, showError, showSuccess } from "../../utils";
+} from "../../../apis/customers.api/customers.api";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./addCustomerModal.scss";
 
 interface Customer {

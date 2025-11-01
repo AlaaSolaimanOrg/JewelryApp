@@ -3,7 +3,7 @@ import { RiHistoryFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
-import ReceiptModal from "../../../components/ReceiptModal/ReceiptModal";
+import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
 import "./home.scss";
