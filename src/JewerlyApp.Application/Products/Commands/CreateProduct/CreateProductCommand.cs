@@ -27,5 +27,6 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
         public int Quantity { get; set; } 
 
         public List<IFormFile> Images { get; set; }
+        public List<string>? Tags { get; set; }
     }
 }

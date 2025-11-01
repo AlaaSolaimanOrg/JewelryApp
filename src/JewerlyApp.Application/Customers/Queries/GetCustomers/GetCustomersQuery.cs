@@ -6,6 +6,6 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
 {
     public class GetCustomersQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetCustomersVM>>
     {
-        public string? SearchBy {  get; set; }
+        public string? SearchBy { get; set; }
     }
 }
