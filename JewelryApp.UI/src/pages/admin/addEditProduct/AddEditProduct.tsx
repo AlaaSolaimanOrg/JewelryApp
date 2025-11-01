@@ -35,6 +35,7 @@ const productFieldsInitialState = {
   description: "",
   quantity: 1,
   nfcId: "",
+  tags: [], // Added tags array
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -42,6 +43,7 @@ const AddEditProduct = ({ isEdit }) => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
+  const [tagInput, setTagInput] = useState(""); // For new tag input
 
   const { productId } = useParams();
 
@@ -57,6 +59,34 @@ const AddEditProduct = ({ isEdit }) => {
       };
     });
   };
+
+  // Add a new tag
+  const handleAddTag = () => {
+    if (tagInput.trim() && !productFields.tags.includes(tagInput.trim())) {
+      setProductFields((prev) => ({
+        ...prev,
+        tags: [...prev.tags, tagInput.trim()],
+      }));
+      setTagInput("");
+    }
+  };
+
+  // Remove a tag
+  const handleRemoveTag = (tagToRemove: string) => {
+    setProductFields((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  // Handle Enter key in tag input
+  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+
   const { data: generatedSKU, setData: setGeneratedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
@@ -99,6 +129,7 @@ const AddEditProduct = ({ isEdit }) => {
         description: product.description,
         quantity: product.quantity,
         nfcId: product.nfcId,
+        tags: product.tags || [], // Initialize tags from product data
       });
 
       const loadFiles = async () => {
@@ -123,6 +154,7 @@ const AddEditProduct = ({ isEdit }) => {
   const handleClearClick = () => {
     setProductFields(productFieldsInitialState);
     setFiles([]);
+    setTagInput("");
     setGeneratedSKU(null);
   };
 
@@ -145,6 +177,11 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Weight", productFields.weight);
     formData.append("quantity", productFields.quantity?.toString());
     formData.append("NfcId", productFields.nfcId);
+
+    // Append tags as JSON array
+    if (productFields.tags.length > 0) {
+      formData.append("Tags", JSON.stringify(productFields.tags));
+    }
 
     if (files && files.length > 0) {
       files.forEach((file) => {
@@ -176,7 +213,8 @@ const AddEditProduct = ({ isEdit }) => {
 
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
-      if (key === "description") return false;
+      if (key === "description" || key === "tags" || key === "nfcId")
+        return false; // tags and nfcId are optional
       if (Array.isArray(value)) {
         return value.length === 0;
       }
@@ -394,6 +432,50 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
+          {/* Tags Section */}
+          <div className="form-group">
+            <label className="form-label">Tags (Optional)</label>
+            <div className="tags-input-container">
+              <div className="tags-display">
+                <div className="tag-input-wrapper">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Add a tag and press Enter or click Add"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagInputKeyDown}
+                  />
+                  <button
+                    type="button"
+                    className="btn-sm btn-gold"
+                    onClick={handleAddTag}
+                    disabled={
+                      !tagInput.trim() ||
+                      productFields.tags.some((tag) => tag === tagInput.trim())
+                    }
+                  >
+                    Add
+                  </button>
+                </div>
+                <div>
+                  {productFields.tags.map((tag, index) => (
+                    <span key={index} className="tag">
+                      {tag}
+                      <button
+                        type="button"
+                        className="tag-remove"
+                        onClick={() => handleRemoveTag(tag)}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {generatedSKU && (
             <div className="barcodeGenerator">
               <div className="titleContainer">
@@ -416,65 +498,6 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           )}
 
-          {/* <div className="form-group">
-            <label className="form-label">Tags</label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              <label className="filter-option" style={{ margin: 0 }}>
-                <input
-                  type="checkbox"
-                  checked={productFields.tags.value.includes("new")}
-                  onChange={(e) => {
-                    const newValue = e.target.checked
-                      ? [...productFields.tags.value, "new"]
-                      : productFields.tags.value.filter((tag) => tag !== "new");
-                    handleProductField("tags", newValue);
-                  }}
-                />
-                New Arrival
-              </label>
-              <label className="filter-option" style={{ margin: 0 }}>
-                <input
-                  type="checkbox"
-                  checked={productFields.tags.value.includes("featured")}
-                  onChange={(e) => {
-                    const newValue = e.target.checked
-                      ? [...productFields.tags.value, "featured"]
-                      : productFields.tags.value.filter(
-                          (tag) => tag !== "featured"
-                        );
-                    handleProductField("tags", newValue);
-                  }}
-                />
-                Featured
-              </label>
-              <label className="filter-option" style={{ margin: 0 }}>
-                <input
-                  type="checkbox"
-                  checked={productFields.tags.value.includes("premium")}
-                  onChange={(e) => {
-                    const newValue = e.target.checked
-                      ? [...productFields.tags.value, "premium"]
-                      : productFields.tags.value.filter(
-                          (tag) => tag !== "premium"
-                        );
-                    handleProductField("tags", newValue);
-                  }}
-                />
-                Premium
-              </label>
-            </div>
-          </div> */}
-
-          {/* <div className="form-group">
-            <label className="form-label">Product Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                handleProductField("productImage", e.target.files[0])
-              }
-            />
-          </div> */}
           <ImageUpload files={files} setFiles={setFiles} />
         </form>
       </div>
