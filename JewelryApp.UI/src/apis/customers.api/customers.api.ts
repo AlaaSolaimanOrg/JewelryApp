@@ -28,3 +28,12 @@ export const deleteCustomer = async (payload: { id: string }) => {
 export const updateCustomer = async (payload: { id: string }) => {
   return requestApi("PUT", apiRoutes.customers.updateCustomer, payload);
 };
+export const getCustomerPurhcaseHistory = async (payload: {
+  customerId: string;
+}) => {
+  return requestApi(
+    "GET",
+    apiRoutes.customers.getCustomerPurhcaseHistory,
+    payload
+  );
+};

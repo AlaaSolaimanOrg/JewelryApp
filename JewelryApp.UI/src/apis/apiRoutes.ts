@@ -39,6 +39,7 @@ export const apiRoutes = {
     getCustomers: "Customer/GetCustomers",
     deleteCustomer: "Customer/DeleteCustomer",
     updateCustomer: "Customer/UpdateCustomer",
+    getCustomerPurhcaseHistory: "Customer/GetCustomerPurhcaseHistory",
   },
   sales: {
     createSale: "Sales/CreateSale",

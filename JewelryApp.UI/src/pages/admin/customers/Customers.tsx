@@ -120,6 +120,7 @@ const Customers = () => {
             <FaEye />
           </button>
           <ReceiptHistoryModal
+            customerId={customer.id}
             sales={[
               {
                 id: "1",
