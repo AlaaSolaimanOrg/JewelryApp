@@ -30,14 +30,12 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
 
             if (loggedInUser == null)
             {
-                var unauthorizedInnerResponse = new PaginatedResponse<GetCustomersVM>
+                return new PaginatedResponse<GetCustomersVM>
                 {
                     Data = new List<GetCustomersVM>(),
                     StatusCode = ResponseStatusCode.Unauthorized,
                     Message = Messages.ErrorGeneral
                 };
-
-                return unauthorizedInnerResponse;
             }
 
             IQueryable<Customer> customersQuery = _context.Customers.AsQueryable().AsNoTracking();
@@ -54,7 +52,6 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
             int totalRecords = await customersQuery.CountAsync(cancellationToken);
 
             string sortBy = request.SortBy?.ToLower() ?? "name";
-
             string sortDirection = request.SortDirection.ToString().ToLower();
 
             customersQuery = sortBy switch
@@ -80,6 +77,21 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
 
+            var customerIds = paginatedCustomers.Select(c => c.Id).ToList();
+
+            var salesWithItems = await _context.Sales
+                .Where(s => customerIds.Contains(s.CustomerId))
+                .Select(s => new
+                {
+                    s.CustomerId,
+                    ProductCount = s.SaleItems.Count()
+                })
+                .ToListAsync(cancellationToken);
+
+            var totalProductsByCustomer = salesWithItems
+                .GroupBy(x => x.CustomerId)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.ProductCount));
+
             var customerListItems = paginatedCustomers
                 .Select(c => new GetCustomersVM
                 {
@@ -88,10 +100,11 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                     Email = c.Email,
                     PhoneNumber = c.PhoneNumber ?? string.Empty,
                     Birthday = c.Birthday,
+                    TotalProductsPurchased = totalProductsByCustomer.ContainsKey(c.Id)
+                        ? totalProductsByCustomer[c.Id]
+                        : 0
                 })
                 .ToList();
-
-          
 
             return new PaginatedResponse<GetCustomersVM>
             {
@@ -103,5 +116,6 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 TotalRecords = totalRecords
             };
         }
+
     }
 }

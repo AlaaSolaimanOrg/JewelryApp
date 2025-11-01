@@ -15,5 +15,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesCustomers
         public string PhoneNumber { get; set; } = string.Empty;
         public string NotesRemarks { get; set; } = string.Empty;
         public DateTime? CreatedDate { get; set; }
+
     }
 }
+
+
