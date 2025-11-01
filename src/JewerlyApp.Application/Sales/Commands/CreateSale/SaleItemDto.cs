@@ -16,5 +16,6 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         public bool IsManualProduct { get; set; }
         public decimal OriginalPricePerGram { get; set; }
         public decimal? OverriddenPricePerGram { get; set; }
+        public int Quantity { get; set; }
     }
 }
