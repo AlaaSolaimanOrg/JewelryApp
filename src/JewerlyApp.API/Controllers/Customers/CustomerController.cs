@@ -2,6 +2,7 @@
 using JewerlyApp.Application.Customers.Commands.DeleteCustomer;
 using JewerlyApp.Application.Customers.Commands.UpdateCustomer;
 using JewerlyApp.Application.Customers.Queries.GetCustomer;
+using JewerlyApp.Application.Customers.Queries.GetCustomerPurchaseHistory;
 using JewerlyApp.Application.Customers.Queries.GetCustomers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -45,6 +46,13 @@ namespace JewerlyApp.API.Controllers.Customers
 
         [HttpGet]
         public async Task<IActionResult> GetCustomer([FromQuery] GetCustomerQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCustomerPurhcaseHistory([FromQuery] GetCustomerPurchaseHistoryQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

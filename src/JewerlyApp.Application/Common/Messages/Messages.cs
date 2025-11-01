@@ -33,6 +33,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Success_Customer_Created = "Customer Successfully Created";
         public const string Success_Customer_Updated = "Customer Updated Successfully";
         public const string Success_Customer_Deleted = "Customer Deleted.";
+        public const string Success_Purchase_Retrieved = "Successfully Retrieved Purchase History.";
 
         //Error Messages
         public const string ErrorGeneral = "An unexpected error occurred. Please try again.";
@@ -77,6 +78,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Invalid_Price = "Invalid Price";
         public const string Error_Customer_Data_Exists = "A Customer with the following data already exists.";
         public const string Error_Customer_Not_Found = "Customer Not Found.";
+        public const string Error_Purchase_Not_Found = "No Purchase Found For This Customer.";
 
         //POS Messages
         public const string Pos_No_Cart = "No cart is found.";
