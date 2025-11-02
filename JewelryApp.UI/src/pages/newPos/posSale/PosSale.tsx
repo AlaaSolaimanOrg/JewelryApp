@@ -336,6 +336,7 @@ const MainPosPage: React.FC = () => {
         customer={customer}
         setCustomer={setCustomer}
         customerInfoActive={customerInfoActive}
+        searchInput={searchInput}
         setSearchInput={setSearchInput}
         onAddCustomerClick={() => setShowAddCustomerModal(true)}
         showAddCustomerModal={showAddCustomerModal}

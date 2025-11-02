@@ -29,6 +29,7 @@ const CustomerSection: React.FC<Props> = ({
   customer,
   setCustomer,
   customerInfoActive,
+  searchInput,
   setSearchInput,
   onAddCustomerClick,
   showAddCustomerModal,
@@ -70,6 +71,7 @@ const CustomerSection: React.FC<Props> = ({
               inputValue ? "No customers found" : "Type to search customers"
             }
             loadingMessage={() => "Searching..."}
+            inputValue={searchInput}
             onChange={(selected) => {
               if (selected) {
                 setCustomerInfoActive(true);
