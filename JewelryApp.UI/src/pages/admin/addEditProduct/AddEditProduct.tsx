@@ -63,9 +63,6 @@ const AddEditProduct = ({ isEdit }) => {
   // Add a new tag
   const handleAddTag = () => {
     if (tagInput.trim() && !productFields.tags.includes(tagInput.trim())) {
- 
- 
- 
       setProductFields((prev) => ({
         ...prev,
         tags: [...prev.tags, tagInput.trim()],
@@ -183,7 +180,7 @@ const AddEditProduct = ({ isEdit }) => {
 
     // Append tags as JSON array
     if (productFields.tags.length > 0) {
-      formData.append("Tags", JSON.stringify(productFields.tags));
+      productFields.tags.forEach((tag) => formData.append("Tags", tag));
     }
 
     if (files && files.length > 0) {

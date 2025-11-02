@@ -14,5 +14,6 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
         public decimal Weight { get; set; }
         public decimal? PricePerGram { get; set; }
         public decimal Subtotal { get; set; }
+        public int Quantity { get; set; }
     }
 }

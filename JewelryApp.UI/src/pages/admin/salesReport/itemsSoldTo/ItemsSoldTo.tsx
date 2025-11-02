@@ -104,8 +104,14 @@ const ItemsSoldTo = () => {
       sortable: true,
     },
     {
-      key: "weightSummed",
+      key: "weight",
       label: "Weight",
+      width: "15%",
+      sortable: true,
+    },
+    {
+      key: "totalWeight",
+      label: "Total Weight",
       width: "15%",
       sortable: true,
     },
@@ -127,7 +133,8 @@ const ItemsSoldTo = () => {
   const tableData = soldItems.map((item) => ({
     productName: item.productName,
     quantity: item.quantity,
-    weightSummed: `${item.weightSummed}g`,
+    weight: `${item.unitWeight}g`,
+    totalWeight: `${item.weightSummed}g`,
     pricePerGram: `$${item.pricePerGram}`,
     subtotal: `$${item.subtotal}`,
   }));

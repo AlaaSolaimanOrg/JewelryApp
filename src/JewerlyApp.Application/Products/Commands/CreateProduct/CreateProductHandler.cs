@@ -25,9 +25,11 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 
         public async Task<GenericResponse<string>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
+            var productId = Guid.NewGuid();
+
             var product = new Product
             {
-                Id = Guid.NewGuid(),
+                Id = productId,
                 Name = request.Name,
                 KaratType = request.KaratType,
                 Sku = request.Sku,
@@ -37,7 +39,14 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Type = request.Type,
                 Description = request.Description,
                 Quantity = request.Quantity,
-                Tags = request.Tags ?? new List<string>()
+                Tags = request.Tags?
+                    .Select(tag => new ProductTag
+                    {
+                        Id = Guid.NewGuid(),         
+                        ProductId = productId,
+                        Tag = tag.Trim()
+                    })
+                    .ToList() ?? new List<ProductTag>()
             };
 
             await _context.Products.AddAsync(product, cancellationToken);

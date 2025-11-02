@@ -72,7 +72,7 @@ axiosInstance.interceptors.response.use(
     }
 
     // If it's a 401 and we've already retried, or it's not a 401, just return the error
-    return Promise.reject(error?.response || error);
+    return Promise.resolve(error?.response || error);
   }
 );
 

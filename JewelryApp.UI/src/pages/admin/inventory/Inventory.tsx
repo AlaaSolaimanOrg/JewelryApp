@@ -94,7 +94,7 @@ const Inventory = () => {
     {
       key: "productName",
       label: "Product Name",
-      width: "250px",
+      width: "150px",
       onHeaderClick: () => {
         handleSort("Name", sortCriteria, onSortChange);
       },
@@ -116,7 +116,7 @@ const Inventory = () => {
     {
       key: "sku",
       label: "SKU",
-      width: "120px",
+      width: "150px",
       onHeaderClick: () => {
         handleSort("sku", sortCriteria, onSortChange);
       },
@@ -162,8 +162,8 @@ const Inventory = () => {
         src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
         alt={product.name ?? ""}
         style={{
-          width: "40px",
-          height: "40px",
+          width: "70px",
+          height: "70px",
           objectFit: "cover",
           borderRadius: "6px",
         }}
@@ -243,11 +243,11 @@ const Inventory = () => {
 
       <div>
         <Row>
-          <Col md={12} lg={4} xl={3}>
+          <Col md={12} lg={3} xl={2}>
             <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
           </Col>
 
-          <Col md={12} lg={8} xl={9}>
+          <Col md={12} lg={9} xl={10}>
             <div className="inventory-content">
               <div className="card">
                 <div className="card-header">

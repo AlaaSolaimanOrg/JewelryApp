@@ -24,9 +24,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
         public async Task<GenericResponse<List<GetTopSellingCategoriesVM>>> Handle(GetTopSellingCategoriesQuery request, CancellationToken cancellationToken)
         {
             var saleItemsQuery = _context.SaleItems
-            .Include(si => si.Product)
-            .Include(si => si.Sale)
-            .AsQueryable();
+                .Include(si => si.Product)
+                .Include(si => si.Sale)
+                .AsQueryable();
 
             // Apply date range filter
             if (request.DateFrom.HasValue)
@@ -57,8 +57,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
                 {
                     Category = g.Key.Category,
                     KaratType = g.Key.KaratType,
-                    ItemsSold = g.Count(),
-                    Revenue = g.Sum(si => si.SubTotal)
+                    ItemsSold = g.Sum(si => si.Quantity), // FIXED: Sum quantities instead of counting rows
+                    Revenue = g.Sum(si => si.SubTotal) // This should already account for quantity, but verify
                 })
                 .ToListAsync(cancellationToken);
 
@@ -86,7 +86,6 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
                 StatusCode = Domain.Enums.ResponseStatusCode.Success,
                 Message = Messages.Success,
             };
-
         }
     }
 }

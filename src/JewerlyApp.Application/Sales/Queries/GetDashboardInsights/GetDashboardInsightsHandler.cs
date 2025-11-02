@@ -88,19 +88,22 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
 
         private async Task<decimal> GetCurrentStockValue(CancellationToken cancellationToken)
         {
-            // Assuming you have a Products table with stock information
+            // Fixed: Account for quantity in stock value calculation
             var totalStockValue = await _context.Products
                 .Where(p => p.Weight > 0 && p.Quantity > 0)
                 .Join(_context.PricingSettings,
                     product => new { KaratType = product.KaratType, ProductType = product.Type },
                     pricing => new { pricing.KaratType, pricing.ProductType },
-                    (product, pricing) => new { product.Weight, pricing.Price })
-                .SumAsync(x => x.Weight * x.Price, cancellationToken);
+                    (product, pricing) => new
+                    {
+                        product.Weight,
+                        product.Quantity, // Include quantity
+                        pricing.Price
+                    })
+                .SumAsync(x => x.Weight * x.Price * x.Quantity, cancellationToken); // Multiply by quantity
 
-            return totalStockValue;
+            return totalStockValue.GetValueOrDefault();
         }
-
-        
 
         private async Task<int> GetTotalCustomers()
         {
@@ -111,7 +114,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
         {
             return await _context.Customers
                 .Where(c => c.CreatedDate < date)
-                .CountAsync(cancellationToken   );
+                .CountAsync(cancellationToken);
         }
 
         private async Task<int> GetItemsSoldForDate(DateTime date)
@@ -119,21 +122,23 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
             var startDate = date.Date;
             var endDate = date.Date.AddDays(1).AddTicks(-1);
 
+            // Fixed: Sum the quantities sold instead of counting rows
             return await _context.SaleItems
                 .Include(si => si.Sale)
                 .Where(si => si.Sale!.CreatedDate >= startDate && si.Sale.CreatedDate <= endDate)
-                .CountAsync();
+                .SumAsync(si => si.Quantity); // Sum quantities instead of counting rows
         }
 
         private async Task<List<StockWeightByKaratDto>> GetStockWeightByKarat()
         {
+            // Fixed: Account for quantity in weight calculation
             return await _context.Products
                 .Where(p => p.Weight > 0 && p.Quantity > 0)
                 .GroupBy(p => p.KaratType)
                 .Select(g => new StockWeightByKaratDto
                 {
                     KaratType = g.Key,
-                    Weight = g.Sum(p => p.Weight)
+                    Weight = g.Sum(p => p.Weight * p.Quantity).GetValueOrDefault()  // Multiply weight by quantity
                 })
                 .ToListAsync();
         }

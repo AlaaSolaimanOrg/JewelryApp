@@ -27,7 +27,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
         {
             var query = _context.SaleItems.AsQueryable();
 
-            if(request.CategoryFilter != null)
+            if (request.CategoryFilter != null)
             {
                 query = query.Where(s => s.Product!.Category == request.CategoryFilter);
             }
@@ -61,11 +61,11 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
                 .Select(g => new GetSoldItemsVM
                 {
                     ProductName = g.Key.ProductName!,
-                    Quantity = g.Count(),
+                    Quantity = g.Sum(si => si.Quantity), 
                     UnitWeight = g.Key.Weight,
-                    WeightSummed = g.Sum(si => si.Weight),
+                    WeightSummed = g.Sum(si => si.Weight * si.Quantity), 
                     PricePerGram = g.Key.PricePerGram,
-                    Subtotal = g.Sum(si => si.SubTotal),
+                    Subtotal = g.Sum(si => si.SubTotal), 
                     LatestSaleDate = (DateTime)g.Max(si => si.CreatedDate)!
                 });
 
@@ -89,7 +89,6 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
                 PageSize = request.PageSize,
                 TotalRecords = totalRecords,
             };
-
         }
     }
 }

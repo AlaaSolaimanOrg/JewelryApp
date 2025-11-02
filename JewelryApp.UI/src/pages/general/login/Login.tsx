@@ -38,6 +38,7 @@ const Login = () => {
     const payload = { email: email, password: password };
     login(payload)
       .then((response) => {
+        console.log("response", response);
         if (checkRequestSucceeded(response.statusCode)) {
           const { accessToken, refreshToken } = response.data;
 
@@ -55,6 +56,7 @@ const Login = () => {
         }
       })
       .catch((e) => {
+        console.log("error", e);
         throw e;
       });
   };

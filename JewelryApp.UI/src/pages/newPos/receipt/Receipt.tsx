@@ -13,6 +13,7 @@ interface SaleItem {
   weight: number;
   pricePerGram: number;
   subtotal: number;
+  quantity: number;
 }
 
 interface Sale {
@@ -123,6 +124,7 @@ const Receipt = () => {
             <tr>
               <th>Product</th>
               <th>Karat</th>
+              <th>Quantity</th>
               <th>Weight (g)</th>
               <th>Price/Gram</th>
               <th>Subtotal</th>
@@ -133,6 +135,7 @@ const Receipt = () => {
               <tr key={index}>
                 <td>{item.productName}</td>
                 <td>{item.karat}</td>
+                <td>{item.quantity}</td>
                 <td>{item.weight}g</td>
                 <td>${item.pricePerGram}</td>
                 <td>${item.subtotal}</td>

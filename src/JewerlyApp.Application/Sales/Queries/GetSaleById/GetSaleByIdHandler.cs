@@ -35,7 +35,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     Total = x.Total,
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,
-                    Discount = x.Discount,
+                    Discount = x.DiscountType == DiscountType.FixedAmount ?  x.Discount : x.DiscountPercentage * x.Total /100,
                     Tax = x.Taxe,
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {
@@ -44,6 +44,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
                         Subtotal = i.SubTotal,
+                        Quantity = i.Quantity
                     }).ToList(),
                 }).FirstOrDefaultAsync(cancellationToken);
 

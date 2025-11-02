@@ -27,6 +27,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
             // First, get the filtered products
             var productQuery = _context.Products.AsNoTracking()
                 .Include(p => p.Images)
+                .Include(p=>p.Tags)
                 .Where(x =>
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 );

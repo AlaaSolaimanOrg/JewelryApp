@@ -78,7 +78,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     }
 
                     // ✅ Decrease stock weight proportionally
-                    product.Weight = Math.Max(0, product.Weight - item.Weight);
+                    //product.Weight = Math.Max(0, product.Weight - item.Weight);
                     product.LastUpdatedDate = DateTime.UtcNow;
 
                     // Add sale item
@@ -92,10 +92,10 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                         OriginalPricePerGram = item.OriginalPricePerGram,
                         OverriddenPricePerGram = item.OverriddenPricePerGram,
                         Quantity = item.Quantity,
-                        SubTotal = itemTotal
+                        SubTotal = itemTotal * item.Quantity
                     };
 
-                    subTotal += itemTotal;
+                    subTotal += itemTotal * item.Quantity;
                     sale.SaleItems.Add(saleItem);
                 }
 
