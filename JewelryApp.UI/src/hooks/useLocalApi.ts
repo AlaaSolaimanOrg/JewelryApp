@@ -49,7 +49,7 @@ const useLocalApi = ({
     };
     try {
       const response = await apiToCall(requestData);
-      const { data: responseData, message } = responseProperty
+      const { data: responseData } = responseProperty
         ? response[responseProperty]
         : response;
       setStatusCode(response?.statusCode);

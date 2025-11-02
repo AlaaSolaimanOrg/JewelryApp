@@ -29,7 +29,6 @@ const CustomerSection: React.FC<Props> = ({
   customer,
   setCustomer,
   customerInfoActive,
-  searchInput,
   setSearchInput,
   onAddCustomerClick,
   showAddCustomerModal,

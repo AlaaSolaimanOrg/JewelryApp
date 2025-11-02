@@ -100,7 +100,7 @@ const Customers = () => {
         }
       })
       .catch((error) => {
-        showError("An error occurred while deleting the customer");
+        showError(error?.message);
       })
       .finally(() => {
         setIsDeletingCustomer(false);
