@@ -46,7 +46,6 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     Note = request.Note,
                     CashAmount = request.CashAmount,
                     CardAmount = request.CardAmount,
-                    Taxe = request.Taxe,
                     CreatedDate = DateTime.UtcNow
                 };
 
@@ -68,7 +67,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
                     // ✅ Calculate subtotal = product final total price × quantity bought
                     var itemTotal = product.Weight * (item.OverriddenPricePerGram ?? item.OriginalPricePerGram);
-                    itemTotal = CustomRound(itemTotal);
+                    itemTotal = itemTotal;
 
                     // ✅ Decrease quantity properly
                     if (product.Quantity.HasValue && product.Quantity > 0)
@@ -134,12 +133,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             }
         }
 
-        // 🧮 Custom rounding rule: if decimal part < .5 → round down, else round up
-        private static decimal CustomRound(decimal value)
-        {
-            var fractional = value - Math.Floor(value);
-            return fractional < 0.5m ? Math.Floor(value) : Math.Ceiling(value);
-        }
+      
 
         private decimal CalculateFinalTotal(Sale sale)
         {
@@ -150,9 +144,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             else if (sale.DiscountType == DiscountType.Percentage && sale.DiscountPercentage.HasValue)
                 total -= sale.SubTotal * (sale.DiscountPercentage.Value / 100);
 
-            total += sale.Taxe;
 
-            total = CustomRound(total);
             return Math.Max(0, total);
         }
 

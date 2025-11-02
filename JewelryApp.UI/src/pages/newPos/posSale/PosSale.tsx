@@ -43,7 +43,7 @@ const MainPosPage: React.FC = () => {
       ? (subtotal * parseFloat(discountAmount.toString())) / 100
       : parseFloat(discountAmount.toString())
     : 0;
-  const total = Math.round(subtotal - discount);
+  const total = subtotal - discount;
 
   const anyProductWithUnfilledField = products.some((product) => {
     const quantity = product.quantityForSale || 0;
@@ -226,12 +226,16 @@ const MainPosPage: React.FC = () => {
     });
   };
 
+  console.log("discountAmount",discountAmount)
   const handleCreateSale = () => {
     setIsLoadingCreateSale(true);
 
     const payload = {
       customerId: customer?.id,
-      discount: discountAmount,
+      discount:
+        discountType == DiscountType.Percentage
+          ? (discountAmount * subtotal) / 100
+          : discountAmount,
       discountPercentage:
         discountType == DiscountType.Percentage
           ? discountAmount

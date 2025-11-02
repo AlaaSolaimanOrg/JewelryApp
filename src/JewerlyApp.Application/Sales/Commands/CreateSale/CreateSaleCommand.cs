@@ -18,7 +18,6 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         public string? Note { get; set; }
         public decimal? CashAmount { get; set; }
         public decimal? CardAmount { get; set; }
-        public decimal Taxe { get; set; }
         public List<SaleItemDto> SaleItems { get; set; } = new();
     }
 }

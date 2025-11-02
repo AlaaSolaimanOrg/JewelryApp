@@ -1,4 +1,5 @@
-﻿    using JewerlyApp.Domain.Enums;
+﻿using JewerlyApp.Domain.Entities;
+using JewerlyApp.Domain.Enums;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -23,5 +24,6 @@
             public decimal? PricePerGram { get; set; } = null;
             public decimal? Price { get; set; } = null;
             public List<ProductImageVM> Images { get; set; } = new();
+            public List<string> Tags { get; set; } = new();
         }
     }

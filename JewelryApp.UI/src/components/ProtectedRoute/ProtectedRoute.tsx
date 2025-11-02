@@ -41,7 +41,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       return <Navigate to="/login" replace />;
     }
 
-    // ✅ Check role authorization
     if (allowedRoles && allowedRoles.length > 0) {
       const hasRole = userInfo?.roles?.some((role) =>
         allowedRoles.includes(role)

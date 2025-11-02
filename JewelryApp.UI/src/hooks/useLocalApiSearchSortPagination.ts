@@ -50,7 +50,7 @@ const useLocalApiSearchSortPagination = <T = any>({
   const componentMounted = useRef(false);
 
   useEffect(() => {
-    if (extraEffectCheck) fetchData();
+    if (extraEffectCheck && !!pagination.pageSize) fetchData();
   }, [
     pagination.pageNumber,
     pagination.pageSize,

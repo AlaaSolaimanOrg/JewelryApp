@@ -24,10 +24,12 @@ import {
 import {
   checkRequestSucceeded,
   handleSort,
+  renderLongDescription,
   showError,
   showSuccess,
 } from "../../../utils";
 import "./inventory.scss";
+import TagsPopover from "./TagsPopover/TagsPopover";
 
 export interface Product {
   id: string;
@@ -43,6 +45,7 @@ export interface Product {
   quantity: number;
   price: number;
   images: { imageUrl: string }[];
+  tags: string[];
 }
 
 const Inventory = () => {
@@ -153,6 +156,11 @@ const Inventory = () => {
         handleSort("category", sortCriteria, onSortChange);
       },
     },
+    {
+      key: "tags",
+      label: "Tags",
+      width: "80px",
+    },
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
@@ -171,12 +179,13 @@ const Inventory = () => {
     ),
     Quantity: product.quantity,
     Price: product.price,
-    ProductName: product.name,
+    ProductName: renderLongDescription(product.name,14),
     SKU: product.sku,
     nfcId: product.nfcId,
     Karat: `${product.karatType}K`,
     Weight: `${product.weight}g`,
     Category: ProductCategory[product.category],
+    Tags: <TagsPopover tags={product.tags} />,
     Actions: (
       <>
         <button

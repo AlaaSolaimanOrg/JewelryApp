@@ -25,6 +25,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
         {
             var product = await _context.Products
                 .Include(p => p.Images)
+                .Include(p => p.Tags)
                 .FirstOrDefaultAsync(p => p.Id == request.Id || (!string.IsNullOrEmpty(p.Sku) && p.Sku == request.SearchBy), cancellationToken);
 
             if (product == null)
@@ -47,6 +48,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 Category = product.Category,
                 ProductType = product.Type,
                 Description = product.Description,
+                Tags = product.Tags.Select(productTag => productTag.Tag).ToList(),
                 Images = product.Images.Select(i => new ProductImageVM
                 {
                     ImageUrl = i.ImageUrl

@@ -15,7 +15,6 @@ namespace JewerlyApp.Domain.Entities
         public decimal? CardAmount { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Total { get; set; }
-        public decimal Taxe { get; set; }
 
         [ForeignKey("CreatedBy")]
         public virtual ApplicationUser? CreatedByUser { get; set; }

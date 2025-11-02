@@ -84,7 +84,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 .Select(s => new
                 {
                     s.CustomerId,
-                    ProductCount = s.SaleItems.Count()
+                    ProductCount = s.SaleItems.Sum(i => i.Quantity)
                 })
                 .ToListAsync(cancellationToken);
 

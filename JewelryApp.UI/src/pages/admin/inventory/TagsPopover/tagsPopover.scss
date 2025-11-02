@@ -1,0 +1,103 @@
+// Tags Popover Styles with Your Colors
+.tags-popover-custom {
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.tags-popover-header {
+  background: var(--primary); // Using your primary color #1a3a5f
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  font-weight: 600;
+  
+  .tags-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .tags-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  
+  .tags-icon {
+    color: var(--gold); // Using your gold color #d4af37
+    font-size: 12px;
+  }
+  
+  .tags-count {
+    background: rgba(212, 175, 55, 0.2); // Using your gold with opacity
+    color: var(--gold);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+}
+
+.tags-popover-body {
+  padding: 16px;
+  background: #ffffff;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.tags-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tag-badge {
+  display: inline-block;
+  background-color: #fff9e6;
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #7a5f1c;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #ffefbf;
+    transform: translateX(2px);
+  }
+}
+
+.no-tags {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+}
+
+// Original action buttons remain unchanged
+.action-btn {
+  background: none;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  color: #6c757d;
+  transition: all 0.2s ease;
+  margin: 0 2px;
+  
+  &:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+  }
+  
+  &.danger:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+  }
+}

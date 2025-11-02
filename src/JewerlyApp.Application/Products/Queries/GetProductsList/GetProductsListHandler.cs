@@ -63,7 +63,11 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                 }
                 else
                 {
-                    productQuery = productQuery.Where(x => x.Sku.Contains(request.SearchBy) || x.Name!.Contains(request.SearchBy));
+                    productQuery = productQuery.Where(x =>
+                               x.Sku.Contains(keyword) ||
+                               (x.Name != null && x.Name.Contains(keyword)) ||
+                               x.Tags.Any(t => t.Tag.Contains(keyword))
+                           );
                 }
             }
 
@@ -116,6 +120,7 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Description = product.Description,
                     PricePerGram = pricePerGram,
                     Price = product.Weight * pricePerGram,
+                    Tags = product.Tags.Select(productTag=>productTag.Tag).ToList(),
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,

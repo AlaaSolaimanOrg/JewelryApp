@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
         {
             var product = await _context.Products
                 .Include(p => p.Images)
+                .Include(p => p.Tags)
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             if (product == null)
@@ -47,7 +49,29 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             product.Description = request.Description;
             product.LastUpdatedDate = DateTime.UtcNow;
             product.Quantity = request.Quantity;
-            
+            // --- ✅ FIX: Properly update Tags ---
+            // Remove existing tags
+            if (product.Tags != null && product.Tags.Any())
+            {
+                _context.ProductTags.RemoveRange(product.Tags);
+            }
+
+            // Add new tags if any
+            if (request.Tags != null && request.Tags.Any())
+            {
+                var newTags = request.Tags
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .Select(tag => new ProductTag
+                    {
+                        Id = Guid.NewGuid(),
+                        ProductId = product.Id,
+                        Tag = tag.Trim()
+                    })
+                    .ToList();
+
+                await _context.ProductTags.AddRangeAsync(newTags, cancellationToken);
+            }
+
             if (product.Images != null && product.Images.Any())
             {
                 _context.ProductImages.RemoveRange(product.Images);

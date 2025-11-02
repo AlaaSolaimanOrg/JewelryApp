@@ -6,6 +6,7 @@ import "./receiptModal.scss";
 import type { KaratType } from "../../../types/enums";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
+import { renderLongDescription } from "../../../utils";
 
 interface SaleItem {
   productName: string;
@@ -13,6 +14,7 @@ interface SaleItem {
   weight: number;
   pricePerGram: number;
   subtotal: number;
+  quantity: number;
 }
 
 interface Sale {
@@ -24,6 +26,7 @@ interface Sale {
   total: number;
   cashAmount: number;
   cardAmount: number;
+  discount: number;
   saleItems: SaleItem[];
 }
 
@@ -57,21 +60,13 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     setShowModal(false);
   };
 
-  // Calculate subtotal from sale items
   const subtotal =
     saleDetails?.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
-
-  // Format date
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
 
   return (
     <div>
-      <div
-        onClick={() => {
-          setShowModal(true);
-        }}
-        style={{ cursor: "pointer" }}
-      >
+      <div onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
         {children}
       </div>
 
@@ -95,6 +90,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             </div>
           ) : (
             <div ref={contentRef} className="receipt-container">
+              {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">Adi Jewelry</div>
                 <div className="receipt-subtitle">
@@ -103,6 +99,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 <div className="receipt-subtitle">Phone: (555) 123-4567</div>
               </div>
 
+              {/* Details */}
               <div className="receipt-details">
                 <div>
                   <div>
@@ -147,42 +144,35 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </div>
               </div>
 
+              {/* Table */}
               <div className="table-wrapper">
                 <table className="receipt-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "40%" }}>Product</th>{" "}
-                      <th style={{ width: "12%" }}>Karat</th>
-                      <th style={{ width: "16%" }}>Weight (g)</th>
-                      <th style={{ width: "16%" }}>Price/Gram</th>
-                      <th style={{ width: "16%" }}>Subtotal</th>
+                      <th style={{ width: "20%" }}>Product</th>
+                      <th>Karat</th>
+                      <th>Quantity</th>
+                      <th>Weight (g)</th>
+                      <th>Price/Gram</th>
+                      <th>Subtotal</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
                     {saleDetails.saleItems?.map((item, index) => (
                       <tr key={index}>
-                        <td style={{ width: "40%" }}>{item.productName}</td>
-                        <td style={{ width: "12%" }}>{item.karat}</td>
-                        <td style={{ width: "16%" }}>{item.weight}g</td>
-                        <td style={{ width: "16%" }}>${item.pricePerGram}</td>
-                        <td style={{ width: "16%" }}>${item.subtotal}</td>
+                        <td style={{ width: "20%" }}>{renderLongDescription(item.productName)}</td>
+                        <td>{item.karat}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.weight}g</td>
+                        <td>${item.pricePerGram}</td>
+                        <td>${item.subtotal}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              <div className="receipt-totals">
-                <div className="receipt-total">
-                  <div className="total-label">Subtotal</div>
-                  <div className="total-value">${subtotal}</div>
-                </div>
-                <div className="receipt-total">
-                  <div className="total-label">Total</div>
-                  <div className="total-value">${saleDetails.total}</div>
-                </div>
-              </div>
-
+              {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
 
@@ -199,10 +189,28 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     <span>${saleDetails.cardAmount}</span>
                   </div>
                 )}
+
+                <div className="summary-item">
+                  <span>Discount:</span>
+                  <span>${saleDetails.discount}</span>
+                </div>
+              </div>
+
+              {/* Totals */}
+              <div className="receipt-totals">
+                <div className="receipt-total">
+                  <div className="total-label">Subtotal</div>
+                  <div className="total-value">${subtotal}</div>
+                </div>
+                <div className="receipt-total">
+                  <div className="total-label">Total</div>
+                  <div className="total-value">${saleDetails.total}</div>
+                </div>
               </div>
             </div>
           )}
         </Modal.Body>
+
         <Modal.Footer>
           <Button
             variant="primary"

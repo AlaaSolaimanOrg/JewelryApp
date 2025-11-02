@@ -22,6 +22,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
         public ProductType ProductType { get; set; }
         public string? Description { get; set; }
         public decimal? PricePerGram { get; set; } = null;
+        public List<string> Tags { get; set; } = new();
         public List<ProductImageVM> Images { get; set; } = new();
     }
 }
