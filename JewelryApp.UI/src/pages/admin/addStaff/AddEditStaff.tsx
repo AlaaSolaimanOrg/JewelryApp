@@ -50,7 +50,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
         userName: staff.userName,
         email: staff.email,
         password: "",
-        phoneNumber: staff.phoneNumber || "", // Added phone number field
+        phoneNumber: staff.phoneNumber || "",
         roles: staff.roles || [],
         isActive: staff.isActive ?? true,
       });
@@ -112,8 +112,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(staffFields.email)) return false;
 
-    // Added phone number validation (basic validation)
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/; // Basic international phone number validation
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
     if (
       !staffFields.phoneNumber?.trim() ||
       !phoneRegex.test(staffFields.phoneNumber.replace(/[\s\-\(\)]/g, ""))
@@ -214,7 +213,15 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                   className="form-control"
                   value={staffFields.email}
                   maxLength={100}
-                  onChange={(e) => handleFieldChange("email", e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      "email",
+                      e.target.value.replace(/[^\w@.\-+]/g, "")
+                    )
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === " ") e.preventDefault();
+                  }}
                   placeholder="Enter email"
                   required
                 />
@@ -230,7 +237,10 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                   value={staffFields.phoneNumber}
                   maxLength={20}
                   onChange={(e) =>
-                    handleFieldChange("phoneNumber", e.target.value)
+                    handleFieldChange(
+                      "phoneNumber",
+                      e.target.value.replace(/[^0-9+\-\s()]/g, "")
+                    )
                   }
                   placeholder="Enter phone number"
                   required
@@ -249,8 +259,14 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                   value={staffFields.password}
                   maxLength={50}
                   onChange={(e) =>
-                    handleFieldChange("password", e.target.value)
+                    handleFieldChange(
+                      "password",
+                      e.target.value.replace(/\s/g, "")
+                    )
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === " ") e.preventDefault();
+                  }}
                   placeholder="Enter password"
                   required
                 />

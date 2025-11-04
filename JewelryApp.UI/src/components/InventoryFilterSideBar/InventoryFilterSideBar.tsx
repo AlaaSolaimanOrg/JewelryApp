@@ -66,7 +66,7 @@ const InventoryFilterSideBar = ({
   return (
     <div className="filter-sidebar">
       <h3 className="filter-title">
-        <FaFilter className="me-2" /> Filter Inventory
+        <FaFilter className="me-2 icon" /> Filter Inventory
       </h3>
 
       <div className="filter-group">
@@ -95,13 +95,14 @@ const InventoryFilterSideBar = ({
               type="number"
               min={0}
               max={filters.weightTo}
-              value={filters.weightFrom}
+              value={filters.weightFrom || ""}
               onChange={(e) => {
-                const val = Number(e.target.value);
+                const val = e.target.value === "" ? 0 : Number(e.target.value);
                 if (val <= filters.weightTo)
                   handleFilterChange("weightFrom", val);
               }}
               className="form-control"
+              placeholder="0"
             />
           </div>
           <div className="form-col">
@@ -110,14 +111,14 @@ const InventoryFilterSideBar = ({
               type="number"
               min={filters.weightFrom}
               max={9999}
-              value={filters.weightTo}
+              value={filters.weightTo || ""}
               onChange={(e) => {
-                if (e.target.value.length > 4) {
-                  return;
-                }
-                handleFilterChange("weightTo", Number(e.target.value));
+                if (e.target.value.length > 4) return;
+                const val = e.target.value === "" ? 0 : Number(e.target.value);
+                handleFilterChange("weightTo", val);
               }}
               className="form-control"
+              placeholder="9999"
             />
           </div>
         </div>
@@ -187,7 +188,7 @@ const InventoryFilterSideBar = ({
         <button
           className="btn-md btn-gold"
           style={{ width: "100%" }}
-          onClick={() => setAppliedFilters(filters)}
+          onClick={() => {setAppliedFilters(filters)}}
         >
           <FaFilter className="me-1" /> Apply Filters
         </button>

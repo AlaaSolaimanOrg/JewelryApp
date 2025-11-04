@@ -69,6 +69,8 @@ const Inventory = () => {
     category: null,
   });
 
+  console.log("appliedFilters", appliedFilters);
+
   const {
     data: products,
     isLoading: isLoadingProducts,
@@ -179,7 +181,7 @@ const Inventory = () => {
     ),
     Quantity: product.quantity,
     Price: product.price,
-    ProductName: renderLongDescription(product.name,14),
+    ProductName: renderLongDescription(product.name, 14),
     SKU: product.sku,
     nfcId: product.nfcId,
     Karat: `${product.karatType}K`,
@@ -252,11 +254,11 @@ const Inventory = () => {
 
       <div>
         <Row>
-          <Col md={12} lg={3} xl={2}>
+          <Col md={12} lg={4} xl={3}>
             <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
           </Col>
 
-          <Col md={12} lg={9} xl={10}>
+          <Col md={12} lg={8} xl={9}>
             <div className="inventory-content">
               <div className="card">
                 <div className="card-header">

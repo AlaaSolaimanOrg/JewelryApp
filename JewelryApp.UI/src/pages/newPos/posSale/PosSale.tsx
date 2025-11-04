@@ -19,7 +19,7 @@ const MainPosPage: React.FC = () => {
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
-  const [discountAmount, setDiscountAmount] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState("0");
   const [discountType, setDiscountType] = useState(DiscountType.Percentage);
   const [notes, setNotes] = useState("");
   const [cashAmount, setCashAmount] = useState(0);
@@ -226,7 +226,7 @@ const MainPosPage: React.FC = () => {
     });
   };
 
-  console.log("discountAmount",discountAmount)
+  console.log("discountAmount", discountAmount);
   const handleCreateSale = () => {
     setIsLoadingCreateSale(true);
 
@@ -234,12 +234,12 @@ const MainPosPage: React.FC = () => {
       customerId: customer?.id,
       discount:
         discountType == DiscountType.Percentage
-          ? (discountAmount * subtotal) / 100
-          : discountAmount,
+          ? (Number(discountAmount) * subtotal) / 100
+          : Number(discountAmount),
       discountPercentage:
         discountType == DiscountType.Percentage
-          ? discountAmount
-          : (discountAmount / subtotal) * 100,
+          ? Number(discountAmount)
+          : (Number(discountAmount) / subtotal) * 100,
       discountType:
         !!discountAmount && Number(discountAmount) > 0
           ? discountType
@@ -283,53 +283,29 @@ const MainPosPage: React.FC = () => {
   };
 
   const handleDiscountChange = (rawValue: string) => {
-    // Clean input - remove non-digits and non-dots
     const cleanValue = rawValue.replace(/[^\d.]/g, "");
-
-    // Split into integer and fractional parts
     const [intPart = "", fracPart = ""] = cleanValue.split(".");
 
+    let value = "";
+
     if (discountType === DiscountType.Percentage) {
-      // For percentages: limit to 100% and 2 decimal places
-      let value = intPart;
-
-      // Add fractional part if exists (max 2 decimals)
-      if (fracPart) {
-        value += "." + fracPart.slice(0, 2);
+      value = intPart;
+      if (fracPart) value += "." + fracPart.slice(0, 2);
+      if (cleanValue.endsWith(".") && !fracPart) value += ".";
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        if (numValue > 100) value = "100";
+        if (numValue < 0) value = "0";
       }
-
-      // Handle trailing dot
-      if (cleanValue.endsWith(".") && !fracPart) {
-        value += ".";
-      }
-
-      // Validate range (0-100)
-      if (value && !value.endsWith(".")) {
-        const numValue = parseFloat(value);
-        if (!isNaN(numValue)) {
-          if (numValue > 100) value = "100";
-          if (numValue < 0) value = "0";
-        }
-      }
-
-      setDiscountAmount(Number(value));
     } else {
-      // For fixed amount: limit to 10 integer digits and 4 decimal places
-      let value = intPart.slice(0, 10);
-
-      // Add fractional part if exists (max 4 decimals)
-      if (fracPart) {
-        value += "." + fracPart.slice(0, 4);
-      }
-
-      // Handle trailing dot
-      if (cleanValue.endsWith(".") && !fracPart) {
-        value += ".";
-      }
-
-      setDiscountAmount(Number(value));
+      value = intPart.slice(0, 10);
+      if (fracPart) value += "." + fracPart.slice(0, 4);
+      if (cleanValue.endsWith(".") && !fracPart) value += ".";
     }
+
+    setDiscountAmount(value);
   };
+
   return (
     <div id="mainPosPage" className="page-content">
       <CustomerSection

@@ -37,6 +37,8 @@ const useLocalApiSearchSortPagination = <T = any>({
     totalRecords: number;
   }>({ pageSize: initialPageSize, pageNumber: 1, totalRecords: 0 });
 
+  console.log("extraEffectDependency", extraEffectDependency);
+  console.log("pagination", pagination);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
     sortDirection: initialSortDirection,
     sortBy: initialSortBy,
@@ -50,7 +52,7 @@ const useLocalApiSearchSortPagination = <T = any>({
   const componentMounted = useRef(false);
 
   useEffect(() => {
-    if (extraEffectCheck && !!pagination.pageSize) fetchData();
+    if (extraEffectCheck) fetchData();
   }, [
     pagination.pageNumber,
     pagination.pageSize,
@@ -93,14 +95,13 @@ const useLocalApiSearchSortPagination = <T = any>({
 
     try {
       const response = await apiToCall(requestData);
-      const { data: responseData, message, totalRecords, pageSize } = response;
+      const { data: responseData, message, totalRecords } = response;
 
       processErrorResponse(response, message);
 
       setPagination((prev) => ({
         ...prev,
         totalRecords: response.statusCode == 204 ? 0 : totalRecords,
-        pageSize: response.statusCode == 204 ? pagination.pageSize : pageSize,
       }));
 
       setData(responseData);

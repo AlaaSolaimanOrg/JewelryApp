@@ -85,7 +85,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 {
                     s.CustomerId,
                     ProductCount = s.SaleItems.Sum(i => i.Quantity),
-                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram)
+                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram) - s.Discount
                 })
                 .ToListAsync(cancellationToken);
 
