@@ -18,6 +18,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import {
   checkRequestSucceeded,
+  convertHeicToJpeg,
   isPositiveInteger,
   showError,
   showSuccess,
@@ -184,8 +185,10 @@ const AddEditProduct = ({ isEdit }) => {
     }
 
     if (files && files.length > 0) {
-      files.forEach((file) => {
-        formData.append("Images", file);
+      files.forEach(async (file) => {
+        const processedFile = await convertHeicToJpeg(file);
+
+        formData.append("Images", processedFile);
       });
     }
 

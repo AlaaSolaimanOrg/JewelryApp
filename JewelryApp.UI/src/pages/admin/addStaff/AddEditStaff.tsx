@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { FaSave, FaTimes } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSave, FaTimes } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   createUser,
   getAllRoles,
@@ -18,17 +18,17 @@ const staffFieldsInitialState = {
   userName: "",
   email: "",
   password: "",
-  phoneNumber: "", // Added phone number field
+  phoneNumber: "",
   roles: [] as string[],
   isActive: true,
 };
 
 const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const { userId } = useParams();
-  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { data: staff } = useLocalApi({
     apiToCall: (data) => getUserById(data.payload),
@@ -55,7 +55,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
         isActive: staff.isActive ?? true,
       });
     } else if (!isEdit) {
-      handleCancel();
+      handleClear();
     }
   }, [staff, isEdit]);
 
@@ -66,12 +66,8 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     }));
   };
 
-  const handleCancel = () => {
-    if (isEdit) {
-      navigate("/admin/staff");
-    } else {
-      setStaffFields(staffFieldsInitialState);
-    }
+  const handleClear = () => {
+    setStaffFields(staffFieldsInitialState);
   };
 
   const callSaveStaff = () => {
@@ -99,11 +95,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       .then((response: any) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          if (!isEdit) {
-            handleCancel();
-          } else {
-            navigate("/admin/staff");
-          }
+          handleClear();
         } else {
           showError(response?.message);
         }
@@ -153,8 +145,8 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
           {isEdit ? <span>Edit Staff Member</span> : <span>Add New Staff</span>}
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gray" onClick={handleCancel}>
-            <FaTimes className="icon" /> Cancel
+          <button className="btn-md btn-gray" onClick={handleClear}>
+            <FaTimes className="icon" /> Clear
           </button>
 
           <button
@@ -196,8 +188,16 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                   value={staffFields.userName}
                   maxLength={50}
                   onChange={(e) =>
-                    handleFieldChange("userName", e.target.value?.trim())
+                    handleFieldChange(
+                      "userName",
+                      e.target.value.replace(/\s/g, "")
+                    )
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="Enter username"
                   required
                 />
@@ -240,21 +240,57 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
           </div>
 
           {!isEdit && (
-            <div className="form-row">
-              <div className="form-col">
-                <div className="form-group">
-                  <label className="form-label required">Password</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    value={staffFields.password}
-                    maxLength={50}
-                    onChange={(e) =>
-                      handleFieldChange("password", e.target.value)
-                    }
-                    placeholder="Enter password"
-                    required
-                  />
+            <div className="form-group">
+              <label className="form-label required">Password</label>
+              <div className="password-input-container">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="form-control"
+                  value={staffFields.password}
+                  maxLength={50}
+                  onChange={(e) =>
+                    handleFieldChange("password", e.target.value)
+                  }
+                  placeholder="Enter password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+
+              <div className="password-requirements">
+                <div className="requirements-title">Password Requirements:</div>
+                <div className="requirements-list">
+                  <ul>
+                    <li
+                      className={
+                        staffFields.password.length >= 6 ? "valid" : "invalid"
+                      }
+                    >
+                      At least 6 characters
+                    </li>
+                    <li
+                      className={
+                        /[A-Z]/.test(staffFields.password) ? "valid" : "invalid"
+                      }
+                    >
+                      At least one uppercase letter
+                    </li>
+                    <li
+                      className={
+                        /[^a-zA-Z0-9]/.test(staffFields.password)
+                          ? "valid"
+                          : "invalid"
+                      }
+                    >
+                      At least one special character
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import qs from "qs";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import type React from "react";
 import { SortDirection } from "./types/enums";
+import heic2any from "heic2any";
 
 const addParamsToObjKeys = (obj: Record<string, any>) => {
   return obj;
@@ -183,3 +184,24 @@ export default function preventSignOnKeyDown(event, extraUnAllowedDigits = []) {
     event.preventDefault();
   }
 }
+
+export const convertHeicToJpeg = async (file) => {
+  if (
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    file.name.toLowerCase().endsWith(".heic") ||
+    file.name.toLowerCase().endsWith(".heif")
+  ) {
+    try {
+      const blob = await heic2any({ blob: file, toType: "image/jpeg" });
+      return new File([blob as BlobPart], file.name.replace(/\.(heic|heif)$/i, ".jpg"), {
+        type: "image/jpeg",
+      });
+    } catch (err) {
+      console.error("HEIC conversion failed:", err);
+      return file; 
+    }
+  }
+
+  return file;
+};

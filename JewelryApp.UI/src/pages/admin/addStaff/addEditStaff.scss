@@ -226,4 +226,86 @@
     gap: 0.4rem;
     font-size: 14px;
   }
+
+  .password-input-container {
+    position: relative;
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gold);
+      cursor: pointer;
+      font-size: 24px;
+      padding: 4px 8px;
+
+      &:hover {
+        color: var(--primary-dark);
+      }
+    }
+
+    .form-control {
+      padding-right: 60px;
+    }
+  }
+
+  .password-requirements {
+    margin-top: 12px;
+
+    .requirements-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--dark-light);
+      margin-bottom: 8px;
+    }
+
+    .requirements-list {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px 16px;
+      border-left: 3px solid var(--gold);
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+
+        &:before {
+          content: "●";
+          font-size: 0.6rem;
+        }
+
+        &.valid {
+          color: #10b981;
+          background: rgba(16, 185, 129, 0.1);
+
+          &:before {
+            content: "✓";
+            font-weight: bold;
+          }
+        }
+
+        &.invalid {
+          color: #ef4444;
+          background: rgba(239, 68, 68, 0.1);
+        }
+      }
+    }
+  }
 }

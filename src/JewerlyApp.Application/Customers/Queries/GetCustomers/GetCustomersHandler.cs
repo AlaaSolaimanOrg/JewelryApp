@@ -84,13 +84,18 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 .Select(s => new
                 {
                     s.CustomerId,
-                    ProductCount = s.SaleItems.Sum(i => i.Quantity)
+                    ProductCount = s.SaleItems.Sum(i => i.Quantity),
+                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram)
                 })
                 .ToListAsync(cancellationToken);
 
             var totalProductsByCustomer = salesWithItems
                 .GroupBy(x => x.CustomerId)
                 .ToDictionary(g => g.Key, g => g.Sum(x => x.ProductCount));
+
+            var totalSalesByCustomer = salesWithItems
+                .GroupBy(x => x.CustomerId)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.TotalSales));
 
             var customerListItems = paginatedCustomers
                 .Select(c => new GetCustomersVM
@@ -102,6 +107,9 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                     Birthday = c.Birthday,
                     TotalProductsPurchased = totalProductsByCustomer.ContainsKey(c.Id)
                         ? totalProductsByCustomer[c.Id]
+                        : 0,
+                    TotalPurchasesValue = totalSalesByCustomer.ContainsKey(c.Id)
+                        ? totalSalesByCustomer[c.Id]
                         : 0
                 })
                 .ToList();

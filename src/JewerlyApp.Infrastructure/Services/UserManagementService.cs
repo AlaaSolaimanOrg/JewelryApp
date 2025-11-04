@@ -375,8 +375,10 @@ namespace JewerlyApp.Infrastructure.Services
             return new UserDto
             {
                 Id = user.Id,
+                FullName = user.FullName,
                 UserName = user.UserName!,
                 Email = user.Email!,
+                PhoneNumber = user.PhoneNumber,
                 IsActive = user.IsActive,
                 Roles = roles,
                 CreatedAt = user.CreatedAt,

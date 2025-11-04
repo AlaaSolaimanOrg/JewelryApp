@@ -33,6 +33,7 @@ interface Customer {
   name: string;
   email: string;
   totalProductsPurchased: number;
+  totalPurchasesValue: number;
   phoneNumber: string;
   birthday: string;
 }
@@ -82,6 +83,14 @@ const Customers = () => {
         handleSort("totalProductsPurchased", sortCriteria, onSortChange);
       },
     },
+    {
+      key: "totalPurchasesValue",
+      label: "Total Puchases Value",
+      width: "150px",
+      onHeaderClick: () => {
+        handleSort("totalPurchasesValue", sortCriteria, onSortChange);
+      },
+    },
 
     { key: "actions", label: "Actions", width: "150px" },
   ];
@@ -112,6 +121,7 @@ const Customers = () => {
       name: customer.name,
       phoneNumber: customer.phoneNumber,
       totalProductsPurchased: customer.totalProductsPurchased,
+      totalPurchasesValue: customer.totalPurchasesValue,
       actions: (
         <div className="action-buttons">
           <button

@@ -10,5 +10,6 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
         public string PhoneNumber { get; set; }
         public DateOnly? Birthday { get; set; }
         public int TotalProductsPurchased {  get; set; }
+        public decimal? TotalPurchasesValue {  get; set; }
     }
 }
