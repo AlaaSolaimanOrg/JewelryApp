@@ -46,6 +46,7 @@ axiosInstance.interceptors.response.use(
         // Use await instead of .then() for better control flow
         const response = await callRefreshToken({ refreshToken });
 
+        console.log("response from refresh token:", response);
         if (checkRequestSucceeded(response.statusCode)) {
           const newAccessToken = response.data.accessToken;
 
