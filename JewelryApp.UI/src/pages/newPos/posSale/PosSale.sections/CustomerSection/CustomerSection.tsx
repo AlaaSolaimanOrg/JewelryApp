@@ -72,15 +72,19 @@ const CustomerSection: React.FC<Props> = ({
             }
             loadingMessage={() => "Searching..."}
             inputValue={searchInput}
+            onInputChange={(value, actionMeta) => {
+              if (actionMeta.action === "input-change") {
+                setSearchInput(value);
+              }
+            }}
             onChange={(selected) => {
               if (selected) {
                 setCustomerInfoActive(true);
                 setCustomer(selected.data);
               } else {
-                // Handle clear action
                 setCustomerInfoActive(false);
                 setCustomer(null);
-                setSearchInput(""); // If you want to clear search input
+                setSearchInput("");
               }
             }}
             value={
@@ -103,11 +107,11 @@ const CustomerSection: React.FC<Props> = ({
               }),
               placeholder: (base) => ({
                 ...base,
-                color: "gray", // Changed to gray
+                color: "lightgray",
               }),
               singleValue: (base) => ({
                 ...base,
-                color: "white !important",
+                color: "white",
               }),
               input: (base) => ({
                 ...base,

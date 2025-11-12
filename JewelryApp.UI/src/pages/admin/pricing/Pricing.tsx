@@ -239,7 +239,7 @@ const Pricing = () => {
         </h1>
         <div className="page-actions">
           <button
-            className={`btn-md ${hasChanges ? "btn-gold" : "btn-dark"}`}
+            className={`btn-md ${hasChanges ? "btn-gold" : "btn-gray"}`}
             onClick={handleApplyPrices}
             disabled={!hasChanges || anyPriceHasNoValue}
           >
