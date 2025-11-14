@@ -155,12 +155,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <thead>
                     <tr>
                       <th style={{ width: "20%" }}>Product</th>
-                      <th>SKU</th>
-                      <th>Karat</th>
-                      <th>Quantity</th>
-                      <th>Weight (g)</th>
-                      <th>Price/Gram</th>
-                      <th>Subtotal</th>
+                      <th style={{ width: "20%" }}>SKU</th>
+                      <th style={{ width: "12%" }}>Karat</th>
+                      <th style={{ width: "12%" }}>Quantity</th>
+                      <th style={{ width: "12%" }}>Weight</th>
+                      <th style={{ width: "12%" }}>Price/Gram</th>
+                      <th style={{ width: "12%" }}>Subtotal</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
@@ -169,12 +169,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                         <td style={{ width: "20%" }}>
                           {renderLongDescription(item.productName)}
                         </td>
-                        <td>{item.sku}</td>
-                        <td>{item.karat}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.weight}g</td>
-                        <td>${item.pricePerGram}</td>
-                        <td>${item.subtotal}</td>
+                        <td style={{ width: "20%" }}>{item.sku}</td>
+                        <td style={{ width: "12%" }}>{item.karat}</td>
+                        <td style={{ width: "12%" }}>{item.quantity}</td>
+                        <td style={{ width: "12%" }}>{item.weight}g</td>
+                        <td style={{ width: "12%" }}>${item.pricePerGram}</td>
+                        <td style={{ width: "12%" }}>${item.subtotal}</td>
                       </tr>
                     ))}
                   </tbody>

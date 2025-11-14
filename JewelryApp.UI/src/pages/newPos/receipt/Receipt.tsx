@@ -10,6 +10,7 @@ import logo from "../../../assets/images/jewelary-logo.svg";
 
 interface SaleItem {
   productName: string;
+  sku: string;
   karat: KaratType;
   weight: number;
   pricePerGram: number;
@@ -127,6 +128,7 @@ const Receipt = () => {
           <thead>
             <tr>
               <th>Product</th>
+              <th>Sku</th>
               <th>Karat</th>
               <th>Quantity</th>
               <th>Weight (g)</th>
@@ -138,6 +140,7 @@ const Receipt = () => {
             {saleDetails.saleItems?.map((item, index) => (
               <tr key={index}>
                 <td>{item.productName}</td>
+                <td>{item.sku}</td>
                 <td>{item.karat}</td>
                 <td>{item.quantity}</td>
                 <td>{item.weight}g</td>

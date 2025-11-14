@@ -26,8 +26,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log("error 401", error);
+    const isRefreshEndpoint =
+      error.request.responseURL.includes("Auth/RefreshTokens");
+
+      
+
     // Prevent infinite retry loop
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isRefreshEndpoint) {
       const refreshToken =
         localStorage.getItem("refreshToken") ||
         sessionStorage.getItem("refreshToken");
@@ -67,7 +73,6 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // If it's a 401 and we've already retried, or it's not a 401, just return the error
     return Promise.resolve(error?.response || error);
   }
 );
