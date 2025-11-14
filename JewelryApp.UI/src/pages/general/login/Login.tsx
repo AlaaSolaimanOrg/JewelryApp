@@ -11,6 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { userInfo, callGetUserInfo } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,6 +38,7 @@ const Login = () => {
   }, [userInfo]);
 
   const callLogin = () => {
+    setIsLoading(true);
     const payload = { email: email, password: password };
     login(payload)
       .then((response) => {
@@ -60,14 +62,18 @@ const Login = () => {
       .catch((e) => {
         console.log("error", e);
         throw e;
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
   // Handle form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    callLogin();
+    if (!isLoading) {
+      callLogin();
+    }
   };
 
   return (

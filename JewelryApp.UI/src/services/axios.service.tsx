@@ -26,12 +26,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
     // Prevent infinite retry loop
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
+    if (error.response?.status === 401) {
       const refreshToken =
         localStorage.getItem("refreshToken") ||
         sessionStorage.getItem("refreshToken");
@@ -48,17 +44,16 @@ axiosInstance.interceptors.response.use(
 
         if (checkRequestSucceeded(response.statusCode)) {
           const newAccessToken = response.data.accessToken;
+          const newRefreshToken = response.data.refreshToken;
 
           // Save new token
           if (localStorage.getItem("refreshToken")) {
             localStorage.setItem("accessToken", newAccessToken);
+            localStorage.setItem("refreshToken", newRefreshToken);
           } else {
             sessionStorage.setItem("accessToken", newAccessToken);
+            sessionStorage.setItem("refreshToken", newRefreshToken);
           }
-
-          // Retry original request with new token
-          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          return axiosInstance(originalRequest);
         } else {
           // Refresh token failed, logout user
           showError(response?.message || "Session expired");
@@ -66,6 +61,7 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
       } catch (error) {
+        console.log("error", error);
         redirectToLogin();
         return Promise.reject(error);
       }

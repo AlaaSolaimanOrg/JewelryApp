@@ -1,4 +1,3 @@
-import { jwtDecode } from "jwt-decode";
 import React, { type JSX } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -31,22 +30,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   try {
-    const decoded: any = jwtDecode(accessToken);
-
-    const isExpired = (decoded.exp as number) * 1000 < Date.now();
-
-    if (isExpired) {
-      localStorage.clear();
-      sessionStorage.clear();
-      return <Navigate to="/login" replace />;
-    }
-
     if (allowedRoles && allowedRoles.length > 0) {
       const hasRole = userInfo?.roles?.some((role) =>
         allowedRoles.includes(role)
       );
       if (!hasRole) {
-        return <Navigate to="/unauthorized" replace />; // you can create this page
+        return <Navigate to="/unauthorized" replace />;
       }
     }
   } catch (error) {
