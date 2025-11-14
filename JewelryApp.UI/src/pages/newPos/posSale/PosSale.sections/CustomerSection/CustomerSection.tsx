@@ -1,4 +1,9 @@
-import React, { useCallback, type Dispatch, type SetStateAction } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   FaBirthdayCake,
   FaEnvelope,
@@ -65,6 +70,10 @@ const CustomerSection: React.FC<Props> = ({
             className="customerSearch"
             cacheOptions
             loadOptions={loadOptions}
+            components={{
+              DropdownIndicator: () => null,
+              IndicatorSeparator: () => null,
+            }}
             defaultOptions
             placeholder="Search customer by name..."
             noOptionsMessage={({ inputValue }) =>
@@ -72,10 +81,8 @@ const CustomerSection: React.FC<Props> = ({
             }
             loadingMessage={() => "Searching..."}
             inputValue={searchInput}
-            onInputChange={(value, actionMeta) => {
-              if (actionMeta.action === "input-change") {
-                setSearchInput(value);
-              }
+            onInputChange={(value) => {
+              setSearchInput(value);
             }}
             onChange={(selected) => {
               if (selected) {

@@ -6,6 +6,7 @@ import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
 import "./receipt.scss";
+import logo from "../../../assets/images/jewelary-logo.svg";
 
 interface SaleItem {
   productName: string;
@@ -69,7 +70,10 @@ const Receipt = () => {
 
       <div ref={contentRef} className="receipt-container">
         <div className="receipt-header">
-          <div className="receipt-title">Adi Jewelry</div>
+          <div className="receipt-title">
+            <img src={logo} alt="Logo" width={36} height={32} />
+            <span> Adi Jewelry</span>
+          </div>
           <div className="receipt-subtitle">
             123 Luxury Avenue, Diamond District
           </div>
@@ -161,19 +165,17 @@ const Receipt = () => {
             </div>
           )}
 
-          <div className="summary-item">
-            <span>Discount:</span>
-            <span>${saleDetails.discount}</span>
-          </div>
+          {!!saleDetails.discount && (
+            <div className="summary-item">
+              <span>Discount:</span>
+              <span>${saleDetails.discount}</span>
+            </div>
+          )}
         </div>
 
         <div className="receipt-totals">
           <div className="receipt-total">
-            <div className="total-label">Subtotal</div>
-            <div className="total-value">${subtotal}</div>
-          </div>
-          <div className="receipt-total">
-            <div className="total-label">Total</div>
+            <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
         </div>

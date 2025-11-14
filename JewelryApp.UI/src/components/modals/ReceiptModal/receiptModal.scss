@@ -52,11 +52,18 @@
     padding-bottom: 20px;
     border-bottom: 2px solid var(--gold);
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .receipt-title {
       font-size: 1.8rem;
       color: var(--primary);
       margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
     }
     .receipt-subtitle {
       color: #666;

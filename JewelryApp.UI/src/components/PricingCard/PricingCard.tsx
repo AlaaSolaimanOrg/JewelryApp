@@ -68,7 +68,7 @@ const PricingCard = ({
         ))}
       </div>
 
-      {isGlobal ? (
+      {isGlobal && (
         <button
           className="btn-md btn-gold"
           onClick={() => {
@@ -77,36 +77,6 @@ const PricingCard = ({
         >
           <FaRedo className="icon" /> Refresh Prices
         </button>
-      ) : (
-        <div className="form-group">
-          <label className="form-label">Pricing Method</label>
-          <div style={{ display: "flex", gap: "20px" }}>
-            <label
-              style={{ display: "flex", alignItems: "center", gap: "8px" }}
-            >
-              <input
-                type="radio"
-                name={`${ProductType[productType]}-pricing-method`}
-                defaultChecked
-              />
-              Manual Pricing
-            </label>
-            <label
-              style={{ display: "flex", alignItems: "center", gap: "8px" }}
-            >
-              <input
-                type="radio"
-                name={`${ProductType[productType]}-pricing-method`}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    handleProductTypePrices(productType);
-                  }
-                }}
-              />
-              API Integration
-            </label>
-          </div>
-        </div>
       )}
     </div>
   );

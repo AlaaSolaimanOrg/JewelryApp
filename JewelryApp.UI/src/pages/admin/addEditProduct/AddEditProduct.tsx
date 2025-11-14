@@ -16,7 +16,7 @@ import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
-import {
+import preventSignOnKeyDown, {
   checkRequestSucceeded,
   convertHeicToJpeg,
   isPositiveInteger,
@@ -216,8 +216,12 @@ const AddEditProduct = ({ isEdit }) => {
 
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
-      if (key === "description" || key === "tags" || key === "nfcId")
-        return false; // tags and nfcId are optional
+      if (key === "description" || key === "tags") return false;
+
+      if (key === "weight" || key === "quantity") {
+        return Number(value) <= 0; 
+      }
+
       if (Array.isArray(value)) {
         return value.length === 0;
       }
@@ -303,6 +307,7 @@ const AddEditProduct = ({ isEdit }) => {
                   step={1} // disables decimals
                   className="form-control"
                   placeholder="Enter quantity"
+                  onKeyDown={preventSignOnKeyDown}
                   value={productFields.quantity}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -363,6 +368,8 @@ const AddEditProduct = ({ isEdit }) => {
                   className="form-control"
                   placeholder="0.0"
                   value={productFields.weight}
+                  onKeyDown={preventSignOnKeyDown}
+                  min={0}
                   onChange={(e) => {
                     const inputValue = e.target.value;
 

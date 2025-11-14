@@ -7,6 +7,7 @@ import type { KaratType } from "../../../types/enums";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { renderLongDescription } from "../../../utils";
+import logo from "../../../assets/images/jewelary-logo.svg";
 
 interface SaleItem {
   productName: string;
@@ -92,7 +93,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             <div ref={contentRef} className="receipt-container">
               {/* Header */}
               <div className="receipt-header">
-                <div className="receipt-title">Adi Jewelry</div>
+                <div className="receipt-title">
+                  <img src={logo} alt="Logo" width={36} height={32} />
+                  <span> Adi Jewelry</span>
+                </div>{" "}
                 <div className="receipt-subtitle">
                   123 Luxury Avenue, Diamond District
                 </div>
@@ -160,7 +164,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <tbody className="table-body-scrollable">
                     {saleDetails.saleItems?.map((item, index) => (
                       <tr key={index}>
-                        <td style={{ width: "20%" }}>{renderLongDescription(item.productName)}</td>
+                        <td style={{ width: "20%" }}>
+                          {renderLongDescription(item.productName)}
+                        </td>
                         <td>{item.karat}</td>
                         <td>{item.quantity}</td>
                         <td>{item.weight}g</td>
@@ -190,20 +196,18 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </div>
                 )}
 
-                <div className="summary-item">
-                  <span>Discount:</span>
-                  <span>${saleDetails.discount}</span>
-                </div>
+                {!!saleDetails.discount && (
+                  <div className="summary-item">
+                    <span>Discount:</span>
+                    <span>${saleDetails.discount}</span>
+                  </div>
+                )}
               </div>
 
               {/* Totals */}
               <div className="receipt-totals">
                 <div className="receipt-total">
-                  <div className="total-label">Subtotal</div>
-                  <div className="total-value">${subtotal}</div>
-                </div>
-                <div className="receipt-total">
-                  <div className="total-label">Total</div>
+                  <div className="total-label">Total (incl. 5% GST)</div>
                   <div className="total-value">${saleDetails.total}</div>
                 </div>
               </div>
