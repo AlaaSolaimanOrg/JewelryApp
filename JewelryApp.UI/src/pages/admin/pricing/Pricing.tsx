@@ -155,7 +155,7 @@ const Pricing = () => {
     apiToCall: (data) => getGlobalPricingSettings(data.payload),
     payload: {
       productType: ProductType.Gold,
-      currency: Currency.USD,
+      currency: Currency.CAD,
     },
   }) as {
     data: MetalPricing;

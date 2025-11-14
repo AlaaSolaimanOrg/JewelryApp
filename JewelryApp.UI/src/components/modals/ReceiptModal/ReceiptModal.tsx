@@ -62,8 +62,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     setShowModal(false);
   };
 
-  const subtotal =
-    saleDetails?.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
 
   return (
