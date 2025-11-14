@@ -165,8 +165,8 @@ const ScanModal: React.FC<ScanModalProps> = ({
               </div>
             ) : (
               <>
-                <div className="sku-list-header">
-                  <span className="item-title">SKU</span>
+                <div className="nfc-list-header">
+                  <span className="item-title">Nfc Id</span>
                 </div>
 
                 {scannedItems.map((scannedItem, idx) => {
