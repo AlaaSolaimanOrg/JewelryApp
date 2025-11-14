@@ -68,15 +68,50 @@ const PricingCard = ({
         ))}
       </div>
 
-      {isGlobal && (
-        <button
-          className="btn-md btn-gold"
-          onClick={() => {
-            recallGlobalPrices();
-          }}
-        >
-          <FaRedo className="icon" /> Refresh Prices
-        </button>
+      {isGlobal ? (
+        <div className="form-group">
+          <label className="form-label">Pricing Method</label>
+          <div style={{ display: "flex", gap: "20px" }}>
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <input
+                type="radio"
+                name={`${ProductType[productType]}-pricing-method`}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    handleProductTypePrices(productType);
+                  }
+                }}
+              />
+              API Integration
+            </label>
+            <button
+              className="btn-md btn-gold"
+              onClick={() => {
+                recallGlobalPrices();
+              }}
+            >
+              <FaRedo className="icon" /> Refresh Prices
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="form-group">
+          <label className="form-label">Pricing Method</label>
+          <div style={{ display: "flex", gap: "20px" }}>
+            <label
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <input
+                type="radio"
+                name={`${ProductType[productType]}-pricing-method`}
+                defaultChecked
+              />
+              Manual Pricing
+            </label>
+          </div>
+        </div>
       )}
     </div>
   );

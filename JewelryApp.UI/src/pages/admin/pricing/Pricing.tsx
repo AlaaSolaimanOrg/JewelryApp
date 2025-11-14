@@ -80,6 +80,7 @@ const Pricing = () => {
   ]);
 
   const [prices, setPrices] = useState<PriceItem[]>([...initialPrices]);
+  console.log("prices", prices);
 
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {
@@ -268,6 +269,7 @@ const Pricing = () => {
             prices={globalGoldPrices}
             isGlobal
             recallGlobalPrices={recallGoldGlobalPricingSettings}
+            handleProductTypePrices={handleProductTypePrices}
           />
         </Col>
       </Row>
