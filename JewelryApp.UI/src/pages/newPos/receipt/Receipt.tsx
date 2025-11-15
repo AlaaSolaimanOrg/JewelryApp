@@ -1,14 +1,24 @@
 import { useRef } from "react";
-import { FaCheck, FaPrint, FaReceipt } from "react-icons/fa";
+import {
+  FaCheck,
+  FaGlobe,
+  FaInstagram,
+  FaPrint,
+  FaReceipt,
+  FaTiktok,
+} from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
 import "./receipt.scss";
+import logo from "../../../assets/images/jewelary-logo.svg";
+import QRCode from "react-qr-code";
 
 interface SaleItem {
   productName: string;
+  sku: string;
   karat: KaratType;
   weight: number;
   pricePerGram: number;
@@ -53,8 +63,6 @@ const Receipt = () => {
     );
   }
 
-  const subtotal =
-    saleDetails.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
   const dateObj = new Date(saleDetails.createdDate);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -69,11 +77,14 @@ const Receipt = () => {
 
       <div ref={contentRef} className="receipt-container">
         <div className="receipt-header">
-          <div className="receipt-title">Adi Jewelry</div>
-          <div className="receipt-subtitle">
-            123 Luxury Avenue, Diamond District
+          <div className="receipt-title">
+            <img src={logo} alt="Logo" width={36} height={32} />
+            <span> Adi Jewelry</span>
           </div>
-          <div className="receipt-subtitle">Phone: (555) 123-4567</div>
+          <div className="receipt-subtitle">
+            6885 Ad Astra Blvd NW Edmonton, Alberta
+          </div>
+          <div className="receipt-subtitle">Phone: (780) 934-1455</div>
         </div>
 
         <div className="receipt-details">
@@ -123,6 +134,7 @@ const Receipt = () => {
           <thead>
             <tr>
               <th>Product</th>
+              <th>Sku</th>
               <th>Karat</th>
               <th>Quantity</th>
               <th>Weight (g)</th>
@@ -134,6 +146,7 @@ const Receipt = () => {
             {saleDetails.saleItems?.map((item, index) => (
               <tr key={index}>
                 <td>{item.productName}</td>
+                <td>{item.sku}</td>
                 <td>{item.karat}</td>
                 <td>{item.quantity}</td>
                 <td>{item.weight}g</td>
@@ -161,19 +174,17 @@ const Receipt = () => {
             </div>
           )}
 
-          <div className="summary-item">
-            <span>Discount:</span>
-            <span>${saleDetails.discount}</span>
-          </div>
+          {!!saleDetails.discount && (
+            <div className="summary-item">
+              <span>Discount:</span>
+              <span>${saleDetails.discount}</span>
+            </div>
+          )}
         </div>
 
         <div className="receipt-totals">
           <div className="receipt-total">
-            <div className="total-label">Subtotal</div>
-            <div className="total-value">${subtotal}</div>
-          </div>
-          <div className="receipt-total">
-            <div className="total-label">Total</div>
+            <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
         </div>
@@ -188,6 +199,44 @@ const Receipt = () => {
               <FaCheck /> Start New Sale
             </button>
           </Link>
+        </div>
+
+        <div className="receipt-footer">
+          <div className="social-links">
+            <Link to="https://adijewelry.ca/" target="_blank">
+              <div className="social-item">
+                <FaGlobe className="globe-icon" />
+                <span>adijewelry.ca</span>
+              </div>
+            </Link>
+
+            <Link
+              to="https://www.instagram.com/adijewelry.ca?igsh=MTlzaTQ3Z2l0a3Axcw=="
+              target="_blank"
+            >
+              <div className="social-item">
+                <FaInstagram className="instagram-icon" />
+                <span>@adijewelry.ca</span>
+              </div>
+            </Link>
+            <Link to="https://www.tiktok.com/@adi_jewellery" target="_blank">
+              <div className="social-item">
+                <FaTiktok className="tiktok-icon" />
+                <span>@adi_jewellery</span>
+              </div>
+            </Link>
+          </div>
+
+          <div className="qr-section">
+            <div className="qr-label">Scan to leave a review</div>
+            <QRCode
+              value="https://share.google/qk8AVqQpSczkKpZmq"
+              size={80}
+              bgColor="#ffffff"
+              fgColor="var(--gold)"
+              style={{ border: "1px solid #eee", padding: "4px" }}
+            />
+          </div>
         </div>
       </div>
     </div>

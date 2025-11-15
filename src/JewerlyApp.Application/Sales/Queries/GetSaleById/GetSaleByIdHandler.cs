@@ -39,6 +39,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {
                         ProductName = i.Product!.Name!,
+                        Sku =  i.Product.Sku,
                         Karat = i.KaratType,
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,

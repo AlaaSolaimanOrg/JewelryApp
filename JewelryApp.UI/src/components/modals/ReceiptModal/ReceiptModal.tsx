@@ -1,15 +1,19 @@
 import { useState, useRef } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { FaPrint, FaReceipt } from "react-icons/fa";
+import { FaGlobe, FaInstagram, FaPrint, FaReceipt, FaTiktok } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import "./receiptModal.scss";
 import type { KaratType } from "../../../types/enums";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { renderLongDescription } from "../../../utils";
+import logo from "../../../assets/images/jewelary-logo.svg";
+import { Link } from "react-router-dom";
+import QRCode from "react-qr-code";
 
 interface SaleItem {
   productName: string;
+  sku: string;
   karat: KaratType;
   weight: number;
   pricePerGram: number;
@@ -60,8 +64,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     setShowModal(false);
   };
 
-  const subtotal =
-    saleDetails?.saleItems?.reduce((acc, item) => acc + item.subtotal, 0) || 0;
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
 
   return (
@@ -92,11 +94,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             <div ref={contentRef} className="receipt-container">
               {/* Header */}
               <div className="receipt-header">
-                <div className="receipt-title">Adi Jewelry</div>
+                <div className="receipt-title">
+                  <img src={logo} alt="Logo" width={36} height={32} />
+                  <span> Adi Jewelry</span>
+                </div>{" "}
                 <div className="receipt-subtitle">
-                  123 Luxury Avenue, Diamond District
+                  6885 Ad Astra Blvd NW Edmonton, Alberta
                 </div>
-                <div className="receipt-subtitle">Phone: (555) 123-4567</div>
+                <div className="receipt-subtitle">Phone: (780) 934-1455</div>
               </div>
 
               {/* Details */}
@@ -150,22 +155,26 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <thead>
                     <tr>
                       <th style={{ width: "20%" }}>Product</th>
-                      <th>Karat</th>
-                      <th>Quantity</th>
-                      <th>Weight (g)</th>
-                      <th>Price/Gram</th>
-                      <th>Subtotal</th>
+                      <th style={{ width: "20%" }}>SKU</th>
+                      <th style={{ width: "12%" }}>Karat</th>
+                      <th style={{ width: "12%" }}>Quantity</th>
+                      <th style={{ width: "12%" }}>Weight</th>
+                      <th style={{ width: "12%" }}>Price/Gram</th>
+                      <th style={{ width: "12%" }}>Subtotal</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
                     {saleDetails.saleItems?.map((item, index) => (
                       <tr key={index}>
-                        <td style={{ width: "20%" }}>{renderLongDescription(item.productName)}</td>
-                        <td>{item.karat}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.weight}g</td>
-                        <td>${item.pricePerGram}</td>
-                        <td>${item.subtotal}</td>
+                        <td style={{ width: "20%" }}>
+                          {renderLongDescription(item.productName)}
+                        </td>
+                        <td style={{ width: "20%" }}>{item.sku}</td>
+                        <td style={{ width: "12%" }}>{item.karat}</td>
+                        <td style={{ width: "12%" }}>{item.quantity}</td>
+                        <td style={{ width: "12%" }}>{item.weight}g</td>
+                        <td style={{ width: "12%" }}>${item.pricePerGram}</td>
+                        <td style={{ width: "12%" }}>${item.subtotal}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -190,21 +199,60 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </div>
                 )}
 
-                <div className="summary-item">
-                  <span>Discount:</span>
-                  <span>${saleDetails.discount}</span>
-                </div>
+                {!!saleDetails.discount && (
+                  <div className="summary-item">
+                    <span>Discount:</span>
+                    <span>${saleDetails.discount}</span>
+                  </div>
+                )}
               </div>
 
               {/* Totals */}
               <div className="receipt-totals">
                 <div className="receipt-total">
-                  <div className="total-label">Subtotal</div>
-                  <div className="total-value">${subtotal}</div>
-                </div>
-                <div className="receipt-total">
-                  <div className="total-label">Total</div>
+                  <div className="total-label">Total (incl. 5% GST)</div>
                   <div className="total-value">${saleDetails.total}</div>
+                </div>
+              </div>
+
+              <div className="receipt-footer">
+                <div className="social-links">
+                  <Link to="https://adijewelry.ca/" target="_blank">
+                    <div className="social-item">
+                      <FaGlobe className="globe-icon" />
+                      <span>adijewelry.ca</span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    to="https://www.instagram.com/adijewelry.ca?igsh=MTlzaTQ3Z2l0a3Axcw=="
+                    target="_blank"
+                  >
+                    <div className="social-item">
+                      <FaInstagram className="instagram-icon" />
+                      <span>@adijewelry.ca</span>
+                    </div>
+                  </Link>
+                  <Link
+                    to="https://www.tiktok.com/@adi_jewellery"
+                    target="_blank"
+                  >
+                    <div className="social-item">
+                      <FaTiktok className="tiktok-icon" />
+                      <span>@adi_jewellery</span>
+                    </div>
+                  </Link>
+                </div>
+
+                <div className="qr-section">
+                  <div className="qr-label">Scan to leave a review</div>
+                  <QRCode
+                    value="https://share.google/qk8AVqQpSczkKpZmq"
+                    size={80}
+                    bgColor="#ffffff"
+                    fgColor="var(--gold)"
+                    style={{ border: "1px solid #eee", padding: "4px" }}
+                  />
                 </div>
               </div>
             </div>

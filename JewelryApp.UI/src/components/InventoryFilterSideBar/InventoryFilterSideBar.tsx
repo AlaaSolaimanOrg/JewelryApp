@@ -193,7 +193,7 @@ const InventoryFilterSideBar = ({
           <FaFilter className="me-1" /> Apply Filters
         </button>
         <button
-          className="btn-md btn-gray"
+          className="btn-md btn-dark"
           style={{ width: "100%", marginTop: "10px" }}
           onClick={resetFilters}
         >
