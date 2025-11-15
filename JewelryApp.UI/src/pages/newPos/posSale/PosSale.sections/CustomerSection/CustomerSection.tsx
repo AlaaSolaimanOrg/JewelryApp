@@ -1,8 +1,7 @@
 import React, {
   useCallback,
-  useEffect,
   type Dispatch,
-  type SetStateAction,
+  type SetStateAction
 } from "react";
 import {
   FaBirthdayCake,
