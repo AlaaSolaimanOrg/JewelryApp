@@ -1,4 +1,8 @@
-import React, { useCallback, type Dispatch, type SetStateAction } from "react";
+import React, {
+  useCallback,
+  type Dispatch,
+  type SetStateAction
+} from "react";
 import {
   FaBirthdayCake,
   FaEnvelope,
@@ -65,6 +69,10 @@ const CustomerSection: React.FC<Props> = ({
             className="customerSearch"
             cacheOptions
             loadOptions={loadOptions}
+            components={{
+              DropdownIndicator: () => null,
+              IndicatorSeparator: () => null,
+            }}
             defaultOptions
             placeholder="Search customer by name..."
             noOptionsMessage={({ inputValue }) =>
@@ -72,15 +80,17 @@ const CustomerSection: React.FC<Props> = ({
             }
             loadingMessage={() => "Searching..."}
             inputValue={searchInput}
+            onInputChange={(value) => {
+              setSearchInput(value);
+            }}
             onChange={(selected) => {
               if (selected) {
                 setCustomerInfoActive(true);
                 setCustomer(selected.data);
               } else {
-                // Handle clear action
                 setCustomerInfoActive(false);
                 setCustomer(null);
-                setSearchInput(""); // If you want to clear search input
+                setSearchInput("");
               }
             }}
             value={
@@ -103,11 +113,11 @@ const CustomerSection: React.FC<Props> = ({
               }),
               placeholder: (base) => ({
                 ...base,
-                color: "gray", // Changed to gray
+                color: "lightgray",
               }),
               singleValue: (base) => ({
                 ...base,
-                color: "white !important",
+                color: "white",
               }),
               input: (base) => ({
                 ...base,

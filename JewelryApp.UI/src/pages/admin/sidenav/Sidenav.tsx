@@ -103,8 +103,7 @@ const SideNav = () => {
   const hasPosRole = userInfo?.roles?.includes("PosRole");
 
   const handlePosRedirect = () => {
-    // Redirect to your POS page
-    navigate("/"); // Adjust the route as needed
+    navigate("/");
   };
   return (
     <>

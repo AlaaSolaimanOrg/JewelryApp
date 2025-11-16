@@ -80,6 +80,7 @@ const Pricing = () => {
   ]);
 
   const [prices, setPrices] = useState<PriceItem[]>([...initialPrices]);
+  console.log("prices", prices);
 
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {
@@ -155,7 +156,7 @@ const Pricing = () => {
     apiToCall: (data) => getGlobalPricingSettings(data.payload),
     payload: {
       productType: ProductType.Gold,
-      currency: Currency.USD,
+      currency: Currency.CAD,
     },
   }) as {
     data: MetalPricing;
@@ -239,7 +240,7 @@ const Pricing = () => {
         </h1>
         <div className="page-actions">
           <button
-            className={`btn-md ${hasChanges ? "btn-gold" : "btn-dark"}`}
+            className={`btn-md ${hasChanges ? "btn-gold" : "btn-gray"}`}
             onClick={handleApplyPrices}
             disabled={!hasChanges || anyPriceHasNoValue}
           >
@@ -268,6 +269,7 @@ const Pricing = () => {
             prices={globalGoldPrices}
             isGlobal
             recallGlobalPrices={recallGoldGlobalPricingSettings}
+            handleProductTypePrices={handleProductTypePrices}
           />
         </Col>
       </Row>

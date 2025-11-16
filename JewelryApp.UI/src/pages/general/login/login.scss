@@ -51,6 +51,34 @@
           color: var(--primary);
         }
       }
+      .password-input-container {
+        position: relative;
+
+        input {
+          width: 100%;
+        }
+
+        .password-toggle-btn {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--gold);
+          cursor: pointer;
+          font-size: 20px;
+          padding: 4px 6px;
+
+          &:hover {
+            color: var(--primary-dark);
+          }
+        }
+
+        input {
+          padding-right: 40px;
+        }
+      }
     }
 
     .loginButton {

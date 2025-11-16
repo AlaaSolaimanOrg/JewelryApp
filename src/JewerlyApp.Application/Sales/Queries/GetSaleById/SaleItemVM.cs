@@ -10,6 +10,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
     public class SaleItemVM
     {
         public string ProductName { get; set; } = string.Empty;
+        public string? Sku { get; set; } 
         public KaratType Karat { get; set; }
         public decimal Weight { get; set; }
         public decimal? PricePerGram { get; set; }

@@ -270,6 +270,11 @@ body {
   width: 100%;
 }
 
+.btn-dark {
+  background-color: var(--dark);
+  color: var(--light);
+}
+
 .disabled-input-gold {
   color: var(--gold);
   font-weight: 600;
