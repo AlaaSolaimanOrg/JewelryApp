@@ -4,6 +4,7 @@ using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,18 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 
         public async Task<GenericResponse<string>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
+            var nfcIdExists = await _context.Products.AnyAsync(x => x.NFCId == request.NFCId, cancellationToken);
+
+            if (nfcIdExists)
+            {
+                return new GenericResponse<string>
+                {
+                    Data = null,
+                    Message = Messages.ErrorInvalidNfcId,
+                    StatusCode = ResponseStatusCode.BadRequest,
+                };
+            }
+
             var productId = Guid.NewGuid();
 
             var product = new Product

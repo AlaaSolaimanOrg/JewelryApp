@@ -79,6 +79,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Customer_Data_Exists = "A Customer with the following data already exists.";
         public const string Error_Customer_Not_Found = "Customer Not Found.";
         public const string Error_Purchase_Not_Found = "No Purchase Found For This Customer.";
+        public const string ErrorInvalidNfcId = "Invalid Nfc Id";
 
         //POS Messages
         public const string Pos_No_Cart = "No cart is found.";
