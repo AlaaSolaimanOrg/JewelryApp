@@ -17,11 +17,19 @@ interface PurchaseHistory {
 interface ReceiptHistoryModalProps {
   customerId: string;
   children: React.ReactNode;
+  totalWeight18K: number;
+  totalWeight21K: number;
+  totalAmount: number;
+  totalDiscount: number;
 }
 
 const ReceiptHistoryModal = ({
   customerId,
   children,
+  totalWeight18K,
+  totalWeight21K,
+  totalAmount,
+  totalDiscount,
 }: ReceiptHistoryModalProps) => {
   const [showModal, setShowModal] = useState(false);
 
@@ -113,6 +121,30 @@ const ReceiptHistoryModal = ({
 
         <Modal.Body>
           <div className="receipt-history-container">
+            {/* Summary Section */}
+            {customerPurhcaseHistory.length > 0 && (
+              <div className="purchase-summary mb-4 p-3 bg-light rounded">
+                <div className="row text-center">
+                  <div className="col-md-3">
+                    <h6>Total 18K Weight</h6>
+                    <p className="mb-0 fw-bold">{totalWeight18K.toFixed(2)}g</p>
+                  </div>
+                  <div className="col-md-3">
+                    <h6>Total 21K Weight</h6>
+                    <p className="mb-0 fw-bold">{totalWeight21K.toFixed(2)}g</p>
+                  </div>
+                  <div className="col-md-3">
+                    <h6>Total Amount</h6>
+                    <p className="mb-0 fw-bold">{formatCurrency(totalAmount)}</p>
+                  </div>
+                  <div className="col-md-3">
+                    <h6>Total Discount</h6>
+                    <p className="mb-0 fw-bold">{formatCurrency(totalDiscount)}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {customerPurhcaseHistory.length === 0 ? (
               <div className="text-center py-4">
                 <p>No purchase history found.</p>

@@ -21,6 +21,15 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         {
             try
             {
+                if (!request.SaleItems.Any())
+                {
+                    return new GenericResponse<string>
+                    {
+                        Data = null,
+                        StatusCode = ResponseStatusCode.BadRequest,
+                        Message = Messages.Error_Sale_MustContain_Items
+                    };
+                }
                 // 🔹 Validate customer
                 var customer = await _context.Customers
                     .FirstOrDefaultAsync(c => c.Id == request.CustomerId, cancellationToken);

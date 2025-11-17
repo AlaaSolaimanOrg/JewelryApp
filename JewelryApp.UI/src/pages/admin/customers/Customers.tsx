@@ -36,6 +36,9 @@ interface Customer {
   totalPurchasesValue: number;
   phoneNumber: string;
   birthday: string;
+  total18K: number;
+  total21K: number;
+  totalDiscount: number;
 }
 const Customers = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
@@ -135,7 +138,13 @@ const Customers = () => {
           >
             <FaEye />
           </button>
-          <ReceiptHistoryModal customerId={customer.id}>
+          <ReceiptHistoryModal
+            customerId={customer.id}
+            totalWeight18K={customer.total18K}
+            totalWeight21K={customer.total21K}
+            totalAmount={customer.totalPurchasesValue}
+            totalDiscount={customer.totalDiscount}
+          >
             <button className="action-btn" title="View">
               <LuHistory />
             </button>

@@ -54,7 +54,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
                             KaratType = k.Key,
                             Weight = k.Sum(si => si.Weight * si.Quantity),
                             PricePerGram = k.Average(si => si.OverriddenPricePerGram ?? si.OriginalPricePerGram ?? 0),
-                            TotalValue = k.Sum(si => si.SubTotal)
+                            // itemPrice - (sale discount * itemPrice / total sale price)
+                            TotalValue = k.Sum(si => si.SubTotal -
+                                     (si.Sale!.Discount ?? 0) * (si.Sale.SubTotal > 0 ? si.SubTotal / si.Sale.SubTotal : 0))
                         })
                         .ToList()
                 })

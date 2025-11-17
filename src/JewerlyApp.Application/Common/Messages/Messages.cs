@@ -80,6 +80,7 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Customer_Not_Found = "Customer Not Found.";
         public const string Error_Purchase_Not_Found = "No Purchase Found For This Customer.";
         public const string ErrorInvalidNfcId = "Invalid Nfc Id";
+        public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
 
         //POS Messages
         public const string Pos_No_Cart = "No cart is found.";

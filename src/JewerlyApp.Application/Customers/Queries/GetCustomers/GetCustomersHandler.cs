@@ -85,9 +85,28 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 {
                     s.CustomerId,
                     ProductCount = s.SaleItems.Sum(i => i.Quantity),
-                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram) - s.Discount
-                })
+                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram) - s.Discount,
+                    s.Discount,
+                    Weight18K = s.SaleItems
+                    .Where(i => i.KaratType == KaratType.Karat18)
+                    .Sum(i => i.Quantity * i.Weight),
+                    Weight21K = s.SaleItems
+                    .Where(i => i.KaratType == KaratType.Karat21)
+                    .Sum(i => i.Quantity * i.Weight),
+                    })
                 .ToListAsync(cancellationToken);
+
+            var totalDiscountByCustomer = salesWithItems
+                 .GroupBy(x => x.CustomerId)
+                 .ToDictionary(g => g.Key, g => g.Sum(x => x.Discount));
+
+            var totalWeight18KByCustomer = salesWithItems
+               .GroupBy(x => x.CustomerId)
+               .ToDictionary(g => g.Key, g => g.Sum(x => x.Weight18K));
+
+            var totalWeight21KByCustomer = salesWithItems
+                .GroupBy(x => x.CustomerId)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Weight21K));
 
             var totalProductsByCustomer = salesWithItems
                 .GroupBy(x => x.CustomerId)
@@ -102,15 +121,26 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 {
                     Id = c.Id,
                     Name = c.Name,
-                    Email = c.Email,
                     PhoneNumber = c.PhoneNumber ?? string.Empty,
-                    Birthday = c.Birthday,
                     TotalProductsPurchased = totalProductsByCustomer.ContainsKey(c.Id)
                         ? totalProductsByCustomer[c.Id]
                         : 0,
                     TotalPurchasesValue = totalSalesByCustomer.ContainsKey(c.Id)
                         ? totalSalesByCustomer[c.Id]
+                        : 0,
+
+                    TotalDiscount = totalDiscountByCustomer.ContainsKey(c.Id)
+                        ? totalDiscountByCustomer[c.Id]
+                        : 0,
+
+                    Total18K = totalWeight18KByCustomer.ContainsKey(c.Id)
+                        ? totalWeight18KByCustomer[c.Id]
+                        : 0,
+
+                    Total21K = totalWeight21KByCustomer.ContainsKey(c.Id)
+                        ? totalWeight21KByCustomer[c.Id]
                         : 0
+
                 })
                 .ToList();
 

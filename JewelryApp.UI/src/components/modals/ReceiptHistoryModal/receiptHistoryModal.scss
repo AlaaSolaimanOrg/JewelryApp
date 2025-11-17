@@ -37,6 +37,21 @@
   .receipt-history-container {
     padding: 1.5rem;
 
+    .purchase-summary {
+      border: 1px solid #dee2e6;
+      
+      h6 {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+      }
+      
+      .fw-bold {
+        font-size: 1.1rem;
+        color: #495057;
+      }
+    }
+
     .customTable {
       margin: 0;
 
@@ -117,6 +132,18 @@
 
     .receipt-history-container {
       padding: 1rem;
+
+      .purchase-summary {
+        .row {
+          .col-md-3 {
+            margin-bottom: 1rem;
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
 
       .customTable {
         table {
