@@ -44,7 +44,7 @@
   .receipt-table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     th {
       background: #f1f5f9;
@@ -85,6 +85,15 @@
         color: var(--primary);
       }
     }
+  }
+
+  .receipt-discount {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #ddd;
+    font-size: 1rem;
+    font-weight: 400;
   }
 
   .payment-breakdown {

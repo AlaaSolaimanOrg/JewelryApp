@@ -157,6 +157,13 @@ const Receipt = () => {
           </tbody>
         </table>
 
+        {!!saleDetails.discount && (
+          <div className="receipt-discount">
+            <span>Discount:</span>
+            <span>${saleDetails.discount}</span>
+          </div>
+        )}
+
         <div className="payment-breakdown">
           <h4>Payment Breakdown</h4>
 
@@ -171,13 +178,6 @@ const Receipt = () => {
             <div className="summary-item">
               <span>Card Payment:</span>
               <span>${saleDetails.cardAmount}</span>
-            </div>
-          )}
-
-          {!!saleDetails.discount && (
-            <div className="summary-item">
-              <span>Discount:</span>
-              <span>${saleDetails.discount}</span>
             </div>
           )}
         </div>
