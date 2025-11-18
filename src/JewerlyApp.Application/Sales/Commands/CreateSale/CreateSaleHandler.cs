@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Messages;
+﻿using JewerlyApp.Application.Common.Helpers;
+using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
@@ -11,14 +12,17 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
     public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, GenericResponse<string>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IUserService _userService;
 
-        public CreateSaleHandler(IApplicationDbContext context)
+        public CreateSaleHandler(IApplicationDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<GenericResponse<string>> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
         {
+            var loggedInUser = await _userService.GetLoggedInUser();
             try
             {
                 if (!request.SaleItems.Any())
@@ -40,7 +44,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     {
                         Data = null,
                         StatusCode = ResponseStatusCode.BadRequest,
-                        Message = "Customer not found"
+                        Message = Messages.Error_Customer_Not_Found 
                     };
                 }
 
@@ -133,6 +137,18 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             }
             catch (Exception ex)
             {
+                await Logger.LogErrorAsync(
+                    context: _context,
+                    handlerName: nameof(CreateSaleHandler),
+                    message: "Failed to create sale",
+                    exception: ex,
+                    content: new
+                    {
+                        Request = request                        
+                    },
+                    userId: loggedInUser.Id,
+                    cancellationToken
+                );
                 return new GenericResponse<string>
                 {
                     Data = null,

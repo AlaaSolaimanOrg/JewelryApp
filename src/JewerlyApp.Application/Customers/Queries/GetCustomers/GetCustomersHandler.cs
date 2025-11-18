@@ -1,15 +1,11 @@
-﻿using JewerlyApp.Application.Common.Messages;
+﻿using JewerlyApp.Application.Common.Extensions;
+using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
 
 namespace JewerlyApp.Application.Customers.Queries.GetCustomers
 {
@@ -38,115 +34,66 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 };
             }
 
-            IQueryable<Customer> customersQuery = _context.Customers.AsQueryable().AsNoTracking();
+            IQueryable<Customer> customersQuery = _context.Customers.AsNoTracking();
 
-            if (!string.IsNullOrWhiteSpace(request.SearchBy))
-            {
-                string term = request.SearchBy.ToLower();
-                customersQuery = customersQuery.Where(c =>
-                    c.Name.ToLower().Contains(term) ||
-                    c.Email.ToLower().Contains(term) ||
-                    (c.PhoneNumber != null && c.PhoneNumber.Contains(term)));
-            }
+            // APPLY SEARCH
+            customersQuery = ApplySearch(customersQuery, request.SearchBy);
 
+            // TOTAL COUNT
             int totalRecords = await customersQuery.CountAsync(cancellationToken);
 
-            string sortBy = request.SortBy?.ToLower() ?? "name";
-            string sortDirection = request.SortDirection.ToString().ToLower();
 
-            customersQuery = sortBy switch
-            {
-                "email" => sortDirection == "descending"
-                    ? customersQuery.OrderByDescending(c => c.Email)
-                    : customersQuery.OrderBy(c => c.Email),
-                "birthday" => sortDirection == "descending"
-                    ? customersQuery.OrderByDescending(c => c.Birthday)
-                    : customersQuery.OrderBy(c => c.Birthday),
-                "createddate" => sortDirection == "descending"
-                    ? customersQuery.OrderByDescending(c => c.CreatedDate)
-                    : customersQuery.OrderBy(c => c.CreatedDate),
-                _ => sortDirection == "descending"
-                    ? customersQuery.OrderByDescending(c => c.Name)
-                    : customersQuery.OrderBy(c => c.Name),
-            };
-
-            int skip = (request.PageNumber - 1) * request.PageSize;
-
-            var paginatedCustomers = await customersQuery
-                .Skip(skip)
-                .Take(request.PageSize)
+            var paginatedCustomers = await customersQuery.ApplySorting(request.SortBy, request.SortDirection)
+                .ApplyPagination(request.PageNumber, request.PageSize)
                 .ToListAsync(cancellationToken);
 
             var customerIds = paginatedCustomers.Select(c => c.Id).ToList();
 
-            var salesWithItems = await _context.Sales
+            // AGGREGATION QUERY (SQL ONLY)
+            var salesAgg = await _context.Sales
                 .Where(s => customerIds.Contains(s.CustomerId))
-                .Select(s => new
+                .GroupBy(s => s.CustomerId)
+                .Select(g => new
                 {
-                    s.CustomerId,
-                    ProductCount = s.SaleItems.Sum(i => i.Quantity),
-                    TotalSales = s.SaleItems.Sum(i => i.Quantity * i.Weight * i.OverriddenPricePerGram) - s.Discount,
-                    s.Discount,
-                    Weight18K = s.SaleItems
-                    .Where(i => i.KaratType == KaratType.Karat18)
-                    .Sum(i => i.Quantity * i.Weight),
-                    Weight21K = s.SaleItems
-                    .Where(i => i.KaratType == KaratType.Karat21)
-                    .Sum(i => i.Quantity * i.Weight),
-                    })
-                .ToListAsync(cancellationToken);
+                    CustomerId = g.Key,
+                    TotalProducts = g.SelectMany(s => s.SaleItems).Sum(si => si.Quantity),
+                    TotalSales = g.SelectMany(s => s.SaleItems).Sum(si => si.Quantity * si.Weight * si.OverriddenPricePerGram) - g.Sum(s => s.Discount),
 
-            var totalDiscountByCustomer = salesWithItems
-                 .GroupBy(x => x.CustomerId)
-                 .ToDictionary(g => g.Key, g => g.Sum(x => x.Discount));
+                    TotalDiscount = g.Sum(s => s.Discount),
 
-            var totalWeight18KByCustomer = salesWithItems
-               .GroupBy(x => x.CustomerId)
-               .ToDictionary(g => g.Key, g => g.Sum(x => x.Weight18K));
+                    Total18K = g.SelectMany(s => s.SaleItems)
+                               .Where(si => si.KaratType == KaratType.Karat18)
+                               .Sum(si => si.Quantity * si.Weight),
 
-            var totalWeight21KByCustomer = salesWithItems
-                .GroupBy(x => x.CustomerId)
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.Weight21K));
+                    Total21K = g.SelectMany(s => s.SaleItems)
+                               .Where(si => si.KaratType == KaratType.Karat21)
+                               .Sum(si => si.Quantity * si.Weight)
+                })
+                .ToDictionaryAsync(g => g.CustomerId, cancellationToken);
 
-            var totalProductsByCustomer = salesWithItems
-                .GroupBy(x => x.CustomerId)
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.ProductCount));
-
-            var totalSalesByCustomer = salesWithItems
-                .GroupBy(x => x.CustomerId)
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.TotalSales));
-
-            var customerListItems = paginatedCustomers
-                .Select(c => new GetCustomersVM
+            // MAP RESULTS
+            var result = paginatedCustomers
+                .Select(c =>
                 {
-                    Id = c.Id,
-                    Name = c.Name,
-                    PhoneNumber = c.PhoneNumber ?? string.Empty,
-                    TotalProductsPurchased = totalProductsByCustomer.ContainsKey(c.Id)
-                        ? totalProductsByCustomer[c.Id]
-                        : 0,
-                    TotalPurchasesValue = totalSalesByCustomer.ContainsKey(c.Id)
-                        ? totalSalesByCustomer[c.Id]
-                        : 0,
+                    salesAgg.TryGetValue(c.Id, out var s);
 
-                    TotalDiscount = totalDiscountByCustomer.ContainsKey(c.Id)
-                        ? totalDiscountByCustomer[c.Id]
-                        : 0,
-
-                    Total18K = totalWeight18KByCustomer.ContainsKey(c.Id)
-                        ? totalWeight18KByCustomer[c.Id]
-                        : 0,
-
-                    Total21K = totalWeight21KByCustomer.ContainsKey(c.Id)
-                        ? totalWeight21KByCustomer[c.Id]
-                        : 0
-
+                    return new GetCustomersVM
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        PhoneNumber = c.PhoneNumber ?? "",
+                        TotalProductsPurchased = s?.TotalProducts ?? 0,
+                        TotalPurchasesValue = s?.TotalSales ?? 0,
+                        TotalDiscount = s?.TotalDiscount ?? 0,
+                        Total18K = s?.Total18K ?? 0,
+                        Total21K = s?.Total21K ?? 0
+                    };
                 })
                 .ToList();
 
             return new PaginatedResponse<GetCustomersVM>
             {
-                Data = customerListItems,
+                Data = result,
                 StatusCode = totalRecords > 0 ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,
                 Message = Messages.Success,
                 PageNumber = request.PageNumber,
@@ -154,6 +101,22 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 TotalRecords = totalRecords
             };
         }
+
+        private IQueryable<Customer> ApplySearch(IQueryable<Customer> query, string? searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return query;
+
+            searchTerm = searchTerm.ToLower();
+
+            return query.Where(c =>
+                c.Name.ToLower().Contains(searchTerm) ||
+                c.Email.ToLower().Contains(searchTerm) ||
+                (c.PhoneNumber != null && c.PhoneNumber.Contains(searchTerm)));
+        }
+
+
+
 
     }
 }

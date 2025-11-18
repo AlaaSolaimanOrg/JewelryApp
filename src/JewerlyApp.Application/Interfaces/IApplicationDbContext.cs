@@ -22,6 +22,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<ApplicationUser> Users { get; set; }
         DbSet<ApplicationRole> Roles { get; set; }
         DbSet<ProductTag> ProductTags { get; set; }
+        DbSet<Log> Logs { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
