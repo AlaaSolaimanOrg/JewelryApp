@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JewerlyApp.Application.Common.Messages
+﻿namespace JewerlyApp.Application.Common.Messages
 {
     public class Messages
     {
         //Success Messages
         public const string SuccessLogin = "Login successful. Welcome!";
         public const string SuccessLogout = "You have been successfully logged out.";
+        public const string Success_Token_Generated = "Access token generated successfully.";
+        public const string Success_Refresh_Token_Generated = "Refresh token generated successfully.";
+        public const string Success_Tokens_Refreshed = "Tokens refreshed successfully.";
+        public const string Success_Token_Revoked = "Refresh token revoked successfully.";
+        public const string Success_Token_Valid = "Refresh token is valid.";
+        public const string Success_Token_Invalid = "Refresh token is invalid.";
+        public const string Success_Tokens_Cleaned = "Expired refresh tokens cleaned successfully.";
         public const string SuccessItemAdded = "Item added to inventory.";
         public const string SuccessItemUpdated = "Item details updated.";
         public const string SuccessItemDeleted = "Item removed from inventory.";
@@ -81,32 +81,10 @@ namespace JewerlyApp.Application.Common.Messages
         public const string Error_Purchase_Not_Found = "No Purchase Found For This Customer.";
         public const string ErrorInvalidNfcId = "Invalid Nfc Id";
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
+        public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
+        public static string Errror_Product_Not_Found(string productName) => $"Product with ID {productName} was not found. The sale cannot be completed.";
 
-        //POS Messages
-        public const string Pos_No_Cart = "No cart is found.";
-        public const string PosCartEmpty = "Cannot checkout. The shopping cart is empty.";
-        public const string PosItemNotFound = "Product not found. Please check the SKU or barcode.";
-        public const string PosSplitPaymentFailed = "Split payment failed. Please ensure all parts of the payment are valid.";
-        public const string PosSmsSent = "Invoice sent to the customer via SMS.";
-        public const string PosSmsSendFailed = "Failed to send SMS. Please check the phone number.";
 
-        //Admin Messages
-        public const string AdminPriceUpdateFailed = "Failed to update gold prices. Please check the new values.";
-        public const string AdminReportGenerationFailed = "Failed to generate the report. Please try again later.";
-        public const string AdminUserRoleUpdateFailed = "Failed to update user roles.";
 
-        //Repair Messages
-        public const string RepairNotFound = "Repair record not found.";
-        public const string RepairStatusInvalid = "The provided repair status is not valid.";
-        public const string RepairCustomerNotified = "Customer has been notified of the repair status via SMS.";
-
-        //Token Success Messages
-        public const string Success_Token_Generated = "Access token generated successfully.";
-        public const string Success_Refresh_Token_Generated = "Refresh token generated successfully.";
-        public const string Success_Tokens_Refreshed = "Tokens refreshed successfully.";
-        public const string Success_Token_Revoked = "Refresh token revoked successfully.";
-        public const string Success_Token_Valid = "Refresh token is valid.";
-        public const string Success_Token_Invalid = "Refresh token is invalid.";
-        public const string Success_Tokens_Cleaned = "Expired refresh tokens cleaned successfully.";
     }
 }
