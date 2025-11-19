@@ -25,15 +25,15 @@ const SalesReports = lazy(
 const Settings = lazy(() => import("../pages/admin/settings/Settings"));
 const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
 const Staff = lazy(() => import("../pages/admin/staff/Staff"));
-const Header = lazy(() => import("../pages/newPos/header/Header"));
-const Home = lazy(() => import("../pages/newPos/home/Home"));
-const MainPosPage = lazy(() => import("../pages/newPos/posSale/PosSale"));
-const Receipt = lazy(() => import("../pages/newPos/receipt/Receipt"));
+const Header = lazy(() => import("../pages/pos/header/Header"));
+const Home = lazy(() => import("../pages/pos/home/Home"));
+const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
+const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const TransactionHistory = lazy(
-  () => import("../pages/newPos/transactionHistory/TransactionHistory")
+  () => import("../pages/pos/transactionHistory/TransactionHistory")
 );
 const ReceiptDelivery = lazy(
-  () => import("../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery")
+  () => import("../pages/newPos/ReceiptDelivery/ReceiptDelivery")
 );
 
 // Loading component for Suspense fallback
