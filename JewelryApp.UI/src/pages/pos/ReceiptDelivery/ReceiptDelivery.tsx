@@ -6,6 +6,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import "./receiptDelivery.scss";
+
 const ReceiptDelivery = () => {
   return (
     <div id="delivery-page" className="page-content">
