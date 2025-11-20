@@ -55,9 +55,8 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
   const handlePrint = useReactToPrint({
     contentRef,
-    documentTitle: `Receipt-${
-      saleDetails?.serialNumber || saleDetails?.id || ""
-    }`,
+    documentTitle: `Receipt-${saleDetails?.serialNumber || saleDetails?.id || ""
+      }`,
   });
 
   const onClose = () => {
@@ -141,10 +140,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     {saleDetails.cashAmount && saleDetails.cardAmount
                       ? "Cash & Card"
                       : saleDetails.cashAmount
-                      ? "Cash"
-                      : saleDetails.cardAmount
-                      ? "Card"
-                      : "N/A"}
+                        ? "Cash"
+                        : saleDetails.cardAmount
+                          ? "Card"
+                          : "N/A"}
                   </div>
                 </div>
               </div>
@@ -247,7 +246,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 <div className="qr-section">
                   <div className="qr-label">Scan to leave a review</div>
                   <QRCode
-                    value="https://share.google/qk8AVqQpSczkKpZmq"
+                    value="https://share.google/gxvrM3GV4YzjE232x"
                     size={80}
                     bgColor="#ffffff"
                     fgColor="var(--gold)"

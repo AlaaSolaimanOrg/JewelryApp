@@ -230,7 +230,7 @@ const Receipt = () => {
           <div className="qr-section">
             <div className="qr-label">Scan to leave a review</div>
             <QRCode
-              value="https://share.google/qk8AVqQpSczkKpZmq"
+              value="https://share.google/gxvrM3GV4YzjE232x"
               size={80}
               bgColor="#ffffff"
               fgColor="var(--gold)"
