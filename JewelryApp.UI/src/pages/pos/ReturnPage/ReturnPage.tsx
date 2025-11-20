@@ -30,7 +30,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import './ReturnPage.scss';
 import CustomTable from '../../../components/Table/CustomTable';
-
 interface TransactionItem {
     id: number;
     name: string;
@@ -42,10 +41,11 @@ interface TransactionItem {
     qtyToReturn: number;
     returnAmount: number;
     selected: boolean;
-    returnReason: string; // Add this
-    otherReason: string; // Add this
+    returnReason: string;
+    otherReason: string;
+    condition: 'good' | 'needs_polishing' | 'damaged' | '';
+    returnOption: 'return_to_stock' | 'melt_after_return' | ''; // Add this
 }
-
 const ReturnPage: React.FC = () => {
     // Navigation
     const navigate = useNavigate();
@@ -66,8 +66,10 @@ const ReturnPage: React.FC = () => {
             qtyToReturn: 1,
             returnAmount: 440.13,
             selected: true,
-            returnReason: '', // Add this
-            otherReason: '' // Add this
+            returnReason: '',
+            otherReason: '',
+            condition: '',
+            returnOption: '' // Add this
         },
         {
             id: 2,
@@ -80,11 +82,18 @@ const ReturnPage: React.FC = () => {
             qtyToReturn: 0,
             returnAmount: 0,
             selected: false,
-            returnReason: '', // Add this
-            otherReason: '' // Add this
+            returnReason: '',
+            otherReason: '',
+            condition: '',
+            returnOption: '' // Add this
         }
     ]);
 
+    // Remove these global state variables:
+    // const [selectedOption, setSelectedOption] = useState<'return_to_stock' | 'melt_after_return' | ''>('');
+
+    // Remove this global state variable:
+    // const [selectedCondition, setSelectedCondition] = useState<'good' | 'needs_polishing' | 'damaged' | ''>('');
 
     const [selectedCondition, setSelectedCondition] = useState<'good' | 'needs_polishing' | 'damaged' | ''>('');
     const [selectedOption, setSelectedOption] = useState<'return_to_stock' | 'melt_after_return' | ''>('');
@@ -123,8 +132,34 @@ const ReturnPage: React.FC = () => {
                     selected,
                     qtyToReturn: selected ? item.qtyPurchased : 0,
                     returnAmount: selected ? item.unitPrice * item.qtyPurchased : 0,
-                    returnReason: selected ? item.returnReason : '', // Reset reason if deselected
-                    otherReason: selected ? item.otherReason : '' // Reset other reason if deselected
+                    returnReason: selected ? item.returnReason : '',
+                    otherReason: selected ? item.otherReason : '',
+                    condition: selected ? item.condition : '',
+                    returnOption: selected ? item.returnOption : '' // Reset option if deselected
+                };
+            }
+            return item;
+        }));
+    };
+
+    const handleReturnOptionChange = (id: number, option: 'return_to_stock' | 'melt_after_return') => {
+        setItems(items.map(item => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    returnOption: option
+                };
+            }
+            return item;
+        }));
+    };
+
+    const handleConditionChange = (id: number, condition: 'good' | 'needs_polishing' | 'damaged') => {
+        setItems(items.map(item => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    condition
                 };
             }
             return item;
@@ -196,10 +231,6 @@ const ReturnPage: React.FC = () => {
             return;
         }
 
-        if (!selectedOption) {
-            alert('Please select a return option.');
-            return;
-        }
 
         // Check if all selected items have return reasons
         const selectedItems = items.filter(item => item.selected);
@@ -220,8 +251,24 @@ const ReturnPage: React.FC = () => {
             return;
         }
 
+
+        const hasMissingConditions = selectedItems.some(item => !item.condition);
+
+        if (hasMissingConditions) {
+            alert('Please select the condition for all selected items.');
+            return;
+        }
+
+
+        const hasMissingOptions = selectedItems.some(item => !item.returnOption);
+
+        if (hasMissingOptions) {
+            alert('Please select a return option for all selected items.');
+            return;
+        }
+
         setModalVisible(true);
-    };
+    }
 
     const handleConfirmReturn = () => {
         alert('Return processed successfully! A return receipt has been generated.');
@@ -235,17 +282,17 @@ const ReturnPage: React.FC = () => {
             qtyToReturn: 0,
             returnAmount: 0,
             returnReason: '',
-            otherReason: ''
+            otherReason: '',
+            condition: '',
+            returnOption: '' // Reset return option
         })));
-        setSelectedCondition('');
-        setSelectedOption('');
     };
 
     const selectedItemsCount = items.filter(item => item.selected).length;
     const totalReturnAmount = calculateTotalReturn();
 
 
-    // Update headers to include return reason
+    // Update headers to include condition
     const headers = [
         { key: 'Return', label: 'Return', width: '50px' },
         { key: 'Product', label: 'Product' },
@@ -254,11 +301,13 @@ const ReturnPage: React.FC = () => {
         { key: 'UnitPrice', label: 'Unit Price' },
         { key: 'QtyPurchased', label: 'Qty Purchased' },
         { key: 'QtytoReturn', label: 'Qty to Return' },
-        { key: 'ReturnReason', label: 'Return Reason' }, // Add this column
+        { key: 'ReturnReason', label: 'Return Reason' },
+        { key: 'Condition', label: 'Condition' },
+        { key: 'ReturnOption', label: 'Return Option' }, // Add this column
         { key: 'ReturnAmount', label: 'Return Amount' }
     ];
 
-    // Update data to include return reason dropdown
+    // Update data to include return options
     const data = items.map(item => ({
         Return: (
             <input
@@ -269,17 +318,17 @@ const ReturnPage: React.FC = () => {
             />
         ),
         Product: (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', minWidth: '200px' }}>
                 <div className="product-icon">
                     {item.icon === 'ring' ? <FaRing /> : <FaGem />}
                 </div>
-                {item.name}
+                <span style={{ fontWeight: 500 }}>{item.name}</span>
             </div>
         ),
-        Karat: item.karat,
-        Weight: item.weight,
-        UnitPrice: `$${item.unitPrice.toFixed(2)}`,
-        QtyPurchased: item.qtyPurchased,
+        Karat: <span style={{ fontWeight: 600, color: '#1a3a5f' }}>{item.karat}</span>,
+        Weight: <span style={{ color: '#666' }}>{item.weight}</span>,
+        UnitPrice: <span style={{ fontWeight: 600 }}>${item.unitPrice.toFixed(2)}</span>,
+        QtyPurchased: <span style={{ textAlign: 'center', display: 'block' }}>{item.qtyPurchased}</span>,
         QtytoReturn: (
             <input
                 type="number"
@@ -288,16 +337,18 @@ const ReturnPage: React.FC = () => {
                 min="0"
                 max={item.qtyPurchased}
                 onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                disabled={!item.selected}
             />
         ),
         ReturnReason: (
-            <div>
+            <div style={{ minWidth: '200px' }}>
                 <select
                     className="form-select"
                     value={item.returnReason}
                     onChange={(e) => handleReturnReasonChange(item.id, e.target.value)}
                     disabled={!item.selected}
                     required
+                    style={{ marginBottom: item.returnReason === 'other' && item.selected ? '8px' : '0' }}
                 >
                     <option value="">Select reason</option>
                     <option value="defective">Defective Product</option>
@@ -310,15 +361,78 @@ const ReturnPage: React.FC = () => {
                 {item.returnReason === 'other' && item.selected && (
                     <textarea
                         className="form-textarea"
-                        placeholder="Provide details..."
+                        placeholder="Please specify the reason..."
                         value={item.otherReason}
                         onChange={(e) => handleOtherReasonChange(item.id, e.target.value)}
-                        style={{ marginTop: '5px', width: '100%' }}
+                        style={{
+                            marginTop: '5px',
+                            width: '100%',
+                            minHeight: '60px',
+                            fontSize: '13px'
+                        }}
                     />
                 )}
             </div>
         ),
-        ReturnAmount: `$${item.returnAmount.toFixed(2)}`
+        Condition: (
+            <div className="condition-options-vertical">
+                <div
+                    className={`condition-option-small ${item.condition === 'good' ? 'selected' : ''} ${!item.selected ? 'disabled' : ''}`}
+                    onClick={() => item.selected && handleConditionChange(item.id, 'good')}
+                >
+                    <FaSmile style={{
+                        color: item.condition === 'good' ? '#1ea97c' : '#666'
+                    }} />
+                    <div>Good</div>
+                </div>
+                <div
+                    className={`condition-option-small ${item.condition === 'needs_polishing' ? 'selected' : ''} ${!item.selected ? 'disabled' : ''}`}
+                    onClick={() => item.selected && handleConditionChange(item.id, 'needs_polishing')}
+                >
+                    <FaMeh style={{
+                        color: item.condition === 'needs_polishing' ? '#ffb300' : '#666'
+                    }} />
+                    <div>Needs Polish</div>
+                </div>
+                <div
+                    className={`condition-option-small ${item.condition === 'damaged' ? 'selected' : ''} ${!item.selected ? 'disabled' : ''}`}
+                    onClick={() => item.selected && handleConditionChange(item.id, 'damaged')}
+                >
+                    <FaFrown style={{
+                        color: item.condition === 'damaged' ? '#ff6b6b' : '#666'
+                    }} />
+                    <div>Damaged</div>
+                </div>
+            </div>
+        ),
+        ReturnOption: (
+            <div className="return-options-vertical">
+                <div
+                    className={`return-option-small ${item.returnOption === 'return_to_stock' ? 'selected' : ''} ${!item.selected ? 'disabled' : ''}`}
+                    onClick={() => item.selected && handleReturnOptionChange(item.id, 'return_to_stock')}
+                >
+                    <FaWarehouse style={{
+                        color: item.returnOption === 'return_to_stock' ? '#1a3a5f' : '#666'
+                    }} />
+                    <div>Return to Stock</div>
+                    <span className="option-description">Available for sale</span>
+                </div>
+                <div
+                    className={`return-option-small ${item.returnOption === 'melt_after_return' ? 'selected' : ''} ${!item.selected ? 'disabled' : ''}`}
+                    onClick={() => item.selected && handleReturnOptionChange(item.id, 'melt_after_return')}
+                >
+                    <FaFire style={{
+                        color: item.returnOption === 'melt_after_return' ? '#ff6b6b' : '#666'
+                    }} />
+                    <div>Melt</div>
+                    <span className="option-description">Melt for materials</span>
+                </div>
+            </div>
+        ),
+        ReturnAmount: <span style={{
+            fontWeight: 700,
+            color: item.returnAmount > 0 ? '#ff6b6b' : '#666'
+        }}>${item.returnAmount.toFixed(2)}</span>
     }));
 
     return (
@@ -456,75 +570,6 @@ const ReturnPage: React.FC = () => {
 
 
 
-
-
-            {/* Condition Check Section */}
-            <section className="section">
-                <h2 className="section-title">
-                    <FaClipboardCheck /> Condition Check
-                </h2>
-                <div className="form-group">
-                    <label>Item Condition</label>
-                    <div className="condition-options">
-                        <div
-                            className={`condition-option ${selectedCondition === 'good' ? 'selected' : ''}`}
-                            onClick={() => setSelectedCondition('good')}
-                        >
-                            <FaSmile />
-                            <div>Good</div>
-                        </div>
-                        <div
-                            className={`condition-option ${selectedCondition === 'needs_polishing' ? 'selected' : ''}`}
-                            onClick={() => setSelectedCondition('needs_polishing')}
-                        >
-                            <FaMeh />
-                            <div>Needs Polishing</div>
-                        </div>
-                        <div
-                            className={`condition-option ${selectedCondition === 'damaged' ? 'selected' : ''}`}
-                            onClick={() => setSelectedCondition('damaged')}
-                        >
-                            <FaFrown />
-                            <div>Damaged</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="purchaseDate">Date of Purchase</label>
-                    <input
-                        type="date"
-                        className="form-input"
-                        id="purchaseDate"
-                        value={new Date().toISOString().split('T')[0]}
-                        readOnly
-                    />
-                </div>
-            </section>
-
-            {/* Return Options Section */}
-            <section className="section">
-                <h2 className="section-title">
-                    <FaCog /> Return Options
-                </h2>
-                <div className="return-options">
-                    <div
-                        className={`return-option ${selectedOption === 'return_to_stock' ? 'selected' : ''}`}
-                        onClick={() => setSelectedOption('return_to_stock')}
-                    >
-                        <FaWarehouse />
-                        <h3>Return to Stock</h3>
-                        <p>Item will be added back to inventory and available for sale</p>
-                    </div>
-                    <div
-                        className={`return-option ${selectedOption === 'melt_after_return' ? 'selected' : ''}`}
-                        onClick={() => setSelectedOption('melt_after_return')}
-                    >
-                        <FaFire />
-                        <h3>Melt After Return</h3>
-                        <p>Item will be melted down and raw materials added to inventory</p>
-                    </div>
-                </div>
-            </section >
 
             {/* Footer Buttons */}
             < div className="footer-buttons" >
