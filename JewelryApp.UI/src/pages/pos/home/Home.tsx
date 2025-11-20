@@ -1,4 +1,4 @@
-import { FaCashRegister, FaPlusCircle } from "react-icons/fa";
+import { FaCashRegister, FaPlusCircle, FaUndoAlt, FaTools } from "react-icons/fa";
 import { RiHistoryFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
@@ -43,11 +43,23 @@ const Home = () => {
           system. Scan gold items, calculate prices by weight, and process
           payments seamlessly.
         </p>
-        <Link to={"/sale"} className="text-decoration-none">
-          <button className="btn btn-primary btn-lg">
-            <FaPlusCircle /> Start New Sale
-          </button>
-        </Link>
+        <div className="home-actions">
+          <Link to={"/sale"} className="text-decoration-none">
+            <button className="btn btn-primary btn-lg">
+              <FaPlusCircle /> Start New Sale
+            </button>
+          </Link>
+          <Link to={"/return"} className="text-decoration-none">
+            <button className="btn btn-warning btn-lg">
+              <FaUndoAlt /> Process Return
+            </button>
+          </Link>
+          <Link to={"/repair"} className="text-decoration-none">
+            <button className="btn btn-info btn-lg">
+              <FaTools /> Repair Service
+            </button>
+          </Link>
+        </div>
 
         <div className="recent-transactions">
           <div className="recent-header">

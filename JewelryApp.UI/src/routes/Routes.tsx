@@ -1,9 +1,9 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Loader from "../components/Loader/Loader";
 
 // Lazy load all components
 const AddEditProduct = lazy(
@@ -33,8 +33,10 @@ const TransactionHistory = lazy(
   () => import("../pages/pos/transactionHistory/TransactionHistory")
 );
 const ReceiptDelivery = lazy(
-  () => import("../pages/newPos/ReceiptDelivery/ReceiptDelivery")
+  () => import("../pages/pos/ReceiptDelivery/ReceiptDelivery")
 );
+const Repair = lazy(() => import("../pages/pos/repair/Repair"));
+const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -88,6 +90,8 @@ const AppRoutes = () => {
             />
             <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
+            <Route path="/repair" element={<Repair />} />
+            <Route path="/return" element={<ReturnPage />} />
           </Route>
 
           <Route
