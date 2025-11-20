@@ -56,6 +56,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                 var sale = new Sale
                 {
                     Id = Guid.NewGuid(),
+                    SerialNumber = await GenerateSaleSerialNumber(),
                     CustomerId = request.CustomerId,
                     Discount = request.Discount,
                     DiscountPercentage = request.DiscountPercentage,
@@ -256,6 +257,17 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         {
             var totalPaid = (sale.CashAmount ?? 0) + (sale.CardAmount ?? 0);
             return totalPaid >= sale.Total;
+        }
+
+        private async Task<string> GenerateSaleSerialNumber()
+        {
+            string today = DateTime.UtcNow.ToString("yyyyMMdd");
+            string prefix = "SALE";
+
+            int countToday = await _context.Sales
+                .CountAsync(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
+
+            return $"{prefix}-{today}-{(countToday + 1).ToString("D4")}";
         }
 
     }

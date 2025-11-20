@@ -28,7 +28,7 @@ namespace JewerlyApp.Infrastructure.Identity
 
             // create admin
             await CreateUserWithRolesAsync(userManager, roleManager,
-                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, role2 });
+                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, role2, posRole });
 
             await CreateUserWithRolesAsync(userManager, roleManager,
                 posEmail, posPassword, "Pos user", new[] { posRole });
