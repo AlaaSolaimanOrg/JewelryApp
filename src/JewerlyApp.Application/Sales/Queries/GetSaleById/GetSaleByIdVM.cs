@@ -9,7 +9,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
     public class GetSaleByIdVM
     {
         public Guid Id { get; set; }
-        public int SerialNumber { get; set; }
+        public string? SerialNumber { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string StaffName { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;

@@ -28,7 +28,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                 .Select(x => new GetSaleByIdVM
                 {
                     Id = request.SaleId,
-                    SerialNumber = 1,
+                    SerialNumber = x.SerialNumber,
                     CreatedDate = x.CreatedDate,
                     StaffName = x.CreatedByUser!.FullName!,
                     CustomerName = x.Customer!.Name,
