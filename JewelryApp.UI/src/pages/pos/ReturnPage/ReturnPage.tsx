@@ -1,14 +1,35 @@
 import React, { useState, type KeyboardEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-    FaUndoAlt, FaReceipt, FaShoppingCart, FaCommentAlt,
-    FaClipboardCheck, FaCog, FaArrowLeft, FaPrint, FaEye,
-    FaRing, FaGem, FaCalendarAlt, FaClock, FaUser,
-    FaUserCircle, FaPhone, FaDollarSign, FaCreditCard,
-    FaMoneyBillWave, FaSmile, FaMeh, FaFrown, FaWarehouse,
-    FaFire, FaCheckCircle, FaTimesCircle
+    FaArrowLeft,
+    FaCalendarAlt,
+    FaCheckCircle,
+    FaClipboardCheck,
+    FaClock,
+    FaCog,
+    FaCommentAlt,
+    FaCreditCard,
+    FaDollarSign,
+    FaEye,
+    FaFire,
+    FaFrown,
+    FaGem,
+    FaMeh,
+    FaMoneyBillWave,
+    FaPhone,
+    FaPrint,
+    FaReceipt,
+    FaRing,
+    FaShoppingCart,
+    FaSmile,
+    FaTimesCircle,
+    FaUndoAlt,
+    FaUser,
+    FaUserCircle,
+    FaWarehouse
 } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import './ReturnPage.scss';
+import CustomTable from '../../../components/Table/CustomTable';
 
 interface TransactionItem {
     id: number;
@@ -21,6 +42,8 @@ interface TransactionItem {
     qtyToReturn: number;
     returnAmount: number;
     selected: boolean;
+    returnReason: string; // Add this
+    otherReason: string; // Add this
 }
 
 const ReturnPage: React.FC = () => {
@@ -42,7 +65,9 @@ const ReturnPage: React.FC = () => {
             qtyPurchased: 1,
             qtyToReturn: 1,
             returnAmount: 440.13,
-            selected: true
+            selected: true,
+            returnReason: '', // Add this
+            otherReason: '' // Add this
         },
         {
             id: 2,
@@ -54,12 +79,13 @@ const ReturnPage: React.FC = () => {
             qtyPurchased: 1,
             qtyToReturn: 0,
             returnAmount: 0,
-            selected: false
+            selected: false,
+            returnReason: '', // Add this
+            otherReason: '' // Add this
         }
     ]);
 
-    const [returnReason, setReturnReason] = useState('');
-    const [otherReason, setOtherReason] = useState('');
+
     const [selectedCondition, setSelectedCondition] = useState<'good' | 'needs_polishing' | 'damaged' | ''>('');
     const [selectedOption, setSelectedOption] = useState<'return_to_stock' | 'melt_after_return' | ''>('');
     const [modalVisible, setModalVisible] = useState(false);
@@ -96,7 +122,34 @@ const ReturnPage: React.FC = () => {
                     ...item,
                     selected,
                     qtyToReturn: selected ? item.qtyPurchased : 0,
-                    returnAmount: selected ? item.unitPrice * item.qtyPurchased : 0
+                    returnAmount: selected ? item.unitPrice * item.qtyPurchased : 0,
+                    returnReason: selected ? item.returnReason : '', // Reset reason if deselected
+                    otherReason: selected ? item.otherReason : '' // Reset other reason if deselected
+                };
+            }
+            return item;
+        }));
+    };
+
+    const handleReturnReasonChange = (id: number, value: string) => {
+        setItems(items.map(item => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    returnReason: value,
+                    otherReason: value === 'other' ? item.otherReason : '' // Clear other reason if not "other"
+                };
+            }
+            return item;
+        }));
+    };
+
+    const handleOtherReasonChange = (id: number, value: string) => {
+        setItems(items.map(item => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    otherReason: value
                 };
             }
             return item;
@@ -136,10 +189,7 @@ const ReturnPage: React.FC = () => {
             return;
         }
 
-        if (!returnReason) {
-            alert('Please select a return reason.');
-            return;
-        }
+
 
         if (!selectedCondition) {
             alert('Please select the item condition.');
@@ -148,6 +198,25 @@ const ReturnPage: React.FC = () => {
 
         if (!selectedOption) {
             alert('Please select a return option.');
+            return;
+        }
+
+        // Check if all selected items have return reasons
+        const selectedItems = items.filter(item => item.selected);
+        const hasMissingReasons = selectedItems.some(item => !item.returnReason);
+
+        if (hasMissingReasons) {
+            alert('Please select a return reason for all selected items.');
+            return;
+        }
+
+        // Check for "other" reasons without specification
+        const hasMissingOtherReasons = selectedItems.some(item =>
+            item.returnReason === 'other' && !item.otherReason.trim()
+        );
+
+        if (hasMissingOtherReasons) {
+            alert('Please specify the return reason for items marked as "Other".');
             return;
         }
 
@@ -164,16 +233,93 @@ const ReturnPage: React.FC = () => {
             ...item,
             selected: false,
             qtyToReturn: 0,
-            returnAmount: 0
+            returnAmount: 0,
+            returnReason: '',
+            otherReason: ''
         })));
-        setReturnReason('');
-        setOtherReason('');
         setSelectedCondition('');
         setSelectedOption('');
     };
 
     const selectedItemsCount = items.filter(item => item.selected).length;
     const totalReturnAmount = calculateTotalReturn();
+
+
+    // Update headers to include return reason
+    const headers = [
+        { key: 'Return', label: 'Return', width: '50px' },
+        { key: 'Product', label: 'Product' },
+        { key: 'Karat', label: 'Karat' },
+        { key: 'Weight', label: 'Weight' },
+        { key: 'UnitPrice', label: 'Unit Price' },
+        { key: 'QtyPurchased', label: 'Qty Purchased' },
+        { key: 'QtytoReturn', label: 'Qty to Return' },
+        { key: 'ReturnReason', label: 'Return Reason' }, // Add this column
+        { key: 'ReturnAmount', label: 'Return Amount' }
+    ];
+
+    // Update data to include return reason dropdown
+    const data = items.map(item => ({
+        Return: (
+            <input
+                type="checkbox"
+                className="return-checkbox"
+                checked={item.selected}
+                onChange={() => handleCheckboxChange(item.id)}
+            />
+        ),
+        Product: (
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="product-icon">
+                    {item.icon === 'ring' ? <FaRing /> : <FaGem />}
+                </div>
+                {item.name}
+            </div>
+        ),
+        Karat: item.karat,
+        Weight: item.weight,
+        UnitPrice: `$${item.unitPrice.toFixed(2)}`,
+        QtyPurchased: item.qtyPurchased,
+        QtytoReturn: (
+            <input
+                type="number"
+                className="return-qty-input"
+                value={item.qtyToReturn}
+                min="0"
+                max={item.qtyPurchased}
+                onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+            />
+        ),
+        ReturnReason: (
+            <div>
+                <select
+                    className="form-select"
+                    value={item.returnReason}
+                    onChange={(e) => handleReturnReasonChange(item.id, e.target.value)}
+                    disabled={!item.selected}
+                    required
+                >
+                    <option value="">Select reason</option>
+                    <option value="defective">Defective Product</option>
+                    <option value="wrong_size">Wrong Size</option>
+                    <option value="not_as_described">Not as Described</option>
+                    <option value="changed_mind">Changed Mind</option>
+                    <option value="gift_return">Gift Return</option>
+                    <option value="other">Other</option>
+                </select>
+                {item.returnReason === 'other' && item.selected && (
+                    <textarea
+                        className="form-textarea"
+                        placeholder="Provide details..."
+                        value={item.otherReason}
+                        onChange={(e) => handleOtherReasonChange(item.id, e.target.value)}
+                        style={{ marginTop: '5px', width: '100%' }}
+                    />
+                )}
+            </div>
+        ),
+        ReturnAmount: `$${item.returnAmount.toFixed(2)}`
+    }));
 
     return (
         <div className="return-page-container" >
@@ -299,100 +445,18 @@ const ReturnPage: React.FC = () => {
                 <h2 className="section-title">
                     <FaShoppingCart /> Select Items to Return
                 </h2>
-                <div className="table-container">
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: '50px' }}>Return</th>
-                                <th>Product</th>
-                                <th>Karat</th>
-                                <th>Weight</th>
-                                <th>Unit Price</th>
-                                <th>Qty Purchased</th>
-                                <th>Qty to Return</th>
-                                <th>Return Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {items.map(item => (
-                                <tr key={item.id}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            className="return-checkbox"
-                                            checked={item.selected}
-                                            onChange={() => handleCheckboxChange(item.id)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <div className="product-icon">
-                                                {item.icon === 'ring' ? <FaRing /> : <FaGem />}
-                                            </div>
-                                            {item.name}
-                                        </div>
-                                    </td>
-                                    <td>{item.karat}</td>
-                                    <td>{item.weight}</td>
-                                    <td>${item.unitPrice.toFixed(2)}</td>
-                                    <td>{item.qtyPurchased}</td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            className="return-qty-input"
-                                            value={item.qtyToReturn}
-                                            min="0"
-                                            max={item.qtyPurchased}
-                                            onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                                        />
-                                    </td>
-                                    <td>${item.returnAmount.toFixed(2)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <CustomTable
+                    headers={headers}
+                    data={data}
+                />
                 <div style={{ textAlign: 'right', marginTop: '15px', fontWeight: 600 }}>
                     Total Return Amount: <span id="totalReturnAmount">${totalReturnAmount.toFixed(2)}</span>
                 </div>
-            </section>
+            </section >
 
-            {/* Return Reason Section */}
-            <section className="section">
-                <h2 className="section-title">
-                    <FaCommentAlt /> Return Reason
-                </h2>
-                <div className="form-group">
-                    <label htmlFor="returnReason">Reason for Return *</label>
-                    <select
-                        className="form-select"
-                        id="returnReason"
-                        value={returnReason}
-                        onChange={(e) => setReturnReason(e.target.value)}
-                        required
-                    >
-                        <option value="">Select a reason</option>
-                        <option value="defective">Defective Product</option>
-                        <option value="wrong_size">Wrong Size</option>
-                        <option value="not_as_described">Not as Described</option>
-                        <option value="changed_mind">Changed Mind</option>
-                        <option value="gift_return">Gift Return</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                {returnReason === 'other' && (
-                    <div className="form-group">
-                        <label htmlFor="otherReason">Please specify</label>
-                        <textarea
-                            className="form-textarea"
-                            id="otherReason"
-                            placeholder="Provide details about the return reason..."
-                            value={otherReason}
-                            onChange={(e) => setOtherReason(e.target.value)}
-                        />
-                    </div>
-                )}
-            </section>
+
+
+
 
             {/* Condition Check Section */}
             <section className="section">
