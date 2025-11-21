@@ -4,6 +4,7 @@ import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
+import Analytics from "../pages/admin/analytics/Analytics";
 
 // Lazy load all components
 const AddEditProduct = lazy(
@@ -99,6 +100,7 @@ const AppRoutes = () => {
             }
           >
             <Route path="admin/dashboard" element={<Dashboard />} />
+            <Route path="admin/analytics" element={<Analytics />} />
             <Route path="admin/inventory" element={<Inventory />} />
             <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />

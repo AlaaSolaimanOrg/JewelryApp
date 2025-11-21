@@ -65,6 +65,12 @@
     width: 100%;
     max-width: 900px;
     margin-bottom: 20px;
+    width: 100%;
+    align-items: center;
+    a {
+      display: flex;
+      justify-content: center;
+    }
 
     @media (min-width: 768px) {
       flex-direction: row;

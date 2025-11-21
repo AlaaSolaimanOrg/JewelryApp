@@ -26,16 +26,26 @@ const RepairItemCard = ({
               <span className="item-label">
                 {item.itemType || "Item"} — {item.repairType || "Repair"}
               </span>
+
               <span className="item-total">${total.toFixed(2)}</span>
             </div>
           </Accordion.Header>
 
           <Accordion.Body>
             <div className="quick-item-body">
-
               {/* SECTION 1 */}
               <h4 className="section-small-title">
-                <FaGem /> Item Information
+                <div>
+                  <FaGem /> Item Information
+                </div>
+
+                <FaTrash
+                  className="remove-icon"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent accordion collapse
+                    removeItem(item.id);
+                  }}
+                />
               </h4>
 
               <div className="form-row">
@@ -98,7 +108,9 @@ const RepairItemCard = ({
 
               {/* SECTION 2 */}
               <h4 className="section-small-title">
-                <FaTools /> Repair Information
+                <div>
+                  <FaTools /> Repair Information
+                </div>
               </h4>
 
               <div className="form-group">
@@ -127,15 +139,15 @@ const RepairItemCard = ({
                 <label>Repair Notes *</label>
                 <textarea
                   value={item.notes}
-                  onChange={(e) =>
-                    updateItem(item.id, "notes", e.target.value)
-                  }
+                  onChange={(e) => updateItem(item.id, "notes", e.target.value)}
                 />
               </div>
 
               {/* SECTION 3 */}
               <h4 className="section-small-title">
-                <FaDollarSign /> Pricing
+                <div>
+                  <FaDollarSign /> Pricing
+                </div>
               </h4>
 
               <div className="form-row">
@@ -200,15 +212,11 @@ const RepairItemCard = ({
                 </div>
               </div>
 
-              {/* STICKY SUMMARY */}
+              {/* SUMMARY */}
               <div className="pricing-summary">
-                <strong>Total:</strong>
+                <strong>Subtotal:</strong>
                 <span>${total.toFixed(2)}</span>
               </div>
-
-              <button className="delete-item-btn" onClick={() => removeItem(item.id)}>
-                <FaTrash /> Remove Item
-              </button>
             </div>
           </Accordion.Body>
         </Accordion.Item>
