@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-           rm -rf node_modules package-lock.json
+            rm -rf node_modules package-lock.json dist
             echo "== Pull latest code =="
             cd /var/www/jewelryApp-dev
             git pull
@@ -40,7 +40,7 @@ jobs:
 
             echo "== Build frontend =="
             cd /var/www/jewelryApp-dev/JewelryApp.UI
-            rm -rf node_modules package-lock.json
+            rm -rf node_modules package-lock.json dist
             npm i
             npm run build:dev
 
