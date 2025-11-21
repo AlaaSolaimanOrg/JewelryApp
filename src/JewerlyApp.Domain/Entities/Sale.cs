@@ -6,6 +6,7 @@ namespace JewerlyApp.Domain.Entities
 {
     public class Sale : Entity<Guid>
     {
+        public string SerialNumber { get; set; } = default!;
         public Guid CustomerId { get; set; }
         public decimal? Discount { get; set; }
         public decimal? DiscountPercentage { get; set; }

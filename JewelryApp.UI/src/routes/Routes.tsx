@@ -1,9 +1,10 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Loader from "../components/Loader/Loader";
+import Analytics from "../pages/admin/analytics/Analytics";
 
 // Lazy load all components
 const AddEditProduct = lazy(
@@ -25,16 +26,16 @@ const SalesReports = lazy(
 const Settings = lazy(() => import("../pages/admin/settings/Settings"));
 const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
 const Staff = lazy(() => import("../pages/admin/staff/Staff"));
-const Header = lazy(() => import("../pages/newPos/header/Header"));
-const Home = lazy(() => import("../pages/newPos/home/Home"));
-const MainPosPage = lazy(() => import("../pages/newPos/posSale/PosSale"));
-const Receipt = lazy(() => import("../pages/newPos/receipt/Receipt"));
+const Header = lazy(() => import("../pages/pos/header/Header"));
+const Home = lazy(() => import("../pages/pos/home/Home"));
+const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
+const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const TransactionHistory = lazy(
-  () => import("../pages/newPos/transactionHistory/TransactionHistory")
+  () => import("../pages/pos/transactionHistory/TransactionHistory")
 );
-const ReceiptDelivery = lazy(
-  () => import("../pages/oldPosPages/ReceiptDelivery/ReceiptDelivery")
-);
+
+const Repair = lazy(() => import("../pages/pos/repair/Repair"));
+const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -87,7 +88,8 @@ const AppRoutes = () => {
               element={<TransactionHistory />}
             />
             <Route path="/receipt/:saleId" element={<Receipt />} />
-            <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
+            <Route path="/repair" element={<Repair />} />
+            <Route path="/return" element={<ReturnPage />} />
           </Route>
 
           <Route
@@ -98,6 +100,7 @@ const AppRoutes = () => {
             }
           >
             <Route path="admin/dashboard" element={<Dashboard />} />
+            <Route path="admin/analytics" element={<Analytics />} />
             <Route path="admin/inventory" element={<Inventory />} />
             <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />

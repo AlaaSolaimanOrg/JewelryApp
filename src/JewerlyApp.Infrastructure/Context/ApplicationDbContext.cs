@@ -5,6 +5,7 @@ using JewerlyApp.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using System.Security.Claims;
 
 namespace JewerlyApp.Infrastructure.Context
@@ -28,6 +29,8 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<SaleItem> SaleItems { get; set; }
         public virtual DbSet<ProductTag> ProductTags { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
+        public virtual DbSet<Return> Returns { get; set; }
+
 
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -70,6 +73,12 @@ namespace JewerlyApp.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ReturnItem>()
+            .HasOne(r => r.SaleItem)
+            .WithMany()
+            .HasForeignKey(r => r.SaleItemId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

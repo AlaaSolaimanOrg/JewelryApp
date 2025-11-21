@@ -1,8 +1,10 @@
 ﻿namespace JewerlyApp.Application.Common.Messages
 {
-    public class Messages
+    public static class Messages
     {
-        //Success Messages
+        // --------------------------------------------------
+        // SUCCESS MESSAGES
+        // --------------------------------------------------
         public const string SuccessLogin = "Login successful. Welcome!";
         public const string SuccessLogout = "You have been successfully logged out.";
         public const string Success_Token_Generated = "Access token generated successfully.";
@@ -35,7 +37,14 @@
         public const string Success_Customer_Deleted = "Customer Deleted.";
         public const string Success_Purchase_Retrieved = "Successfully Retrieved Purchase History.";
 
-        //Error Messages
+        // NEW FOR RETURNS
+        public const string Success_Return_Created = "Return created successfully.";
+        public const string SuccessReturnProcessed = "Return processed successfully.";
+
+
+        // --------------------------------------------------
+        // ERROR MESSAGES
+        // --------------------------------------------------
         public const string ErrorGeneral = "An unexpected error occurred. Please try again.";
         public const string ErrorInvalidCredentials = "Invalid username or password. Please try again.";
         public const string ErrorForbidden = "You do not have permission to perform this action.";
@@ -82,9 +91,29 @@
         public const string ErrorInvalidNfcId = "Invalid Nfc Id";
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
         public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
-        public static string Errror_Product_Not_Found(string productName) => $"Product with ID {productName} was not found. The sale cannot be completed.";
+        public const string Error_Sale_Not_Found = "Sale not found.";
 
+        // Dynamic Product Message
+        public static string Errror_Product_Not_Found(string productName)
+            => $"Product with ID {productName} was not found. The sale cannot be completed.";
 
+        // --------------------------------------------------
+        // RETURN ERROR MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Error_Return_No_Items = "Return must include at least one item.";
+        public const string Error_Invalid_SaleItem = "Invalid SaleItemId.";
+        public const string Error_Invalid_Return_Quantity = "Quantity to return must be greater than 0.";
+        public const string Error_Exceeds_Purchased_Quantity = "Cannot return more quantity than purchased.";
+        public const string Error_Invalid_Return_Amount = "Return amount must be greater than 0.";
+        public const string Error_Invalid_Weight = "Weight must be provided for returned items.";
 
+        public static string Error_Invalid_SaleItemId(Guid id)
+            => $"Invalid SaleItemId: {id}";
+
+        public static string Error_Return_Quantity_Exceeds(int requested, int purchased)
+            => $"Cannot return {requested} pcs — only {purchased} were purchased.";
+                
     }
+
+
 }

@@ -1,0 +1,335 @@
+#repair-page {
+  padding: 20px;
+  background: var(--light-bg);
+
+  /* ================================
+     POS HEADER STYLE (MATCHES POS)
+  ================================= */
+  .pos-header {
+    background: var(--primary);
+    color: white;
+    padding: 15px 25px;
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-bottom);
+    margin-bottom: 25px;
+
+    .pos-header-title {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      i {
+        color: var(--gold);
+        font-size: 22px;
+      }
+    }
+
+    .pos-back-btn {
+      background-color: var(--gold);
+      color: var(--primary);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #e6c035;
+      }
+    }
+  }
+
+  /* ================================
+       POS CUSTOMER SECTION STYLING
+  ================================= */
+  #customerSection {
+    margin-bottom: 25px;
+
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-bottom);
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .logo {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .search-section {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 8px 15px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        min-width: 350px;
+        flex: 1;
+
+        .customerSearch {
+          flex: 1;
+          min-width: 280px;
+
+          input {
+            -webkit-text-fill-color: white;
+          }
+        }
+
+        .add-customer-btn {
+          background-color: var(--gold);
+          color: var(--primary);
+          padding: 8px 15px;
+          border-radius: 20px;
+          border: none;
+          cursor: pointer;
+          margin-left: 10px;
+          white-space: nowrap;
+          font-weight: 600;
+
+          &:hover {
+            background-color: #e6c035;
+          }
+        }
+      }
+
+      .scan-btn {
+        background-color: var(--gold);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+
+        &:hover {
+          background-color: #e6c035;
+        }
+      }
+    }
+
+    .customer-info {
+      background: white;
+      padding: 18px 25px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      box-shadow: var(--shadow-bottom);
+      display: none;
+
+      &.active {
+        display: block;
+      }
+
+      .customer-title {
+        font-size: 20px;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 15px;
+
+        svg {
+          color: var(--gold);
+          margin-right: 10px;
+        }
+      }
+
+      .customer-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+
+        .customer-detail {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--primary);
+        }
+      }
+    }
+  }
+
+  /* ================================
+       MAIN BOX SECTIONS (REPAIR ITEMS)
+  ================================= */
+  .section {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-bottom);
+    margin-bottom: 25px;
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      i {
+        color: var(--gold);
+      }
+    }
+
+    .add-item-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #152a45;
+      }
+
+      .plus-icon {
+        color: var(--gold);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  /* ================================
+       FORM STYLES
+  ================================= */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    font-size: 15px;
+  }
+
+  .form-textarea {
+    height: 80px;
+    resize: vertical;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    .form-col {
+      flex: 1;
+    }
+  }
+
+  .form-label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--primary);
+    font-weight: 600;
+    display: block;
+  }
+
+  /* ================================
+        ITEM CARD
+  ================================= */
+
+  .summary-box {
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--light);
+    border-radius: 10px;
+    border: 1px solid #ddd;
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 18px;
+    }
+  }
+
+  /* ================================
+        FOOTER BUTTONS
+  ================================= */
+  .footer-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+
+    button {
+      flex: 1;
+      padding: 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .save-btn {
+      background: var(--primary);
+      color: white;
+
+      &:hover {
+        background: #152a45;
+      }
+    }
+
+    .print-btn {
+      background: var(--gold);
+      color: var(--primary);
+
+      &:hover {
+        background: #e6c035;
+      }
+    }
+
+    .cancel-btn {
+      background: var(--dark);
+      color: white;
+
+      &:hover {
+        background: #111;
+      }
+    }
+  }
+}
+
+/* ================================
+    RESPONSIVE IMPROVEMENTS
+================================= */
+@media (max-width: 768px) {
+  #customerSection .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .search-section {
+      width: 100%;
+    }
+
+    .scan-btn {
+      width: 100%;
+    }
+  }
+
+  .footer-buttons {
+    flex-direction: column;
+  }
+}

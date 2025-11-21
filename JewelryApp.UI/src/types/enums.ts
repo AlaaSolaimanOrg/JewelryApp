@@ -57,3 +57,22 @@ export enum CustomerFilter {
   New = 1,
   Returning,
 }
+
+export enum ReturnReason {
+  Defective = "Defective",
+  WrongItem = "WrongItem",
+  ChangedMind = "ChangedMind",
+  Other = "Other",
+}
+
+export enum ItemCondition {
+  New = "New",
+  Used = "Used",
+  Damaged = "Damaged",
+}
+
+export enum ReturnOption {
+  Refund = "Refund",
+  Exchange = "Exchange",
+  StoreCredit = "StoreCredit",
+}

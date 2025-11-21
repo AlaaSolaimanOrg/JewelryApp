@@ -51,4 +51,7 @@ export const apiRoutes = {
     getDashboardInsights: "Sales/GetDashboardInsights",
     getTopSellingCategories: "Sales/GetTopSellingCategories",
   },
+  returns: {
+    createReturn: "Returns/CreateReturn",
+  },
 };
