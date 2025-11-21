@@ -1,6 +1,7 @@
 import Accordion from "react-bootstrap/Accordion";
 import "./repairItemCard.scss";
 import type { RepairItem } from "../Repair";
+import { FaTools, FaGem, FaDollarSign, FaTrash } from "react-icons/fa";
 
 const RepairItemCard = ({
   item,
@@ -20,19 +21,27 @@ const RepairItemCard = ({
       <Accordion defaultActiveKey="0">
         <Accordion.Item eventKey="0">
           <Accordion.Header>
-            Item #{item.id} — {item.itemType || "Item"} —{" "}
-            {item.repairType || "-"} — ${total.toFixed(2)}
+            <div className="accordion-title">
+              <span className="item-id">#{item.id}</span>
+              <span className="item-label">
+                {item.itemType || "Item"} — {item.repairType || "Repair"}
+              </span>
+              <span className="item-total">${total.toFixed(2)}</span>
+            </div>
           </Accordion.Header>
 
           <Accordion.Body>
             <div className="quick-item-body">
-              <h4 className="section-small-title">Item Information</h4>
+
+              {/* SECTION 1 */}
+              <h4 className="section-small-title">
+                <FaGem /> Item Information
+              </h4>
 
               <div className="form-row">
                 <div className="form-col">
-                  <label className="form-label">Item Type *</label>
+                  <label>Item Type *</label>
                   <select
-                    className="form-select"
                     value={item.itemType}
                     onChange={(e) =>
                       updateItem(item.id, "itemType", e.target.value)
@@ -48,9 +57,8 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label className="form-label">Metal *</label>
+                  <label>Metal *</label>
                   <select
-                    className="form-select"
                     value={item.metal}
                     onChange={(e) =>
                       updateItem(item.id, "metal", e.target.value)
@@ -66,12 +74,9 @@ const RepairItemCard = ({
 
               <div className="form-row">
                 <div className="form-col">
-                  <label className="form-label">
-                    Weight Before Repair (g)
-                  </label>
+                  <label>Weight Before Repair (g)</label>
                   <input
                     type="number"
-                    className="form-input"
                     value={item.weight}
                     onChange={(e) =>
                       updateItem(item.id, "weight", e.target.value)
@@ -80,9 +85,8 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label className="form-label">Stone Type</label>
+                  <label>Stone Type</label>
                   <input
-                    className="form-input"
                     value={item.stone}
                     onChange={(e) =>
                       updateItem(item.id, "stone", e.target.value)
@@ -92,12 +96,14 @@ const RepairItemCard = ({
                 </div>
               </div>
 
-              <h4 className="section-small-title">Repair Information</h4>
+              {/* SECTION 2 */}
+              <h4 className="section-small-title">
+                <FaTools /> Repair Information
+              </h4>
 
               <div className="form-group">
-                <label className="form-label">Repair Type *</label>
+                <label>Repair Type *</label>
                 <select
-                  className="form-select"
                   value={item.repairType}
                   onChange={(e) =>
                     updateItem(item.id, "repairType", e.target.value)
@@ -118,9 +124,8 @@ const RepairItemCard = ({
               </div>
 
               <div className="form-group">
-                <label className="form-label">Repair Notes *</label>
+                <label>Repair Notes *</label>
                 <textarea
-                  className="form-textarea"
                   value={item.notes}
                   onChange={(e) =>
                     updateItem(item.id, "notes", e.target.value)
@@ -128,14 +133,16 @@ const RepairItemCard = ({
                 />
               </div>
 
-              <h4 className="section-small-title">Pricing</h4>
+              {/* SECTION 3 */}
+              <h4 className="section-small-title">
+                <FaDollarSign /> Pricing
+              </h4>
 
               <div className="form-row">
                 <div className="form-col">
-                  <label className="form-label">Cost ($)</label>
+                  <label>Cost ($)</label>
                   <input
                     type="number"
-                    className="form-input"
                     value={item.cost}
                     onChange={(e) =>
                       updateItem(item.id, "cost", e.target.value)
@@ -144,10 +151,9 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label className="form-label">Urgent Fee ($)</label>
+                  <label>Urgent Fee ($)</label>
                   <input
                     type="number"
-                    className="form-input"
                     value={item.urgent}
                     onChange={(e) =>
                       updateItem(item.id, "urgent", e.target.value)
@@ -156,10 +162,9 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label className="form-label">Discount ($)</label>
+                  <label>Discount ($)</label>
                   <input
                     type="number"
-                    className="form-input"
                     value={item.discount}
                     onChange={(e) =>
                       updateItem(item.id, "discount", e.target.value)
@@ -170,9 +175,8 @@ const RepairItemCard = ({
 
               <div className="form-row">
                 <div className="form-col">
-                  <label className="form-label">Payment Status</label>
+                  <label>Payment Status</label>
                   <select
-                    className="form-select"
                     value={item.paymentStatus}
                     onChange={(e) =>
                       updateItem(item.id, "paymentStatus", e.target.value)
@@ -185,10 +189,9 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label className="form-label">Due Date *</label>
+                  <label>Due Date *</label>
                   <input
                     type="date"
-                    className="form-input"
                     value={item.dueDate}
                     onChange={(e) =>
                       updateItem(item.id, "dueDate", e.target.value)
@@ -197,18 +200,14 @@ const RepairItemCard = ({
                 </div>
               </div>
 
-              <div className="pricing-box">
-                <div className="pricing-line">
-                  <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
-                </div>
+              {/* STICKY SUMMARY */}
+              <div className="pricing-summary">
+                <strong>Total:</strong>
+                <span>${total.toFixed(2)}</span>
               </div>
 
-              <button
-                className="delete-item-btn"
-                onClick={() => removeItem(item.id)}
-              >
-                <i className="fas fa-trash" /> Remove Item
+              <button className="delete-item-btn" onClick={() => removeItem(item.id)}>
+                <FaTrash /> Remove Item
               </button>
             </div>
           </Accordion.Body>

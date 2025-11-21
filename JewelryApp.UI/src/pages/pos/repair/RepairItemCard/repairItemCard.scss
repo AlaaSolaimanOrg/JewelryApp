@@ -1,92 +1,162 @@
-/* ================================
-        ITEM CARD (ACCORDION)
-================================ */
-
+/* CARD WRAPPER */
 .repair-card-wrapper {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
-/* Accordion outer wrapper */
+/* Accordion Card */
 .accordion-item {
-  border-radius: 10px !important;
-  overflow: hidden;
+  border-radius: 14px !important;
   border: 1px solid #ddd !important;
+  overflow: hidden;
   background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-/* Header (acts like your old `.quick-item-header`) */
+/* HEADER */
 .accordion-header {
-  background: var(--light) !important;
-  padding: 0 !important; /* Bootstrap overrides padding internally */
-  font-weight: 700;
-  color: var(--primary);
+  padding: 0 !important;
 
   .accordion-button {
-    background: var(--light) !important;
-    color: var(--primary) !important;
+    background: var(--light);
+    color: var(--primary);
     font-weight: 700;
-    padding: 14px !important;
-    box-shadow: none !important;
-
-    /* Gold ring icon color */
-    i {
-      color: var(--gold);
-      margin-right: 8px;
-    }
-
-    &:not(.collapsed) {
-      background: var(--light) !important;
-      color: var(--primary) !important;
-    }
+    padding: 16px !important;
+    border-radius: 0 !important;
+    display: flex;
+    align-items: center;
 
     &:focus {
       box-shadow: none !important;
     }
+
+    .accordion-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      font-size: 15px;
+
+      .item-id {
+        background: var(--gold);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      .item-label {
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      .item-total {
+        margin-left: auto;
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+    }
   }
 }
 
-/* Body */
+/* BODY */
 .accordion-body {
   padding: 0 !important;
-  background: white;
 }
 
-/* Inner content (matches your previous .quick-item-body) */
+/* CONTENT */
 .quick-item-body {
-  padding: 16px;
+  padding: 18px;
 
-  .section-small-title {
-    color: var(--primary);
-    margin-bottom: 10px;
+  h4.section-small-title {
+    font-size: 16px;
     font-weight: 700;
-  }
+    margin: 22px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-  .pricing-box {
-    background: var(--light);
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-
-    .pricing-line {
-      display: flex;
-      justify-content: space-between;
-      font-weight: 700;
+    svg {
+      color: var(--gold);
     }
   }
 
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    transition: 0.2s ease;
+
+    &:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+      outline: none;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+
+    .form-col {
+      flex: 1;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+
+    textarea {
+      height: 90px;
+      resize: vertical;
+    }
+  }
+
+  /* Sticky total bar */
+  .pricing-summary {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: var(--light);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
   .delete-item-btn {
-    margin-top: 14px;
+    margin-top: 18px;
     background: var(--danger);
     color: white;
     padding: 12px;
     width: 100%;
-    border-radius: 8px;
+    border-radius: 10px;
     border: none;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     cursor: pointer;
 
     &:hover {
-      opacity: 0.85;
+      opacity: 0.88;
+    }
+
+    svg {
+      font-size: 15px;
     }
   }
 }
