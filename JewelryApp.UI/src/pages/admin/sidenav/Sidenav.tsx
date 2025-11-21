@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useState, useEffect } from "react";
 import "./sidenav.scss";
+import { GiPieChart } from "react-icons/gi";
 
 const SideNav = () => {
   const navigate = useNavigate();
@@ -27,6 +28,11 @@ const SideNav = () => {
       label: "Dashboard",
       icon: <AiFillHome className="icon homeIcon" />,
       path: "/admin/dashboard",
+    },
+    {
+      label: "Analytics",
+      icon: <GiPieChart className="icon homeIcon" />,
+      path: "/admin/analytics",
     },
     {
       label: "Inventory",

@@ -89,7 +89,7 @@ const Repair = () => {
   );
 
   return (
-    <div className="repair-page">
+    <div id="repair-page" className="page-content">
       <CustomerSection
         customer={customer}
         setCustomer={setCustomer}
@@ -134,9 +134,7 @@ const Repair = () => {
 
       <div className="footer-buttons">
         <button className="save-btn">Save Repair</button>
-        <button className="print-btn">
-          <FaPrint /> Print Receipt
-        </button>
+
         <button className="cancel-btn" onClick={() => history.back()}>
           <FaTimes /> Cancel
         </button>
