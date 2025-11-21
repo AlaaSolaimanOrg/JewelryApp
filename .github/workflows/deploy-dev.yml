@@ -21,9 +21,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             echo "== Pull latest code =="
-            cd /var/www/jewelryApp-dev/JewelryApp.UI
-            rm -rf node_modules package-lock.json dist
-            
             cd /var/www/jewelryApp-dev
             git pull
 
@@ -37,14 +34,22 @@ jobs:
             echo "== Publish backend =="
             dotnet publish -c Release -o /var/www/jewelryApp-dev/src/JewerlyApp.API/publish/ --self-contained false
 
-            echo "== Restart service =="
+            echo "== Restart backend service =="
             sudo systemctl restart jewelryApp-dev
 
             echo "== Build frontend =="
             cd /var/www/jewelryApp-dev/JewelryApp.UI
-            npm i
+            
+            # Clean old environment
+            rm -rf node_modules dist
+            
+            echo "== Install dependencies =="
+            npm ci
+
+            echo "== Type-check (TS errors will stop pipeline) =="
             npm run type-check
 
+            echo "== Frontend build =="
             npm run build:dev
 
             echo "== DONE DEPLOYMENT ✔ =="
