@@ -1,4 +1,9 @@
-import { FaCashRegister, FaPlusCircle, FaUndoAlt, FaTools } from "react-icons/fa";
+import {
+  FaCashRegister,
+  FaPlusCircle,
+  FaUndoAlt,
+  FaTools,
+} from "react-icons/fa";
 import { RiHistoryFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { getSalesList } from "../../../apis/sales.api/sales.api";
@@ -29,7 +34,7 @@ const Home = () => {
     initialSortBy: "createdDate",
     initialSortDirection: SortDirection.Descending,
   });
-  console.log("in home")
+  console.log("in home");
 
   return (
     <div className="page-content active">

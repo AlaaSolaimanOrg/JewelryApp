@@ -1,8 +1,4 @@
-import React, {
-  useCallback,
-  type Dispatch,
-  type SetStateAction
-} from "react";
+import React, { useCallback, type Dispatch, type SetStateAction } from "react";
 import {
   FaBirthdayCake,
   FaEnvelope,
@@ -27,6 +23,7 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
+  showScanProduct?: boolean;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -40,6 +37,7 @@ const CustomerSection: React.FC<Props> = ({
   setShowAddCustomerModal,
   onOpenScanModal,
   setCustomerInfoActive,
+  showScanProduct = false,
 }) => {
   const loadOptions = useCallback(async (inputValue: string) => {
     if (!inputValue) return [];
@@ -57,6 +55,7 @@ const CustomerSection: React.FC<Props> = ({
         data: customer, // Include full customer data
       }));
     } catch (error) {
+      console.error(error);
       return [];
     }
   }, []);
@@ -150,9 +149,12 @@ const CustomerSection: React.FC<Props> = ({
             Add New Customer
           </button>
         </div>
-        <button className="scan-btn" onClick={onOpenScanModal}>
-          Scan Product
-        </button>
+
+        {showScanProduct && (
+          <button className="scan-btn" onClick={onOpenScanModal}>
+            Scan Product
+          </button>
+        )}
       </header>
 
       {!!customer && (

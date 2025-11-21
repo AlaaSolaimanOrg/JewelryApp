@@ -18,16 +18,11 @@ const Header = () => {
 
   const getPageTitle = (pathname: string) => {
     const routeTitles = [
-      { path: "/productLookup", title: "Product Lookup" },
-      { path: "/transactionHistory", title: "Transaction History" },
-      { path: "/cartSummary", title: "Cart Summary" },
-      { path: "/manualItemEntry", title: "Manual Item Entry" },
-      { path: "/applyDiscount", title: "Apply Discount" },
-      { path: "/payment", title: "Payment" },
-      { path: "/receipt", title: "Receipt Preview" },
-      { path: "/ReceiptDelivery", title: "Receipt Delivery" },
-      { path: "/sale", title: "Sale" },
       { path: "/", title: "POS Dashboard" },
+      { path: "/transactionHistory", title: "Transaction History" },
+      { path: "/receipt", title: "Receipt Preview" },
+      { path: "/sale", title: "Sale" },
+      
     ];
 
     const matchedRoute = routeTitles.find(

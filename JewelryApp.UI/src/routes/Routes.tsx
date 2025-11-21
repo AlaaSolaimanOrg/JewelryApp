@@ -32,9 +32,7 @@ const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const TransactionHistory = lazy(
   () => import("../pages/pos/transactionHistory/TransactionHistory")
 );
-const ReceiptDelivery = lazy(
-  () => import("../pages/pos/ReceiptDelivery/ReceiptDelivery")
-);
+
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 
@@ -89,7 +87,6 @@ const AppRoutes = () => {
               element={<TransactionHistory />}
             />
             <Route path="/receipt/:saleId" element={<Receipt />} />
-            <Route path="/ReceiptDelivery" element={<ReceiptDelivery />} />
             <Route path="/repair" element={<Repair />} />
             <Route path="/return" element={<ReturnPage />} />
           </Route>

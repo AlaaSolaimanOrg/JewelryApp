@@ -1,262 +1,335 @@
 .repair-page {
   padding: 20px;
-  color: var(--text-dark, #333);
+  background: var(--light-bg);
 
-  .repair-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .repair-header {
+  /* ================================
+     POS HEADER STYLE (MATCHES POS)
+  ================================= */
+  .pos-header {
+    background: var(--primary);
+    color: white;
+    padding: 15px 25px;
+    border-radius: var(--border-radius);
     display: flex;
-    gap: 16px;
-    align-items: center;
     justify-content: space-between;
-    background: var(--primary, #1a3a5f);
-    color: var(--light, #fff);
-    padding: 14px 20px;
-    border-radius: 12px;
-    box-shadow: var(--shadow-bottom, 0 4px 12px rgba(0, 0, 0, 0.08));
+    align-items: center;
+    box-shadow: var(--shadow-bottom);
+    margin-bottom: 25px;
 
-    .repair-logo {
+    .pos-header-title {
+      font-size: 22px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 700;
-    }
 
-    .repair-search-section {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.06);
-      padding: 6px 12px;
-      border-radius: 30px;
-      flex: 1 1 480px;
-
-      .repair-search-tabs {
-        display: flex;
-        gap: 6px;
-      }
-
-      .repair-search-tab {
-        padding: 6px 10px;
-        border-radius: 20px;
-        font-size: 13px;
-        cursor: pointer;
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .repair-search-tab.active {
-        background: var(--gold, #d4af37);
-        color: var(--primary, #1a3a5f);
-        font-weight: 600;
-      }
-
-      .repair-search-input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: var(--light, #fff);
-        font-size: 14px;
-        padding: 6px 8px;
+      i {
+        color: var(--gold);
+        font-size: 22px;
       }
     }
 
-    .repair-back-btn {
-      background: var(--gold, #d4af37);
-      color: var(--primary, #1a3a5f);
+    .pos-back-btn {
+      background-color: var(--gold);
+      color: var(--primary);
+      padding: 10px 20px;
       border: none;
       border-radius: 20px;
-      padding: 8px 16px;
-      cursor: pointer;
       font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #e6c035;
+      }
     }
   }
 
-  .repair-section {
-    background: var(--light, #fff);
-    border-radius: 12px;
-    padding: 18px;
-    margin-top: 20px;
-    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.06));
+  /* ================================
+       POS CUSTOMER SECTION STYLING
+  ================================= */
+  #customerSection {
+    margin-bottom: 25px;
 
-    .repair-section-title {
-      font-size: 18px;
-      color: var(--primary, #1a3a5f);
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
+      box-shadow: var(--shadow-bottom);
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .logo {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .search-section {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 8px 15px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        min-width: 350px;
+        flex: 1;
+
+        .customerSearch {
+          flex: 1;
+          min-width: 280px;
+
+          input {
+            -webkit-text-fill-color: white;
+          }
+        }
+
+        .add-customer-btn {
+          background-color: var(--gold);
+          color: var(--primary);
+          padding: 8px 15px;
+          border-radius: 20px;
+          border: none;
+          cursor: pointer;
+          margin-left: 10px;
+          white-space: nowrap;
+          font-weight: 600;
+
+          &:hover {
+            background-color: #e6c035;
+          }
+        }
+      }
+
+      .scan-btn {
+        background-color: var(--gold);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+
+        &:hover {
+          background-color: #e6c035;
+        }
+      }
     }
 
-    .repair-customer-card {
-      background: rgba(78, 205, 196, 0.06);
-      border-left: 4px solid var(--repair-teal, #4ecdc4);
-      padding: 12px;
-      border-radius: 8px;
+    .customer-info {
+      background: white;
+      padding: 18px 25px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      box-shadow: var(--shadow-bottom);
       display: none;
 
       &.active {
         display: block;
       }
 
-      .repair-customer-header {
-        margin-bottom: 8px;
-      }
-      .repair-customer-name {
+      .customer-title {
+        font-size: 20px;
+        color: var(--primary);
         font-weight: 700;
-        color: var(--repair-teal, #4ecdc4);
+        margin-bottom: 15px;
+
+        svg {
+          color: var(--gold);
+          margin-right: 10px;
+        }
       }
 
-      .repair-customer-details {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 10px;
+      .customer-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+
+        .customer-detail {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--primary);
+        }
       }
-      .repair-detail-label {
-        font-size: 13px;
-        color: #666;
-      }
-      .repair-detail-value {
-        font-weight: 600;
-      }
-    }
-
-    .repair-add-customer-btn {
-      margin-top: 12px;
-      background: var(--gold, #d4af37);
-      color: var(--primary, #1a3a5f);
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .repair-form-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .repair-form-group {
-      flex: 1;
-      min-width: 200px;
-      margin-bottom: 12px;
-    }
-    .repair-form-group label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: var(--primary, #1a3a5f);
-    }
-
-    .repair-input,
-    .repair-select,
-    .repair-textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      font-size: 14px;
-    }
-
-    .repair-textarea {
-      min-height: 84px;
-      resize: vertical;
-    }
-
-    .repair-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .repair-option {
-      padding: 12px;
-      border: 2px solid #eee;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      text-align: center;
-    }
-    .repair-option i {
-      font-size: 20px;
-      color: var(--repair-teal, #4ecdc4);
-      margin-bottom: 8px;
-      display: block;
-    }
-    .repair-option.selected {
-      border-color: var(--repair-teal, #4ecdc4);
-      background: rgba(78, 205, 196, 0.06);
-    }
-
-    .repair-pricing-section {
-      background: #fafafa;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 12px;
-    }
-    .repair-pricing-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .repair-pricing-row.total {
-      font-weight: 700;
-      border-top: 1px solid #eee;
-      padding-top: 8px;
-      margin-top: 8px;
-      color: var(--primary, #1a3a5f);
-    }
-
-    .repair-footer-buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 18px;
-    }
-    .repair-save-btn {
-      flex: 1;
-      background: var(--repair-teal, #4ecdc4);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .repair-print-btn {
-      background: var(--gold, #d4af37);
-      color: var(--primary, #1a3a5f);
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .repair-cancel-btn {
-      flex: 1;
-      background: var(--primary, #1a3a5f);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
     }
   }
 
-  @media (max-width: 768px) {
-    .repair-header {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
+  /* ================================
+       MAIN BOX SECTIONS (REPAIR ITEMS)
+  ================================= */
+  .section {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-bottom);
+    margin-bottom: 25px;
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      i {
+        color: var(--gold);
+      }
     }
-    .repair-form-row {
-      flex-direction: column;
+
+    .add-item-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #152a45;
+      }
+
+      .plus-icon {
+        color: var(--gold);
+        font-size: 12px;
+        margin-top: 2px;
+      }
     }
-    .repair-footer-buttons {
-      flex-direction: column;
+  }
+
+  /* ================================
+       FORM STYLES
+  ================================= */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    font-size: 15px;
+  }
+
+  .form-textarea {
+    height: 80px;
+    resize: vertical;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    .form-col {
+      flex: 1;
     }
+  }
+
+  .form-label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--primary);
+    font-weight: 600;
+    display: block;
+  }
+
+  /* ================================
+        ITEM CARD
+  ================================= */
+
+  .summary-box {
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--light);
+    border-radius: 10px;
+    border: 1px solid #ddd;
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 18px;
+    }
+  }
+
+  /* ================================
+        FOOTER BUTTONS
+  ================================= */
+  .footer-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+
+    button {
+      flex: 1;
+      padding: 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .save-btn {
+      background: var(--primary);
+      color: white;
+
+      &:hover {
+        background: #152a45;
+      }
+    }
+
+    .print-btn {
+      background: var(--gold);
+      color: var(--primary);
+
+      &:hover {
+        background: #e6c035;
+      }
+    }
+
+    .cancel-btn {
+      background: var(--dark);
+      color: white;
+
+      &:hover {
+        background: #111;
+      }
+    }
+  }
+}
+
+/* ================================
+    RESPONSIVE IMPROVEMENTS
+================================= */
+@media (max-width: 768px) {
+  #customerSection .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .search-section {
+      width: 100%;
+    }
+
+    .scan-btn {
+      width: 100%;
+    }
+  }
+
+  .footer-buttons {
+    flex-direction: column;
   }
 }

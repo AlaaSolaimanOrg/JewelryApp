@@ -320,6 +320,7 @@ const MainPosPage: React.FC = () => {
         setShowAddCustomerModal={setShowAddCustomerModal}
         onOpenScanModal={() => setShowScanModal(true)}
         setCustomerInfoActive={setCustomerInfoActive}
+        showScanProduct
       />
 
       <ProductsSection

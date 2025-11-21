@@ -1,0 +1,92 @@
+/* ================================
+        ITEM CARD (ACCORDION)
+================================ */
+
+.repair-card-wrapper {
+  margin-bottom: 18px;
+}
+
+/* Accordion outer wrapper */
+.accordion-item {
+  border-radius: 10px !important;
+  overflow: hidden;
+  border: 1px solid #ddd !important;
+  background: white;
+}
+
+/* Header (acts like your old `.quick-item-header`) */
+.accordion-header {
+  background: var(--light) !important;
+  padding: 0 !important; /* Bootstrap overrides padding internally */
+  font-weight: 700;
+  color: var(--primary);
+
+  .accordion-button {
+    background: var(--light) !important;
+    color: var(--primary) !important;
+    font-weight: 700;
+    padding: 14px !important;
+    box-shadow: none !important;
+
+    /* Gold ring icon color */
+    i {
+      color: var(--gold);
+      margin-right: 8px;
+    }
+
+    &:not(.collapsed) {
+      background: var(--light) !important;
+      color: var(--primary) !important;
+    }
+
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+/* Body */
+.accordion-body {
+  padding: 0 !important;
+  background: white;
+}
+
+/* Inner content (matches your previous .quick-item-body) */
+.quick-item-body {
+  padding: 16px;
+
+  .section-small-title {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .pricing-box {
+    background: var(--light);
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    .pricing-line {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+    }
+  }
+
+  .delete-item-btn {
+    margin-top: 14px;
+    background: var(--danger);
+    color: white;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}
