@@ -34,7 +34,7 @@ namespace JewerlyApp.API.Controllers.Sales
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetSaleById([FromQuery] GetSaleByIdQuery command)
+        public async Task<IActionResult> GetSaleById([FromQuery] GetSaleDetailsQuery command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
