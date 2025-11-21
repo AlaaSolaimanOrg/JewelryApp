@@ -47,7 +47,7 @@ jobs:
             npm ci
 
             echo "== Type-check (TS errors will stop pipeline) =="
-            npx tsc --noEmit
+            npx tsc -b
 
             echo "== Frontend build =="
             npm run build:dev
