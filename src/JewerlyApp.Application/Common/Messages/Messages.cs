@@ -112,7 +112,15 @@
 
         public static string Error_Return_Quantity_Exceeds(int requested, int purchased)
             => $"Cannot return {requested} pcs — only {purchased} were purchased.";
-                
+
+        // --------------------------------------------------
+        // REPAIR MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_Repair_Created = "Repair order created successfully.";
+        public const string Success_Repair_Status_Updated = "Repair status updated successfully.";
+        public const string Error_Repair_No_Items = "Repair order must include at least one item.";
+        public const string Error_Repair_Not_Found = "Repair order not found.";
+        public const string Error_Repair_Customer_Not_Found = "Customer not found for repair.";
     }
 
 
