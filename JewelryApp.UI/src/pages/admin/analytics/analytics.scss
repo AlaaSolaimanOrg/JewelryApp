@@ -1,91 +1,401 @@
 .analytics-page {
+  /* Override palette ONLY inside analytics page */
+  --primary: #d4af37;
+  --primary-dark: #b5942d;
+  --primary-light: #f5e9c8;
+  --secondary: #6c757d;
+  --secondary-light: #f8f9fa;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --gray: #e9ecef;
+  --gray-dark: #adb5bd;
+  --border: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.08);
+  --card-radius: 10px;
+  --transition: all 0.3s ease;
+
   padding: 25px;
 
+  /* PAGE HEADER (reuses global .page-header/.page-title, just slightly tuned) */
   .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
 
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+    }
+
     .page-title {
       font-size: 1.8rem;
       font-weight: 600;
+      color: var(--dark);
       display: flex;
       align-items: center;
       gap: 12px;
 
-      i {
+      .icon {
         color: var(--primary);
         background: var(--primary-light);
         width: 42px;
         height: 42px;
-        border-radius: 10px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 20px;
       }
     }
 
     .page-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
   }
 
+  /* Button tweaks just for this page */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    box-shadow: 0 2px 5px var(--shadow);
+
+    i {
+      font-size: 14px;
+    }
+  }
+
+  .btn-primary {
+    background: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3) !important;
+
+    &:hover {
+      background: var(--primary-dark) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35) !important;
+    }
+  }
+
+  .btn-outline {
+    background: transparent !important;
+    border: 1px solid var(--border) !important;
+    color: var(--dark) !important;
+
+    &:hover {
+      background: var(--secondary-light) !important;
+      border-color: var(--primary) !important;
+      color: var(--primary) !important;
+    }
+  }
+
+  .btn-md {
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+  }
+
+  .btn-small {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    box-shadow: none;
+  }
+
+  /* FILTER CARD */
+  .analytics-filter-card {
+    margin-bottom: 25px;
+  }
+
+  .analytics-filter-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+  }
+
+  .date-range-row {
+    display: flex;
+    gap: 10px;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+    }
+  }
+
+  .filter-actions {
+    margin-top: 10px;
+  }
+
+  /* GRID LAYOUT FOR CHARTS */
   .analytics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
     gap: 25px;
+    margin-bottom: 25px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .analytics-card {
-    background: white;
+    background: #ffffff;
     border-radius: var(--card-radius);
     padding: 25px;
     box-shadow: 0 5px 15px var(--shadow);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: var(--transition);
 
     &:hover {
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
     }
+  }
 
-    .analytics-header {
+  .analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .analytics-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark);
+
+    .icon-circle {
+      color: var(--primary);
+      background: var(--primary-light);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
+      justify-content: center;
+      font-size: 18px;
     }
+  }
 
-    .analytics-title {
-      font-size: 1.2rem;
-      font-weight: 600;
+  .analytics-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+
+    &.chart-container-doughnut {
+      height: 280px;
+    }
+  }
+
+  /* LEGEND */
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+
+    .legend-item {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--secondary);
 
-      svg {
-        color: var(--primary);
-      }
-    }
-
-    .chart-container {
-      width: 100%;
-      height: 300px;
-
-      &.doughnut {
-        height: 260px;
+      .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
       }
     }
   }
-}
 
-/* Responsive */
-@media (max-width: 768px) {
-  .analytics-page {
+  /* ANALYTICS SUMMARY (KPI CARDS) */
+  .analytics-summary-card {
+    margin-top: 10px;
+  }
+
+  .analytics-summary-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .kpi-card {
+    background: #ffffff;
+    border-radius: var(--card-radius);
+    padding: 20px;
+    box-shadow: 0 5px 15px var(--shadow);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .kpi-title {
+    font-weight: 500;
+    color: var(--secondary);
+  }
+
+  .kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--primary);
+    font-size: 20px;
+  }
+
+  .kpi-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--dark);
+  }
+
+  .kpi-trend {
+    font-size: 0.9rem;
+    color: #28a745;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    &.down {
+      color: #dc3545;
+    }
+  }
+
+  /* ================================
+      FULL VIEW CHART MODAL
+================================ */
+
+  .fullscreen-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .fullscreen-modal {
+    width: 92%;
+    height: 92%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    animation: scaleIn 0.25s ease;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  }
+
+  .fullscreen-chart-container {
+    width: 100%;
+    height: calc(100% - 40px);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      background: #f1f1f1;
+    }
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.92);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
     padding: 15px;
+
+    .analytics-card {
+      padding: 18px;
+    }
 
     .analytics-grid {
       grid-template-columns: 1fr;
