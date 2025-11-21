@@ -43,6 +43,8 @@ jobs:
             echo "== Build frontend =="
             cd /var/www/jewelryApp-dev/JewelryApp.UI
             npm i
+            npm run type-check
+
             npm run build:dev
 
             echo "== DONE DEPLOYMENT ✔ =="
