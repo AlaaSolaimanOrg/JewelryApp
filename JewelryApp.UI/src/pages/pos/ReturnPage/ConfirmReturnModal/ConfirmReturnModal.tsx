@@ -8,7 +8,6 @@ interface ConfirmReturnModalProps {
   onConfirm: () => void;
   selectedItemsCount: number;
   totalReturnAmount: number;
-  isLoading: boolean;
 }
 
 const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
