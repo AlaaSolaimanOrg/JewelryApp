@@ -65,6 +65,7 @@ const Repair = () => {
     ]);
   };
 
+  
   const removeItem = (id: number) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
