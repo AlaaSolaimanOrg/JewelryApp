@@ -2,34 +2,33 @@ import { useEffect, useState } from "react";
 import "./analytics.scss";
 
 import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
   Chart as ChartJS,
+  Legend,
+  LinearScale,
   LineElement,
   PointElement,
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
   Tooltip,
-  Legend,
 } from "chart.js";
 
-import { Line, Doughnut, Bar } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 import {
+  FaAward,
   FaChartBar,
   FaChartLine,
   FaChartPie,
-  FaUser,
-  FaRing,
-  FaGem,
   FaDollarSign,
-  FaUserTie,
-  FaFilter,
-  FaSync,
-  FaDownload,
   FaExpand,
-  FaAward,
+  FaFilter,
+  FaGem,
+  FaRing,
+  FaSync,
   FaTimes,
+  FaUser,
+  FaUserTie
 } from "react-icons/fa";
 
 ChartJS.register(

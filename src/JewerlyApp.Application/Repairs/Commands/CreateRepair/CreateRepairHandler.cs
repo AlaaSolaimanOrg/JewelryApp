@@ -1,0 +1,91 @@
+using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
+using JewerlyApp.Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
+{
+    public class CreateRepairHandler : IRequestHandler<CreateRepairCommand, GenericResponse<Guid>>
+    {
+        private readonly IApplicationDbContext _context;
+
+        public CreateRepairHandler(IApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<GenericResponse<Guid>> Handle(CreateRepairCommand request, CancellationToken cancellationToken)
+        {
+            // Validation
+            var validationResult = await ValidateRepair(request, cancellationToken);
+            if (validationResult != null) return validationResult;
+
+            var repairItems = request.Items.Select(itemDto => new RepairItem
+            {
+                ItemType = itemDto.ItemType,
+                Metal = itemDto.Metal,
+                Weight = itemDto.Weight,
+                StoneType = itemDto.StoneType,
+                RepairType = itemDto.RepairType,
+                Notes = itemDto.Notes,
+                Cost = itemDto.Cost,
+                UrgentFee = itemDto.UrgentFee,
+                Discount = itemDto.Discount,
+                DueDate = itemDto.DueDate,
+                PaymentStatus = PaymentStatus.Unpaid,
+                SubTotal = itemDto.Cost + itemDto.UrgentFee - itemDto.Discount
+            }).ToList();
+
+            var repair = new Repair
+            {
+                CustomerId = request.CustomerId,
+                OrderDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = RepairStatus.Received,
+                Notes = request.Notes,
+                Items = repairItems,
+                TotalCost = repairItems.Sum(i => i.SubTotal)
+            };
+
+            _context.Repairs.Add(repair);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return new GenericResponse<Guid>
+            {
+                Data = repair.Id,
+                StatusCode = ResponseStatusCode.Created,
+                Message = Messages.Success_Repair_Created
+            };
+        }
+
+        private async Task<GenericResponse<Guid>?> ValidateRepair(CreateRepairCommand request, CancellationToken cancellationToken)
+        {
+            if (request.Items == null || !request.Items.Any())
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_No_Items
+                };
+            }
+
+            var customerExists = await _context.Customers.AnyAsync(c => c.Id == request.CustomerId, cancellationToken);
+            if (!customerExists)
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.NotFound,
+                    Message = Messages.Error_Repair_Customer_Not_Found
+                };
+            }
+
+            return null;
+        }
+    }
+}
