@@ -17,7 +17,6 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
   onConfirm,
   selectedItemsCount,
   totalReturnAmount,
-  isLoading,
 }) => {
   // Close modal on Escape key press
   useEffect(() => {

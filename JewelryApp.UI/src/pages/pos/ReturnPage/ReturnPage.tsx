@@ -6,16 +6,17 @@ import {
   FaUndoAlt,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
-import "./ReturnPage.scss";
-import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
-import TransactionDetails from "./TransactionDetails/TransactionDetails";
+import { createReturn } from "../../../apis/returns.api/returns.api";
 import type {
   ItemCondition,
   ReturnOption,
   ReturnReason,
 } from "../../../types/enums";
-import { createReturn } from "../../../apis/returns.api/returns.api";
+import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
+import "./ReturnPage.scss";
+import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
+import TransactionDetails from "./TransactionDetails/TransactionDetails";
+import { checkRequestSucceeded, showSuccess } from "../../../utils";
 
 interface TransactionItem {
   id: number;
@@ -37,7 +38,6 @@ interface TransactionItem {
 const ReturnPage: React.FC = () => {
   // Navigation
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
   // State management
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +45,7 @@ const ReturnPage: React.FC = () => {
     "receipt" | "phone" | "name"
   >("receipt");
   const [transactionVisible, setTransactionVisible] = useState(true);
-  
+
   const [items, setItems] = useState<TransactionItem[]>([
     {
       id: 1,
@@ -269,8 +269,6 @@ const ReturnPage: React.FC = () => {
   };
 
   const handleConfirmReturn = async () => {
-    setIsLoading(true);
-
     try {
       // Prepare payload for API
       const payload = {
@@ -291,6 +289,9 @@ const ReturnPage: React.FC = () => {
 
       // Call the API
       const response = await createReturn(payload);
+      if (checkRequestSucceeded(response.status)) {
+        showSuccess(response?.message);
+      }
 
       // Handle success
       alert(
@@ -316,7 +317,6 @@ const ReturnPage: React.FC = () => {
       console.error("Error processing return:", error);
       alert("Failed to process return. Please try again.");
     } finally {
-      setIsLoading(false);
     }
   };
   const selectedItemsCount = items.filter((item) => item.selected).length;
@@ -415,7 +415,6 @@ const ReturnPage: React.FC = () => {
         onConfirm={handleConfirmReturn}
         selectedItemsCount={selectedItemsCount}
         totalReturnAmount={totalReturnAmount}
-        isLoading={isLoading}
       />
     </div>
   );

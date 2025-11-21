@@ -1,10 +1,10 @@
 import { useState } from "react";
 import CustomerSection from "../posSale/PosSale.sections/CustomerSection/CustomerSection";
-import "./repair.scss";
 import type { Customer } from "../posSale/types";
+import "./repair.scss";
 import RepairItemCard from "./RepairItemCard/RepairItemCard";
 
-import { FaRing, FaPlus, FaPrint, FaTimes } from "react-icons/fa";
+import { FaPlus, FaRing, FaTimes } from "react-icons/fa";
 
 export interface RepairItem {
   id: number;
