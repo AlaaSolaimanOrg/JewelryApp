@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Queries.GetSaleById
 {
-    public class GetSaleByIdQuery : IRequest<GenericResponse<GetSaleByIdVM>>
+    public class GetSaleDetailsQuery : IRequest<GenericResponse<GetSaleDetailsVM>>
     {
-        public Guid SaleId { get; set; }
+        public Guid? SaleId { get; set; }
+        public string? SerialNumber { get; set; }
     }
 }

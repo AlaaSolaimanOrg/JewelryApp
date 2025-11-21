@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Queries.GetSaleById
 {
-    public class GetSaleByIdVM
+    public class GetSaleDetailsVM
     {
         public Guid Id { get; set; }
         public string? SerialNumber { get; set; }
