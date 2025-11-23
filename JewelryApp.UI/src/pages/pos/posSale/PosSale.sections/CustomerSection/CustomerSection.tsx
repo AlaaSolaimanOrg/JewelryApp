@@ -23,6 +23,7 @@ interface Props {
   setShowAddCustomerModal: (v: boolean) => void;
   onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
+  actions?: any;
   showScanProduct?: boolean;
 }
 
@@ -37,6 +38,7 @@ const CustomerSection: React.FC<Props> = ({
   setShowAddCustomerModal,
   onOpenScanModal,
   setCustomerInfoActive,
+  actions = null,
   showScanProduct = false,
 }) => {
   const loadOptions = useCallback(async (inputValue: string) => {
@@ -149,6 +151,8 @@ const CustomerSection: React.FC<Props> = ({
             Add New Customer
           </button>
         </div>
+
+        {actions}
 
         {showScanProduct && (
           <button className="scan-btn" onClick={onOpenScanModal}>

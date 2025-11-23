@@ -13,7 +13,7 @@ import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
 import "./receipt.scss";
-import logo from "../../../assets/images/jewelary-logo.svg";
+import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import QRCode from "react-qr-code";
 
 interface SaleItem {
@@ -78,8 +78,7 @@ const Receipt = () => {
       <div ref={contentRef} className="receipt-container">
         <div className="receipt-header">
           <div className="receipt-title">
-            <img src={logo} alt="Logo" width={36} height={32} />
-            <span> Adi Jewelry</span>
+            <img className="receipt-logo" src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
           </div>
           <div className="receipt-subtitle">
             6885 Ad Astra Blvd NW Edmonton, Alberta

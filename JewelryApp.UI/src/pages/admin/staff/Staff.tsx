@@ -6,12 +6,11 @@ import {
   softDeleteUser,
 } from "../../../apis/users.api/users.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/Table/CustomTable";
+
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./staff.scss";
+import CustomTable, { type TableHeader } from "../../../components/tables/Table/CustomTable";
 
 export interface User {
   id: number;

@@ -2,135 +2,6 @@
   margin-block: 20px;
   padding: 15px;
 
-  /* ========= HEADER ========= */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--primary);
-    color: white;
-    padding: 15px 25px;
-    border-radius: var(--border-radius);
-    margin-bottom: 25px;
-    box-shadow: var(--shadow-bottom);
-    flex-wrap: wrap;
-    gap: 15px;
-
-    .logo {
-      font-size: 24px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-
-      i {
-        color: var(--gold);
-        margin-right: 10px;
-      }
-    }
-
-    .search-section {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 30px;
-      padding: 8px 15px;
-      min-width: 250px;
-
-      .search-tabs {
-        display: flex;
-        margin-right: 15px;
-        flex-wrap: wrap;
-
-        .search-tab {
-          padding: 6px 12px;
-          margin-right: 5px;
-          border-radius: 20px;
-          font-size: 13px;
-          cursor: pointer;
-          transition: all 0.3s;
-
-          &.active {
-            background-color: var(--gold);
-            color: var(--primary);
-            font-weight: 600;
-          }
-        }
-      }
-
-      .search-input {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 15px;
-        padding: 5px;
-        outline: none;
-
-        &::placeholder {
-          color: rgba(255, 255, 255, 0.7);
-        }
-      }
-
-      .add-customer-btn {
-        background-color: var(--gold);
-        color: var(--primary);
-        border: none;
-        border-radius: 20px;
-        padding: 8px 15px;
-        margin-left: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          background-color: #e6c035;
-        }
-      }
-    }
-
-    .scan-btn {
-      background-color: var(--gold);
-      color: var(--primary);
-      border: none;
-      border-radius: 20px;
-      padding: 10px 20px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      transition: all 0.3s;
-      white-space: nowrap;
-
-      i {
-        margin-right: 8px;
-      }
-
-      &:hover {
-        background-color: #e6c035;
-      }
-    }
-  }
-
-  /* ========= CUSTOMER INFO ========= */
-  .customer-info {
-    background-color: white;
-    border-radius: var(--border-radius);
-    padding: 15px 25px;
-    margin-bottom: 25px;
-    box-shadow: var(--shadow-bottom);
-    display: none;
-
-    &.active {
-      display: block;
-    }
-
-    .customer-details {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-  }
-
   /* ========= DISCOUNT & NOTES ========= */
   .discount-section,
   .notes-section {
@@ -266,16 +137,6 @@
 
   /* ========= RESPONSIVE BREAKPOINTS ========= */
   @media (max-width: 992px) {
-    .header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .search-section {
-      flex: 1 1 100%;
-      width: 100%;
-    }
-
     .payment-inputs {
       flex-direction: column;
     }
@@ -284,10 +145,6 @@
   @media (max-width: 768px) {
     .section-title {
       font-size: 20px;
-    }
-
-    .header {
-      padding: 15px;
     }
 
     .products-section {
@@ -305,36 +162,6 @@
 
   /* ========= MOBILE ADJUSTMENTS ========= */
   @media (max-width: 576px) {
-    /* Header adjustments */
-    .header {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-
-      .search-section {
-        align-items: stretch;
-        gap: 10px;
-        width: 100%;
-
-        .search-input {
-          flex: 1 1 auto;
-        }
-
-        .add-customer-btn {
-          flex: 1 1 auto;
-          margin-left: 0;
-          width: 100%;
-          text-align: center;
-        }
-      }
-
-      .scan-btn {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    /* Footer buttons adjustments */
     .payment-section {
       .footer-buttons {
         flex-direction: column;

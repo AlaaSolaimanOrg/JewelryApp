@@ -8,6 +8,7 @@ import {
   FaUsers,
   FaBars,
   FaTimes,
+  FaTools,
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
@@ -55,6 +56,11 @@ const SideNav = () => {
       path: "/admin/customers",
     },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
+    {
+      label: "Repair Management",
+      icon: <FaTools className="icon" />,
+      path: "/admin/repairManagement",
+    },
   ];
 
   const operationItems = [

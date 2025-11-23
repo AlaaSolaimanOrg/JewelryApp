@@ -1,10 +1,10 @@
 import { FaDownload } from "react-icons/fa";
 import { getTopSellingCategories } from "../../../../apis/sales.api/sales.api";
-import CustomTable, {
-  type TableHeader,
-} from "../../../../components/Table/CustomTable";
+
 import useLocalApi from "../../../../hooks/useLocalApi";
 import type { KaratType } from "../../../../types/enums";
+import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../../components/tables/Table/CustomTable";
 
 interface TopSellingCategory {
   categoryName: string;

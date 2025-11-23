@@ -8,9 +8,8 @@ import Paginator from "../../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
-import CustomTable, {
-  type TableHeader,
-} from "../../../../components/Table/CustomTable";
+import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../../components/tables/Table/CustomTable";
 
 interface SoldItem {
   productName: string;

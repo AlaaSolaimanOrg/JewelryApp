@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaReceipt } from "react-icons/fa";
 import "./receiptHistoryModal.scss";
-import type { TableHeader } from "../../Table/CustomTable";
-import CustomTable from "../../Table/CustomTable";
+
 import ReceiptModal from "../ReceiptModal/ReceiptModal";
 import { getCustomerPurhcaseHistory } from "../../../apis/customers.api/customers.api";
 import useLocalApi from "../../../hooks/useLocalApi";
+import type { TableHeader } from "../../tables/Table/CustomTable";
+import CustomTable from "../../tables/Table/CustomTable";
 
 interface PurchaseHistory {
   saleId: string;

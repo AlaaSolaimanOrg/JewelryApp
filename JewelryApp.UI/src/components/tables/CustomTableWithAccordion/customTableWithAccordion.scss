@@ -1,0 +1,102 @@
+.custom-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+
+  th {
+    background: var(--light);
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    color: var(--primary);
+    transition: 0.2s ease;
+
+    &:hover {
+      background: var(--gray);
+      color: var(--gold);
+    }
+  }
+
+  .empty-state {
+    padding: 20px;
+    text-align: center;
+  }
+
+  .subrow-wrapper {
+    background: #fafafa;
+
+    > td {
+      padding: 0 !important;
+    }
+  }
+
+  .accordion-wrapper {
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ==================================
+        SUB TABLE (accordion section)
+  ================================== */
+  .sub-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    padding: 10px 0;
+  }
+
+  .sub-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .sub-table th,
+  .sub-table td {
+    padding: 12px 16px !important;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  .sub-table th {
+    background: #f1f3f7;
+    border-bottom: 1px solid var(--border);
+    color: var(--primary);
+    text-align: left;
+  }
+
+  .sub-table td {
+    border-bottom: 1px solid #eee;
+    color: var(--dark);
+  }
+
+  .sub-table tbody tr:hover td {
+    background: #f7f8fb;
+  }
+}

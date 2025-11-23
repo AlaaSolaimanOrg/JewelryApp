@@ -2,17 +2,14 @@ using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Application.Repairs.Dtos;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
 {
-    public class GetRepairsHandler : IRequestHandler<GetRepairsQuery, GenericResponse<List<RepairDto>>>
+    public class GetRepairsHandler : IRequestHandler<GetRepairsQuery, PaginatedResponse<RepairDto>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -21,23 +18,35 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
             _context = context;
         }
 
-        public async Task<GenericResponse<List<RepairDto>>> Handle(GetRepairsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<RepairDto>> Handle(GetRepairsQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.Repairs
+            IQueryable<Repair> query = _context.Repairs
                 .Include(r => r.Customer)
                 .Include(r => r.Items)
-                .AsQueryable();
+                .AsNoTracking();
 
-            if (request.Status.HasValue)
-            {
-                query = query.Where(r => r.Status == request.Status.Value);
-            }
+            /* =============================
+                    APPLY FILTERS HERE
+            ============================== */
+            query = ApplyFilters(query, request);
 
-            var repairs = await query
-                .OrderByDescending(r => r.OrderDate)
+            /* =============================
+                    TOTAL RECORD COUNT
+            ============================== */
+            int totalRecords = await query.CountAsync(cancellationToken);
+
+            /* =============================
+                        PAGINATION
+            ============================== */
+            var paginatedRepairs = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
 
-            var repairDtos = repairs.Select(r => new RepairDto
+            /* =============================
+                        MAP TO DTO
+            ============================== */
+            var result = paginatedRepairs.Select(r => new RepairDto
             {
                 Id = r.Id,
                 CustomerId = r.CustomerId,
@@ -47,6 +56,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 Status = r.Status,
                 TotalCost = r.TotalCost,
                 Notes = r.Notes,
+
                 Items = r.Items.Select(i => new RepairItemDto
                 {
                     Id = i.Id,
@@ -63,14 +73,61 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                     DueDate = i.DueDate,
                     SubTotal = i.SubTotal
                 }).ToList()
+
             }).ToList();
 
-            return new GenericResponse<List<RepairDto>>
+            return new PaginatedResponse<RepairDto>
             {
-                Data = repairDtos,
+                Data = result,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalRecords = totalRecords,
                 StatusCode = ResponseStatusCode.Success,
                 Message = Messages.Success
             };
+        }
+
+        /* ==========================================================
+                          FILTER METHOD
+           (Status, RepairType, Search)
+        =========================================================== */
+        private IQueryable<Repair> ApplyFilters(IQueryable<Repair> query, GetRepairsQuery request)
+        {
+            /* =============================
+                 FILTER BY STATUS
+            ============================== */
+            if (request.Status.HasValue)
+            {
+                query = query.Where(r => r.Status == request.Status.Value);
+            }
+
+            /* =============================
+                 FILTER BY REPAIR TYPE
+                 (INSIDE ITEMS)
+            ============================== */
+            if (request.RepairType.HasValue)
+            {
+                var repairType = request.RepairType.Value;
+
+                query = query.Where(r =>
+                    r.Items.Any(i => i.RepairType == repairType));
+            }
+
+            /* =============================
+                     SEARCH FILTER
+               (name, phone, notes)
+            ============================== */
+            if (!string.IsNullOrWhiteSpace(request.SearchBy))
+            {
+                var s = request.SearchBy.ToLower();
+
+                query = query.Where(r =>
+                    r.Customer.Name.ToLower().Contains(s) ||
+                    r.Customer.PhoneNumber.Contains(s) ||
+                    r.Notes.ToLower().Contains(s));
+            }
+
+            return query;
         }
     }
 }

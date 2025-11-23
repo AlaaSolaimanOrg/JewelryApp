@@ -16,9 +16,7 @@ import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/Table/CustomTable";
+
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   checkRequestSucceeded,
@@ -27,6 +25,9 @@ import {
   showSuccess,
 } from "../../../utils";
 import "./customers.scss";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/tables/Table/CustomTable";
 
 interface Customer {
   id: string;
@@ -82,17 +83,11 @@ const Customers = () => {
       key: "totalProductsPurchased",
       label: "Items Sold",
       width: "150px",
-      onHeaderClick: () => {
-        handleSort("totalProductsPurchased", sortCriteria, onSortChange);
-      },
     },
     {
       key: "totalPurchasesValue",
-      label: "Total Puchases Value",
+      label: "Total Purchases Value",
       width: "150px",
-      onHeaderClick: () => {
-        handleSort("totalPurchasesValue", sortCriteria, onSortChange);
-      },
     },
 
     { key: "actions", label: "Actions", width: "150px" },

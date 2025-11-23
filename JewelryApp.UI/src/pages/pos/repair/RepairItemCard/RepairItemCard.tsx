@@ -2,17 +2,27 @@ import Accordion from "react-bootstrap/Accordion";
 import "./repairItemCard.scss";
 import type { RepairItem } from "../Repair";
 import { FaTools, FaGem, FaDollarSign, FaTrash } from "react-icons/fa";
+import {
+  ProductCategory,
+  ProductType,
+  RepairType,
+} from "../../../../types/enums";
+import { splitCamelCaseWords } from "../../../../utils";
 
 const RepairItemCard = ({
   item,
   updateItem,
   removeItem,
   calculateItemTotal,
+  itemsCount,
+  cardNumber,
 }: {
   item: RepairItem;
   updateItem: (id: number, field: keyof RepairItem, value: string) => void;
   removeItem: (id: number) => void;
   calculateItemTotal: (item: RepairItem) => number;
+  itemsCount: number;
+  cardNumber: number;
 }) => {
   const total = calculateItemTotal(item);
 
@@ -22,9 +32,11 @@ const RepairItemCard = ({
         <Accordion.Item eventKey="0">
           <Accordion.Header>
             <div className="accordion-title">
-              <span className="item-id">#{item.id}</span>
+              <span className="item-id">#{cardNumber}</span>
               <span className="item-label">
-                {item.itemType || "Item"} — {item.repairType || "Repair"}
+                {splitCamelCaseWords(ProductCategory[item.itemType]) || "Item"}
+                <span> — </span>
+                {splitCamelCaseWords(RepairType[item.repairType]) || "Repair"}
               </span>
 
               <span className="item-total">${total.toFixed(2)}</span>
@@ -38,14 +50,15 @@ const RepairItemCard = ({
                 <div>
                   <FaGem /> Item Information
                 </div>
-
-                <FaTrash
-                  className="remove-icon"
-                  onClick={(e) => {
-                    e.stopPropagation(); // prevent accordion collapse
-                    removeItem(item.id);
-                  }}
-                />
+                {itemsCount > 1 && (
+                  <FaTrash
+                    className="remove-icon"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent accordion collapse
+                      removeItem(item.id);
+                    }}
+                  />
+                )}
               </h4>
 
               <div className="form-row">
@@ -57,12 +70,13 @@ const RepairItemCard = ({
                       updateItem(item.id, "itemType", e.target.value)
                     }
                   >
-                    <option value="">Select</option>
-                    <option>Ring</option>
-                    <option>Necklace</option>
-                    <option>Bracelet</option>
-                    <option>Earrings</option>
-                    <option>Pendant</option>
+                    <option value={""}>Select</option>
+                    <option value={ProductCategory.Necklaces}>Necklace</option>
+                    <option value={ProductCategory.Bracelets}>Bracelet</option>
+                    <option value={ProductCategory.Rings}>Ring</option>
+                    <option value={ProductCategory.Earrings}>Earrings</option>
+                    <option value={ProductCategory.Pendants}>Pendant</option>
+                    <option value={ProductCategory.Bullion}>Bullion</option>
                   </select>
                 </div>
 
@@ -75,9 +89,8 @@ const RepairItemCard = ({
                     }
                   >
                     <option value="">Select</option>
-                    <option>Gold</option>
-                    <option>Silver</option>
-                    <option>Platinum</option>
+                    <option value={ProductType.Gold}>Gold</option>
+                    <option value={ProductType.Silver}>Silver</option>
                   </select>
                 </div>
               </div>
@@ -122,16 +135,23 @@ const RepairItemCard = ({
                   }
                 >
                   <option value="">Select</option>
-                  <option>Resize</option>
-                  <option>Solder</option>
-                  <option>Stone Replacement</option>
-                  <option>Stone Tightening</option>
-                  <option>Polishing</option>
-                  <option>Cleaning</option>
-                  <option>Plating</option>
-                  <option>Engraving</option>
-                  <option>Fix/Change Lock</option>
-                  <option>Add Gold</option>
+
+                  <option value={RepairType.Resize}>Resize</option>
+                  <option value={RepairType.Solder}>Solder</option>
+                  <option value={RepairType.StoneReplacement}>
+                    Stone Replacement
+                  </option>
+                  <option value={RepairType.StoneTightening}>
+                    Stone Tightening
+                  </option>
+                  <option value={RepairType.Polishing}>Polishing</option>
+                  <option value={RepairType.Cleaning}>Cleaning</option>
+                  <option value={RepairType.Plating}>Plating</option>
+                  <option value={RepairType.Engraving}>Engraving</option>
+                  <option value={RepairType.FixOrChangeLock}>
+                    Fix/Change Lock
+                  </option>
+                  <option value={RepairType.AddGold}>Add Gold</option>
                 </select>
               </div>
 

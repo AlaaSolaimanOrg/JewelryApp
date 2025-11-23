@@ -194,14 +194,22 @@ export const convertHeicToJpeg = async (file) => {
   ) {
     try {
       const blob = await heic2any({ blob: file, toType: "image/jpeg" });
-      return new File([blob as BlobPart], file.name.replace(/\.(heic|heif)$/i, ".jpg"), {
-        type: "image/jpeg",
-      });
+      return new File(
+        [blob as BlobPart],
+        file.name.replace(/\.(heic|heif)$/i, ".jpg"),
+        {
+          type: "image/jpeg",
+        }
+      );
     } catch (err) {
       console.error("HEIC conversion failed:", err);
-      return file; 
+      return file;
     }
   }
 
   return file;
+};
+
+export const splitCamelCaseWords = (text: string): string => {
+  return text?.replace(/([a-z])([A-Z])/g, "$1 $2");
 };

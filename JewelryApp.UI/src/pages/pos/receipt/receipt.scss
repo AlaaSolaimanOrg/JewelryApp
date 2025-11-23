@@ -19,13 +19,19 @@
     align-items: center;
 
     .receipt-title {
-      font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 600;
+      .receipt-logo {
+        width: 80%;
+        max-width: 500px; // prevents it from getting too large on big screens
+        margin: auto;
+        margin-bottom: 10px;
+
+        img {
+          width: 100%;
+          height: auto; // keeps aspect ratio
+          object-fit: contain;
+          display: block; // removes bottom whitespace
+        }
+      }
     }
 
     .receipt-subtitle {
@@ -171,7 +177,18 @@
       }
     }
   }
+  @media (max-width: 480px) {
+    .receipt-logo {
+      width: 95%;
+      max-width: 220px;
+  
+      img {
+        width: 100%;
+      }
+    }
+  }
 }
+
 
 @media print {
   .receipt-actions {

@@ -1,13 +1,19 @@
 import { useState, useRef } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { FaGlobe, FaInstagram, FaPrint, FaReceipt, FaTiktok } from "react-icons/fa";
+import {
+  FaGlobe,
+  FaInstagram,
+  FaPrint,
+  FaReceipt,
+  FaTiktok,
+} from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
 import "./receiptModal.scss";
 import type { KaratType } from "../../../types/enums";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { renderLongDescription } from "../../../utils";
-import logo from "../../../assets/images/jewelary-logo.svg";
+import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
 
@@ -55,8 +61,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
   const handlePrint = useReactToPrint({
     contentRef,
-    documentTitle: `Receipt-${saleDetails?.serialNumber || saleDetails?.id || ""
-      }`,
+    documentTitle: `Receipt-${
+      saleDetails?.serialNumber || saleDetails?.id || ""
+    }`,
   });
 
   const onClose = () => {
@@ -94,9 +101,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">
-                  <img src={logo} alt="Logo" width={36} height={32} />
-                  <span> Adi Jewelry</span>
-                </div>{" "}
+                  <div className="receipt-logo">
+                    <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
+                  </div>
+                </div>
                 <div className="receipt-subtitle">
                   6885 Ad Astra Blvd NW Edmonton, Alberta
                 </div>
@@ -140,10 +148,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     {saleDetails.cashAmount && saleDetails.cardAmount
                       ? "Cash & Card"
                       : saleDetails.cashAmount
-                        ? "Cash"
-                        : saleDetails.cardAmount
-                          ? "Card"
-                          : "N/A"}
+                      ? "Cash"
+                      : saleDetails.cardAmount
+                      ? "Card"
+                      : "N/A"}
                   </div>
                 </div>
               </div>
@@ -180,6 +188,13 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </table>
               </div>
 
+              {!!saleDetails.discount && (
+                <div className="receipt-discount">
+                  <span>Discount:</span>
+                  <span>${saleDetails.discount}</span>
+                </div>
+              )}
+
               {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
@@ -195,13 +210,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <div className="summary-item">
                     <span>Card Payment:</span>
                     <span>${saleDetails.cardAmount}</span>
-                  </div>
-                )}
-
-                {!!saleDetails.discount && (
-                  <div className="summary-item">
-                    <span>Discount:</span>
-                    <span>${saleDetails.discount}</span>
                   </div>
                 )}
               </div>

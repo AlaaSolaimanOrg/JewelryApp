@@ -12,9 +12,7 @@ import InventoryFilterSideBar, {
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/Table/CustomTable";
+
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   KaratType,
@@ -30,6 +28,8 @@ import {
 } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
+import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/Table/CustomTable";
 
 export interface Product {
   id: string;

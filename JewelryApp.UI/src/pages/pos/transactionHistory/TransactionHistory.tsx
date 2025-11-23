@@ -5,12 +5,11 @@ import { getSalesList } from "../../../apis/sales.api/sales.api";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/Table/CustomTable";
+
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { handleSort } from "../../../utils";
 import "./transactionHistory.scss";
+import CustomTable, { type TableHeader } from "../../../components/tables/Table/CustomTable";
 
 export interface Sale {
   id: string;

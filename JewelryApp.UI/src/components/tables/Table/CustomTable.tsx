@@ -1,7 +1,7 @@
 // CustomTable.tsx
 
+import CustomLoader from "../../CustomLoader/CustomLoader";
 import "./customTable.scss";
-import CustomLoader from "../CustomLoader/CustomLoader";
 
 type TableRow = Record<
   string,
@@ -37,7 +37,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 key={i}
                 style={{ width: header.width }}
                 onClick={() => {
-                  !!header.onHeaderClick && header.onHeaderClick();
+                  header.onHeaderClick?.();
                 }}
               >
                 {header.label}

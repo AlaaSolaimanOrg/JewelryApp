@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaFire, FaFrown, FaGem, FaMeh, FaRing, FaShoppingCart, FaSmile, FaWarehouse } from 'react-icons/fa';
 import './selectItemsToReturn.scss';
-import CustomTable from '../../../../components/Table/CustomTable';
+import CustomTable from '../../../../components/tables/Table/CustomTable';
 
 interface TransactionItem {
     id: number;

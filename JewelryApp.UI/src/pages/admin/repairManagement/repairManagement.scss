@@ -1,0 +1,142 @@
+.repair-management-page {
+  margin: 0 auto;
+  color: var(--dark);
+
+  /* ============================
+        ANALYTICS CARDS
+  ============================= */
+  .repair-analytics {
+    margin-bottom: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+
+    &__card {
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-bottom);
+      border-top: 4px solid transparent;
+      text-align: center;
+
+      h3 {
+        font-size: 16px;
+        color: var(--primary);
+        margin-bottom: 8px;
+      }
+
+      .value {
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      &.pending {
+        border-top-color: #ffa726;
+        .value {
+          color: #ffa726;
+        }
+      }
+      &.completed {
+        border-top-color: #66bb6a;
+        .value {
+          color: #66bb6a;
+        }
+      }
+      &.pickedup {
+        border-top-color: #42a5f5;
+        .value {
+          color: #42a5f5;
+        }
+      }
+      &.avg-time {
+        border-top-color: #4ecdc4;
+        .value {
+          color: #4ecdc4;
+        }
+      }
+    }
+  }
+
+  /* ============================
+        LIST SECTION
+  ============================= */
+  .repair-list-section {
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-bottom);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary);
+
+    &__icon {
+      color: var(--gold);
+    }
+  }
+
+  /* ============================
+        FILTERS
+  ============================= */
+  .filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+
+    .search-input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .filter-select {
+      min-width: 150px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  }
+
+  /* ============================
+        STATUS BADGES
+  ============================= */
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &.status-pending {
+      background: rgba(255, 167, 38, 0.1);
+      color: #ffa726;
+    }
+
+    &.status-completed {
+      background: rgba(102, 187, 106, 0.1);
+      color: #66bb6a;
+    }
+
+    &.status-pickedup {
+      background: rgba(66, 165, 245, 0.1);
+      color: #42a5f5;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filter-section {
+      flex-direction: column;
+
+      .search-input,
+      .filter-select {
+        width: 100%;
+      }
+    }
+  }
+}

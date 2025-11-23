@@ -76,3 +76,30 @@ export enum ReturnOption {
   Exchange = "Exchange",
   StoreCredit = "StoreCredit",
 }
+
+export enum RepairType {
+  Resize,
+  Solder,
+  StoneReplacement,
+  StoneTightening,
+  Polishing,
+  Cleaning,
+  Plating,
+  Engraving,
+  FixOrChangeLock,
+  AddGold,
+}
+
+export enum RepairStatus {
+  Received,
+  InProgress,
+  Ready,
+  Completed,
+  PickedUp,
+}
+
+export enum PaymentStatus {
+  Unpaid,
+  Paid,
+  Partial,
+}

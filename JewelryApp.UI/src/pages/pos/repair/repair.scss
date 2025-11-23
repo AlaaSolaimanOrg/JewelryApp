@@ -2,6 +2,27 @@
   padding: 20px;
   background: var(--light-bg);
 
+  .back-btn {
+    background-color: var(--gold);
+    color: var(--primary);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+
+    svg {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: #e6c035;
+    }
+  }
+
   /* ================================
      POS HEADER STYLE (MATCHES POS)
   ================================= */
@@ -67,40 +88,7 @@
         font-weight: 700;
       }
 
-      .search-section {
-        background: rgba(255, 255, 255, 0.12);
-        padding: 8px 15px;
-        border-radius: 30px;
-        display: flex;
-        align-items: center;
-        min-width: 350px;
-        flex: 1;
-
-        .customerSearch {
-          flex: 1;
-          min-width: 280px;
-
-          input {
-            -webkit-text-fill-color: white;
-          }
-        }
-
-        .add-customer-btn {
-          background-color: var(--gold);
-          color: var(--primary);
-          padding: 8px 15px;
-          border-radius: 20px;
-          border: none;
-          cursor: pointer;
-          margin-left: 10px;
-          white-space: nowrap;
-          font-weight: 600;
-
-          &:hover {
-            background-color: #e6c035;
-          }
-        }
-      }
+    
 
       .scan-btn {
         background-color: var(--gold);

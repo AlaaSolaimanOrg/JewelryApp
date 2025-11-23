@@ -4,7 +4,10 @@ import type { Customer } from "../posSale/types";
 import "./repair.scss";
 import RepairItemCard from "./RepairItemCard/RepairItemCard";
 
-import { FaPlus, FaRing, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaRing, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { createRepair } from "../../../apis/repairs.api/repairs.api";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 
 export interface RepairItem {
   id: number;
@@ -22,6 +25,7 @@ export interface RepairItem {
 }
 
 const Repair = () => {
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
 
@@ -65,7 +69,6 @@ const Repair = () => {
     ]);
   };
 
-  
   const removeItem = (id: number) => {
     setItems((prev) => prev.filter((i) => i.id !== id));
   };
@@ -89,6 +92,45 @@ const Repair = () => {
     0
   );
 
+  const handleSaveRepair = async () => {
+    if (!customer) {
+      alert("Select a customer first");
+      return;
+    }
+
+    const payload = {
+      customerId: customer.id,
+      notes: "",
+      items: items.map((i) => ({
+        itemType: Number(i.itemType),
+        metal: Number(i.metal),
+        weight: Number(i.weight) || 0,
+        repairType: Number(i.repairType),
+        stoneType: i.stone,
+        notes: i.notes,
+        cost: Number(i.cost) || 0,
+        urgentFee: Number(i.urgent) || 0,
+        discount: Number(i.discount) || 0,
+        dueDate: i.dueDate || null,
+      })),
+    };
+
+    try {
+      const response = await createRepair(payload);
+      console.log("response", response);
+      if (checkRequestSucceeded(response.statusCode)) {
+        showSuccess(response.message);
+        setItems([]);
+        setCustomer(null);
+        setCustomerInfoActive(false);
+      } else {
+        showError(response.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div id="repair-page" className="page-content">
       <CustomerSection
@@ -102,6 +144,11 @@ const Repair = () => {
         setShowAddCustomerModal={setShowAddCustomerModal}
         onOpenScanModal={() => {}}
         setCustomerInfoActive={setCustomerInfoActive}
+        actions={
+          <button className="back-btn" onClick={() => navigate("/")}>
+            <FaArrowLeft /> Back to POS
+          </button>
+        }
       />
 
       <div className="section">
@@ -115,13 +162,15 @@ const Repair = () => {
           </button>
         </div>
 
-        {items.map((item) => (
+        {items.map((item, index) => (
           <RepairItemCard
             key={item.id}
             item={item}
             updateItem={updateItem}
             removeItem={removeItem}
             calculateItemTotal={calculateItemTotal}
+            itemsCount={items.length}
+            cardNumber={index + 1}
           />
         ))}
 
@@ -134,7 +183,9 @@ const Repair = () => {
       </div>
 
       <div className="footer-buttons">
-        <button className="save-btn">Save Repair</button>
+        <button className="save-btn" onClick={handleSaveRepair}>
+          Save Repair
+        </button>
 
         <button className="cancel-btn" onClick={() => history.back()}>
           <FaTimes /> Cancel
