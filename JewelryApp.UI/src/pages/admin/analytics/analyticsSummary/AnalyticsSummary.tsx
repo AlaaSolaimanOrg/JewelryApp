@@ -9,7 +9,7 @@ import {
 import { getAnalyticsSummary } from "../../../../apis/analytics.api/analytics.api";
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { smartRound } from "../../../../utils";
-import "./AnalyticsSummary.scss";
+import "./analyticsSummary.scss";
 
 export interface AnalyticsSummary {
   avgDailySales: number;
