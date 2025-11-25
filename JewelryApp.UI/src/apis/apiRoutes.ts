@@ -62,4 +62,10 @@ export const apiRoutes = {
     updateRepair: "Repairs/UpdateRepair",
     getRepairAnalytics: "Repairs/GetRepairAnalytics",
   },
+  analytics: {
+    getSalesOverTime: "Analytics/GetSalesOverTime",
+    getSalesByCategory: "Analytics/GetSalesByCategory",
+    getStaffPerformance: "Analytics/GetStaffPerformance",
+    getAnalyticsSummary: "Analytics/GetAnalyticsSummary",
+  },
 };

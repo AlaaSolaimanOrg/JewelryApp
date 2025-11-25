@@ -213,3 +213,7 @@ export const convertHeicToJpeg = async (file) => {
 export const splitCamelCaseWords = (text: string): string => {
   return text?.replace(/([a-z])([A-Z])/g, "$1 $2");
 };
+
+export const smartRound = (value: number): number => {
+  return parseFloat((Math.round(value * 100) / 100).toString());
+};

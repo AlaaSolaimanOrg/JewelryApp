@@ -16,6 +16,7 @@ const RepairItemCard = ({
   calculateItemTotal,
   itemsCount,
   cardNumber,
+  errors,
 }: {
   item: RepairItem;
   updateItem: (id: number, field: keyof RepairItem, value: string) => void;
@@ -23,6 +24,7 @@ const RepairItemCard = ({
   calculateItemTotal: (item: RepairItem) => number;
   itemsCount: number;
   cardNumber: number;
+  errors: Record<string, string>;
 }) => {
   const total = calculateItemTotal(item);
 
@@ -54,7 +56,7 @@ const RepairItemCard = ({
                   <FaTrash
                     className="remove-icon"
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent accordion collapse
+                      e.stopPropagation();
                       removeItem(item.id);
                     }}
                   />
@@ -62,15 +64,17 @@ const RepairItemCard = ({
               </h4>
 
               <div className="form-row">
+                {/* ITEM TYPE */}
                 <div className="form-col">
                   <label>Item Type *</label>
                   <select
+                    className={errors.itemType ? "input-error" : ""}
                     value={item.itemType}
                     onChange={(e) =>
                       updateItem(item.id, "itemType", e.target.value)
                     }
                   >
-                    <option value={""}>Select</option>
+                    <option value="">Select</option>
                     <option value={ProductCategory.Necklaces}>Necklace</option>
                     <option value={ProductCategory.Bracelets}>Bracelet</option>
                     <option value={ProductCategory.Rings}>Ring</option>
@@ -78,11 +82,16 @@ const RepairItemCard = ({
                     <option value={ProductCategory.Pendants}>Pendant</option>
                     <option value={ProductCategory.Bullion}>Bullion</option>
                   </select>
+                  {errors.itemType && (
+                    <p className="error-text">{errors.itemType}</p>
+                  )}
                 </div>
 
+                {/* METAL */}
                 <div className="form-col">
                   <label>Metal *</label>
                   <select
+                    className={errors.metal ? "input-error" : ""}
                     value={item.metal}
                     onChange={(e) =>
                       updateItem(item.id, "metal", e.target.value)
@@ -92,9 +101,13 @@ const RepairItemCard = ({
                     <option value={ProductType.Gold}>Gold</option>
                     <option value={ProductType.Silver}>Silver</option>
                   </select>
+                  {errors.metal && (
+                    <p className="error-text">{errors.metal}</p>
+                  )}
                 </div>
               </div>
 
+              {/* WEIGHT + STONE */}
               <div className="form-row">
                 <div className="form-col">
                   <label>Weight Before Repair (g)</label>
@@ -126,16 +139,17 @@ const RepairItemCard = ({
                 </div>
               </h4>
 
+              {/* REPAIR TYPE */}
               <div className="form-group">
                 <label>Repair Type *</label>
                 <select
+                  className={errors.repairType ? "input-error" : ""}
                   value={item.repairType}
                   onChange={(e) =>
                     updateItem(item.id, "repairType", e.target.value)
                   }
                 >
                   <option value="">Select</option>
-
                   <option value={RepairType.Resize}>Resize</option>
                   <option value={RepairType.Solder}>Solder</option>
                   <option value={RepairType.StoneReplacement}>
@@ -153,14 +167,24 @@ const RepairItemCard = ({
                   </option>
                   <option value={RepairType.AddGold}>Add Gold</option>
                 </select>
+                {errors.repairType && (
+                  <p className="error-text">{errors.repairType}</p>
+                )}
               </div>
 
+              {/* NOTES */}
               <div className="form-group">
                 <label>Repair Notes *</label>
                 <textarea
+                  className={errors.notes ? "input-error" : ""}
                   value={item.notes}
-                  onChange={(e) => updateItem(item.id, "notes", e.target.value)}
+                  onChange={(e) =>
+                    updateItem(item.id, "notes", e.target.value)
+                  }
                 />
+                {errors.notes && (
+                  <p className="error-text">{errors.notes}</p>
+                )}
               </div>
 
               {/* SECTION 3 */}
@@ -205,6 +229,7 @@ const RepairItemCard = ({
                 </div>
               </div>
 
+              {/* PAYMENT + DUE DATE */}
               <div className="form-row">
                 <div className="form-col">
                   <label>Payment Status</label>
@@ -224,11 +249,15 @@ const RepairItemCard = ({
                   <label>Due Date *</label>
                   <input
                     type="date"
+                    className={errors.dueDate ? "input-error" : ""}
                     value={item.dueDate}
                     onChange={(e) =>
                       updateItem(item.id, "dueDate", e.target.value)
                     }
                   />
+                  {errors.dueDate && (
+                    <p className="error-text">{errors.dueDate}</p>
+                  )}
                 </div>
               </div>
 

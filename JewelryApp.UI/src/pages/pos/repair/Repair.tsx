@@ -31,6 +31,9 @@ const Repair = () => {
 
   const [searchInput, setSearchInput] = useState("");
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+  const [errors, setErrors] = useState<
+    Record<number, Partial<Record<keyof RepairItem, string>>>
+  >({});
 
   const [items, setItems] = useState<RepairItem[]>([
     {
@@ -94,10 +97,15 @@ const Repair = () => {
 
   const handleSaveRepair = async () => {
     if (!customer) {
-      alert("Select a customer first");
+      showError("Select a customer first");
       return;
     }
 
+    // 🔥 STOP if validation fails
+    if (!validateItems()) {
+      showError("Please fill required fields");
+      return;
+    }
     const payload = {
       customerId: customer.id,
       notes: "",
@@ -129,6 +137,26 @@ const Repair = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const validateItems = () => {
+    const newErrors: Record<number, any> = {};
+
+    items.forEach((item) => {
+      const err: any = {};
+
+      if (!item.itemType) err.itemType = "Item type is required";
+      if (!item.metal) err.metal = "Metal is required";
+      if (!item.repairType) err.repairType = "Repair type is required";
+      if (!item.notes.trim()) err.notes = "Notes are required";
+      if (!item.dueDate) err.dueDate = "Due date is required";
+
+      if (Object.keys(err).length > 0) newErrors[item.id] = err;
+    });
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   return (
@@ -171,6 +199,7 @@ const Repair = () => {
             calculateItemTotal={calculateItemTotal}
             itemsCount={items.length}
             cardNumber={index + 1}
+            errors={errors[item.id] || {}}
           />
         ))}
 

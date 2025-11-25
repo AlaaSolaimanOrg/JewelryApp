@@ -16,21 +16,43 @@ import {
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 import {
-  FaAward,
   FaChartBar,
   FaChartLine,
   FaChartPie,
-  FaDollarSign,
   FaExpand,
   FaFilter,
-  FaGem,
-  FaRing,
   FaSync,
   FaTimes,
   FaUser,
-  FaUserTie
 } from "react-icons/fa";
 
+import AnalyticsSummary from "./analyticsSummary/AnalyticsSummary";
+import { ReportType } from "../../../types/enums";
+import useLocalApi from "../../../hooks/useLocalApi";
+import {
+  getSalesByCategory,
+  getSalesOverTime,
+  getStaffPerformance,
+} from "../../../apis/analytics.api/analytics.api";
+
+export interface SalesByCategoryItem {
+  categoryName: string;
+  revenue: number;
+  percentage: number;
+}
+
+export interface SalesOverTimeItem {
+  dateLabel: string;
+  date: string;
+  revenue: number;
+  unitsSold: number;
+}
+
+export interface StaffPerformanceItem {
+  staffName: string;
+  salesAmount: number;
+  commission: number;
+}
 ChartJS.register(
   LineElement,
   PointElement,
@@ -43,52 +65,122 @@ ChartJS.register(
 );
 
 const Analytics = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [fullViewChart, setFullViewChart] = useState<null | string>(null);
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [reportType, setReportType] = useState<ReportType>(ReportType.Monthly);
+  const [appliedFilters, setAppliedFilters] = useState<{
+    dateFrom: string;
+    dateTo: string;
+    reportType: ReportType;
+  }>({
+    dateFrom: "",
+    dateTo: "",
+    reportType: ReportType.Monthly,
+  });
+
+  const openFullView = (chartId: string) => setFullViewChart(chartId);
+  const closeFullView = () => setFullViewChart(null);
+
+  const { data: salesByCategory } = useLocalApi({
+    apiToCall: (data) => getSalesByCategory(data.payload),
+    payload: {
+      dateFrom: appliedFilters.dateFrom,
+      dateTo: appliedFilters.dateTo,
+      reportType: appliedFilters.reportType,
+    },
+    effectDependency: [appliedFilters, refreshKey],
+  }) as { data: SalesByCategoryItem[] };
+
+  const { data: salesOverTime } = useLocalApi({
+    apiToCall: (data) => getSalesOverTime(data.payload),
+    payload: {
+      dateFrom: appliedFilters.dateFrom,
+      dateTo: appliedFilters.dateTo,
+      reportType: appliedFilters.reportType,
+    },
+    effectDependency: [appliedFilters, refreshKey],
+  }) as { data: SalesOverTimeItem[] };
+
+  const { data: staffPerformance } = useLocalApi({
+    apiToCall: (data) => getStaffPerformance(data.payload),
+    payload: {
+      dateFrom: appliedFilters.dateFrom,
+      dateTo: appliedFilters.dateTo,
+      reportType: appliedFilters.reportType,
+    },
+    effectDependency: [appliedFilters, refreshKey],
+  }) as { data: StaffPerformanceItem[] };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   /* ----------------------------------------------
-        FULL VIEW STATE
+        SALES OVER TIME (STATIC DEMO)
   ---------------------------------------------- */
-  const [fullViewChart, setFullViewChart] = useState<null | string>(null);
+  // const salesOverTimeData = {
+  //   labels: [
+  //     "Oct 1",
+  //     "Oct 5",
+  //     "Oct 10",
+  //     "Oct 15",
+  //     "Oct 20",
+  //     "Oct 25",
+  //     "Oct 30",
+  //   ],
+  //   datasets: [
+  //     {
+  //       label: "Revenue ($)",
+  //       data: [12500, 13200, 14100, 14800, 15600, 16400, 17200],
+  //       borderColor: "#D4AF37",
+  //       backgroundColor: "rgba(212,175,55,0.1)",
+  //       borderWidth: 2,
+  //       tension: 0.4,
+  //       fill: true,
+  //     },
+  //     {
+  //       label: "Units Sold",
+  //       data: [45, 52, 48, 55, 58, 62, 65],
+  //       borderColor: "#6C757D",
+  //       backgroundColor: "rgba(108,117,125,0.1)",
+  //       borderWidth: 2,
+  //       tension: 0.4,
+  //       fill: true,
+  //     },
+  //   ],
+  // };
 
-  const openFullView = (chartId: string) => setFullViewChart(chartId);
-  const closeFullView = () => setFullViewChart(null);
-
-  /* ----------------------------------------------
-        SALES OVER TIME
-  ---------------------------------------------- */
-  const salesOverTimeData = {
-    labels: [
-      "Oct 1",
-      "Oct 5",
-      "Oct 10",
-      "Oct 15",
-      "Oct 20",
-      "Oct 25",
-      "Oct 30",
-    ],
-    datasets: [
-      {
-        label: "Revenue ($)",
-        data: [12500, 13200, 14100, 14800, 15600, 16400, 17200],
-        borderColor: "#D4AF37",
-        backgroundColor: "rgba(212, 175, 55, 0.1)",
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: "Units Sold",
-        data: [45, 52, 48, 55, 58, 62, 65],
-        borderColor: "#6C757D",
-        backgroundColor: "rgba(108, 117, 125, 0.1)",
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-      },
-    ],
-  };
+  const salesOverTimeData =
+    salesOverTime && salesOverTime.length > 0
+      ? {
+          labels: salesOverTime.map((d) => d.dateLabel),
+          datasets: [
+            {
+              label: "Revenue ($)",
+              data: salesOverTime.map((d) => d.revenue),
+              borderColor: "#D4AF37",
+              backgroundColor: "rgba(212,175,55,0.1)",
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+            },
+            {
+              label: "Units Sold",
+              data: salesOverTime.map((d) => d.unitsSold),
+              borderColor: "#6C757D",
+              backgroundColor: "rgba(108,117,125,0.1)",
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true,
+            },
+          ],
+        }
+      : {
+          labels: [],
+          datasets: [],
+        };
 
   const lineOptions = {
     responsive: true,
@@ -101,33 +193,32 @@ const Analytics = () => {
   };
 
   /* ----------------------------------------------
-        SALES BY CATEGORY
+        SALES BY CATEGORY (STATIC DEMO)
   ---------------------------------------------- */
-  const salesByCategoryData = {
-    labels: [
-      "Rings",
-      "Necklaces",
-      "Earrings",
-      "Bangles",
-      "Bracelets",
-      "Pendants",
-    ],
-    datasets: [
-      {
-        data: [35, 20, 15, 12, 10, 8],
-        backgroundColor: [
-          "#D4AF37",
-          "#B5942D",
-          "#E6C55C",
-          "#F5E9C8",
-          "#6C757D",
-          "#ADB5BD",
+
+  const salesByCategoryData = salesByCategory
+    ? {
+        labels: salesByCategory.map((c) => c.categoryName),
+        datasets: [
+          {
+            data: salesByCategory.map((c) => c.percentage),
+            backgroundColor: [
+              "#D4AF37",
+              "#B5942D",
+              "#E6C55C",
+              "#F5E9C8",
+              "#6C757D",
+              "#ADB5BD",
+            ],
+            borderColor: "#FFFFFF",
+            borderWidth: 1,
+          },
         ],
-        borderColor: "#FFFFFF",
-        borderWidth: 1,
-      },
-    ],
-  };
+      }
+    : {
+        labels: [],
+        datasets: [],
+      };
 
   const doughnutOptions = {
     responsive: true,
@@ -139,25 +230,31 @@ const Analytics = () => {
   };
 
   /* ----------------------------------------------
-        STAFF PERFORMANCE
+        STAFF PERFORMANCE (STATIC DEMO)
   ---------------------------------------------- */
-  const staffPerformanceData = {
-    labels: ["Sarah J.", "Michael C.", "Emma R.", "David W.", "Lisa M."],
-    datasets: [
-      {
-        label: "Sales ($)",
-        data: [12450, 9870, 8450, 7230, 6120],
-        backgroundColor: "#D4AF37",
-        borderRadius: 6,
-      },
-      {
-        label: "Commission",
-        data: [1245, 987, 845, 723, 612],
-        backgroundColor: "#B5942D",
-        borderRadius: 6,
-      },
-    ],
-  };
+  const staffPerformanceData =
+    staffPerformance && staffPerformance.length > 0
+      ? {
+          labels: staffPerformance.map((s) => s.staffName),
+          datasets: [
+            {
+              label: "Sales ($)",
+              data: staffPerformance.map((s) => s.salesAmount),
+              backgroundColor: "#D4AF37",
+              borderRadius: 6,
+            },
+            {
+              label: "Commission",
+              data: staffPerformance.map((s) => s.commission),
+              backgroundColor: "#B5942D",
+              borderRadius: 6,
+            },
+          ],
+        }
+      : {
+          labels: [],
+          datasets: [],
+        };
 
   const barOptions = {
     responsive: true,
@@ -167,6 +264,25 @@ const Analytics = () => {
       y: { beginAtZero: true, grid: { color: "rgba(0,0,0,0.05)" } },
       x: { grid: { display: false } },
     },
+  };
+
+  const applyFilters = () =>
+    setAppliedFilters({
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      reportType: reportType,
+    });
+
+  const resetFilters = () => {
+    setDateFrom("");
+    setDateTo("");
+    setReportType(ReportType.Monthly);
+
+    setAppliedFilters({
+      dateFrom: "",
+      dateTo: "",
+      reportType: ReportType.Monthly,
+    });
   };
 
   return (
@@ -181,7 +297,10 @@ const Analytics = () => {
         </h1>
 
         <div className="page-actions">
-          <button className="btn btn-primary">
+          <button
+            className="btn btn-primary"
+            onClick={() => setRefreshKey((prev) => prev + 1)}
+          >
             <FaSync />
             Refresh Data
           </button>
@@ -198,10 +317,20 @@ const Analytics = () => {
           <div className="form-col">
             <div className="form-group">
               <label className="form-label">Date Range</label>
-
               <div className="date-range-row">
-                <input type="date" className="form-control" />
-                <input type="date" className="form-control" />
+                <input
+                  type="date"
+                  className="form-control"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                />
+
+                <input
+                  type="date"
+                  className="form-control"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -209,20 +338,29 @@ const Analytics = () => {
           <div className="form-col">
             <div className="form-group">
               <label className="form-label">Report Type</label>
-
-              <select className="form-control" defaultValue="monthly">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
+              <select
+                className="form-control"
+                value={reportType}
+                onChange={(e) => setReportType(Number(e.target.value))}
+              >
+                <option value={ReportType.Daily}>Daily</option>
+                <option value={ReportType.Weekly}>Weekly</option>
+                <option value={ReportType.Monthly}>Monthly</option>
+                <option value={ReportType.Yearly}>Yearly</option>
               </select>
             </div>
           </div>
         </div>
 
         <div className="filter-actions">
-          <button className="btn btn-primary btn-md">
+          <button className="btn btn-primary btn-md" onClick={applyFilters}>
             <FaFilter />
             Apply Filters
+          </button>
+
+          <button className="btn btn-gray btn-md" onClick={resetFilters}>
+            <FaTimes />
+            Reset
           </button>
         </div>
       </div>
@@ -239,34 +377,25 @@ const Analytics = () => {
               Sales Over Time
             </h3>
 
-            <button
-              className="btn btn-outline btn-small"
-              onClick={() => openFullView("sales_over_time")}
-            >
-              <FaExpand />
-            </button>
+            {!!salesOverTime.length && (
+              <button
+                className="btn btn-outline btn-small"
+                onClick={() => openFullView("sales_over_time")}
+              >
+                <FaExpand />
+              </button>
+            )}
           </div>
 
           <div className="chart-container">
-            <Line data={salesOverTimeData} options={lineOptions} />
-          </div>
-
-          <div className="chart-legend">
-            <div className="legend-item">
-              <span
-                className="legend-color"
-                style={{ backgroundColor: "#D4AF37" }}
-              />
-              Revenue
-            </div>
-
-            <div className="legend-item">
-              <span
-                className="legend-color"
-                style={{ backgroundColor: "#6c757d" }}
-              />
-              Units Sold
-            </div>
+            {salesOverTime && salesOverTime.length > 0 ? (
+              <Line data={salesOverTimeData} options={lineOptions} />
+            ) : (
+              <div className="no-data">
+                <FaChartLine />
+                No data available
+              </div>
+            )}
           </div>
         </div>
 
@@ -280,16 +409,24 @@ const Analytics = () => {
               Sales by Category
             </h3>
 
-            <button
-              className="btn btn-outline btn-small"
-              onClick={() => openFullView("sales_by_category")}
-            >
-              <FaExpand />
-            </button>
+            {!!salesByCategory.length && (
+              <button
+                className="btn btn-outline btn-small"
+                onClick={() => openFullView("sales_by_category")}
+              >
+                <FaExpand />
+              </button>
+            )}
           </div>
-
           <div className="chart-container chart-container-doughnut">
-            <Doughnut data={salesByCategoryData} options={doughnutOptions} />
+            {salesByCategory && salesByCategory.length > 0 ? (
+              <Doughnut data={salesByCategoryData} options={doughnutOptions} />
+            ) : (
+              <div className="no-data">
+                <FaChartPie />
+                No data available
+              </div>
+            )}
           </div>
         </div>
 
@@ -303,110 +440,34 @@ const Analytics = () => {
               Staff Performance
             </h3>
 
-            <button
-              className="btn btn-outline btn-small"
-              onClick={() => openFullView("staff_performance")}
-            >
-              <FaExpand />
-            </button>
+            {!!staffPerformance.length && (
+              <button
+                className="btn btn-outline btn-small"
+                onClick={() => openFullView("staff_performance")}
+              >
+                <FaExpand />
+              </button>
+            )}
           </div>
 
           <div className="chart-container">
-            <Bar data={staffPerformanceData} options={barOptions} />
-          </div>
-
-          <div className="chart-legend">
-            <div className="legend-item">
-              <span
-                className="legend-color"
-                style={{ backgroundColor: "#D4AF37" }}
-              />
-              Sales ($)
-            </div>
-
-            <div className="legend-item">
-              <span
-                className="legend-color"
-                style={{ backgroundColor: "#B5942D" }}
-              />
-              Commission
-            </div>
+            {staffPerformance && staffPerformance.length > 0 ? (
+              <Bar data={staffPerformanceData} options={barOptions} />
+            ) : (
+              <div className="no-data">
+                <FaUser />
+                No data available
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ANALYTICS SUMMARY */}
-      <div className="analytics-card analytics-summary-card">
-        <div className="analytics-summary-header">
-          <h3 className="card-title">Analytics Summary</h3>
-        </div>
-
-        <div className="kpi-grid">
-          <div className="kpi-card">
-            <div className="kpi-header">
-              <div className="kpi-title">Avg. Daily Sales</div>
-              <div className="kpi-icon">
-                <FaDollarSign />
-              </div>
-            </div>
-
-            <div className="kpi-value">$2,450</div>
-
-            <div className="kpi-trend">
-              <FaAward />
-              5.2% from last period
-            </div>
-          </div>
-
-          <div className="kpi-card">
-            <div className="kpi-header">
-              <div className="kpi-title">Best Selling Category</div>
-              <div className="kpi-icon">
-                <FaRing />
-              </div>
-            </div>
-
-            <div className="kpi-value">Rings</div>
-
-            <div className="kpi-trend">
-              <FaChartLine />
-              34% of total sales
-            </div>
-          </div>
-
-          <div className="kpi-card">
-            <div className="kpi-header">
-              <div className="kpi-title">Top Performer</div>
-              <div className="kpi-icon">
-                <FaUserTie />
-              </div>
-            </div>
-
-            <div className="kpi-value">Sarah Johnson</div>
-
-            <div className="kpi-trend">
-              <FaAward />
-              $12,450 in sales
-            </div>
-          </div>
-
-          <div className="kpi-card">
-            <div className="kpi-header">
-              <div className="kpi-title">Most Valuable Karat</div>
-              <div className="kpi-icon">
-                <FaGem />
-              </div>
-            </div>
-
-            <div className="kpi-value">21K Gold</div>
-
-            <div className="kpi-trend">
-              <FaGem />
-              42% of inventory value
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* NEW SUMMARY COMPONENT */}
+      <AnalyticsSummary
+        appliedFilters={appliedFilters}
+        refreshKey={refreshKey}
+      />
 
       {/* FULL VIEW MODAL */}
       {fullViewChart && (
@@ -423,14 +484,12 @@ const Analytics = () => {
               {fullViewChart === "sales_over_time" && (
                 <Line data={salesOverTimeData} options={lineOptions} />
               )}
-
               {fullViewChart === "sales_by_category" && (
                 <Doughnut
                   data={salesByCategoryData}
                   options={doughnutOptions}
                 />
               )}
-
               {fullViewChart === "staff_performance" && (
                 <Bar data={staffPerformanceData} options={barOptions} />
               )}
