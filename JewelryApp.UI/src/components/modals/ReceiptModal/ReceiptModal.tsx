@@ -17,6 +17,20 @@ import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
 
+interface Sale {
+  id: string;  
+  serialNumber: string;
+  createdDate: string;
+  staffName: string;
+  customerName: string;
+  total: number;
+  cashAmount: number;
+  cardAmount: number;
+  tax: number;
+  discount: number;
+  saleItems: SaleItem[];
+}
+
 interface SaleItem {
   productName: string;
   sku: string;
@@ -26,20 +40,6 @@ interface SaleItem {
   subtotal: number;
   quantity: number;
 }
-
-interface Sale {
-  id: string;
-  serialNumber: number;
-  createdDate: string;
-  staffName: string;
-  customerName: string;
-  total: number;
-  cashAmount: number;
-  cardAmount: number;
-  discount: number;
-  saleItems: SaleItem[];
-}
-
 interface ReceiptModalProps {
   saleId: string;
   children: React.ReactNode;

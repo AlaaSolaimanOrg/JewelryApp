@@ -177,6 +177,35 @@
     }
   }
 
+  .no-transaction-box {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+
+    h3 {
+      margin-bottom: 10px;
+      color: var(--primary-blue);
+      font-weight: 700;
+      font-size: 22px;
+    }
+
+    p {
+      color: #555;
+      font-size: 15px;
+    }
+
+    &.not-found {
+      background: #fff4f4;
+      border-left: 4px solid #d9534f;
+
+      h3 {
+        color: #d9534f;
+      }
+    }
+  }
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
@@ -238,6 +267,5 @@
       width: 100%;
       text-align: center;
     }
-
   }
 }

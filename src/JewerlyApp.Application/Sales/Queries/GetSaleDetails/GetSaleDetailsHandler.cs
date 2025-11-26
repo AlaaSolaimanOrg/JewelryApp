@@ -52,6 +52,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     CreatedDate = x.CreatedDate,
                     StaffName = x.CreatedByUser!.FullName!,
                     CustomerName = x.Customer!.Name,
+                    CustomerPhone = x.Customer!.PhoneNumber,
                     Total = x.Total,
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,

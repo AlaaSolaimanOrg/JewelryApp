@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { createReturn } from "../../../apis/returns.api/returns.api";
 import type {
   ItemCondition,
+  KaratType,
   ReturnOption,
   ReturnReason,
 } from "../../../types/enums";
@@ -17,6 +18,8 @@ import "./ReturnPage.scss";
 import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
 import TransactionDetails from "./TransactionDetails/TransactionDetails";
 import { checkRequestSucceeded, showSuccess } from "../../../utils";
+import { getSaleById } from "../../../apis/sales.api/sales.api";
+import useLocalApi from "../../../hooks/useLocalApi";
 
 interface TransactionItem {
   id: number;
@@ -35,16 +38,40 @@ interface TransactionItem {
   returnOption: "return_to_stock" | "melt_after_return" | "";
 }
 
+interface Sale {
+  id: string;
+  serialNumber: string;
+  createdDate: string;
+  staffName: string;
+  customerName: string;
+  customerPhone: string;
+  total: number;
+  cashAmount: number;
+  cardAmount: number;
+  tax: number;
+  discount: number;
+  saleItems: SaleItem[];
+}
+
+interface SaleItem {
+  productName: string;
+  sku: string;
+  karat: KaratType;
+  weight: number;
+  pricePerGram: number;
+  subtotal: number;
+  quantity: number;
+}
 const ReturnPage: React.FC = () => {
   // Navigation
   const navigate = useNavigate();
 
   // State management
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchBy, setSearchBy] = useState("");
   const [activeSearchTab, setActiveSearchTab] = useState<
     "receipt" | "phone" | "name"
   >("receipt");
-  const [transactionVisible, setTransactionVisible] = useState(true);
 
   const [items, setItems] = useState<TransactionItem[]>([
     {
@@ -83,27 +110,27 @@ const ReturnPage: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Transaction data
-  const transactionData = {
-    receiptNumber: "GC-2023-001245",
-    status: "Completed",
-    date: "October 15, 2023",
-    time: "2:45 PM",
-    employee: "Sarah Johnson",
-    customerName: "John Doe",
-    customerPhone: "(555) 123-4567",
-    totalAmount: 2215.17,
-    paymentMethods: [
-      { type: "Cash", amount: 1000.0 },
-      { type: "Card", amount: 1215.17 },
-    ],
+  const { data: saleDetails } = useLocalApi({
+    apiToCall: (data) => getSaleById(data.payload),
+    payload: { serialNumber: searchBy },
+    extraEffectCheck: !!searchBy && activeSearchTab == "receipt",
+    effectDependency: [searchBy],
+    dataInitalValue: null,
+  }) as {
+    data: Sale;
+    fetchData: () => void;
   };
 
+  const hasSearched = searchBy.trim() !== "";
+  const transactionNotFound = hasSearched && !saleDetails;
+
+  console.log("saleDetails", saleDetails);
+  console.log("searchBy", searchBy);
   // Handlers
   const handleSearchKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
+    console.log("event", e);
     if (e.key === "Enter" && searchQuery.trim() !== "") {
-      setTransactionVisible(true);
-      // In real app, fetch transaction data here
+      setSearchBy(searchQuery);
     }
   };
 
@@ -225,7 +252,7 @@ const ReturnPage: React.FC = () => {
 
   const handleProcessReturn = () => {
     // Validation
-    if (!transactionVisible) {
+    if (!saleDetails) {
       alert("Please search for and select a transaction first.");
       return;
     }
@@ -272,7 +299,7 @@ const ReturnPage: React.FC = () => {
     try {
       // Prepare payload for API
       const payload = {
-        saleId: transactionData.receiptNumber, // Using receipt number as saleId
+        saleId: saleDetails.serialNumber, // Using receipt number as saleId
         items: items
           .filter((item) => item.selected && item.qtyToReturn > 0)
           .map((item) => ({
@@ -299,8 +326,6 @@ const ReturnPage: React.FC = () => {
       );
       setModalVisible(false);
 
-      // Reset form
-      setTransactionVisible(false);
       setItems(
         items.map((item) => ({
           ...item,
@@ -316,11 +341,27 @@ const ReturnPage: React.FC = () => {
     } catch (error) {
       console.error("Error processing return:", error);
       alert("Failed to process return. Please try again.");
-    } finally {
     }
   };
   const selectedItemsCount = items.filter((item) => item.selected).length;
   const totalReturnAmount = calculateTotalReturn();
+
+  // Format date & time from createdDate
+  const formattedDate = saleDetails
+    ? new Date(saleDetails.createdDate).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
+  const formattedTime = saleDetails
+    ? new Date(saleDetails.createdDate).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "";
 
   return (
     <div className="return-page-container">
@@ -363,7 +404,7 @@ const ReturnPage: React.FC = () => {
             placeholder="Search transaction..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleSearchKeyPress}
+            onKeyDown={handleSearchKeyPress}
           />
         </div>
         <button className="back-btn" onClick={() => navigate("/")}>
@@ -371,43 +412,63 @@ const ReturnPage: React.FC = () => {
         </button>
       </header>
 
-      {/* Transaction Details Section */}
-      <TransactionDetails
-        receiptNumber={transactionData.receiptNumber}
-        status={transactionData.status}
-        date={transactionData.date}
-        time={transactionData.time}
-        employee={transactionData.employee}
-        customerName={transactionData.customerName}
-        customerPhone={transactionData.customerPhone}
-        totalAmount={transactionData.totalAmount}
-        paymentMethods={transactionData.paymentMethods}
-        isVisible={transactionVisible}
-        onPrintReceipt={handlePrintReceipt}
-        onViewDetails={handleViewDetails}
-      />
+      {/* Show BEFORE search */}
+      {!hasSearched && (
+        <div className="no-transaction-box">
+          <h3>Search for a transaction to begin</h3>
+          <p>Enter a receipt number, phone, or customer name.</p>
+        </div>
+      )}
 
-      {/* Transaction Items Section */}
-      <SelectItemsToReturn
-        items={items}
-        onCheckboxChange={handleCheckboxChange}
-        onQuantityChange={handleQuantityChange}
-        onReturnReasonChange={handleReturnReasonChange}
-        onOtherReasonChange={handleOtherReasonChange}
-        onConditionChange={handleConditionChange}
-        onReturnOptionChange={handleReturnOptionChange}
-        totalReturnAmount={totalReturnAmount}
-      />
+      {/* Show AFTER search but NOT found */}
+      {transactionNotFound && (
+        <div className="no-transaction-box not-found">
+          <h3>No transaction found</h3>
+          <p>Please check the value you entered and try again.</p>
+        </div>
+      )}
 
-      {/* Footer Buttons */}
-      <div className="footer-buttons">
-        <button className="process-btn" onClick={handleProcessReturn}>
-          <FaCheckCircle /> Process Return
-        </button>
-        <button className="cancel-btn" onClick={() => navigate("/")}>
-          <FaTimesCircle /> Cancel
-        </button>
-      </div>
+      {!!saleDetails && (
+        <section>
+          <TransactionDetails
+            saleId={saleDetails?.id}
+            receiptNumber={saleDetails?.serialNumber}
+            status="Completed"
+            date={formattedDate}
+            time={formattedTime}
+            employee={saleDetails?.staffName}
+            customerName={saleDetails?.customerName}
+            customerPhone={saleDetails?.customerPhone}
+            totalAmount={saleDetails?.total}
+            paymentMethods={[
+              { type: "Cash", amount: saleDetails?.cashAmount },
+              { type: "Card", amount: saleDetails?.cardAmount },
+            ]}
+            onPrintReceipt={handlePrintReceipt}
+            onViewDetails={handleViewDetails}
+          />
+
+          <SelectItemsToReturn
+            items={items}
+            onCheckboxChange={handleCheckboxChange}
+            onQuantityChange={handleQuantityChange}
+            onReturnReasonChange={handleReturnReasonChange}
+            onOtherReasonChange={handleOtherReasonChange}
+            onConditionChange={handleConditionChange}
+            onReturnOptionChange={handleReturnOptionChange}
+            totalReturnAmount={totalReturnAmount}
+          />
+
+          <div className="footer-buttons">
+            <button className="process-btn" onClick={handleProcessReturn}>
+              <FaCheckCircle /> Process Return
+            </button>
+            <button className="cancel-btn" onClick={() => navigate("/")}>
+              <FaTimesCircle /> Cancel
+            </button>
+          </div>
+        </section>
+      )}
 
       <ConfirmReturnModal
         isVisible={modalVisible}

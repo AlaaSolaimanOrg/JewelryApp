@@ -13,6 +13,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
         public DateTime? CreatedDate { get; set; }
         public string StaffName { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
+        public string CustomerPhone { get; set; } = string.Empty;
         public decimal Total { get; set; }
         public decimal? CashAmount { get; set; }
         public decimal? CardAmount { get; set; }
