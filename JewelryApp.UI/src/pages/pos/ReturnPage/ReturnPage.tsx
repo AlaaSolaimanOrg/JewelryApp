@@ -7,19 +7,19 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createReturn } from "../../../apis/returns.api/returns.api";
+import { getSaleById } from "../../../apis/sales.api/sales.api";
+import useLocalApi from "../../../hooks/useLocalApi";
 import type {
   ItemCondition,
   KaratType,
   ReturnOption,
   ReturnReason,
 } from "../../../types/enums";
+import { checkRequestSucceeded, showSuccess } from "../../../utils";
 import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
 import "./ReturnPage.scss";
 import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
 import TransactionDetails from "./TransactionDetails/TransactionDetails";
-import { checkRequestSucceeded, showSuccess } from "../../../utils";
-import { getSaleById } from "../../../apis/sales.api/sales.api";
-import useLocalApi from "../../../hooks/useLocalApi";
 
 interface TransactionItem {
   id: number;
@@ -62,17 +62,21 @@ interface SaleItem {
   subtotal: number;
   quantity: number;
 }
+
 const ReturnPage: React.FC = () => {
-  // Navigation
   const navigate = useNavigate();
 
-  // State management
+  // Search State
   const [searchQuery, setSearchQuery] = useState("");
   const [searchBy, setSearchBy] = useState("");
   const [activeSearchTab, setActiveSearchTab] = useState<
     "receipt" | "phone" | "name"
   >("receipt");
 
+  // Item Validation Errors
+  const [itemErrors, setItemErrors] = useState<{ [key: number]: string[] }>({});
+
+  // Return Items
   const [items, setItems] = useState<TransactionItem[]>([
     {
       id: 1,
@@ -108,8 +112,10 @@ const ReturnPage: React.FC = () => {
     },
   ]);
 
+  // Modal
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Sale Details API
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
     payload: { serialNumber: searchBy },
@@ -124,34 +130,30 @@ const ReturnPage: React.FC = () => {
   const hasSearched = searchBy.trim() !== "";
   const transactionNotFound = hasSearched && !saleDetails;
 
-  console.log("saleDetails", saleDetails);
-  console.log("searchBy", searchBy);
-  // Handlers
   const handleSearchKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    console.log("event", e);
     if (e.key === "Enter" && searchQuery.trim() !== "") {
       setSearchBy(searchQuery);
     }
   };
 
+  // -----------------------------
+  // Item State Handlers
+  // -----------------------------
+
   const handleCheckboxChange = (id: number) => {
     setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          const selected = !item.selected;
-          return {
-            ...item,
-            selected,
-            qtyToReturn: selected ? item.qtyPurchased : 0,
-            returnAmount: selected ? item.unitPrice * item.qtyPurchased : 0,
-            returnReason: selected ? item.returnReason : "",
-            otherReason: selected ? item.otherReason : "",
-            condition: selected ? item.condition : "",
-            returnOption: selected ? item.returnOption : "",
-          };
-        }
-        return item;
-      })
+      items.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              selected: !item.selected,
+              qtyToReturn: !item.selected ? item.qtyPurchased : 0,
+              returnAmount: !item.selected
+                ? item.unitPrice * item.qtyPurchased
+                : 0,
+            }
+          : item
+      )
     );
   };
 
@@ -160,15 +162,9 @@ const ReturnPage: React.FC = () => {
     option: "return_to_stock" | "melt_after_return"
   ) => {
     setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            returnOption: option,
-          };
-        }
-        return item;
-      })
+      items.map((item) =>
+        item.id === id ? { ...item, returnOption: option } : item
+      )
     );
   };
 
@@ -177,176 +173,151 @@ const ReturnPage: React.FC = () => {
     condition: "good" | "needs_polishing" | "damaged"
   ) => {
     setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            condition,
-          };
-        }
-        return item;
-      })
+      items.map((item) => (item.id === id ? { ...item, condition } : item))
     );
   };
 
   const handleReturnReasonChange = (id: number, value: string) => {
     setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            returnReason: value,
-            otherReason: value === "other" ? item.otherReason : "",
-          };
-        }
-        return item;
-      })
+      items.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              returnReason: value,
+              otherReason: value === "other" ? item.otherReason : "",
+            }
+          : item
+      )
     );
   };
 
   const handleOtherReasonChange = (id: number, value: string) => {
     setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            otherReason: value,
-          };
-        }
-        return item;
-      })
+      items.map((item) =>
+        item.id === id ? { ...item, otherReason: value } : item
+      )
     );
   };
 
   const handleQuantityChange = (id: number, value: string) => {
     const qty = Math.max(0, parseInt(value) || 0);
+
     setItems(
       items.map((item) => {
-        if (item.id === id) {
-          const validQty = Math.min(qty, item.qtyPurchased);
-          return {
-            ...item,
-            qtyToReturn: validQty,
-            returnAmount: item.unitPrice * validQty,
-            selected: validQty > 0,
-          };
-        }
-        return item;
+        if (item.id !== id) return item;
+
+        const validQty = Math.min(qty, item.qtyPurchased);
+
+        return {
+          ...item,
+          qtyToReturn: validQty,
+          returnAmount: validQty * item.unitPrice,
+          selected: validQty > 0,
+        };
       })
     );
   };
 
-  const calculateTotalReturn = (): number => {
-    return items.reduce((sum, item) => sum + item.returnAmount, 0);
+  const calculateTotalReturn = () =>
+    items.reduce((sum, item) => sum + item.returnAmount, 0);
+
+  // -----------------------------
+  // Validation Logic
+  // -----------------------------
+
+  const validateItems = () => {
+    const errors: { [key: number]: string[] } = {};
+
+    items.forEach((item) => {
+      if (!item.selected) return;
+
+      const err: string[] = [];
+
+      if (!item.qtyToReturn || item.qtyToReturn <= 0)
+        err.push("Quantity must be greater than 0.");
+
+      if (!item.returnReason) err.push("Return reason is required.");
+
+      if (item.returnReason === "other" && !item.otherReason.trim())
+        err.push("Please specify the reason for 'Other'.");
+
+      if (!item.condition) err.push("Item condition is required.");
+
+      if (!item.returnOption) err.push("Return option is required.");
+
+      if (err.length) errors[item.id] = err;
+    });
+
+    setItemErrors(errors);
+
+    // Scroll to first invalid row
+    if (Object.keys(errors).length > 0) {
+      const firstErrorId = Object.keys(errors)[0];
+      const el = document.getElementById(`item-row-${firstErrorId}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    return Object.keys(errors).length === 0;
   };
 
-  const handlePrintReceipt = () => {
-    // Implement print receipt functionality
-    console.log("Printing receipt...");
-  };
-
-  const handleViewDetails = () => {
-    // Implement view details functionality
-    console.log("Viewing transaction details...");
-  };
+  // -----------------------------
+  // Process Return
+  // -----------------------------
 
   const handleProcessReturn = () => {
-    // Validation
-    if (!saleDetails) {
-      alert("Please search for and select a transaction first.");
-      return;
-    }
+    if (!saleDetails) return;
 
-    const hasSelectedItems = items.some((item) => item.selected);
-    if (!hasSelectedItems) {
-      alert("Please select at least one item to return.");
-      return;
-    }
+    const hasSelected = items.some((i) => i.selected);
+    if (!hasSelected) return;
 
-    // Check if all selected items have return reasons
-    const selectedItems = items.filter((item) => item.selected);
-    const hasMissingReasons = selectedItems.some((item) => !item.returnReason);
-    const hasMissingOtherReasons = selectedItems.some(
-      (item) => item.returnReason === "other" && !item.otherReason.trim()
-    );
-    const hasMissingConditions = selectedItems.some((item) => !item.condition);
-    const hasMissingOptions = selectedItems.some((item) => !item.returnOption);
-
-    if (hasMissingReasons) {
-      alert("Please select a return reason for all selected items.");
-      return;
-    }
-
-    if (hasMissingOtherReasons) {
-      alert('Please specify the return reason for items marked as "Other".');
-      return;
-    }
-
-    if (hasMissingConditions) {
-      alert("Please select the condition for all selected items.");
-      return;
-    }
-
-    if (hasMissingOptions) {
-      alert("Please select a return option for all selected items.");
-      return;
-    }
+    const valid = validateItems();
+    if (!valid) return;
 
     setModalVisible(true);
   };
 
   const handleConfirmReturn = async () => {
-    try {
-      // Prepare payload for API
-      const payload = {
-        saleId: saleDetails.serialNumber, // Using receipt number as saleId
-        items: items
-          .filter((item) => item.selected && item.qtyToReturn > 0)
-          .map((item) => ({
-            saleItemId: item.id.toString(),
-            quantityToReturn: item.qtyToReturn,
-            reason: item.returnReason as ReturnReason,
-            reasonNote:
-              item.returnReason === "other" ? item.otherReason : undefined,
-            returnAmount: item.returnAmount,
-            condition: item.condition as ItemCondition,
-            option: item.returnOption as ReturnOption,
-          })),
-      };
+    const payload = {
+      saleId: saleDetails.serialNumber,
+      items: items
+        .filter((i) => i.selected && i.qtyToReturn > 0)
+        .map((item) => ({
+          saleItemId: item.id.toString(),
+          quantityToReturn: item.qtyToReturn,
+          reason: item.returnReason as ReturnReason,
+          reasonNote:
+            item.returnReason === "other" ? item.otherReason : undefined,
+          returnAmount: item.returnAmount,
+          condition: item.condition as ItemCondition,
+          option: item.returnOption as ReturnOption,
+        })),
+    };
 
-      // Call the API
-      const response = await createReturn(payload);
-      if (checkRequestSucceeded(response.status)) {
-        showSuccess(response?.message);
-      }
-
-      // Handle success
-      alert(
-        "Return processed successfully! A return receipt has been generated."
-      );
-      setModalVisible(false);
-
-      setItems(
-        items.map((item) => ({
-          ...item,
-          selected: false,
-          qtyToReturn: 0,
-          returnAmount: 0,
-          returnReason: "",
-          otherReason: "",
-          condition: "",
-          returnOption: "",
-        }))
-      );
-    } catch (error) {
-      console.error("Error processing return:", error);
-      alert("Failed to process return. Please try again.");
+    const response = await createReturn(payload);
+    if (checkRequestSucceeded(response.status)) {
+      showSuccess(response.message);
     }
-  };
-  const selectedItemsCount = items.filter((item) => item.selected).length;
-  const totalReturnAmount = calculateTotalReturn();
 
-  // Format date & time from createdDate
+    setModalVisible(false);
+
+    setItems(
+      items.map((item) => ({
+        ...item,
+        selected: false,
+        qtyToReturn: 0,
+        returnAmount: 0,
+        returnReason: "",
+        otherReason: "",
+        condition: "",
+        returnOption: "",
+      }))
+    );
+  };
+
+  // -----------------------------
+  // FORMAT DATE & TIME
+  // -----------------------------
+
   const formattedDate = saleDetails
     ? new Date(saleDetails.createdDate).toLocaleDateString("en-US", {
         year: "numeric",
@@ -363,6 +334,9 @@ const ReturnPage: React.FC = () => {
       })
     : "";
 
+  const totalReturnAmount = calculateTotalReturn();
+  const selectedItemsCount = items.filter((i) => i.selected).length;
+
   return (
     <div className="return-page-container">
       {/* Header */}
@@ -371,6 +345,7 @@ const ReturnPage: React.FC = () => {
           <FaUndoAlt />
           GoldCraft POS - Process Return
         </div>
+
         <div className="search-section">
           <div className="search-tabs">
             <div
@@ -398,6 +373,7 @@ const ReturnPage: React.FC = () => {
               Name
             </div>
           </div>
+
           <input
             type="text"
             className="search-input"
@@ -407,12 +383,13 @@ const ReturnPage: React.FC = () => {
             onKeyDown={handleSearchKeyPress}
           />
         </div>
+
         <button className="back-btn" onClick={() => navigate("/")}>
           <FaArrowLeft /> Back to POS
         </button>
       </header>
 
-      {/* Show BEFORE search */}
+      {/* Before Search */}
       {!hasSearched && (
         <div className="no-transaction-box">
           <h3>Search for a transaction to begin</h3>
@@ -420,7 +397,7 @@ const ReturnPage: React.FC = () => {
         </div>
       )}
 
-      {/* Show AFTER search but NOT found */}
+      {/* Not Found */}
       {transactionNotFound && (
         <div className="no-transaction-box not-found">
           <h3>No transaction found</h3>
@@ -428,27 +405,29 @@ const ReturnPage: React.FC = () => {
         </div>
       )}
 
-      {!!saleDetails && (
+      {/* Sale Found */}
+      {saleDetails && (
         <section>
           <TransactionDetails
-            saleId={saleDetails?.id}
-            receiptNumber={saleDetails?.serialNumber}
+            saleId={saleDetails.id}
+            receiptNumber={saleDetails.serialNumber}
             status="Completed"
             date={formattedDate}
             time={formattedTime}
-            employee={saleDetails?.staffName}
-            customerName={saleDetails?.customerName}
-            customerPhone={saleDetails?.customerPhone}
-            totalAmount={saleDetails?.total}
+            employee={saleDetails.staffName}
+            customerName={saleDetails.customerName}
+            customerPhone={saleDetails.customerPhone}
+            totalAmount={saleDetails.total}
             paymentMethods={[
-              { type: "Cash", amount: saleDetails?.cashAmount },
-              { type: "Card", amount: saleDetails?.cardAmount },
+              { type: "Cash", amount: saleDetails.cashAmount },
+              { type: "Card", amount: saleDetails.cardAmount },
             ]}
-            onViewDetails={handleViewDetails}
+            onViewDetails={() => {}}
           />
 
           <SelectItemsToReturn
             items={items}
+            itemErrors={itemErrors}
             onCheckboxChange={handleCheckboxChange}
             onQuantityChange={handleQuantityChange}
             onReturnReasonChange={handleReturnReasonChange}
@@ -462,6 +441,7 @@ const ReturnPage: React.FC = () => {
             <button className="process-btn" onClick={handleProcessReturn}>
               <FaCheckCircle /> Process Return
             </button>
+
             <button className="cancel-btn" onClick={() => navigate("/")}>
               <FaTimesCircle /> Cancel
             </button>
