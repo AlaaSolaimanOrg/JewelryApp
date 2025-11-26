@@ -1,25 +1,26 @@
-import React, { useState, type KeyboardEvent } from "react";
-import {
-  FaArrowLeft,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaUndoAlt,
-} from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+
 import { createReturn } from "../../../apis/returns.api/returns.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
+
 import type {
   ItemCondition,
   KaratType,
   ReturnOption,
   ReturnReason,
 } from "../../../types/enums";
+
 import { checkRequestSucceeded, showSuccess } from "../../../utils";
+
 import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
-import "./ReturnPage.scss";
 import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
 import TransactionDetails from "./TransactionDetails/TransactionDetails";
+
+import ReturnHeader from "./ReturnHeader/ReturnHeader";
+import "./ReturnPage.scss";
 
 interface TransactionItem {
   id: number;
@@ -66,60 +67,27 @@ interface SaleItem {
 const ReturnPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Search State
+  // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [searchBy, setSearchBy] = useState("");
   const [activeSearchTab, setActiveSearchTab] = useState<
     "receipt" | "phone" | "name"
   >("receipt");
 
-  // Item Validation Errors
+  // Item validation errors
   const [itemErrors, setItemErrors] = useState<{ [key: number]: string[] }>({});
 
-  // Return Items
-  const [items, setItems] = useState<TransactionItem[]>([
-    {
-      id: 1,
-      name: "Diamond Solitaire Ring",
-      icon: "ring",
-      karat: "21K",
-      weight: "3.5g",
-      unitPrice: 440.13,
-      qtyPurchased: 1,
-      qtyToReturn: 1,
-      returnAmount: 440.13,
-      selected: true,
-      returnReason: "",
-      otherReason: "",
-      condition: "",
-      returnOption: "",
-    },
-    {
-      id: 2,
-      name: "Gold Tennis Bracelet",
-      icon: "gem",
-      karat: "18K",
-      weight: "8.2g",
-      unitPrice: 920.68,
-      qtyPurchased: 1,
-      qtyToReturn: 0,
-      returnAmount: 0,
-      selected: false,
-      returnReason: "",
-      otherReason: "",
-      condition: "",
-      returnOption: "",
-    },
-  ]);
+  // Return items
+  const [items, setItems] = useState<TransactionItem[]>([]);
 
-  // Modal
+  // Modal visibility
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Sale Details API
+  // Fetch sale details
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
     payload: { serialNumber: searchBy },
-    extraEffectCheck: !!searchBy && activeSearchTab == "receipt",
+    extraEffectCheck: !!searchBy && activeSearchTab === "receipt",
     effectDependency: [searchBy],
     dataInitalValue: null,
   }) as {
@@ -130,14 +98,35 @@ const ReturnPage: React.FC = () => {
   const hasSearched = searchBy.trim() !== "";
   const transactionNotFound = hasSearched && !saleDetails;
 
-  const handleSearchKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchQuery.trim() !== "") {
-      setSearchBy(searchQuery);
-    }
-  };
+  useEffect(() => {
+    if (!saleDetails) return;
+
+    const mappedItems: TransactionItem[] = saleDetails.saleItems.map(
+      (i, index) => ({
+        id: index + 1, // or i.sku
+        name: i.productName,
+        icon: i.productName.toLowerCase().includes("ring") ? "ring" : "gem",
+        karat: i.karat,
+        weight: i.weight + "g",
+        unitPrice: i.subtotal / i.quantity,
+        qtyPurchased: i.quantity,
+        qtyToReturn: 0,
+        returnAmount: 0,
+        selected: false,
+
+        // user-entry fields
+        returnReason: "",
+        otherReason: "",
+        condition: "",
+        returnOption: "",
+      })
+    );
+
+    setItems(mappedItems);
+  }, [saleDetails]);
 
   // -----------------------------
-  // Item State Handlers
+  // ITEM STATE HANDLERS
   // -----------------------------
 
   const handleCheckboxChange = (id: number) => {
@@ -222,7 +211,7 @@ const ReturnPage: React.FC = () => {
     items.reduce((sum, item) => sum + item.returnAmount, 0);
 
   // -----------------------------
-  // Validation Logic
+  // VALIDATION LOGIC
   // -----------------------------
 
   const validateItems = () => {
@@ -250,10 +239,9 @@ const ReturnPage: React.FC = () => {
 
     setItemErrors(errors);
 
-    // Scroll to first invalid row
     if (Object.keys(errors).length > 0) {
-      const firstErrorId = Object.keys(errors)[0];
-      const el = document.getElementById(`item-row-${firstErrorId}`);
+      const first = Object.keys(errors)[0];
+      const el = document.getElementById(`item-row-${first}`);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -261,7 +249,7 @@ const ReturnPage: React.FC = () => {
   };
 
   // -----------------------------
-  // Process Return
+  // PROCESS RETURN LOGIC
   // -----------------------------
 
   const handleProcessReturn = () => {
@@ -339,55 +327,15 @@ const ReturnPage: React.FC = () => {
 
   return (
     <div className="return-page-container">
-      {/* Header */}
-      <header className="header">
-        <div className="logo">
-          <FaUndoAlt />
-          GoldCraft POS - Process Return
-        </div>
-
-        <div className="search-section">
-          <div className="search-tabs">
-            <div
-              className={`search-tab ${
-                activeSearchTab === "receipt" ? "active" : ""
-              }`}
-              onClick={() => setActiveSearchTab("receipt")}
-            >
-              Receipt #
-            </div>
-            <div
-              className={`search-tab ${
-                activeSearchTab === "phone" ? "active" : ""
-              }`}
-              onClick={() => setActiveSearchTab("phone")}
-            >
-              Phone
-            </div>
-            <div
-              className={`search-tab ${
-                activeSearchTab === "name" ? "active" : ""
-              }`}
-              onClick={() => setActiveSearchTab("name")}
-            >
-              Name
-            </div>
-          </div>
-
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search transaction..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearchKeyPress}
-          />
-        </div>
-
-        <button className="back-btn" onClick={() => navigate("/")}>
-          <FaArrowLeft /> Back to POS
-        </button>
-      </header>
+      {/* 🔥 NEW CLEAN HEADER COMPONENT */}
+      <ReturnHeader
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        activeSearchTab={activeSearchTab}
+        setActiveSearchTab={setActiveSearchTab}
+        onEnterPress={(v) => setSearchBy(v)}
+        onBack={() => navigate("/")}
+      />
 
       {/* Before Search */}
       {!hasSearched && (

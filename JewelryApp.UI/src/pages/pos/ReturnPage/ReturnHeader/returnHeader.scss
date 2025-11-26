@@ -1,0 +1,123 @@
+.return-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-blue);
+  color: var(--text-light);
+  padding: 15px 25px;
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+
+  .logo {
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+
+    svg {
+      color: var(--primary-gold);
+      margin-right: 10px;
+    }
+  }
+
+  .search-section {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 8px 15px;
+    flex: 0 1 500px;
+  }
+
+  .search-tabs {
+    display: flex;
+    margin-right: 15px;
+
+    .search-tab {
+      padding: 6px 12px;
+      margin-right: 5px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &.active {
+        background-color: var(--primary-gold);
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 15px;
+    padding: 5px;
+    outline: none;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  .back-btn {
+    background-color: var(--primary-gold);
+    color: var(--primary-blue);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+
+    svg {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: #e6c035;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+
+    .search-section {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .logo {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .logo {
+      font-size: 18px;
+    }
+
+    .search-section {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-tabs {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .search-input {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

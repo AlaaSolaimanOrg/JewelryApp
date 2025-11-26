@@ -18,7 +18,7 @@ import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
 
 interface Sale {
-  id: string;  
+  id: string;
   serialNumber: string;
   createdDate: string;
   staffName: string;
@@ -220,6 +220,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <div className="total-label">Total (incl. 5% GST)</div>
                   <div className="total-value">${saleDetails.total}</div>
                 </div>
+                
               </div>
 
               <div className="receipt-footer">
