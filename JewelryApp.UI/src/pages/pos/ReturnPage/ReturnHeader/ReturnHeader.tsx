@@ -1,6 +1,6 @@
 import React from "react";
 import { FaArrowLeft, FaUndoAlt } from "react-icons/fa";
-import "./ReturnHeader.scss";
+import "./returnHeader.scss";
 
 interface Props {
   searchQuery: string;
