@@ -1,19 +1,18 @@
 import React from "react";
 import {
-  FaCalendarAlt,
-  FaClock,
-  FaUser,
-  FaUserCircle,
-  FaPhone,
-  FaDollarSign,
-  FaCreditCard,
-  FaMoneyBillWave,
-  FaPrint,
-  FaEye,
-  FaReceipt,
+    FaCalendarAlt,
+    FaClock,
+    FaCreditCard,
+    FaDollarSign,
+    FaEye,
+    FaMoneyBillWave,
+    FaPhone,
+    FaReceipt,
+    FaUser,
+    FaUserCircle
 } from "react-icons/fa";
-import "./transactionDetails.scss";
 import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
+import "./transactionDetails.scss";
 
 interface PaymentMethod {
   type: string;
@@ -31,7 +30,6 @@ interface TransactionDetailsProps {
   customerPhone: string;
   totalAmount: number;
   paymentMethods: PaymentMethod[];
-  onPrintReceipt: () => void;
   onViewDetails: () => void;
 }
 
@@ -46,7 +44,6 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
   customerPhone,
   totalAmount,
   paymentMethods,
-  onPrintReceipt,
   onViewDetails,
 }) => {
   const getStatusBadgeClass = (status: string) => {

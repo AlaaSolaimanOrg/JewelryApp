@@ -444,7 +444,6 @@ const ReturnPage: React.FC = () => {
               { type: "Cash", amount: saleDetails?.cashAmount },
               { type: "Card", amount: saleDetails?.cardAmount },
             ]}
-            onPrintReceipt={handlePrintReceipt}
             onViewDetails={handleViewDetails}
           />
 
