@@ -42,6 +42,17 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
                 query = query.Where(x => x.Level == request.LogLevel.Value);
             }
 
+            if (!string.IsNullOrEmpty(request.SearchBy))
+            {
+                query = query.Where(x =>
+                    x.HandlerName.Contains(request.SearchBy) ||
+                    x.Message.Contains(request.SearchBy) ||
+                    x.Exception!.Contains(request.SearchBy) ||
+                    x.Content!.Contains(request.SearchBy) ||
+                    (x.UserName != null && x.UserName.Contains(request.SearchBy)) ||
+                    x.CorrelationId!.Contains(request.SearchBy));
+            }
+
             var totalRecords = await query.CountAsync(cancellationToken);
 
             var logs = await query

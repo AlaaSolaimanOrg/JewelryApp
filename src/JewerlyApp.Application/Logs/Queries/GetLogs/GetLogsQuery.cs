@@ -8,5 +8,6 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
     public class GetLogsQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetLogsVM>>
     {
         public LogLevel? LogLevel { get; set; }
+        public string? SearchBy { get; set; }
     }
 }
