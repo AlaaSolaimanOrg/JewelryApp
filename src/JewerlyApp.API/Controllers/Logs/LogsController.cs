@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace JewerlyApp.API.Controllers.Logs
 {
     [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
     public class LogsController : MainController
     {
         /// <summary>

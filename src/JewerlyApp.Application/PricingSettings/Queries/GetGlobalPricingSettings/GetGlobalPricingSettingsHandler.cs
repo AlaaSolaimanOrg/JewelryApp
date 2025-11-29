@@ -38,32 +38,16 @@ namespace JewerlyApp.Application.PricingSettings.Queries.GetGlobalPricingSetting
 
                 string url = $"https://www.goldapi.io/api/{symbol}/{curr}{date}";
 
-                try
+                HttpResponseMessage response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                string result = await response.Content.ReadAsStringAsync();
+
+                // Deserialize only the needed fields
+                goldPrices = JsonSerializer.Deserialize<GetGlobalPricingSettingsVM>(result, new JsonSerializerOptions
                 {
-                    HttpResponseMessage response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-
-                    string result = await response.Content.ReadAsStringAsync();
-
-                    // Deserialize only the needed fields
-                    goldPrices = JsonSerializer.Deserialize<GetGlobalPricingSettingsVM>(result, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-                    
-
-
-                    
-                }
-                catch (Exception ex)
-                {
-                    return new GenericResponse<GetGlobalPricingSettingsVM>
-                    {
-                        Data = null,
-                        StatusCode = ResponseStatusCode.InternalServerError,
-                        Message = ex.Message,
-                    };
-                }
+                    PropertyNameCaseInsensitive = true
+                });
             }
             goldPrices!.ProductType = request.ProductType.ToString();
             return new GenericResponse<GetGlobalPricingSettingsVM>

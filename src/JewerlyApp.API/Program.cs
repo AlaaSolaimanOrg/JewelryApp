@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using JewerlyApp.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -165,6 +166,9 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseCors("AllowReactApp");
 

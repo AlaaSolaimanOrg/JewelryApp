@@ -21,39 +21,20 @@ namespace JewerlyApp.Application.Logs.Commands.DeleteLogs
             // Validation
             if (request.LogIds == null || !request.LogIds.Any())
             {
-                return new GenericResponse<string>
-                {
-                    Data = null,
-                    StatusCode = ResponseStatusCode.BadRequest,
-                    Message = "Log IDs list cannot be empty."
-                };
+                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, "Log IDs list cannot be empty.");
             }
 
-            // Find logs to delete
-            var logsToDelete = await _context.Logs
+            // Server-side delete without loading entities
+            var deletedCount = await _context.Logs
                 .Where(log => request.LogIds.Contains(log.Id))
-                .ToListAsync(cancellationToken);
+                .ExecuteDeleteAsync(cancellationToken);
 
-            if (!logsToDelete.Any())
+            if (deletedCount == 0)
             {
-                return new GenericResponse<string>
-                {
-                    Data = null,
-                    StatusCode = ResponseStatusCode.NotFound,
-                    Message = "No logs found with the provided IDs."
-                };
+                return GenericResponse<string>.NotFound(Messages.ErrorNotFound);
             }
 
-            // Delete logs
-            _context.Logs.RemoveRange(logsToDelete);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return new GenericResponse<string>
-            {
-                Data = $"{logsToDelete.Count} log(s) deleted successfully.",
-                StatusCode = ResponseStatusCode.Success,
-                Message = Messages.Success
-            };
+            return GenericResponse<string>.Success(null, Messages.Success);
         }
     }
 }

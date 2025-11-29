@@ -1,4 +1,5 @@
 using JewerlyApp.Application.Common.Extensions;
+using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
@@ -51,6 +52,7 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
             return new PaginatedResponse<GetLogsVM>
             {
                 Data = logs,
+                Message = Messages.LogsRetrievedSuccessfully,
                 TotalRecords = totalRecords,
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize,
