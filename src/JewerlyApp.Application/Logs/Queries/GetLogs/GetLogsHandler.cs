@@ -1,0 +1,61 @@
+using JewerlyApp.Application.Common.Extensions;
+using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Enums;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace JewerlyApp.Application.Logs.Queries.GetLogs
+{
+    internal class GetLogsHandler : IRequestHandler<GetLogsQuery, PaginatedResponse<GetLogsVM>>
+    {
+        private readonly IApplicationDbContext _context;
+
+        public GetLogsHandler(IApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<PaginatedResponse<GetLogsVM>> Handle(GetLogsQuery request, CancellationToken cancellationToken)
+        {
+            var query = from log in _context.Logs
+                        join user in _context.Users on log.LoggedInUserId equals user.Id into userGroup
+                        from user in userGroup.DefaultIfEmpty()
+                        select new GetLogsVM
+                        {
+                            Id = log.Id,
+                            HandlerName = log.HandlerName,
+                            Message = log.Message,
+                            Exception = log.Exception,
+                            Content = log.Content,
+                            Level = log.Level,
+                            LoggedInUserId = log.LoggedInUserId,
+                            UserName = user != null ? user.UserName : null,
+                            CorrelationId = log.CorrelationId,
+                            CreatedAt = log.CreatedAt
+                        };
+
+            // Apply log level filter if specified
+            if (request.LogLevel.HasValue)
+            {
+                query = query.Where(x => x.Level == request.LogLevel.Value);
+            }
+
+            var totalRecords = await query.CountAsync(cancellationToken);
+
+            var logs = await query
+                .ApplySorting(request.SortBy ?? "CreatedAt", request.SortDirection)
+                .ApplyPagination(request.PageNumber, request.PageSize)
+                .ToListAsync(cancellationToken);
+
+            return new PaginatedResponse<GetLogsVM>
+            {
+                Data = logs,
+                TotalRecords = totalRecords,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                StatusCode = logs.Any() ? ResponseStatusCode.Success : ResponseStatusCode.NoContent
+            };
+        }
+    }
+}
