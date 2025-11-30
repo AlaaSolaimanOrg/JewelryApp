@@ -59,22 +59,22 @@ export enum CustomerFilter {
 }
 
 export enum ReturnReason {
-  Defective = "Defective",
-  WrongItem = "WrongItem",
-  ChangedMind = "ChangedMind",
-  Other = "Other",
+    NotAsExpected = 1,
+    WrongSize = 2,
+    Defective = 3,
+    GiftReturn = 4,
+    Other = 99
 }
 
 export enum ItemCondition {
-  New = "New",
-  Used = "Used",
-  Damaged = "Damaged",
+  Good = 1,
+  NeedsPolishing = 2,
+  Damaged = 3,
 }
 
 export enum ReturnOption {
-  Refund = "Refund",
-  Exchange = "Exchange",
-  StoreCredit = "StoreCredit",
+  ReturnToStock = 1,
+  MeltAfterReturn = 2,
 }
 
 export enum RepairType {

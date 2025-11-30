@@ -6,11 +6,11 @@ import { createReturn } from "../../../apis/returns.api/returns.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 
-import type {
-  ItemCondition,
-  KaratType,
-  ReturnOption,
+import {
   ReturnReason,
+  type ItemCondition,
+  type KaratType,
+  type ReturnOption,
 } from "../../../types/enums";
 
 import { checkRequestSucceeded, showSuccess } from "../../../utils";
@@ -21,22 +21,23 @@ import TransactionDetails from "./TransactionDetails/TransactionDetails";
 
 import ReturnHeader from "./ReturnHeader/ReturnHeader";
 import "./ReturnPage.scss";
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
-interface TransactionItem {
-  id: number;
+export interface TransactionItem {
+  id: string;
   name: string;
   icon: "ring" | "gem";
-  karat: string;
+  karat: KaratType;
   weight: string;
   unitPrice: number;
   qtyPurchased: number;
   qtyToReturn: number;
   returnAmount: number;
   selected: boolean;
-  returnReason: string;
+  returnReason: ReturnReason | null;
   otherReason: string;
-  condition: "good" | "needs_polishing" | "damaged" | "";
-  returnOption: "return_to_stock" | "melt_after_return" | "";
+  condition: ItemCondition | null;
+  returnOption: ReturnOption | null;
 }
 
 interface Sale {
@@ -55,6 +56,7 @@ interface Sale {
 }
 
 interface SaleItem {
+  id: string;
   productName: string;
   sku: string;
   karat: KaratType;
@@ -84,7 +86,11 @@ const ReturnPage: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   // Fetch sale details
-  const { data: saleDetails } = useLocalApi({
+  const {
+    data: saleDetails,
+    setData: setSaleDetails,
+    isLoading: isLoadingSale,
+  } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
     payload: { serialNumber: searchBy },
     extraEffectCheck: !!searchBy && activeSearchTab === "receipt",
@@ -92,33 +98,41 @@ const ReturnPage: React.FC = () => {
     dataInitalValue: null,
   }) as {
     data: Sale;
-    fetchData: () => void;
+    setData: React.Dispatch<React.SetStateAction<Sale | null>>;
+    isLoading: boolean;
   };
 
   const hasSearched = searchBy.trim() !== "";
   const transactionNotFound = hasSearched && !saleDetails;
 
   useEffect(() => {
+    if (!searchQuery) {
+      setSearchBy("");
+      setSaleDetails(null);
+    }
+  }, [searchQuery, setSaleDetails]);
+
+  useEffect(() => {
     if (!saleDetails) return;
 
     const mappedItems: TransactionItem[] = saleDetails.saleItems.map(
-      (i, index) => ({
-        id: index + 1, // or i.sku
-        name: i.productName,
-        icon: i.productName.toLowerCase().includes("ring") ? "ring" : "gem",
-        karat: i.karat,
-        weight: i.weight + "g",
-        unitPrice: i.subtotal / i.quantity,
-        qtyPurchased: i.quantity,
+      (item) => ({
+        id: item.id,
+        name: item.productName,
+        icon: item.productName.toLowerCase().includes("ring") ? "ring" : "gem",
+        karat: item.karat,
+        weight: item.weight + "g",
+        unitPrice: item.subtotal / item.quantity,
+        qtyPurchased: item.quantity,
         qtyToReturn: 0,
         returnAmount: 0,
         selected: false,
 
         // user-entry fields
-        returnReason: "",
+        returnReason: null,
         otherReason: "",
-        condition: "",
-        returnOption: "",
+        condition: null,
+        returnOption: null,
       })
     );
 
@@ -129,7 +143,7 @@ const ReturnPage: React.FC = () => {
   // ITEM STATE HANDLERS
   // -----------------------------
 
-  const handleCheckboxChange = (id: number) => {
+  const handleCheckboxChange = (id: string) => {
     setItems(
       items.map((item) =>
         item.id === id
@@ -147,8 +161,8 @@ const ReturnPage: React.FC = () => {
   };
 
   const handleReturnOptionChange = (
-    id: number,
-    option: "return_to_stock" | "melt_after_return"
+    id: string,
+    option: ReturnOption | null
   ) => {
     setItems(
       items.map((item) =>
@@ -158,29 +172,29 @@ const ReturnPage: React.FC = () => {
   };
 
   const handleConditionChange = (
-    id: number,
-    condition: "good" | "needs_polishing" | "damaged"
+    id: string,
+    condition: ItemCondition | null
   ) => {
     setItems(
       items.map((item) => (item.id === id ? { ...item, condition } : item))
     );
   };
 
-  const handleReturnReasonChange = (id: number, value: string) => {
+  const handleReturnReasonChange = (id: string, value: ReturnReason | null) => {
     setItems(
       items.map((item) =>
         item.id === id
           ? {
               ...item,
               returnReason: value,
-              otherReason: value === "other" ? item.otherReason : "",
+              otherReason: value === ReturnReason.Other ? item.otherReason : "",
             }
           : item
       )
     );
   };
 
-  const handleOtherReasonChange = (id: number, value: string) => {
+  const handleOtherReasonChange = (id: string, value: string) => {
     setItems(
       items.map((item) =>
         item.id === id ? { ...item, otherReason: value } : item
@@ -188,7 +202,7 @@ const ReturnPage: React.FC = () => {
     );
   };
 
-  const handleQuantityChange = (id: number, value: string) => {
+  const handleQuantityChange = (id: string, value: string) => {
     const qty = Math.max(0, parseInt(value) || 0);
 
     setItems(
@@ -225,9 +239,9 @@ const ReturnPage: React.FC = () => {
       if (!item.qtyToReturn || item.qtyToReturn <= 0)
         err.push("Quantity must be greater than 0.");
 
-      if (!item.returnReason) err.push("Return reason is required.");
+      if (item.returnReason === null) err.push("Return reason is required.");
 
-      if (item.returnReason === "other" && !item.otherReason.trim())
+      if (item.returnReason === ReturnReason.Other && !item.otherReason.trim())
         err.push("Please specify the reason for 'Other'.");
 
       if (!item.condition) err.push("Item condition is required.");
@@ -266,24 +280,29 @@ const ReturnPage: React.FC = () => {
 
   const handleConfirmReturn = async () => {
     const payload = {
-      saleId: saleDetails.serialNumber,
+      saleId: saleDetails.id,
       items: items
         .filter((i) => i.selected && i.qtyToReturn > 0)
         .map((item) => ({
           saleItemId: item.id.toString(),
           quantityToReturn: item.qtyToReturn,
-          reason: item.returnReason as ReturnReason,
+          reason: item.returnReason,
           reasonNote:
-            item.returnReason === "other" ? item.otherReason : undefined,
+            item.returnReason === ReturnReason.Other
+              ? item.otherReason
+              : undefined,
           returnAmount: item.returnAmount,
-          condition: item.condition as ItemCondition,
-          option: item.returnOption as ReturnOption,
+          condition: item.condition,
+          option: item.returnOption,
         })),
     };
 
     const response = await createReturn(payload);
-    if (checkRequestSucceeded(response.status)) {
+    if (checkRequestSucceeded(response.statusCode)) {
       showSuccess(response.message);
+      setSaleDetails(null);
+      setSearchBy("");
+      setSearchQuery("");
     }
 
     setModalVisible(false);
@@ -294,10 +313,10 @@ const ReturnPage: React.FC = () => {
         selected: false,
         qtyToReturn: 0,
         returnAmount: 0,
-        returnReason: "",
+        returnReason: null,
         otherReason: "",
-        condition: "",
-        returnOption: "",
+        condition: null,
+        returnOption: null,
       }))
     );
   };
@@ -325,6 +344,8 @@ const ReturnPage: React.FC = () => {
   const totalReturnAmount = calculateTotalReturn();
   const selectedItemsCount = items.filter((i) => i.selected).length;
 
+  console.log("selectedItemsCount", selectedItemsCount);
+
   return (
     <div className="return-page-container">
       {/* 🔥 NEW CLEAN HEADER COMPONENT */}
@@ -338,7 +359,7 @@ const ReturnPage: React.FC = () => {
       />
 
       {/* Before Search */}
-      {!hasSearched && (
+      {!hasSearched && !isLoadingSale && (
         <div className="no-transaction-box">
           <h3>Search for a transaction to begin</h3>
           <p>Enter a receipt number, phone, or customer name.</p>
@@ -346,7 +367,7 @@ const ReturnPage: React.FC = () => {
       )}
 
       {/* Not Found */}
-      {transactionNotFound && (
+      {transactionNotFound && !isLoadingSale && (
         <div className="no-transaction-box not-found">
           <h3>No transaction found</h3>
           <p>Please check the value you entered and try again.</p>
@@ -386,7 +407,11 @@ const ReturnPage: React.FC = () => {
           />
 
           <div className="footer-buttons">
-            <button className="process-btn" onClick={handleProcessReturn}>
+            <button
+              className="process-btn"
+              onClick={handleProcessReturn}
+              disabled={!selectedItemsCount}
+            >
               <FaCheckCircle /> Process Return
             </button>
 
@@ -404,6 +429,8 @@ const ReturnPage: React.FC = () => {
         selectedItemsCount={selectedItemsCount}
         totalReturnAmount={totalReturnAmount}
       />
+
+      <LoadingScreen isLoading={isLoadingSale} />
     </div>
   );
 };

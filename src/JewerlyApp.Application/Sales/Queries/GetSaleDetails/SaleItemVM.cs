@@ -9,6 +9,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
 {
     public class SaleItemVM
     {
+        public Guid Id { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string? Sku { get; set; } 
         public KaratType Karat { get; set; }

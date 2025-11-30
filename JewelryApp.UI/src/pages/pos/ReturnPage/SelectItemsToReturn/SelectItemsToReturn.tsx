@@ -11,41 +11,24 @@ import {
 } from "react-icons/fa";
 import "./selectItemsToReturn.scss";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
-
-interface TransactionItem {
-  id: number;
-  name: string;
-  icon: "ring" | "gem";
-  karat: string;
-  weight: string;
-  unitPrice: number;
-  qtyPurchased: number;
-  qtyToReturn: number;
-  returnAmount: number;
-  selected: boolean;
-  returnReason: string;
-  otherReason: string;
-  condition: "good" | "needs_polishing" | "damaged" | "";
-  returnOption: "return_to_stock" | "melt_after_return" | "";
-}
+import {
+  ItemCondition,
+  ReturnOption,
+  ReturnReason,
+} from "../../../../types/enums";
+import type { TransactionItem } from "../ReturnPage";
 
 interface SelectItemsToReturnProps {
   items: TransactionItem[];
-  onCheckboxChange: (id: number) => void;
-  onQuantityChange: (id: number, value: string) => void;
-  onReturnReasonChange: (id: number, value: string) => void;
-  onOtherReasonChange: (id: number, value: string) => void;
-  onConditionChange: (
-    id: number,
-    condition: "good" | "needs_polishing" | "damaged"
-  ) => void;
-  onReturnOptionChange: (
-    id: number,
-    option: "return_to_stock" | "melt_after_return"
-  ) => void;
+  onCheckboxChange: (id: string) => void;
+  onQuantityChange: (id: string, value: string) => void;
   totalReturnAmount: number;
 
-  // 🔥 NEW VALIDATION PROP
+  onReturnReasonChange: (id: string, value: ReturnReason | null) => void;
+  onOtherReasonChange: (id: string, value: string) => void;
+  onConditionChange: (id: string, value: ItemCondition | null) => void;
+  onReturnOptionChange: (id: string, value: ReturnOption | null) => void;
+
   itemErrors: { [key: number]: string[] };
 }
 
@@ -133,25 +116,28 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
             className={`form-select ${
               hasError("Return reason is required.") ? "input-error" : ""
             }`}
-            value={item.returnReason}
-            onChange={(e) => onReturnReasonChange(item.id, e.target.value)}
+            value={item.returnReason ?? ""}
+            onChange={(e) =>
+              onReturnReasonChange(
+                item.id,
+                e.target.value ? Number(e.target.value) : null
+              )
+            }
             disabled={!item.selected}
-            required
           >
-            <option value="">Select reason</option>
-            <option value="defective">Defective Product</option>
-            <option value="wrong_size">Wrong Size</option>
-            <option value="not_as_described">Not as Described</option>
-            <option value="changed_mind">Changed Mind</option>
-            <option value="gift_return">Gift Return</option>
-            <option value="other">Other</option>
+            <option value={""}>Select reason</option>
+            <option value={ReturnReason.NotAsExpected}>Not As Expected</option>
+            <option value={ReturnReason.WrongSize}>Wrong Size</option>
+            <option value={ReturnReason.Defective}>Defective</option>
+            <option value={ReturnReason.GiftReturn}>Gift Return</option>
+            <option value={ReturnReason.Other}>Other</option>
           </select>
 
           {hasError("Return reason is required.") && (
             <div className="item-error-message">Return reason is required.</div>
           )}
 
-          {item.returnReason === "other" && item.selected && (
+          {item.returnReason === ReturnReason.Other && item.selected && (
             <div>
               <textarea
                 className={`form-textarea ${
@@ -182,13 +168,16 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
           <div
             className={`condition-option-small ${
-              item.condition === "good" ? "selected" : ""
+              item.condition === ItemCondition.Good ? "selected" : ""
             } ${!item.selected ? "disabled" : ""}`}
-            onClick={() => item.selected && onConditionChange(item.id, "good")}
+            onClick={() =>
+              item.selected && onConditionChange(item.id, ItemCondition.Good)
+            }
           >
             <FaSmile
               style={{
-                color: item.condition === "good" ? "#1ea97c" : "#666",
+                color:
+                  item.condition === ItemCondition.Good ? "#1ea97c" : "#666",
               }}
             />
             <div>Good</div>
@@ -196,16 +185,19 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
           <div
             className={`condition-option-small ${
-              item.condition === "needs_polishing" ? "selected" : ""
+              item.condition === ItemCondition.NeedsPolishing ? "selected" : ""
             } ${!item.selected ? "disabled" : ""}`}
             onClick={() =>
-              item.selected && onConditionChange(item.id, "needs_polishing")
+              item.selected &&
+              onConditionChange(item.id, ItemCondition.NeedsPolishing)
             }
           >
             <FaMeh
               style={{
                 color:
-                  item.condition === "needs_polishing" ? "#ffb300" : "#666",
+                  item.condition === ItemCondition.NeedsPolishing
+                    ? "#ffb300"
+                    : "#666",
               }}
             />
             <div>Needs Polish</div>
@@ -213,15 +205,16 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
           <div
             className={`condition-option-small ${
-              item.condition === "damaged" ? "selected" : ""
+              item.condition === ItemCondition.Damaged ? "selected" : ""
             } ${!item.selected ? "disabled" : ""}`}
             onClick={() =>
-              item.selected && onConditionChange(item.id, "damaged")
+              item.selected && onConditionChange(item.id, ItemCondition.Damaged)
             }
           >
             <FaFrown
               style={{
-                color: item.condition === "damaged" ? "#ff6b6b" : "#666",
+                color:
+                  item.condition === ItemCondition.Damaged ? "#ff6b6b" : "#666",
               }}
             />
             <div>Damaged</div>
@@ -237,16 +230,19 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
           <div
             className={`return-option-small ${
-              item.returnOption === "return_to_stock" ? "selected" : ""
+              item.returnOption === ReturnOption.ReturnToStock ? "selected" : ""
             } ${!item.selected ? "disabled" : ""}`}
             onClick={() =>
-              item.selected && onReturnOptionChange(item.id, "return_to_stock")
+              item.selected &&
+              onReturnOptionChange(item.id, ReturnOption.ReturnToStock)
             }
           >
             <FaWarehouse
               style={{
                 color:
-                  item.returnOption === "return_to_stock" ? "#1a3a5f" : "#666",
+                  item.returnOption === ReturnOption.ReturnToStock
+                    ? "#1a3a5f"
+                    : "#666",
               }}
             />
             <div>Return to Stock</div>
@@ -255,17 +251,19 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
           <div
             className={`return-option-small ${
-              item.returnOption === "melt_after_return" ? "selected" : ""
+              item.returnOption === ReturnOption.MeltAfterReturn
+                ? "selected"
+                : ""
             } ${!item.selected ? "disabled" : ""}`}
             onClick={() =>
               item.selected &&
-              onReturnOptionChange(item.id, "melt_after_return")
+              onReturnOptionChange(item.id, ReturnOption.MeltAfterReturn)
             }
           >
             <FaFire
               style={{
                 color:
-                  item.returnOption === "melt_after_return"
+                  item.returnOption === ReturnOption.MeltAfterReturn
                     ? "#ff6b6b"
                     : "#666",
               }}

@@ -17,20 +17,19 @@ const ProductsSection: React.FC<Props> = ({
   handleRemoveProduct,
   handleManualProductChange,
 }) => {
-  
   const handleQuantityChange = (idx: number, value: string) => {
     // Prevent negative numbers and ensure it's a valid number
     const numValue = Math.max(0, parseInt(value) || 0);
-    
+
     // Ensure quantity doesn't exceed available stock for non-manual products
     if (!products[idx].manual && numValue > products[idx].quantity) {
       return; // Don't update if exceeding available quantity
     }
-    
+
     handleManualProductChange(idx, "quantityForSale", numValue);
   };
 
-  console.log("products",products)
+  console.log("products", products);
 
   return (
     <section className="products-section">
@@ -119,11 +118,18 @@ const ProductsSection: React.FC<Props> = ({
                   onChange={(e) => handleQuantityChange(idx, e.target.value)}
                   style={{ width: "70px" }}
                 />
-                {!product.manual && product.quantityForSale > product.quantity && (
-                  <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-                    Exceeds available stock
-                  </div>
-                )}
+                {!product.manual &&
+                  product.quantityForSale > product.quantity && (
+                    <div
+                      style={{
+                        color: "red",
+                        fontSize: "12px",
+                        marginTop: "4px",
+                      }}
+                    >
+                      Exceeds available stock
+                    </div>
+                  )}
               </td>
               <td>{product.quantity}</td>
               <td>
@@ -196,7 +202,7 @@ const ProductsSection: React.FC<Props> = ({
                   border: "none",
                   cursor: "pointer",
                   fontSize: "2rem",
-                  color: "var(--primary-blue)",
+                  color: "var(--primary)",
                 }}
                 title="Add manual entry"
               >

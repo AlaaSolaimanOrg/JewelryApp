@@ -58,7 +58,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     CardAmount = x.CardAmount,
                     Discount = x.Discount,
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
-                    {
+                    {   Id = i.Id,
                         ProductName = i.Product!.Name!,
                         Sku = i.Product.Sku,
                         Karat = i.KaratType,

@@ -172,14 +172,14 @@ const CustomerSection: React.FC<Props> = ({
           <div className="customer-details">
             <div className="customer-detail">
               <FaUserCircle
-                style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                style={{ marginRight: "8px", color: "var(--primary)" }}
               />
               <span id="customerName">{customer.name}</span>
             </div>
             {customer.email && (
               <div className="customer-detail">
                 <FaEnvelope
-                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                  style={{ marginRight: "8px", color: "var(--primary)" }}
                 />
                 <span id="customerEmail">{customer.email ?? "-"}</span>
               </div>
@@ -187,7 +187,7 @@ const CustomerSection: React.FC<Props> = ({
             {customer.phoneNumber && (
               <div className="customer-detail">
                 <FaPhone
-                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                  style={{ marginRight: "8px", color: "var(--primary)" }}
                 />
                 <span id="customerPhone">{customer.phoneNumber ?? "-"}</span>
               </div>
@@ -195,7 +195,7 @@ const CustomerSection: React.FC<Props> = ({
             {customer.birthday && (
               <div className="customer-detail">
                 <FaBirthdayCake
-                  style={{ marginRight: "8px", color: "var(--primary-blue)" }}
+                  style={{ marginRight: "8px", color: "var(--primary)" }}
                 />
                 <span id="customerBirthday">{customer.birthday ?? "-"}</span>
               </div>

@@ -11,11 +11,11 @@ export const createReturn = async (payload: {
   items: {
     saleItemId: string;
     quantityToReturn: number;
-    reason: ReturnReason;
+    reason: ReturnReason | null;
     reasonNote?: string;
     returnAmount: number;
-    condition: ItemCondition;
-    option: ReturnOption;
+    condition: ItemCondition | null;
+    option: ReturnOption| null;
   }[];
 }) => {
   return requestApi("POST", apiRoutes.returns.createReturn, payload);
