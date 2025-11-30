@@ -24,8 +24,6 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
         {
             var loggedInUser = await _userService.GetLoggedInUser();
 
-            try
-            {
                 //-----------------------------------------------------
                 // 1. VALIDATION
                 //-----------------------------------------------------
@@ -102,11 +100,6 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return GenericResponse<string>.Success(ret.Id.ToString());
-            }
-            catch (Exception ex)
-            {
-                return GenericResponse<string>.InternalError(ex.Message);
-            }
         }
 
 

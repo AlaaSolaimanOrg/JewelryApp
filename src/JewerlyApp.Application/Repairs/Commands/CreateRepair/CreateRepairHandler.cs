@@ -47,7 +47,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             {
                 CustomerId = request.CustomerId,
                 OrderDate = DateOnly.FromDateTime(DateTime.Now),
-                Status = RepairStatus.Received,
+                Status = RepairStatus.InProgress,
                 Notes = request.Notes,
                 Items = repairItems,
                 TotalCost = repairItems.Sum(i => i.SubTotal)

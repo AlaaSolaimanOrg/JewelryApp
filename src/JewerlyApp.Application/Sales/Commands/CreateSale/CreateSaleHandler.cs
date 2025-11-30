@@ -24,122 +24,100 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         {
             var loggedInUser = await _userService.GetLoggedInUser();
 
-            try
+            // -------------------------------
+            // 1. VALIDATE REQUEST
+            // -------------------------------
+            var validationError = await ValidateRequestAsync(request, cancellationToken);
+            if (validationError != null)
+                return validationError;
+
+            // -------------------------------
+            // 2. INSERT MANUAL PRODUCTS FIRST
+            // -------------------------------
+            await AddManualProductsBatch(request.SaleItems, cancellationToken);
+
+            // Now ALL sale items have a valid ProductId
+            var allProductIds = request.SaleItems
+                .Select(i => i.ProductId!.Value)
+                .ToList();
+
+            // -------------------------------
+            // 3. FETCH ALL PRODUCTS IN ONE CALL
+            // -------------------------------
+            var products = await _context.Products
+                .Where(p => allProductIds.Contains(p.Id))
+                .ToDictionaryAsync(p => p.Id, cancellationToken);
+
+            // -------------------------------
+            // 4. PREPARE SALE
+            // -------------------------------
+            var sale = new Sale
             {
-                // -------------------------------
-                // 1. VALIDATE REQUEST
-                // -------------------------------
-                var validationError = await ValidateRequestAsync(request, cancellationToken);
-                if (validationError != null)
-                    return validationError;
+                Id = Guid.NewGuid(),
+                SerialNumber = await GenerateSaleSerialNumber(),
+                CustomerId = request.CustomerId,
+                Discount = request.Discount,
+                DiscountPercentage = request.DiscountPercentage,
+                DiscountType = request.DiscountType,
+                Note = request.Note,
+                CashAmount = request.CashAmount,
+                CardAmount = request.CardAmount,
+                CreatedDate = DateTime.UtcNow,
+                SaleItems = new List<SaleItem>()
+            };
 
-                // -------------------------------
-                // 2. INSERT MANUAL PRODUCTS FIRST
-                // -------------------------------
-                await AddManualProductsBatch(request.SaleItems, cancellationToken);
+            decimal subTotal = 0;
 
-                // Now ALL sale items have a valid ProductId
-                var allProductIds = request.SaleItems
-                    .Select(i => i.ProductId!.Value)
-                    .ToList();
+            // -------------------------------
+            // 5. PROCESS SALE ITEMS
+            // -------------------------------
+            foreach (var item in request.SaleItems)
+            {
+                var productId = item.ProductId!.Value;
 
-                // -------------------------------
-                // 3. FETCH ALL PRODUCTS IN ONE CALL
-                // -------------------------------
-                var products = await _context.Products
-                    .Where(p => allProductIds.Contains(p.Id))
-                    .ToDictionaryAsync(p => p.Id, cancellationToken);
-
-                // -------------------------------
-                // 4. PREPARE SALE
-                // -------------------------------
-                var sale = new Sale
-                {
-                    Id = Guid.NewGuid(),
-                    SerialNumber = await GenerateSaleSerialNumber(),
-                    CustomerId = request.CustomerId,
-                    Discount = request.Discount,
-                    DiscountPercentage = request.DiscountPercentage,
-                    DiscountType = request.DiscountType,
-                    Note = request.Note,
-                    CashAmount = request.CashAmount,
-                    CardAmount = request.CardAmount,
-                    CreatedDate = DateTime.UtcNow,
-                    SaleItems = new List<SaleItem>()
-                };
-
-                decimal subTotal = 0;
-
-                // -------------------------------
-                // 5. PROCESS SALE ITEMS
-                // -------------------------------
-                foreach (var item in request.SaleItems)
-                {
-                    var productId = item.ProductId!.Value;
-
-                    if (!products.TryGetValue(productId, out var product))
-                        return new GenericResponse<string>
-                        {
-                            Data = null,
-                            StatusCode = ResponseStatusCode.BadRequest,
-                            Message = Messages.Errror_Product_Not_Found(item.ProductName),
-                        };
-
-                    var saleItem = CreateSaleItem(sale.Id, product, item);
-                    UpdateProductStock(product, item);
-
-                    subTotal += saleItem.SubTotal;
-                    sale.SaleItems.Add(saleItem);
-                }
-
-                // -------------------------------
-                // 6. CALCULATE TOTALS
-                // -------------------------------
-                sale.SubTotal = subTotal;
-                sale.Total = CalculateFinalTotal(sale);
-
-                if (!ValidatePaymentAmounts(sale))
-                {
+                if (!products.TryGetValue(productId, out var product))
                     return new GenericResponse<string>
                     {
                         Data = null,
                         StatusCode = ResponseStatusCode.BadRequest,
-                        Message = Messages.Error_Payments_Dont_Match,
+                        Message = Messages.Errror_Product_Not_Found(item.ProductName),
                     };
-                }
 
-                // -------------------------------
-                // 7. SAVE SALE
-                // -------------------------------
-                _context.Sales.Add(sale);
-                await _context.SaveChangesAsync(cancellationToken);
+                var saleItem = CreateSaleItem(sale.Id, product, item);
+                UpdateProductStock(product, item);
 
-                return new GenericResponse<string>
-                {
-                    Data = sale.Id.ToString(),
-                    StatusCode = ResponseStatusCode.Created,
-                    Message = Messages.Success
-                };
+                subTotal += saleItem.SubTotal;
+                sale.SaleItems.Add(saleItem);
             }
-            catch (Exception ex)
-            {
-                await Logger.LogErrorAsync(
-                    context: _context,
-                    handlerName: nameof(CreateSaleHandler),
-                    message: "Failed to create sale",
-                    exception: ex,
-                    content: new { Request = request },
-                    userId: loggedInUser.Id,
-                    cancellationToken
-                );
 
+            // -------------------------------
+            // 6. CALCULATE TOTALS
+            // -------------------------------
+            sale.SubTotal = subTotal;
+            sale.Total = CalculateFinalTotal(sale);
+
+            if (!ValidatePaymentAmounts(sale))
+            {
                 return new GenericResponse<string>
                 {
                     Data = null,
-                    StatusCode = ResponseStatusCode.InternalServerError,
-                    Message = ex.Message
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Payments_Dont_Match,
                 };
             }
+
+            // -------------------------------
+            // 7. SAVE SALE
+            // -------------------------------
+            _context.Sales.Add(sale);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return new GenericResponse<string>
+            {
+                Data = sale.Id.ToString(),
+                StatusCode = ResponseStatusCode.Created,
+                Message = Messages.Success
+            };
         }
 
 

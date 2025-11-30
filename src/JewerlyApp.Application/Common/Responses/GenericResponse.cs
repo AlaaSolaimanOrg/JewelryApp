@@ -14,7 +14,7 @@ namespace JewerlyApp.Application.Common.Responses
         public T? Data { get; set; }
         public List<string>? Errors { get; set; }
 
-        public static GenericResponse<T> Success(T data, string message = "Success")
+        public static GenericResponse<T> Success(T? data, string message = "Success")
         {
             return new GenericResponse<T>
             {

@@ -19,7 +19,8 @@ namespace JewerlyApp.Application.Common.Helpers
             Exception exception,
             object? content,
             int userId,
-            CancellationToken cancellationToken)
+            string? correlationId = null,
+            CancellationToken cancellationToken = default)
         {
             var log = new Log
             {
@@ -34,6 +35,7 @@ namespace JewerlyApp.Application.Common.Helpers
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 }) : null,
                 LoggedInUserId = userId,
+                CorrelationId = correlationId,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -48,7 +50,8 @@ namespace JewerlyApp.Application.Common.Helpers
             string message,
             object? content,
             int userId,
-            CancellationToken cancellationToken)
+            string? correlationId = null,
+            CancellationToken cancellationToken = default)
         {
             var log = new Log
             {
@@ -62,6 +65,7 @@ namespace JewerlyApp.Application.Common.Helpers
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 }) : null,
                 LoggedInUserId = userId,
+                CorrelationId = correlationId,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -76,9 +80,10 @@ namespace JewerlyApp.Application.Common.Helpers
             string handlerName,
             Exception exception,
             int userId,
-            CancellationToken cancellationToken)
+            string? correlationId = null,
+            CancellationToken cancellationToken = default)
         {
-            return await LogErrorAsync(context, handlerName, exception.Message, exception, null, userId, cancellationToken);
+            return await LogErrorAsync(context, handlerName, exception.Message, exception, null, userId, correlationId, cancellationToken);
         }
     }
 }
