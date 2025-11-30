@@ -19,9 +19,9 @@ import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
 import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
 import TransactionDetails from "./TransactionDetails/TransactionDetails";
 
+import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import ReturnHeader from "./ReturnHeader/ReturnHeader";
 import "./ReturnPage.scss";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
 export interface TransactionItem {
   id: string;

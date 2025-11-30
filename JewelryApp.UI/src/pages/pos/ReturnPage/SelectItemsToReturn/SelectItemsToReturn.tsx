@@ -9,7 +9,6 @@ import {
   FaSmile,
   FaWarehouse,
 } from "react-icons/fa";
-import "./selectItemsToReturn.scss";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
 import {
   ItemCondition,
@@ -17,6 +16,7 @@ import {
   ReturnReason,
 } from "../../../../types/enums";
 import type { TransactionItem } from "../ReturnPage";
+import "./selectItemsToReturn.scss";
 
 interface SelectItemsToReturnProps {
   items: TransactionItem[];
