@@ -67,30 +67,6 @@
   align-items: center;
 }
 
-.status-badge {
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-completed {
-  background-color: #e7f7ef;
-  color: #1ea97c;
-}
-
-.status-refunded {
-  background-color: #fff2e8;
-  color: #ff8b36;
-}
-
-.status-pending {
-  background-color: #fff8e1;
-  color: #ffb300;
-}
-
 .transaction-meta {
   display: flex;
   gap: 20px;

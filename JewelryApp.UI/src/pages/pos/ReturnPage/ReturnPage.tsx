@@ -380,7 +380,6 @@ const ReturnPage: React.FC = () => {
           <TransactionDetails
             saleId={saleDetails.id}
             receiptNumber={saleDetails.serialNumber}
-            status="Completed"
             date={formattedDate}
             time={formattedTime}
             employee={saleDetails.staffName}

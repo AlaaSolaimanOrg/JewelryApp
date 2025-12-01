@@ -59,11 +59,11 @@ export enum CustomerFilter {
 }
 
 export enum ReturnReason {
-    NotAsExpected = 1,
-    WrongSize = 2,
-    Defective = 3,
-    GiftReturn = 4,
-    Other = 99
+  NotAsExpected = 1,
+  WrongSize = 2,
+  Defective = 3,
+  GiftReturn = 4,
+  Other = 99,
 }
 
 export enum ItemCondition {
@@ -91,9 +91,7 @@ export enum RepairType {
 }
 
 export enum RepairStatus {
-  Received,
   InProgress,
-  Ready,
   Completed,
   PickedUp,
 }

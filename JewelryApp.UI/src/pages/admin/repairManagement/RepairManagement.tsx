@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FaList } from "react-icons/fa";
 import "./repairManagement.scss";
 
@@ -97,17 +97,9 @@ const RepairManagement: React.FC = () => {
     RepairStatus,
     { label: string; className: string; actionText?: string }
   > = {
-    [RepairStatus.Received]: {
-      label: "Received",
-      className: "status-badge received",
-    },
     [RepairStatus.InProgress]: {
       label: "In Progress",
       className: "status-badge pending",
-    },
-    [RepairStatus.Ready]: {
-      label: "Ready",
-      className: "status-badge ready",
     },
     [RepairStatus.Completed]: {
       label: "Completed",
@@ -148,14 +140,8 @@ const RepairManagement: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value={""}>All Statuses</option>
-            <option value={RepairStatus.Received}>
-              {splitCamelCaseWords(RepairStatus[RepairStatus.Received])}
-            </option>
             <option value={RepairStatus.InProgress}>
               {splitCamelCaseWords(RepairStatus[RepairStatus.InProgress])}
-            </option>
-            <option value={RepairStatus.Ready}>
-              {splitCamelCaseWords(RepairStatus[RepairStatus.Ready])}
             </option>
             <option value={RepairStatus.Completed}>
               {splitCamelCaseWords(RepairStatus[RepairStatus.Completed])}

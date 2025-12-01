@@ -1,15 +1,15 @@
 import React from "react";
 import {
-    FaCalendarAlt,
-    FaClock,
-    FaCreditCard,
-    FaDollarSign,
-    FaEye,
-    FaMoneyBillWave,
-    FaPhone,
-    FaReceipt,
-    FaUser,
-    FaUserCircle
+  FaCalendarAlt,
+  FaClock,
+  FaCreditCard,
+  FaDollarSign,
+  FaEye,
+  FaMoneyBillWave,
+  FaPhone,
+  FaReceipt,
+  FaUser,
+  FaUserCircle,
 } from "react-icons/fa";
 import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
 import "./transactionDetails.scss";
@@ -36,7 +36,6 @@ interface TransactionDetailsProps {
 const TransactionDetails: React.FC<TransactionDetailsProps> = ({
   saleId,
   receiptNumber,
-  status,
   date,
   time,
   employee,
@@ -46,19 +45,6 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
   paymentMethods,
   onViewDetails,
 }) => {
-  const getStatusBadgeClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "completed":
-        return "status-badge status-completed";
-      case "refunded":
-        return "status-badge status-refunded";
-      case "pending":
-        return "status-badge status-pending";
-      default:
-        return "status-badge status-completed";
-    }
-  };
-
   return (
     <section className="transaction-details-section">
       <h2 className="section-title">
@@ -68,9 +54,6 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
         <div className="transaction-header">
           <div className="transaction-id">
             Receipt #: <span>{receiptNumber}</span>
-          </div>
-          <div className="transaction-status">
-            <span className={getStatusBadgeClass(status)}>{status}</span>
           </div>
         </div>
         <div className="transaction-meta">
