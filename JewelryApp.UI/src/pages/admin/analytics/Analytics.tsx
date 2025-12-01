@@ -34,6 +34,7 @@ import {
   getSalesOverTime,
   getStaffPerformance,
 } from "../../../apis/analytics.api/analytics.api";
+import { LuChartSpline } from "react-icons/lu";
 
 export interface SalesByCategoryItem {
   categoryName: string;
@@ -53,6 +54,7 @@ export interface StaffPerformanceItem {
   salesAmount: number;
   commission: number;
 }
+
 ChartJS.register(
   LineElement,
   PointElement,
@@ -118,41 +120,9 @@ const Analytics = () => {
   }, []);
 
   /* ----------------------------------------------
-        SALES OVER TIME (STATIC DEMO)
+      REVENUE LINE DATA (WITHOUT UNITS SOLD)
   ---------------------------------------------- */
-  // const salesOverTimeData = {
-  //   labels: [
-  //     "Oct 1",
-  //     "Oct 5",
-  //     "Oct 10",
-  //     "Oct 15",
-  //     "Oct 20",
-  //     "Oct 25",
-  //     "Oct 30",
-  //   ],
-  //   datasets: [
-  //     {
-  //       label: "Revenue ($)",
-  //       data: [12500, 13200, 14100, 14800, 15600, 16400, 17200],
-  //       borderColor: "#D4AF37",
-  //       backgroundColor: "rgba(212,175,55,0.1)",
-  //       borderWidth: 2,
-  //       tension: 0.4,
-  //       fill: true,
-  //     },
-  //     {
-  //       label: "Units Sold",
-  //       data: [45, 52, 48, 55, 58, 62, 65],
-  //       borderColor: "#6C757D",
-  //       backgroundColor: "rgba(108,117,125,0.1)",
-  //       borderWidth: 2,
-  //       tension: 0.4,
-  //       fill: true,
-  //     },
-  //   ],
-  // };
-
-  const salesOverTimeData =
+  const revenueLineData =
     salesOverTime && salesOverTime.length > 0
       ? {
           labels: salesOverTime.map((d) => d.dateLabel),
@@ -166,21 +136,30 @@ const Analytics = () => {
               tension: 0.4,
               fill: true,
             },
+          ],
+        }
+      : { labels: [], datasets: [] };
+
+  /* ----------------------------------------------
+      NEW SEPARATE UNITS SOLD LINE CHART
+  ---------------------------------------------- */
+  const unitsSoldLineData =
+    salesOverTime && salesOverTime.length > 0
+      ? {
+          labels: salesOverTime.map((d) => d.dateLabel),
+          datasets: [
             {
               label: "Units Sold",
               data: salesOverTime.map((d) => d.unitsSold),
-              borderColor: "#6C757D",
-              backgroundColor: "rgba(108,117,125,0.1)",
+              borderColor: "#1a3a5f",
+              backgroundColor: "rgba(26,58,95,0.15)",
               borderWidth: 2,
               tension: 0.4,
               fill: true,
             },
           ],
         }
-      : {
-          labels: [],
-          datasets: [],
-        };
+      : { labels: [], datasets: [] };
 
   const lineOptions = {
     responsive: true,
@@ -193,9 +172,8 @@ const Analytics = () => {
   };
 
   /* ----------------------------------------------
-        SALES BY CATEGORY (STATIC DEMO)
+      SALES BY CATEGORY
   ---------------------------------------------- */
-
   const salesByCategoryData = salesByCategory
     ? {
         labels: salesByCategory.map((c) => c.categoryName),
@@ -215,10 +193,7 @@ const Analytics = () => {
           },
         ],
       }
-    : {
-        labels: [],
-        datasets: [],
-      };
+    : { labels: [], datasets: [] };
 
   const doughnutOptions = {
     responsive: true,
@@ -230,7 +205,7 @@ const Analytics = () => {
   };
 
   /* ----------------------------------------------
-        STAFF PERFORMANCE (STATIC DEMO)
+      STAFF PERFORMANCE
   ---------------------------------------------- */
   const staffPerformanceData =
     staffPerformance && staffPerformance.length > 0
@@ -251,10 +226,7 @@ const Analytics = () => {
             },
           ],
         }
-      : {
-          labels: [],
-          datasets: [],
-        };
+      : { labels: [], datasets: [] };
 
   const barOptions = {
     responsive: true,
@@ -367,20 +339,20 @@ const Analytics = () => {
 
       {/* CHART GRID */}
       <div className="analytics-grid">
-        {/* SALES OVER TIME */}
+        {/* SALES OVER TIME (REVENUE) */}
         <div className="analytics-card">
           <div className="analytics-header">
             <h3 className="analytics-title">
               <span className="icon-circle">
                 <FaChartLine />
               </span>
-              Sales Over Time
+              Revenue Over Time
             </h3>
 
             {!!salesOverTime.length && (
               <button
                 className="btn btn-outline btn-small"
-                onClick={() => openFullView("sales_over_time")}
+                onClick={() => openFullView("revenue")}
               >
                 <FaExpand />
               </button>
@@ -389,7 +361,39 @@ const Analytics = () => {
 
           <div className="chart-container">
             {salesOverTime && salesOverTime.length > 0 ? (
-              <Line data={salesOverTimeData} options={lineOptions} />
+              <Line data={revenueLineData} options={lineOptions} />
+            ) : (
+              <div className="no-data">
+                <FaChartLine />
+                No data available
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* UNITS SOLD OVER TIME — NEW CARD */}
+        <div className="analytics-card">
+          <div className="analytics-header">
+            <h3 className="analytics-title">
+              <span className="icon-circle">
+                <LuChartSpline />
+              </span>
+              Units Sold Over Time
+            </h3>
+
+            {!!salesOverTime.length && (
+              <button
+                className="btn btn-outline btn-small"
+                onClick={() => openFullView("units_sold")}
+              >
+                <FaExpand />
+              </button>
+            )}
+          </div>
+
+          <div className="chart-container">
+            {salesOverTime && salesOverTime.length > 0 ? (
+              <Line data={unitsSoldLineData} options={lineOptions} />
             ) : (
               <div className="no-data">
                 <FaChartLine />
@@ -463,13 +467,13 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* NEW SUMMARY COMPONENT */}
+      {/* SUMMARY CARDS */}
       <AnalyticsSummary
         appliedFilters={appliedFilters}
         refreshKey={refreshKey}
       />
 
-      {/* FULL VIEW MODAL */}
+      {/* FULLSCREEN COMPONENT */}
       {fullViewChart && (
         <div className="fullscreen-overlay" onClick={closeFullView}>
           <div
@@ -481,15 +485,21 @@ const Analytics = () => {
             </button>
 
             <div className="fullscreen-chart-container">
-              {fullViewChart === "sales_over_time" && (
-                <Line data={salesOverTimeData} options={lineOptions} />
+              {fullViewChart === "revenue" && (
+                <Line data={revenueLineData} options={lineOptions} />
               )}
+
+              {fullViewChart === "units_sold" && (
+                <Line data={unitsSoldLineData} options={lineOptions} />
+              )}
+
               {fullViewChart === "sales_by_category" && (
                 <Doughnut
                   data={salesByCategoryData}
                   options={doughnutOptions}
                 />
               )}
+
               {fullViewChart === "staff_performance" && (
                 <Bar data={staffPerformanceData} options={barOptions} />
               )}
