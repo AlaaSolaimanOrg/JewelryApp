@@ -26,17 +26,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 
         public async Task<GenericResponse<string>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var nfcIdExists = await _context.Products.AnyAsync(x => x.NFCId == request.NFCId, cancellationToken);
-
-            if (nfcIdExists)
-            {
-                return new GenericResponse<string>
-                {
-                    Data = null,
-                    Message = Messages.ErrorInvalidNfcId,
-                    StatusCode = ResponseStatusCode.BadRequest,
-                };
-            }
+            
 
             var productId = Guid.NewGuid();
 
@@ -46,7 +36,6 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Name = request.Name,
                 KaratType = request.KaratType,
                 Sku = request.Sku,
-                NFCId = request.NFCId,
                 Weight = request.Weight,
                 Category = request.Category,
                 Type = request.Type,

@@ -7,7 +7,7 @@ import React, {
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
 import { MdError } from "react-icons/md";
-import { getProductsByNfcIds } from "../../../apis/products.api/products.api";
+import { getProductsBySkus } from "../../../apis/products.api/products.api";
 import { renderTooltip } from "../../../utils";
 import "./scanModal.scss";
 
@@ -17,7 +17,7 @@ interface ScanModalProps {
   setProducts: Dispatch<SetStateAction<any>>;
   products: any[];
   scanOnly?: boolean;
-  setScannedNfcIds?: Dispatch<SetStateAction<any>>;
+  setScannedSkus?: Dispatch<SetStateAction<any>>;
 }
 
 const ScanModal: React.FC<ScanModalProps> = ({
@@ -26,7 +26,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
   products,
   setProducts,
   scanOnly = false,
-  setScannedNfcIds,
+  setScannedSkus,
 }) => {
   const handleClearAll = () => {
     setScannedItems([]);
@@ -35,47 +35,46 @@ const ScanModal: React.FC<ScanModalProps> = ({
   const [scannedItems, setScannedItems] = useState<string[]>([]);
   const [validationErrors, setValidationErrors] = useState<any>([]);
 
-  // Simulate NFC scan (replace with actual NFC reader logic)
   const handleScanInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const addedNfcId = scanInput.trim();
-    const checkListHasAddedNfcId = scannedItems.some(
-      (scannedItem) => scannedItem == addedNfcId
+    const addedSku = scanInput.trim();
+    const checkListHasAddedSku = scannedItems.some(
+      (scannedItem) => scannedItem == addedSku
     );
 
-    if (e.key === "Enter" && addedNfcId !== "") {
-      if (checkListHasAddedNfcId) {
+    if (e.key === "Enter" && addedSku !== "") {
+      if (checkListHasAddedSku) {
         setScanInput("");
         return;
       }
       setValidationErrors([]);
-      setScannedItems([...scannedItems, addedNfcId]);
+      setScannedItems([...scannedItems, addedSku]);
       setScanInput("");
     }
   };
 
-  const handleRemove = (nfcId: string) => {
+  const handleRemove = (sku: string) => {
     setScannedItems(
-      scannedItems.filter((scannedItem) => scannedItem !== nfcId)
+      scannedItems.filter((scannedItem) => scannedItem !== sku)
     );
   };
 
   // Helper function for validation
-  function validateProducts(nfcIds: string[], fetchedProducts: any[]) {
+  function validateProducts(skus: string[], fetchedProducts: any[]) {
     const productsWithNoQuantity = fetchedProducts.filter(
       (product) => !product.quantity || product.quantity <= 0
     );
 
-    const nonExistentNfcIds = nfcIds.filter(
-      (nfcId) => !fetchedProducts.some((product) => product.nfcId === nfcId)
+    const nonExistentSkus = skus.filter(
+      (sku) => !fetchedProducts.some((product) => product.sku === sku)
     );
 
     const quantityErrors = productsWithNoQuantity.map((product) => ({
-      nfcId: product.nfcId,
+      sku: product.sku,
       errorMessage: "This product has no quantity",
     }));
 
-    const notFoundErrors = nonExistentNfcIds.map((nfcId) => ({
-      nfcId,
+    const notFoundErrors = nonExistentSkus.map((sku) => ({
+      sku,
       errorMessage: "Product not found",
     }));
 
@@ -83,11 +82,11 @@ const ScanModal: React.FC<ScanModalProps> = ({
     return allErrors;
   }
 
-  async function getProductsByNfcIdsApi(nfcIds: string[]): Promise<void> {
-    const response = await getProductsByNfcIds({ nfcIds });
+  async function getProductsBySkusApi(skus: string[]): Promise<void> {
+    const response = await getProductsBySkus({ skus });
     const fetchedProducts = response?.data || [];
 
-    const newValidationErrors = validateProducts(nfcIds, fetchedProducts);
+    const newValidationErrors = validateProducts(skus, fetchedProducts);
 
     if (newValidationErrors.length && !validationErrors.length) {
       setValidationErrors(newValidationErrors);
@@ -100,9 +99,9 @@ const ScanModal: React.FC<ScanModalProps> = ({
       quantityForSale: 1,
     }));
 
-    const existingNfcIds = products.map((p) => p.nfcId);
+    const existingSkus = products.map((p) => p.sku);
     const newProducts = updatedFetchedProducts
-      .filter((p) => !existingNfcIds.includes(p.nfcId) && p.quantity > 0)
+      .filter((p) => !existingSkus.includes(p.sku) && p.quantity > 0)
       .map((p) => ({ ...p, manual: false }));
 
     const updatedProducts = [...products, ...newProducts];
@@ -117,8 +116,8 @@ const ScanModal: React.FC<ScanModalProps> = ({
   }
 
   const saveFilters = () => {
-    if (setScannedNfcIds) {
-      setScannedNfcIds(scannedItems);
+    if (setScannedSkus) {
+      setScannedSkus(scannedItems);
       onClose();
     }
   };
@@ -133,7 +132,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
   return (
     <Modal show={show} onHide={onClose} centered className="scan-modal">
       <Modal.Header closeButton>
-        <Modal.Title>NFC Scan</Modal.Title>
+        <Modal.Title>SKU Scan</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="scan-section">
@@ -141,7 +140,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
             <input
               type="text"
               className="scan-input"
-              placeholder="Scan NFC or enter code..."
+              placeholder="Scan SKU or enter code..."
               value={scanInput}
               onChange={(e) => setScanInput(e.target.value)}
               onKeyUp={handleScanInput}
@@ -165,13 +164,13 @@ const ScanModal: React.FC<ScanModalProps> = ({
               </div>
             ) : (
               <>
-                <div className="nfc-list-header">
-                  <span className="item-title">Nfc Id</span>
+                <div className="sku-list-header">
+                  <span className="item-title">Sku Id</span>
                 </div>
 
                 {scannedItems.map((scannedItem, idx) => {
                   const error = validationErrors.find(
-                    (error: any) => error.nfcId === scannedItem
+                    (error: any) => error.sku === scannedItem
                   );
 
                   return (
@@ -229,7 +228,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
             if (scanOnly) {
               saveFilters();
             } else {
-              getProductsByNfcIdsApi(scannedItems);
+              getProductsBySkusApi(scannedItems);
             }
           }}
         >

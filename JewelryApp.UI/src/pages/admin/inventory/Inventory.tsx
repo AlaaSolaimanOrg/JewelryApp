@@ -37,7 +37,6 @@ export interface Product {
   name?: string;
   karatType: KaratType;
   weight: number;
-  nfcId: string;
   category: ProductCategory;
   productType: ProductType;
   description?: string;
@@ -51,7 +50,7 @@ export interface Product {
 const Inventory = () => {
   const navigate = useNavigate();
 
-  const [scannedNfcIds, setScannedNfcIds] = useState([]);
+  const [scannedSkus, setScannedSkus] = useState([]);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
 
@@ -83,7 +82,7 @@ const Inventory = () => {
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
-      nfcIds: scannedNfcIds,
+      skus: scannedSkus,
       karatTypeFilter: appliedFilters?.karatTypes,
       weightFromFilter: appliedFilters?.weightFrom,
       weightToFilter: appliedFilters?.weightTo,
@@ -91,7 +90,7 @@ const Inventory = () => {
       priceToFilter: appliedFilters?.priceTo,
       productCategoryFilter: appliedFilters?.category,
     },
-    extraEffectDependency: [appliedFilters, scannedNfcIds],
+    extraEffectDependency: [appliedFilters, scannedSkus],
   });
 
   const headers: TableHeader[] = [
@@ -126,14 +125,7 @@ const Inventory = () => {
         handleSort("sku", sortCriteria, onSortChange);
       },
     },
-    {
-      key: "nfcId",
-      label: "NFC Id",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("nfcId", sortCriteria, onSortChange);
-      },
-    },
+
     {
       key: "karat",
       label: "Karat",
@@ -183,7 +175,6 @@ const Inventory = () => {
     Price: product.price,
     ProductName: renderLongDescription(product.name, 14),
     SKU: product.sku,
-    nfcId: product.nfcId,
     Karat: `${product.karatType}K`,
     Weight: `${product.weight}g`,
     Category: ProductCategory[product.category],
@@ -284,11 +275,11 @@ const Inventory = () => {
                         />
                       </div>
 
-                      {scannedNfcIds.length ? (
+                      {scannedSkus.length ? (
                         <button
                           className="scan-btn flex-shrink-0"
                           onClick={() => {
-                            setScannedNfcIds([]);
+                            setScannedSkus([]);
                           }}
                         >
                           Reset Scanner
@@ -327,7 +318,7 @@ const Inventory = () => {
         products={products}
         setProducts={() => {}}
         scanOnly
-        setScannedNfcIds={setScannedNfcIds}
+        setScannedSkus={setScannedSkus}
       />
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>

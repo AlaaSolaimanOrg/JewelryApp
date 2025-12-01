@@ -8,21 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
 {
-    public class GetProductsByNfcIdsHandler : IRequestHandler<GetProductsByNfcIdsQuery, GenericResponse<List<GetProductsVM>>>
+    public class GetProductsBySkusHandler : IRequestHandler<GetProductsBySkusQuery, GenericResponse<List<GetProductsVM>>>
     {
         private readonly IApplicationDbContext _context;
 
-        public GetProductsByNfcIdsHandler(IApplicationDbContext context)
+        public GetProductsBySkusHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<GenericResponse<List<GetProductsVM>>> Handle(GetProductsByNfcIdsQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<List<GetProductsVM>>> Handle(GetProductsBySkusQuery request, CancellationToken cancellationToken)
         {
             var productQuery = _context.Products.AsNoTracking()
                 .Include(p => p.Images)
                 .Where(x =>
-                    request.NFCIds.Contains(x.NFCId!)
+                    request.SKUs.Contains(x.Sku!)
                 );
 
 
@@ -65,7 +65,6 @@ namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
                     Description = product.Description,
                     PricePerGram = pricePerGram,
                     Price = product.Weight * pricePerGram,
-                    NFCId = product.NFCId,
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,

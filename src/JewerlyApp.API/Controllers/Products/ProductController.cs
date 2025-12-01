@@ -81,7 +81,7 @@ namespace JewerlyApp.API.Controllers.Products
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetProductsByNfcIds([FromQuery] GetProductsByNfcIdsQuery query)
+        public async Task<IActionResult> GetProductsBySkus([FromQuery] GetProductsBySkusQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

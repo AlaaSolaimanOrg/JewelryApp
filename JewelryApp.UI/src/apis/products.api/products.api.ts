@@ -35,6 +35,6 @@ export const deleteProduct = async (payload: { id: string }) => {
   return requestApi("DELETE", apiRoutes.product.deleteProduct, payload);
 };
 
-export const getProductsByNfcIds = async (payload: { nfcIds: string[] }) => {
-  return requestApi("GET", apiRoutes.product.getProductsByNfcIds, payload);
+export const getProductsBySkus = async (payload: { skus: string[] }) => {
+  return requestApi("GET", apiRoutes.product.getProductsBySkus, payload);
 };

@@ -108,25 +108,36 @@
   ============================= */
   .status-badge {
     display: inline-block;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
+    text-align: center;
+    min-width: 90px;
+  }
 
-    &.status-pending {
-      background: rgba(255, 167, 38, 0.1);
-      color: #ffa726;
-    }
+  .status-badge.received {
+    background: #fff9db;
+    color: #d69e00;
+  }
+  .status-badge.pending {
+    background: #fff4e6;
+    color: #ff9800;
+  }
 
-    &.status-completed {
-      background: rgba(102, 187, 106, 0.1);
-      color: #66bb6a;
-    }
+  .status-badge.completed {
+    background: #e6f7ec;
+    color: #4caf50;
+  }
 
-    &.status-pickedup {
-      background: rgba(66, 165, 245, 0.1);
-      color: #42a5f5;
-    }
+  .status-badge.pickedup {
+    background: #e8f1ff;
+    color: #2196f3;
+  }
+
+  .status-badge.ready {
+    background: #f0e8ff;
+    color: #7a42f5;
   }
 
   @media (max-width: 768px) {

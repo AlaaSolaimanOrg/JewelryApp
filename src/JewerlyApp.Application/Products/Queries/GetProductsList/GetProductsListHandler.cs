@@ -32,9 +32,9 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     (request.ProductCategoryFilter == null || x.Category == request.ProductCategoryFilter)
                 );
 
-            if(request.NFCIds != null && request.NFCIds.Any())
+            if(request.SKUs != null && request.SKUs.Any())
             {
-                productQuery = productQuery.Where(p => request.NFCIds.Contains(p.NFCId!));
+                productQuery = productQuery.Where(p => request.SKUs.Contains(p.Sku!));
             }
 
             if (request.KaratTypeFilter.Any())
@@ -114,7 +114,6 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Quantity = product.Quantity,
                     KaratType = product.KaratType,
                     Weight = product.Weight,
-                    NFCId = product.NFCId,
                     Category = product.Category,
                     ProductType = product.Type,
                     Description = product.Description,

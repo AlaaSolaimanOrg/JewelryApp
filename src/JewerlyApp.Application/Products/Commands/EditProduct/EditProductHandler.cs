@@ -40,7 +40,6 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             }
 
             product.Sku = request.Sku;
-            product.NFCId = request.NFCId;
             product.Name = request.Name;
             product.KaratType = request.KaratType;
             product.Weight = request.Weight;

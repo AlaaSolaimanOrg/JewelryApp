@@ -66,14 +66,6 @@ const RepairManagement: React.FC = () => {
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
-  const getStatusClass = (status: RepairStatus): string => {
-    if (status === RepairStatus.InProgress)
-      return "status-badge status-pending";
-    if (status === RepairStatus.Completed)
-      return "status-badge status-completed";
-    return "status-badge status-pickedup";
-  };
-
   // TABLE COLUMNS — identical to old visuals
   const columns: Column<Repair>[] = [
     { label: "Repair ID", accessor: "id" },
@@ -84,16 +76,52 @@ const RepairManagement: React.FC = () => {
     },
     {
       label: "Status",
-      render: (row) => (
-        <span className={getStatusClass(row.status)}>{row.status}</span>
-      ),
+      render: (row) => {
+        const { label, className } = getRepairStatusInfo(row.status);
+        return <span className={className}>{label}</span>;
+      },
     },
     {
       label: "Total",
       render: (row) => formatCurrency(row.totalCost),
     },
-    { label: "Repair Status", render: (row) => <button>{row.status}</button> },
+    {
+      label: "Actions",
+      render: (row) => {
+        return <button className="status-action-btn">{row.status}</button>;
+      },
+    },
   ];
+
+  const REPAIR_STATUS_UI: Record<
+    RepairStatus,
+    { label: string; className: string; actionText?: string }
+  > = {
+    [RepairStatus.Received]: {
+      label: "Received",
+      className: "status-badge received",
+    },
+    [RepairStatus.InProgress]: {
+      label: "In Progress",
+      className: "status-badge pending",
+    },
+    [RepairStatus.Ready]: {
+      label: "Ready",
+      className: "status-badge ready",
+    },
+    [RepairStatus.Completed]: {
+      label: "Completed",
+      className: "status-badge completed",
+    },
+    [RepairStatus.PickedUp]: {
+      label: "Picked Up",
+      className: "status-badge pickedup",
+    },
+  };
+
+  const getRepairStatusInfo = (status: RepairStatus) => {
+    return REPAIR_STATUS_UI[status];
+  };
 
   return (
     <div className="repair-management-page">
@@ -143,38 +171,19 @@ const RepairManagement: React.FC = () => {
             onChange={(e) => setTypeFilter(e.target.value)}
           >
             <option value={""}>All Repair Types</option>
-            <option value={RepairType.AddGold}>
-              {splitCamelCaseWords(RepairType[RepairType.AddGold])}
-            </option>
-            <option value={RepairType.Resize}>
-              {splitCamelCaseWords(RepairType[RepairType.Resize])}
-            </option>
-            <option value={RepairType.Solder}>
-              {splitCamelCaseWords(RepairType[RepairType.Solder])}
-            </option>
+            <option value={RepairType.AddGold}>Add Gold</option>
+            <option value={RepairType.Resize}>Resize</option>
+            <option value={RepairType.Solder}>Solder</option>
             <option value={RepairType.StoneReplacement}>
-              {splitCamelCaseWords(RepairType[RepairType.StoneReplacement])}
+              Stone Replacement
             </option>
-            <option value={RepairType.StoneTightening}>
-              {splitCamelCaseWords(RepairType[RepairType.StoneTightening])}
-            </option>
-            <option value={RepairType.Polishing}>
-              {splitCamelCaseWords(RepairType[RepairType.Polishing])}
-            </option>
-            <option value={RepairType.Cleaning}>
-              {splitCamelCaseWords(RepairType[RepairType.Cleaning])}
-            </option>
-            <option value={RepairType.Plating}>
-              {splitCamelCaseWords(RepairType[RepairType.Plating])}
-            </option>
-            <option value={RepairType.Engraving}>
-              {splitCamelCaseWords(RepairType[RepairType.Engraving])}
-            </option>
+            <option value={RepairType.StoneTightening}>Stone Tightening</option>
+            <option value={RepairType.Polishing}>Polishing</option>
+            <option value={RepairType.Cleaning}>Cleaning</option>
+            <option value={RepairType.Plating}>Plating</option>
+            <option value={RepairType.Engraving}>Engraving</option>
             <option value={RepairType.FixOrChangeLock}>
-              {splitCamelCaseWords(RepairType[RepairType.FixOrChangeLock])}
-            </option>
-            <option value={RepairType.AddGold}>
-              {splitCamelCaseWords(RepairType[RepairType.AddGold])}
+              Fix Or Change Lock
             </option>
           </select>
         </div>

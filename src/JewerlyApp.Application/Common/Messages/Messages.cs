@@ -92,7 +92,6 @@
         public const string Error_Customer_Data_Exists = "A Customer with the following data already exists.";
         public const string Error_Customer_Not_Found = "Customer Not Found.";
         public const string Error_Purchase_Not_Found = "No Purchase Found For This Customer.";
-        public const string ErrorInvalidNfcId = "Invalid Nfc Id";
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
         public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
         public const string Error_Sale_Not_Found = "Sale not found.";

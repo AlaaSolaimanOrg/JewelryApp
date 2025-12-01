@@ -158,6 +158,7 @@ const Repair = () => {
 
     return Object.keys(newErrors).length === 0;
   };
+  
 
   return (
     <div id="repair-page" className="page-content">

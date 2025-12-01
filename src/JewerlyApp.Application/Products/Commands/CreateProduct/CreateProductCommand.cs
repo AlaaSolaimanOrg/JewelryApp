@@ -21,9 +21,6 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
         public string Sku { get; set; } = string.Empty;
 
         [Required]
-        public string NFCId { get; set; } = string.Empty ;
-
-        [Required]
         public ProductCategory Category { get; set; }
 
         [Required]

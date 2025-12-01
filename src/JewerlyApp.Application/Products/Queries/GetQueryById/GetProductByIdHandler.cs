@@ -40,7 +40,6 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
             {
                 Id = product.Id,
                 Sku = product.Sku,
-                NFCId = product.NFCId,
                 Name = product.Name,
                 Quantity = product.Quantity,
                 KaratType = product.KaratType,

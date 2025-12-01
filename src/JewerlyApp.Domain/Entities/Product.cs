@@ -8,7 +8,6 @@ namespace JewerlyApp.Domain.Entities
     public class Product : Entity<Guid>
     {
         public string? Sku { get; set; }
-        public string? NFCId { get; set; }
         public string? Name { get; set; }
         public KaratType KaratType { get; set; }
         public decimal Weight { get; set; }

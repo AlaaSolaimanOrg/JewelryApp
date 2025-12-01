@@ -21,7 +21,7 @@ import preventSignOnKeyDown, {
   isPositiveInteger,
   showError,
   showSuccess,
-  urlToFile
+  urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
 
@@ -34,7 +34,6 @@ const productFieldsInitialState = {
   category: "",
   description: "",
   quantity: 1,
-  nfcId: "",
   tags: [] as string[], // Explicitly type tags as string array
 };
 
@@ -128,7 +127,6 @@ const AddEditProduct = ({ isEdit }) => {
         category: product.category,
         description: product.description,
         quantity: product.quantity,
-        nfcId: product.nfcId,
         tags: product.tags || [], // Initialize tags from product data
       });
 
@@ -169,14 +167,12 @@ const AddEditProduct = ({ isEdit }) => {
 
     formData.append("Name", productFields.productName);
     formData.append("Sku", productFields.SKU);
-    formData.append("NFCId", productFields.nfcId);
     formData.append("Category", productFields.category);
     formData.append("Type", productFields.productType.toString());
     formData.append("KaratType", productFields.karat);
     formData.append("Description", productFields.description);
     formData.append("Weight", productFields.weight);
     formData.append("quantity", productFields.quantity?.toString());
-    formData.append("NfcId", productFields.nfcId);
 
     // Append tags as JSON array
     if (productFields.tags.length > 0) {
@@ -216,7 +212,7 @@ const AddEditProduct = ({ isEdit }) => {
       if (key === "description" || key === "tags") return false;
 
       if (key === "weight" || key === "quantity") {
-        return Number(value) <= 0; 
+        return Number(value) <= 0;
       }
 
       if (Array.isArray(value)) {
@@ -295,7 +291,11 @@ const AddEditProduct = ({ isEdit }) => {
           </div>
 
           <div className="form-row">
-            <div className="form-col">
+        
+          </div>
+
+          <div className="form-row">
+                <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Quantity</label>
                 <input
@@ -319,26 +319,6 @@ const AddEditProduct = ({ isEdit }) => {
                 />
               </div>
             </div>
-
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">NFC ID</label>
-                <input
-                  type="text"
-                  maxLength={20}
-                  className="form-control"
-                  placeholder="Enter NFC ID"
-                  value={productFields.nfcId}
-                  onChange={(e) => {
-                    const noSpaces = e.target.value.replace(/\s/g, "");
-                    handleProductField("nfcId", noSpaces);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Karat</label>
@@ -356,7 +336,11 @@ const AddEditProduct = ({ isEdit }) => {
                 </select>
               </div>
             </div>
-            <div className="form-col">
+          
+          </div>
+
+          <div className="form-row">
+              <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Weight (grams)</label>
                 <input
@@ -378,9 +362,6 @@ const AddEditProduct = ({ isEdit }) => {
                 />
               </div>
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Category</label>
