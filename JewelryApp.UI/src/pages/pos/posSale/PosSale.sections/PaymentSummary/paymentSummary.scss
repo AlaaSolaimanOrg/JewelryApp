@@ -9,7 +9,7 @@
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 20px;
-    color: var(--primary);
+    color: var(--dark);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,12 +43,12 @@
         font-weight: 500;
 
         &:first-child {
-          color: var(--primary);
+          color: var(--dark);
         }
 
         &:last-child {
           font-weight: 600;
-          color: var(--primary);
+          color: var(--dark);
         }
       }
 
@@ -61,7 +61,7 @@
           font-weight: 700;
 
           &:last-child {
-            color: var(--primary);
+            color: var(--dark);
           }
         }
       }

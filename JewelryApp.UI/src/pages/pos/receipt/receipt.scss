@@ -1,13 +1,11 @@
-#receipt-page {
-  .receipt-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: white;
-    border: 2px solid #eee;
-    border-radius: var(--border-radius);
-    padding: 30px;
-    box-shadow: var(--box-shadow);
-  }
+#receipt-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  box-shadow: var(--box-shadow);
 
   .receipt-header {
     text-align: center;
@@ -181,15 +179,13 @@
     .receipt-logo {
       width: 95%;
       max-width: 220px;
-  
+
       img {
         width: 100%;
       }
     }
   }
 }
-
-
 @media print {
   .receipt-actions {
     display: none !important;

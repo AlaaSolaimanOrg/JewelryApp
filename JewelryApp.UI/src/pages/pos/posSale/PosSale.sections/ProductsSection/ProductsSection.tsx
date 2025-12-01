@@ -202,7 +202,7 @@ const ProductsSection: React.FC<Props> = ({
                   border: "none",
                   cursor: "pointer",
                   fontSize: "2rem",
-                  color: "var(--primary)",
+                  color: "var(--dark)",
                 }}
                 title="Add manual entry"
               >

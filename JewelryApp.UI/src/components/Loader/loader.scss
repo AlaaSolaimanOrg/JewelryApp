@@ -54,7 +54,7 @@
     top: 8px;
     right: 8px;
     animation-delay: 0.1s;
-    background: var(--primary, #1a3a5f);
+    background: var(--dark, #212529);
   }
 
   &:nth-child(3) {
@@ -68,14 +68,14 @@
     bottom: 0;
     left: 24px;
     animation-delay: 0.3s;
-    background: var(--primary, #1a3a5f);
+    background: var(--dark, #212529);
   }
 }
 
 .loader-text {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--primary, #1a3a5f);
+  color: var(--dark, #212529);
   text-align: center;
   margin-top: 0.5rem;
 }

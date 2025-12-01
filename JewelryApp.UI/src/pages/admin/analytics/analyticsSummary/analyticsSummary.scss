@@ -1,6 +1,6 @@
 .analytics-summary-card {
   margin-top: 10px;
-  background: #ffffff;
+  background: var(--light); // #ffffff → global white/light
   border-radius: var(--card-radius);
   padding: 25px;
   box-shadow: 0 5px 15px var(--shadow);
@@ -19,14 +19,16 @@
   }
 }
 
+/* GRID */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
 }
 
+/* CARD */
 .kpi-card {
-  background: #ffffff;
+  background: var(--light); // #fff
   border-radius: var(--card-radius);
   padding: 20px;
   box-shadow: 0 5px 15px var(--shadow);
@@ -37,7 +39,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-bottom);
   }
 }
 
@@ -53,6 +55,7 @@
   color: var(--secondary);
 }
 
+/* ICON */
 .kpi-icon {
   width: 44px;
   height: 44px;
@@ -60,11 +63,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(212, 175, 55, 0.15);
-  color: var(--primary);
+
+  /* old: rgba(212, 175, 55, 0.15) = gold 15% opacity */
+  background: var(--gold-opacity-5);
+
+  color: var(--gold);
   font-size: 20px;
 }
 
+/* VALUE */
 .kpi-value {
   font-size: 1.8rem;
   font-weight: 600;
@@ -72,14 +79,15 @@
   color: var(--dark);
 }
 
+/* TREND */
 .kpi-trend {
   font-size: 0.9rem;
-  color: #28a745;
+  color: var(--success); // #28a745
   display: flex;
   align-items: center;
   gap: 5px;
 
   &.down {
-    color: #dc3545;
+    color: var(--danger); // #dc3545
   }
 }

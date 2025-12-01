@@ -241,7 +241,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
               style={{
                 color:
                   item.returnOption === ReturnOption.ReturnToStock
-                    ? "#1a3a5f"
+                    ? "#212529"
                     : "#666",
               }}
             />

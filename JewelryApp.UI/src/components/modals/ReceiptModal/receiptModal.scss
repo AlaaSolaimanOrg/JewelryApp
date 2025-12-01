@@ -11,7 +11,7 @@
     padding: 0;
   }
   .modal-header {
-    background: var(--primary);
+    background: var(--dark);
     color: #fff;
     border-bottom: 2px solid var(--gold);
     .modal-title {
@@ -107,7 +107,7 @@
             padding: 12px 15px;
             text-align: left;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--dark);
             border-bottom: 2px solid #e0e0e0;
           }
         }
@@ -153,7 +153,7 @@
       .total-value {
         font-size: 1.8rem;
         font-weight: bold;
-        color: var(--primary);
+        color: var(--dark);
       }
     }
   }
@@ -172,7 +172,7 @@
 
     h4 {
       margin-bottom: 15px;
-      color: var(--primary);
+      color: var(--dark);
     }
 
     .summary-item {

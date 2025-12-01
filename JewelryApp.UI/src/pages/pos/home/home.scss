@@ -26,7 +26,7 @@
   .home-title {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--dark);
     margin-bottom: 12px;
     line-height: 1.2;
 
@@ -109,7 +109,7 @@
       font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 15px;
-      color: var(--primary);
+      color: var(--dark);
       display: flex;
       flex-direction: column;
       gap: 15px;
@@ -186,7 +186,7 @@
 
         .view-receipt-btn {
           background-color: var(--gold);
-          color: var(--primary);
+          color: var(--dark);
           border: none;
           border-radius: 6px;
           padding: 10px 15px;

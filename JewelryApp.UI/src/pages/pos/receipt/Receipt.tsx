@@ -76,7 +76,7 @@ const Receipt = () => {
       </h2>
       <p className="subtitle">Review receipt before finalizing</p>
 
-      <div ref={contentRef} className="receipt-container">
+      <div ref={contentRef} id="receipt-container">
         <div className="receipt-header">
           <div className="receipt-title">
             <img
@@ -199,7 +199,7 @@ const Receipt = () => {
           </button>
 
           <Link to={"/"} className="text-decoration-none">
-            <button className="btn btn-success">
+            <button className="btn btn-secondary">
               <FaCheck /> Start New Sale
             </button>
           </Link>

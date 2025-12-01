@@ -9,7 +9,7 @@
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
-    color: var(--primary);
+    color: var(--dark);
     display: flex;
     align-items: center;
 
@@ -27,7 +27,7 @@
     color: var(--text-dark);
 
     #totalReturnAmount {
-      color: var(--primary);
+      color: var(--dark);
       font-weight: 700;
     }
   }
@@ -59,7 +59,7 @@
 // Value styles
 .karat-value {
   font-weight: 600;
-  color: var(--primary);
+  color: var(--dark);
 }
 
 .weight-value {
@@ -79,7 +79,7 @@
   font-weight: 700;
 
   &.has-amount {
-    color: var(--primary);
+    color: var(--dark);
   }
 
   &:not(.has-amount) {
@@ -111,7 +111,7 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--dark);
     box-shadow: 0 0 0 2px rgba(26, 58, 95, 0.1);
   }
 
@@ -134,7 +134,7 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--dark);
     box-shadow: 0 0 0 2px rgba(26, 58, 95, 0.1);
   }
 }
@@ -146,7 +146,7 @@
   cursor: pointer;
 
   &:checked {
-    accent-color: var(--primary);
+    accent-color: var(--dark);
   }
 }
 
@@ -161,7 +161,7 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--dark);
     box-shadow: 0 0 0 2px rgba(26, 58, 95, 0.1);
   }
 
@@ -192,7 +192,7 @@
   background: white;
 
   &.selected {
-    border-color: var(--primary);
+    border-color: var(--dark);
     background-color: rgba(26, 58, 95, 0.08);
     box-shadow: 0 2px 4px rgba(26, 58, 95, 0.1);
   }
@@ -204,7 +204,7 @@
   }
 
   &:hover:not(.disabled) {
-    border-color: var(--primary);
+    border-color: var(--dark);
     transform: translateY(-1px);
   }
 
@@ -243,7 +243,7 @@
   text-align: center;
 
   &.selected {
-    border-color: var(--primary);
+    border-color: var(--dark);
     background-color: rgba(26, 58, 95, 0.08);
     box-shadow: 0 2px 4px rgba(26, 58, 95, 0.1);
   }
@@ -255,7 +255,7 @@
   }
 
   &:hover:not(.disabled) {
-    border-color: var(--primary);
+    border-color: var(--dark);
     transform: translateY(-1px);
   }
 

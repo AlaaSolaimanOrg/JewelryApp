@@ -18,7 +18,7 @@
 
   .accordion-button {
     background: var(--light);
-    color: var(--primary);
+    color: var(--dark);
     font-weight: 700;
     padding: 16px !important;
     border-radius: 0 !important;
@@ -46,7 +46,7 @@
       }
 
       .item-label {
-        color: var(--primary);
+        color: var(--dark);
         font-weight: 600;
       }
 

@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 :root {
-  --primary: #1a3a5f;
   --primary-dark: #b5942d;
   --primary-light: #f5e9c8;
   --secondary: #6c757d;
@@ -206,7 +205,7 @@ body {
 }
 
 .btn-secondary {
-  background: var(--primary) !important;
+  background: var(--dark) !important;
   color: white;
 }
 
@@ -348,11 +347,11 @@ body {
 
 .react-datepicker {
   font-family: inherit;
-  border: 1px solid var(--primary);
+  border: 1px solid var(--dark);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 
   .react-datepicker__header {
-    background-color: var(--primary);
+    background-color: var(--dark);
     border-bottom: 1px solid var(--gold);
     color: #fff;
   }
@@ -364,7 +363,7 @@ body {
   }
 
   .react-datepicker__day {
-    color: var(--primary);
+    color: var(--dark);
 
     &:hover {
       background-color: var(--gold);
@@ -374,7 +373,7 @@ body {
 
   .react-datepicker__day--selected,
   .react-datepicker__day--keyboard-selected {
-    background-color: var(--primary);
+    background-color: var(--dark);
     color: #fff;
   }
 

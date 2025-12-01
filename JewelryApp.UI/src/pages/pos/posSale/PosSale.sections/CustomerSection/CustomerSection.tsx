@@ -136,11 +136,11 @@ const CustomerSection: React.FC<Props> = ({
               option: (base, state) => ({
                 ...base,
                 backgroundColor: state.isFocused
-                  ? "var(--primary, #1a3a5f)"
+                  ? "var(--dark, #212529)"
                   : "white",
-                color: state.isFocused ? "white" : "var(--primary, #1a3a5f)",
+                color: state.isFocused ? "white" : "var(--dark, #212529)",
                 "&:hover": {
-                  backgroundColor: "var(--primary, #1a3a5f)",
+                  backgroundColor: "var(--dark, #212529)",
                   color: "white",
                 },
               }),
@@ -172,30 +172,28 @@ const CustomerSection: React.FC<Props> = ({
           <div className="customer-details">
             <div className="customer-detail">
               <FaUserCircle
-                style={{ marginRight: "8px", color: "var(--primary)" }}
+                style={{ marginRight: "8px", color: "var(--dark)" }}
               />
               <span id="customerName">{customer.name}</span>
             </div>
             {customer.email && (
               <div className="customer-detail">
                 <FaEnvelope
-                  style={{ marginRight: "8px", color: "var(--primary)" }}
+                  style={{ marginRight: "8px", color: "var(--dark)" }}
                 />
                 <span id="customerEmail">{customer.email ?? "-"}</span>
               </div>
             )}
             {customer.phoneNumber && (
               <div className="customer-detail">
-                <FaPhone
-                  style={{ marginRight: "8px", color: "var(--primary)" }}
-                />
+                <FaPhone style={{ marginRight: "8px", color: "var(--dark)" }} />
                 <span id="customerPhone">{customer.phoneNumber ?? "-"}</span>
               </div>
             )}
             {customer.birthday && (
               <div className="customer-detail">
                 <FaBirthdayCake
-                  style={{ marginRight: "8px", color: "var(--primary)" }}
+                  style={{ marginRight: "8px", color: "var(--dark)" }}
                 />
                 <span id="customerBirthday">{customer.birthday ?? "-"}</span>
               </div>

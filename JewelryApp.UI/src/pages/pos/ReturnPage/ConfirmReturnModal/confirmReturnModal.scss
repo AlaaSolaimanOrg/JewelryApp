@@ -36,7 +36,7 @@
   .custom-modal-title {
     font-size: 20px;
     font-weight: 600;
-    color: #1a3a5f;
+    color: #212529;
     margin: 0;
   }
 
@@ -106,7 +106,7 @@
     &:last-child {
       border-bottom: none;
       font-weight: 600;
-      color: #1a3a5f;
+      color: #212529;
       font-size: 15px;
     }
 
@@ -133,7 +133,7 @@
   border: none;
 
   .modal-cancel-btn {
-    background: var(--primary) !important;
+    background: var(--dark) !important;
     color: white !important;
     border: none !important;
     border-radius: 8px !important;
@@ -145,7 +145,7 @@
 
     &:hover,
     &:focus {
-      background: var(--primary) !important;
+      background: var(--dark) !important;
       transform: translateY(-1px) !important;
       color: white !important;
       border: none !important;

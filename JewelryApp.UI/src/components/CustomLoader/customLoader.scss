@@ -36,7 +36,7 @@
 
   .loading-text {
     margin-top: 1rem;
-    color: var(--primary);
+    color: var(--dark);
     font-weight: 600;
     font-size: 0.9rem;
     letter-spacing: 0.5px;
@@ -53,7 +53,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background-color: var(--primary);
+      background-color: var(--dark);
       animation: dotPulse 1.4s ease-in-out infinite both;
 
       &:nth-child(2) {

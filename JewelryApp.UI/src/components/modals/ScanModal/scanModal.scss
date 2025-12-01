@@ -2,10 +2,10 @@
   .modal-content {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(44, 108, 223, 0.08);
-    border: 2px solid var(--primary);
+    border: 2px solid var(--dark);
   }
   .modal-header {
-    background: var(--primary);
+    background: var(--dark);
     color: #fff;
     border-bottom: 1px solid white;
     .modal-title {
@@ -53,7 +53,7 @@
     width: 260px;
     padding: 0.7rem 1rem;
     font-size: 1.1rem;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--dark);
     border-radius: 8px;
     outline: none;
     background: #fff;
@@ -61,7 +61,7 @@
     box-shadow: 0 2px 8px rgba(44, 108, 223, 0.08);
     transition: border-color 0.2s;
     &:focus {
-      border-color: darken(#1a3a5f, 10%);
+      border-color: darken(#212529, 10%);
     }
   }
 
@@ -88,7 +88,7 @@
       .item-title {
         margin-left: 50px;
         font-size: 1.05rem;
-        color: var(--primary);
+        color: var(--dark);
         font-weight: 700;
         letter-spacing: 0.5px;
       }
@@ -134,14 +134,14 @@
       }
       .item-title {
         font-size: 0.95rem;
-        color: var(--primary);
+        color: var(--dark);
         font-weight: 600;
         margin-bottom: 2px;
         letter-spacing: 0.5px;
       }
       .item-data {
         font-size: 0.97rem;
-        color: var(--primary);
+        color: var(--dark);
         font-weight: 500;
         margin-right: 1rem;
         word-break: break-all;
