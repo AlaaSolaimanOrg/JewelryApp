@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaList } from "react-icons/fa";
+import { FaCalendarAlt, FaDollarSign, FaList, FaPhone } from "react-icons/fa";
 import "./repairManagement.scss";
 
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
@@ -11,12 +11,12 @@ import {
   RepairType,
 } from "../../../types/enums";
 
-import { getRepairs } from "../../../apis/repairs.api/repairs.api";
+import {
+  getRepairs,
+  updateRepairStatus,
+} from "../../../apis/repairs.api/repairs.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTableWithAccordion, {
-  type Column,
-} from "../../../components/tables/CustomTableWithAccordion/CustomTableWithAccordion";
-import { splitCamelCaseWords } from "../../../utils";
+import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
 import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
 
 export interface RepairItem {
@@ -43,17 +43,17 @@ export interface Repair {
   orderDate: string;
   status: RepairStatus;
   totalCost: number;
-  notes: string;
   items: RepairItem[];
-  paymentStatus: PaymentStatus;
 }
 
 const RepairManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [expandedRepairId, setExpandedRepairId] = useState<string | null>(null);
 
   const {
     data: repairs,
+    fetchData: recallGetRepairs,
     onSearchChange,
     pagination,
     onPaginationChange,
@@ -61,53 +61,41 @@ const RepairManagement: React.FC = () => {
     apiToCall: (data) => getRepairs(data.payload),
     extraPayload: { repairType: typeFilter, status: statusFilter },
     extraEffectDependency: [typeFilter, statusFilter],
-    initialPageSize: 5,
+    initialPageSize: 2,
   });
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
-  // TABLE COLUMNS — identical to old visuals
-  const columns: Column<Repair>[] = [
-    { label: "Repair ID", accessor: "id" },
-    { label: "Customer", accessor: "customerName" },
-    {
-      label: "Items",
-      render: (row) => `${row.items.length} item(s)`,
-    },
-    {
-      label: "Status",
-      render: (row) => {
-        const { label, className } = getRepairStatusInfo(row.status);
-        return <span className={className}>{label}</span>;
-      },
-    },
-    {
-      label: "Total",
-      render: (row) => formatCurrency(row.totalCost),
-    },
-    {
-      label: "Actions",
-      render: (row) => {
-        return <button className="status-action-btn">{row.status}</button>;
-      },
-    },
-  ];
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const toggleRepairExpansion = (repairId: string) => {
+    setExpandedRepairId(expandedRepairId === repairId ? null : repairId);
+  };
 
   const REPAIR_STATUS_UI: Record<
     RepairStatus,
-    { label: string; className: string; actionText?: string }
+    { label: string; className: string; color: string }
   > = {
     [RepairStatus.InProgress]: {
       label: "In Progress",
-      className: "status-badge pending",
+      className: "status-badge in-progress",
+      color: "#ff9800",
     },
     [RepairStatus.Completed]: {
       label: "Completed",
       className: "status-badge completed",
+      color: "#4caf50",
     },
     [RepairStatus.PickedUp]: {
       label: "Picked Up",
       className: "status-badge pickedup",
+      color: "#2196f3",
     },
   };
 
@@ -115,108 +103,367 @@ const RepairManagement: React.FC = () => {
     return REPAIR_STATUS_UI[status];
   };
 
+  const getCustomerInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getNextStatus = (current: RepairStatus) => {
+    switch (current) {
+      case RepairStatus.InProgress:
+        return RepairStatus.Completed;
+      case RepairStatus.Completed:
+        return RepairStatus.PickedUp;
+      case RepairStatus.PickedUp:
+        return RepairStatus.InProgress;
+    }
+  };
+
+  const getPreviousStatus = (current: RepairStatus) => {
+    switch (current) {
+      case RepairStatus.PickedUp:
+        return RepairStatus.Completed;
+      case RepairStatus.Completed:
+        return RepairStatus.InProgress;
+      case RepairStatus.InProgress:
+        return RepairStatus.PickedUp;
+    }
+  };
+
+  const handleStatusUpdate = async (
+    repairId: string,
+    currentStatus: RepairStatus,
+    direction: "next" | "prev"
+  ) => {
+    const newStatus =
+      direction === "next"
+        ? getNextStatus(currentStatus)
+        : getPreviousStatus(currentStatus);
+
+    try {
+      const response = await updateRepairStatus({
+        id: repairId,
+        status: newStatus,
+      });
+
+      if (response.statusCode === 200 || response.success) {
+        showSuccess("Status updated successfully");
+        recallGetRepairs();
+      } else {
+        showError(response.message || "Failed to update status");
+      }
+    } catch (err) {
+      console.error(err);
+      showError("Error updating status");
+    }
+  };
+
+  const NEXT_STATUS_BUTTON_CLASS: Record<RepairStatus, string> = {
+    [RepairStatus.InProgress]: "completed-btn", // next is Completed (green)
+    [RepairStatus.Completed]: "pickedup-btn", // next is PickedUp (blue)
+    [RepairStatus.PickedUp]: "inprogress-btn", // next is InProgress (orange)
+  };
+
   return (
     <div className="repair-management-page">
       <RepairStatsCards />
 
       <section className="section repair-list-section">
-        <h2 className="section-title">
-          <FaList className="section-title__icon" />
-          Repair List
-        </h2>
+        <div className="section-header">
+          <h2 className="section-title">
+            <FaList className="section-title__icon" />
+            Repair Orders
+          </h2>
+          <span className="repair-count">{repairs.length} repairs</span>
+        </div>
 
         {/* FILTERS */}
         <div className="filter-section">
-          <input
-            type="text"
-            className="search-input form-control"
-            placeholder="Search by name, phone, or repair ID..."
-            onChange={onSearchChange}
-          />
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input form-control"
+              placeholder="Search repairs..."
+              onChange={onSearchChange}
+            />
+          </div>
 
-          <select
-            className="filter-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value={""}>All Statuses</option>
-            <option value={RepairStatus.InProgress}>
-              {splitCamelCaseWords(RepairStatus[RepairStatus.InProgress])}
-            </option>
-            <option value={RepairStatus.Completed}>
-              {splitCamelCaseWords(RepairStatus[RepairStatus.Completed])}
-            </option>
-            <option value={RepairStatus.PickedUp}>
-              {splitCamelCaseWords(RepairStatus[RepairStatus.PickedUp])}
-            </option>
-          </select>
+          <div className="filter-controls">
+            <div className="filter-group">
+              <label className="filter-label">Status</label>
+              <select
+                className="filter-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value={""}>All Statuses</option>
+                <option value={RepairStatus.InProgress}>
+                  {splitCamelCaseWords(RepairStatus[RepairStatus.InProgress])}
+                </option>
+                <option value={RepairStatus.Completed}>
+                  {splitCamelCaseWords(RepairStatus[RepairStatus.Completed])}
+                </option>
+                <option value={RepairStatus.PickedUp}>
+                  {splitCamelCaseWords(RepairStatus[RepairStatus.PickedUp])}
+                </option>
+              </select>
+            </div>
 
-          <select
-            className="filter-select"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
-            <option value={""}>All Repair Types</option>
-            <option value={RepairType.AddGold}>Add Gold</option>
-            <option value={RepairType.Resize}>Resize</option>
-            <option value={RepairType.Solder}>Solder</option>
-            <option value={RepairType.StoneReplacement}>
-              Stone Replacement
-            </option>
-            <option value={RepairType.StoneTightening}>Stone Tightening</option>
-            <option value={RepairType.Polishing}>Polishing</option>
-            <option value={RepairType.Cleaning}>Cleaning</option>
-            <option value={RepairType.Plating}>Plating</option>
-            <option value={RepairType.Engraving}>Engraving</option>
-            <option value={RepairType.FixOrChangeLock}>
-              Fix Or Change Lock
-            </option>
-          </select>
+            <div className="filter-group">
+              <label className="filter-label">Repair Type</label>
+              <select
+                className="filter-select"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              >
+                <option value={""}>All Types</option>
+                <option value={RepairType.AddGold}>Add Gold</option>
+                <option value={RepairType.Resize}>Resize</option>
+                <option value={RepairType.Solder}>Solder</option>
+                <option value={RepairType.StoneReplacement}>
+                  Stone Replacement
+                </option>
+                <option value={RepairType.StoneTightening}>
+                  Stone Tightening
+                </option>
+                <option value={RepairType.Polishing}>Polishing</option>
+                <option value={RepairType.Cleaning}>Cleaning</option>
+                <option value={RepairType.Plating}>Plating</option>
+                <option value={RepairType.Engraving}>Engraving</option>
+                <option value={RepairType.FixOrChangeLock}>
+                  Fix Or Change Lock
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        {/* TABLE */}
-        <CustomTableWithAccordion
-          data={repairs}
-          columns={columns}
-          rowKey="id"
-          emptyMessage="No repairs found."
-          renderAccordion={(repair) => (
-            <div className="sub-table-wrapper">
-              <table className="sub-table">
-                <thead>
-                  <tr>
-                    <th>Item Type</th>
-                    <th>Metal</th>
-                    <th>Weight</th>
-                    <th>Stone</th>
-                    <th>Repair Type</th>
-                    <th>Cost</th>
-                    <th>Urgent Fee</th>
-                    <th>Discount</th>
-                    <th>Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {repair.items.map((item) => (
-                    <tr key={item.id}>
-                      <td>{ProductCategory[item.itemType]}</td>
-                      <td>{item.metal}</td>
-                      <td>{item.weight}</td>
-                      <td>{item.stoneType}</td>
-                      <td>
-                        {splitCamelCaseWords(RepairType[item.repairType])}
-                      </td>
-                      <td>{formatCurrency(item.cost)}</td>
-                      <td>{formatCurrency(item.urgentFee)}</td>
-                      <td>{formatCurrency(item.discount)}</td>
-                      <td>{formatCurrency(item.subTotal)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* REPAIR CARDS */}
+        <div className="repairs-container">
+          {repairs.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-icon">📋</div>
+              <h3>No Repairs Found</h3>
+              <p>Try adjusting your filters or add a new repair</p>
             </div>
+          ) : (
+            repairs.map((repair) => {
+              const statusInfo = getRepairStatusInfo(repair.status);
+              const isExpanded = expandedRepairId === repair.id;
+
+              return (
+                <div
+                  key={repair.id}
+                  className={`repair-card ${isExpanded ? "expanded" : ""} ${
+                    repair.status
+                  }`}
+                >
+                  {/* CARD HEADER */}
+                  <div
+                    className="repair-card__header"
+                    onClick={() => toggleRepairExpansion(repair.id)}
+                  >
+                    <div className="repair-card__customer">
+                      <div className="customer-avatar">
+                        {getCustomerInitials(repair.customerName)}
+                      </div>
+                      <div className="customer-info">
+                        <h3 className="customer-name">{repair.customerName}</h3>
+                        <div className="customer-meta">
+                          <span className="meta-item">
+                            <FaPhone className="meta-icon" />
+                            {repair.customerPhone}
+                          </span>
+                          <span className="meta-item">
+                            <FaCalendarAlt className="meta-icon" />
+                            {formatDate(repair.orderDate)}
+                          </span>
+                          <span className="meta-item">
+                            <FaDollarSign className="meta-icon" />
+                            {formatCurrency(repair.totalCost)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="repair-card__actions">
+                      <div className="repair-id">#{repair.id.slice(-6)}</div>
+                      <div className="repair-date">
+                        <FaCalendarAlt className="meta-icon" />
+                        {formatDate(repair.orderDate)}
+                      </div>
+
+                      <span className={statusInfo.className}>
+                        {statusInfo.label}
+                      </span>
+                      <button className="expand-toggle">
+                        {isExpanded ? "▲" : "▼"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* EXPANDED CONTENT */}
+                  {isExpanded && (
+                    <div className="repair-card__content">
+                      <div className="repair-details">
+                        <div className="detail-section">
+                          <div className="section-header-row">
+                            <h4 className="section-subtitle">
+                              Repair Items ({repair.items.length})
+                            </h4>
+                          </div>
+
+                          <div className="items-table-container">
+                            <table className="items-table">
+                              <thead>
+                                <tr>
+                                  <th>Id</th>
+                                  <th>Item Type</th>
+                                  <th>Metal</th>
+                                  <th>Weight</th>
+                                  <th>Stone</th>
+                                  <th>Repair Type</th>
+                                  <th>Payment</th>
+                                  <th>Notes</th>
+                                  <th>Cost</th>
+                                  <th>Urgent</th>
+                                  <th>Discount</th>
+                                  <th>Subtotal</th>
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                {repair.items.map((item, index) => (
+                                  <tr key={item.id}>
+                                    {/* I] */}
+                                    <td>{index + 1}</td>
+                                    {/* ITEM TYPE */}
+                                    <td>
+                                      <span className="badge-itemtype">
+                                        {ProductCategory[item.itemType]}
+                                      </span>
+                                    </td>
+
+                                    {/* METAL */}
+                                    <td>
+                                      <span className="badge-metal">
+                                        {ProductType[item.metal]}
+                                      </span>
+                                    </td>
+
+                                    {/* WEIGHT */}
+                                    <td>{item.weight}g</td>
+
+                                    {/* STONE TYPE (NO BADGE) */}
+                                    <td>{item.stoneType || "None"}</td>
+
+                                    {/* REPAIR TYPE */}
+                                    <td>
+                                      <span className="badge-repairtype">
+                                        {splitCamelCaseWords(
+                                          RepairType[item.repairType]
+                                        )}
+                                      </span>
+                                    </td>
+
+                                    {/* PAYMENT STATUS */}
+                                    <td>
+                                      <span
+                                        className={`badge-payment ${
+                                          PaymentStatus[item.paymentStatus]
+                                        }`}
+                                      >
+                                        {PaymentStatus[item.paymentStatus]}
+                                      </span>
+                                    </td>
+
+                                    {/* NOTES */}
+                                    <td className="item-notes">
+                                      {item.notes || "-"}
+                                    </td>
+
+                                    {/* COST */}
+                                    <td>{formatCurrency(item.cost)}</td>
+
+                                    {/* URGENT */}
+                                    <td>
+                                      {item.urgentFee > 0
+                                        ? formatCurrency(item.urgentFee)
+                                        : "-"}
+                                    </td>
+
+                                    {/* DISCOUNT */}
+                                    <td>
+                                      {item.discount > 0
+                                        ? formatCurrency(item.discount)
+                                        : "-"}
+                                    </td>
+
+                                    {/* SUBTOTAL */}
+                                    <td>{formatCurrency(item.subTotal)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+
+                              <tfoot>
+                                <tr>
+                                  <td colSpan={11} className="total-label">
+                                    Total Cost:
+                                  </td>
+                                  <td className="total-cost">
+                                    {formatCurrency(repair.totalCost)}
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* ACTION BUTTONS */}
+                        <div className="action-buttons">
+                          <button className="btn btn-outline">
+                            View Invoice
+                          </button>
+                          <button
+                            className={`btn status-btn ${
+                              NEXT_STATUS_BUTTON_CLASS[repair.status]
+                            }`}
+                            onClick={() =>
+                              handleStatusUpdate(
+                                repair.id,
+                                repair.status,
+                                "next"
+                              )
+                            }
+                            onContextMenu={(e) => {
+                              e.preventDefault();
+                              handleStatusUpdate(
+                                repair.id,
+                                repair.status,
+                                "prev"
+                              );
+                            }}
+                          >
+                            Mark As{" "}
+                            {repair.status === RepairStatus.InProgress
+                              ? "Completed"
+                              : repair.status === RepairStatus.Completed
+                              ? "Picked Up"
+                              : "In Progress"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
-        />
+        </div>
 
         {/* PAGINATION */}
         <Paginator
