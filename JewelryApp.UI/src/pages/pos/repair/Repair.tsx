@@ -24,6 +24,22 @@ export interface RepairItem {
   dueDate: string;
 }
 
+const itemsInitialValue: RepairItem[] = [
+  {
+    id: 1,
+    itemType: "",
+    metal: "",
+    weight: "",
+    stone: "",
+    repairType: "",
+    notes: "",
+    cost: "",
+    urgent: "",
+    discount: "",
+    paymentStatus: "Not Paid",
+    dueDate: "",
+  },
+];
 const Repair = () => {
   const navigate = useNavigate();
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -35,22 +51,7 @@ const Repair = () => {
     Record<number, Partial<Record<keyof RepairItem, string>>>
   >({});
 
-  const [items, setItems] = useState<RepairItem[]>([
-    {
-      id: 1,
-      itemType: "",
-      metal: "",
-      weight: "",
-      stone: "",
-      repairType: "",
-      notes: "",
-      cost: "",
-      urgent: "",
-      discount: "",
-      paymentStatus: "Not Paid",
-      dueDate: "",
-    },
-  ]);
+  const [items, setItems] = useState<RepairItem[]>(itemsInitialValue);
 
   const addItem = () => {
     setItems((prev) => [
@@ -128,7 +129,7 @@ const Repair = () => {
       console.log("response", response);
       if (checkRequestSucceeded(response.statusCode)) {
         showSuccess(response.message);
-        setItems([]);
+        setItems(itemsInitialValue);
         setCustomer(null);
         setCustomerInfoActive(false);
       } else {
@@ -158,7 +159,6 @@ const Repair = () => {
 
     return Object.keys(newErrors).length === 0;
   };
-  
 
   return (
     <div id="repair-page" className="page-content">

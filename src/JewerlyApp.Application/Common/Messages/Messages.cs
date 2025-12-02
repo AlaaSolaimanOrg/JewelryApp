@@ -116,6 +116,12 @@
         public static string Error_Return_Quantity_Exceeds(int requested, int purchased)
             => $"Cannot return {requested} pcs — only {purchased} were purchased.";
 
+        public static string Error_Item_Already_Returned(int purchased, int alreadyReturned)
+            => $"This item has already been fully returned ({alreadyReturned} out of {purchased} pcs).";
+
+        public static string Error_Return_Exceeds_Available(int requested, int available, int previouslyReturned)
+            => $"Cannot return {requested} pcs — only {available} pcs available (already returned {previouslyReturned} pcs).";
+
         // --------------------------------------------------
         // REPAIR MESSAGES (NEW)
         // --------------------------------------------------

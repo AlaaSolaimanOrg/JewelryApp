@@ -269,11 +269,11 @@
     }
 
     .save-btn {
-      background: var(--dark);
+      background: var(--gold);
       color: white;
 
       &:hover {
-        background: #152a45;
+        background: var(--dark);
       }
     }
 
