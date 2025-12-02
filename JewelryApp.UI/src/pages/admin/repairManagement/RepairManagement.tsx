@@ -61,7 +61,7 @@ const RepairManagement: React.FC = () => {
     apiToCall: (data) => getRepairs(data.payload),
     extraPayload: { repairType: typeFilter, status: statusFilter },
     extraEffectDependency: [typeFilter, statusFilter],
-    initialPageSize: 2,
+    initialPageSize: 5,
   });
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
