@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FaCalendarAlt, FaDollarSign, FaList, FaPhone } from "react-icons/fa";
 import "./repairManagement.scss";
 
