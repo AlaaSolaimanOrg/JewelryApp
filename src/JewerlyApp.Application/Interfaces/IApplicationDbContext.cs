@@ -24,6 +24,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<ProductTag> ProductTags { get; set; }
         DbSet<Log> Logs { get; set; }
         DbSet<Return> Returns { get; set; }
+        DbSet<ReturnItem> ReturnItems { get; set; }
         DbSet<Repair> Repairs { get; set; }
         DbSet<RepairItem> RepairItems { get; set; }
 

@@ -65,7 +65,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
                         Subtotal = i.SubTotal,
-                        Quantity = i.Quantity
+                        Quantity = i.Quantity,
+                        //QuantityReturned = i.ReturnItems.Sum(r => r.QuantityReturned),
+                        //AmountReturned = i.ReturnItems.Sum(r => r.ReturnAmount)
                     }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);
@@ -79,6 +81,11 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     Message = "Sale not found"
                 };
             }
+
+            // Calculate total return amount from the already populated items
+            sale.TotalReturnAmount = sale.SaleItems.Any(i => i.AmountReturned > 0)
+                ? sale.SaleItems.Sum(i => i.AmountReturned)
+                : null;
 
             return new GenericResponse<GetSaleDetailsVM>
             {

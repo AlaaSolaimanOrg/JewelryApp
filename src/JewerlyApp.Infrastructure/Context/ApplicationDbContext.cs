@@ -30,6 +30,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<ProductTag> ProductTags { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
         public virtual DbSet<Return> Returns { get; set; }
+        public virtual DbSet<ReturnItem> ReturnItems { get; set; }
         public virtual DbSet<Repair> Repairs { get; set; }
         public virtual DbSet<RepairItem> RepairItems { get; set; }
 

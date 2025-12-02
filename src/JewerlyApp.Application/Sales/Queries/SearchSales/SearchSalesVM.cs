@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JewerlyApp.Application.Sales.Queries.GetSaleById;
 
-namespace JewerlyApp.Application.Sales.Queries.GetSaleById
+namespace JewerlyApp.Application.Sales.Queries.SearchSales
 {
-    public class GetSaleDetailsVM
+    public class SearchSalesVM
     {
         public Guid Id { get; set; }
         public string? SerialNumber { get; set; }

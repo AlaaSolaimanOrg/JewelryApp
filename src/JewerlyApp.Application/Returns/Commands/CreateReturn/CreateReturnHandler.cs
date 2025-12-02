@@ -131,7 +131,19 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
 
             var saleItemsMap = sale.SaleItems.ToDictionary(x => x.Id);
 
-            // 3. Validate each return item
+            // 3. Load existing returns for these sale items
+            var saleItemIds = request.Items.Select(i => i.SaleItemId).ToList();
+            var existingReturns = await _context.ReturnItems
+                .Where(ri => saleItemIds.Contains(ri.SaleItemId))
+                .GroupBy(ri => ri.SaleItemId)
+                .Select(g => new
+                {
+                    SaleItemId = g.Key,
+                    TotalReturnedQuantity = g.Sum(ri => ri.QuantityReturned)
+                })
+                .ToDictionaryAsync(x => x.SaleItemId, x => x.TotalReturnedQuantity, cancellationToken);
+
+            // 4. Validate each return item
             foreach (var item in request.Items)
             {
                 // Invalid sale item
@@ -148,11 +160,24 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                     continue;
                 }
 
-                // Qty exceeds purchased amount
-                if (item.QuantityToReturn > saleItem.Quantity)
+                // Check if item has been previously returned
+                var previouslyReturned = existingReturns.GetValueOrDefault(item.SaleItemId, 0);
+                var totalQuantityAfterReturn = previouslyReturned + item.QuantityToReturn;
+
+                // If item was fully returned already
+                if (previouslyReturned >= saleItem.Quantity)
                 {
-                    errors.Add(Messages.Error_Return_Quantity_Exceeds(
-                        item.QuantityToReturn, saleItem.Quantity));
+                    errors.Add(Messages.Error_Item_Already_Returned(saleItem.Quantity, previouslyReturned));
+                    continue;
+                }
+
+                // Qty exceeds available amount (purchased - previously returned)
+                if (totalQuantityAfterReturn > saleItem.Quantity)
+                {
+                    var availableToReturn = saleItem.Quantity - previouslyReturned;
+                    errors.Add(Messages.Error_Return_Exceeds_Available(
+                        item.QuantityToReturn, availableToReturn, previouslyReturned));
+                    continue;
                 }
 
                 // Invalid amount

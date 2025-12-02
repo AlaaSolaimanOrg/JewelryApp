@@ -6,6 +6,7 @@ using JewerlyApp.Application.Sales.Queries.GetSalesCustomers;
 using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using JewerlyApp.Application.Sales.Queries.GetSoldItems;
+using JewerlyApp.Application.Sales.Queries.SearchSales;
 using JewerlyApp.Application.Sales.Queries.GetTopSellingCategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,18 @@ namespace JewerlyApp.API.Controllers.Sales
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetSalesList([FromQuery] GetSalesListQuery command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+        
+        /// <summary>
+        /// search sales with detailed information
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> SearchSales([FromQuery] SearchSalesQuery command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);
