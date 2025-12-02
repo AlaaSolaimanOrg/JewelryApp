@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { FaList } from "react-icons/fa";
 import "./repairManagement.scss";
 
