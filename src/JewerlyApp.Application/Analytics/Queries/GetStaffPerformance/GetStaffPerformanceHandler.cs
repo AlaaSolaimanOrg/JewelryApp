@@ -64,8 +64,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaffPerformance
 
             var result = staffPerformance.Select(s => new StaffPerformanceVM
             {
-                Name = s.Name,
-                Sales = s.Sales
+                StaffName = s.Name,
+                SalesAmount = s.Sales
             }).ToList();
 
             return new GenericResponse<List<StaffPerformanceVM>>
