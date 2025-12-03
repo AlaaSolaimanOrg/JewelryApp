@@ -60,6 +60,8 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
                 .ApplyPagination(request.PageNumber, request.PageSize)
                 .ToListAsync(cancellationToken);
 
+            //throw new Exception("test alaa 3333");
+
             return new PaginatedResponse<GetLogsVM>
             {
                 Data = logs,

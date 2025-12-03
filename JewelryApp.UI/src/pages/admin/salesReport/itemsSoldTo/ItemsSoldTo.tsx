@@ -10,6 +10,7 @@ import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
 import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
+import dateFormat from "dateformat";
 
 interface SoldItem {
   productName: string;
@@ -30,6 +31,7 @@ const ItemsSoldTo = () => {
   const [dateTo, setDateTo] = useState<any>(null);
   const [timeRangeFilter, setTimeRangeFilter] = useState<string>("");
 
+  console.log("dateFrom", dateFrom);
   // Handle time range selection
   const handleTimeRangeChange = (range: string) => {
     setTimeRangeFilter(range);
@@ -65,6 +67,10 @@ const ItemsSoldTo = () => {
     setTimeRangeFilter("");
   };
 
+  const formatDateTime = (d: Date | null) => {
+    if (!d) return null;
+    return dateFormat(d, "yyyy-mm-dd HH:MM:ss");
+  };
   const {
     data: soldItems,
     onPaginationChange,
@@ -74,10 +80,10 @@ const ItemsSoldTo = () => {
     apiToCall: (data) => getSoldItems(data.payload),
     initialPageSize: 5,
     extraPayload: {
-      karatTypeFilter: karatTypeFilter,
+      karatFilter: karatTypeFilter,
       categoryFilter: productCategoryFilter,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
+      dateFrom: formatDateTime(dateFrom),
+      dateTo: formatDateTime(dateTo),
     },
     extraEffectDependency: [
       karatTypeFilter,

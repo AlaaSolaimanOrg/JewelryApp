@@ -82,6 +82,8 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                         Id = c.Id,
                         Name = c.Name,
                         PhoneNumber = c.PhoneNumber ?? "",
+                        Email = c.Email ?? "",
+                        Birthday = c.Birthday,
                         TotalProductsPurchased = s?.TotalProducts ?? 0,
                         TotalPurchasesValue = s?.TotalSales ?? 0,
                         TotalDiscount = s?.TotalDiscount ?? 0,
