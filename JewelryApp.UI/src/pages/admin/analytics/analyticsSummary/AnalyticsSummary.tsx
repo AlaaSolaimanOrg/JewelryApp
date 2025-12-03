@@ -10,6 +10,7 @@ import { getAnalyticsSummary } from "../../../../apis/analytics.api/analytics.ap
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { smartRound } from "../../../../utils";
 import "./analyticsSummary.scss";
+import { ReportType } from "../../../../types/enums";
 
 export interface AnalyticsSummary {
   avgDailySales: number;
@@ -27,7 +28,10 @@ const AnalyticsSummary = ({ appliedFilters, refreshKey }) => {
     payload: {
       dateFrom: appliedFilters.dateFrom,
       dateTo: appliedFilters.dateTo,
-      reportType: appliedFilters.reportType,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: AnalyticsSummary };

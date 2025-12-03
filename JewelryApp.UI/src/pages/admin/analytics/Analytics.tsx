@@ -72,6 +72,7 @@ const Analytics = () => {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [reportType, setReportType] = useState<ReportType>(ReportType.AllTime);
+  console.log("reportType", reportType);
   const [appliedFilters, setAppliedFilters] = useState<{
     dateFrom: string;
     dateTo: string;
@@ -79,7 +80,7 @@ const Analytics = () => {
   }>({
     dateFrom: "",
     dateTo: "",
-    reportType: reportType == ReportType.AllTime ? null : reportType,
+    reportType: ReportType.AllTime,
   });
 
   const openFullView = (chartId: string) => setFullViewChart(chartId);
@@ -90,7 +91,10 @@ const Analytics = () => {
     payload: {
       dateFrom: appliedFilters.dateFrom,
       dateTo: appliedFilters.dateTo,
-      reportType: appliedFilters.reportType,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: SalesByCategoryItem[] };
@@ -100,7 +104,10 @@ const Analytics = () => {
     payload: {
       dateFrom: appliedFilters.dateFrom,
       dateTo: appliedFilters.dateTo,
-      reportType: appliedFilters.reportType,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: SalesOverTimeItem[] };
@@ -110,7 +117,10 @@ const Analytics = () => {
     payload: {
       dateFrom: appliedFilters.dateFrom,
       dateTo: appliedFilters.dateTo,
-      reportType: appliedFilters.reportType,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: StaffPerformanceItem[] };
