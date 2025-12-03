@@ -57,6 +57,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,
                     Discount = x.Discount,
+                    TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {   Id = i.Id,
                         ProductName = i.Product!.Name!,
@@ -66,8 +67,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
                         Subtotal = i.SubTotal,
                         Quantity = i.Quantity,
-                        //QuantityReturned = i.ReturnItems.Sum(r => r.QuantityReturned),
-                        //AmountReturned = i.ReturnItems.Sum(r => r.ReturnAmount)
+                        QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
+                        AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
                     }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);
