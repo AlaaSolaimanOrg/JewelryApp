@@ -23,36 +23,54 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaffPerformance
 
         public async Task<GenericResponse<List<StaffPerformanceVM>>> Handle(GetStaffPerformanceQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.Sales
+            // Determine date range / filtering strategy
+            var hasExplicitDates = request.DateFrom.HasValue || request.DateTo.HasValue;
+            var hasReportType = request.ReportType.HasValue;
+            var noDateFilter = !hasExplicitDates && !hasReportType; // when true, treat as "all time"
+
+            DateTime dateFrom = DateTime.MinValue;
+            DateTime dateTo = DateTime.MaxValue;
+
+            if (hasReportType)
+            {
+                var (rFrom, rTo) = DateRangeHelper.GetDateRange(request.ReportType!.Value);
+                dateFrom = rFrom;
+                dateTo = rTo;
+            }
+
+            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
+            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
+
+            var salesQuery = _context.Sales
                 .AsNoTracking()
                 .Include(s => s.CreatedByUser)
                 .AsQueryable();
 
-            // Apply Date Range
-            // 1. Start with range from ReportType
-            var (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType);
+            if (!noDateFilter)
+            {
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
+            }
 
-            // 2. Override with specific dates if provided
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
-
-            query = query.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
-
-            var staffPerformance = await query
+            var staffPerformance = await salesQuery
                 .Where(s => s.CreatedByUser != null)
-                .GroupBy(s => s.CreatedByUser!.FullName ?? s.CreatedByUser.UserName) // Use FullName or UserName as fallback
-                .Select(g => new StaffPerformanceVM
+                .GroupBy(s => s.CreatedByUser!.FullName ?? s.CreatedByUser.UserName)
+                .Select(g => new
                 {
-                    StaffName = g.Key ?? "Unknown",
-                    SalesAmount = g.Sum(s => s.Total),
-                    Commission = 0 // Placeholder as per requirements
+                    Name = g.Key,
+                    Sales = g.Sum(s => s.Total)
                 })
-                .OrderByDescending(x => x.SalesAmount)
+                .OrderByDescending(x => x.Sales)
                 .ToListAsync(cancellationToken);
+
+            var result = staffPerformance.Select(s => new StaffPerformanceVM
+            {
+                Name = s.Name,
+                Sales = s.Sales
+            }).ToList();
 
             return new GenericResponse<List<StaffPerformanceVM>>
             {
-                Data = staffPerformance,
+                Data = result,
                 StatusCode = Domain.Enums.ResponseStatusCode.Success,
                 Message = Messages.Success
             };

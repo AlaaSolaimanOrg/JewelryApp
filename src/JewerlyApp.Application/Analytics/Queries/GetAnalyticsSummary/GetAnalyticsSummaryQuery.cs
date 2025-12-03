@@ -1,7 +1,7 @@
-using JewerlyApp.Domain.Enums;
-using JewerlyApp.Application.Common.Responses;
-using MediatR;
 using System;
+using MediatR;
+using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Domain.Enums;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
 {
@@ -9,6 +9,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
-        public ReportType ReportType { get; set; } = ReportType.Daily;
+
+        // Made nullable so callers can omit the report-type filter and request all-time data.
+        public ReportType? ReportType { get; set; } = null;
     }
 }

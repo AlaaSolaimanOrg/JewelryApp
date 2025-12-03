@@ -30,8 +30,17 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
                 .AsQueryable();
 
             // Apply Date Range
-            // 1. Start with range from ReportType
-            var (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType);
+            DateTime dateFrom, dateTo;
+            if (request.ReportType.HasValue)
+            {
+                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
+            }
+            else
+            {
+                // All time
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
+            }
 
             // 2. Override with specific dates if provided
             if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;

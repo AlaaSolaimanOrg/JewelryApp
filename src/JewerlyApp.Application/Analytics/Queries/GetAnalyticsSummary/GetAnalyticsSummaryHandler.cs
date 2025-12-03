@@ -25,8 +25,16 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
             var vm = new AnalyticsSummaryVM();
 
             // Apply Date Range
-            // 1. Start with range from ReportType
-            var (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType);
+            DateTime dateFrom, dateTo;
+            if (request.ReportType.HasValue)
+            {
+                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
+            }
+            else
+            {
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
+            }
 
             // 2. Override with specific dates if provided
             if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
