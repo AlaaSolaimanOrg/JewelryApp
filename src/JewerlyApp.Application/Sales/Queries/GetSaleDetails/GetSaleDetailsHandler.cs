@@ -65,7 +65,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         Karat = i.KaratType,
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
-                        Subtotal = i.SubTotal,
+                        Subtotal = i.SubTotal -
+                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0),
                         Quantity = i.Quantity,
                         QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
                         AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
