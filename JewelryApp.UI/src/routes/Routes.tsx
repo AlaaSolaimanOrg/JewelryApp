@@ -6,7 +6,7 @@ import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 import Analytics from "../pages/admin/analytics/Analytics";
 import RepairManagement from "../pages/admin/repairManagement/RepairManagement";
-import Logs from "../pages/admin/logs/Logs";
+import Logs from "../pages/admin/Logss/Logs";
 
 // Lazy load all components
 const AddEditProduct = lazy(
