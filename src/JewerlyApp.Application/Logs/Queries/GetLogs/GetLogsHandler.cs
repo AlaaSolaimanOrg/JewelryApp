@@ -26,7 +26,7 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
                         {
                             Id = log.Id,
                             HandlerName = log.HandlerName,
-                            Request = log.Request,
+                            Request = log.Request ?? string.Empty,
                             Message = log.Message,
                             Exception = log.Exception,
                             Content = log.Content,
@@ -48,6 +48,7 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
                 query = query.Where(x =>
                     x.HandlerName.Contains(request.SearchBy) ||
                     x.Message.Contains(request.SearchBy) ||
+                    x.Request.Contains(request.SearchBy) ||
                     x.Exception!.Contains(request.SearchBy) ||
                     x.Content!.Contains(request.SearchBy) ||
                     (x.UserName != null && x.UserName.Contains(request.SearchBy)) ||
