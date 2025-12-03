@@ -19,6 +19,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
         public decimal? CardAmount { get; set; }
         public decimal? Tax { get; set; }
         public decimal? Discount { get; set; }
+        public decimal? TotalReturnedAmmount { get; set; }
         public decimal? TotalReturnAmount { get; set; }
         public List<SaleItemVM> SaleItems { get; set; } = new();
     }

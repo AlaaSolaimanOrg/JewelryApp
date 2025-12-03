@@ -21,5 +21,6 @@ namespace JewerlyApp.Domain.Entities
         public virtual ApplicationUser? CreatedByUser { get; set; }
         public Customer? Customer { get; set; }
         public List<SaleItem> SaleItems { get; set; } = new();
+        public List<Return> Returns { get; set; } = new();
     }
 }

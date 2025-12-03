@@ -57,17 +57,20 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,
                     Discount = x.Discount,
+                    TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {   Id = i.Id,
                         ProductName = i.Product!.Name!,
+                        ProductImage = i.Product!.Images.Where(im => im.IsMain).Select(im => im.ImageUrl).FirstOrDefault()!,
                         Sku = i.Product.Sku,
                         Karat = i.KaratType,
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
-                        Subtotal = i.SubTotal,
+                        Subtotal = i.SubTotal -
+                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0),
                         Quantity = i.Quantity,
-                        //QuantityReturned = i.ReturnItems.Sum(r => r.QuantityReturned),
-                        //AmountReturned = i.ReturnItems.Sum(r => r.ReturnAmount)
+                        QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
+                        AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
                     }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);
