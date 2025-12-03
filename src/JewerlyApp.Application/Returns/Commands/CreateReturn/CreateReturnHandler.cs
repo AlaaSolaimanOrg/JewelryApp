@@ -111,8 +111,6 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
     CreateReturnCommand request,
     CancellationToken cancellationToken)
         {
-            var errors = new List<string>();
-
             // 1. Must contain items
             if (request.Items == null || !request.Items.Any())
                 return GenericResponse<string>.Error(
@@ -149,15 +147,17 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 // Invalid sale item
                 if (!saleItemsMap.TryGetValue(item.SaleItemId, out var saleItem))
                 {
-                    errors.Add(Messages.Error_Invalid_SaleItemId(item.SaleItemId));
-                    continue;
+                    return GenericResponse<string>.Error(
+                        ResponseStatusCode.BadRequest,
+                        Messages.Error_Invalid_SaleItemId(item.SaleItemId));
                 }
 
                 // Invalid qty
                 if (item.QuantityToReturn <= 0)
                 {
-                    errors.Add(Messages.Error_Invalid_Return_Quantity);
-                    continue;
+                    return GenericResponse<string>.Error(
+                        ResponseStatusCode.BadRequest,
+                        Messages.Error_Invalid_Return_Quantity);
                 }
 
                 // Check if item has been previously returned
@@ -167,28 +167,29 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 // If item was fully returned already
                 if (previouslyReturned >= saleItem.Quantity)
                 {
-                    errors.Add(Messages.Error_Item_Already_Returned(saleItem.Quantity, previouslyReturned));
-                    continue;
+                    return GenericResponse<string>.Error(
+                        ResponseStatusCode.BadRequest,
+                        Messages.Error_Item_Already_Returned(saleItem.Quantity, previouslyReturned));
                 }
 
                 // Qty exceeds available amount (purchased - previously returned)
                 if (totalQuantityAfterReturn > saleItem.Quantity)
                 {
                     var availableToReturn = saleItem.Quantity - previouslyReturned;
-                    errors.Add(Messages.Error_Return_Exceeds_Available(
-                        item.QuantityToReturn, availableToReturn, previouslyReturned));
-                    continue;
+                    return GenericResponse<string>.Error(
+                        ResponseStatusCode.BadRequest,
+                        Messages.Error_Return_Exceeds_Available(
+                            item.QuantityToReturn, availableToReturn, previouslyReturned));
                 }
 
                 // Invalid amount
                 if (item.ReturnAmount <= 0)
                 {
-                    errors.Add(Messages.Error_Invalid_Return_Amount);
+                    return GenericResponse<string>.Error(
+                        ResponseStatusCode.BadRequest,
+                        Messages.Error_Invalid_Return_Amount);
                 }                             
             }
-
-            if (errors.Any())
-                return GenericResponse<string>.ValidationError(errors);
 
             return null;
         }
