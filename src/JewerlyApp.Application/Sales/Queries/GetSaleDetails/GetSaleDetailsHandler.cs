@@ -61,6 +61,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {   Id = i.Id,
                         ProductName = i.Product!.Name!,
+                        ProductImage = i.Product!.Images.Where(im => im.IsMain).Select(im => im.ImageUrl).FirstOrDefault()!,
                         Sku = i.Product.Sku,
                         Karat = i.KaratType,
                         Weight = i.Weight,
