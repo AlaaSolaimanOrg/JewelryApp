@@ -6,6 +6,7 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
     {
         public Guid Id { get; set; }
         public string HandlerName { get; set; } = string.Empty;
+        public string Request { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public string? Exception { get; set; }
         public string? Content { get; set; }

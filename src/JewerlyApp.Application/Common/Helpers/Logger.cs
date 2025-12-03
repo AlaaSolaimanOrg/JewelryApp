@@ -20,6 +20,7 @@ namespace JewerlyApp.Application.Common.Helpers
             object? content,
             int userId,
             string? correlationId = null,
+            string? request = null,
             CancellationToken cancellationToken = default)
         {
             var log = new Log
@@ -36,6 +37,7 @@ namespace JewerlyApp.Application.Common.Helpers
                 }) : null,
                 LoggedInUserId = userId,
                 CorrelationId = correlationId,
+                Request = request,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -51,6 +53,7 @@ namespace JewerlyApp.Application.Common.Helpers
             object? content,
             int userId,
             string? correlationId = null,
+            string? request = null,
             CancellationToken cancellationToken = default)
         {
             var log = new Log
@@ -66,6 +69,7 @@ namespace JewerlyApp.Application.Common.Helpers
                 }) : null,
                 LoggedInUserId = userId,
                 CorrelationId = correlationId,
+                Request = request,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -81,9 +85,10 @@ namespace JewerlyApp.Application.Common.Helpers
             Exception exception,
             int userId,
             string? correlationId = null,
+            string? request = null,
             CancellationToken cancellationToken = default)
         {
-            return await LogErrorAsync(context, handlerName, exception.Message, exception, null, userId, correlationId, cancellationToken);
+            return await LogErrorAsync(context, handlerName, exception.Message, exception, null, userId, correlationId, request, cancellationToken);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace JewerlyApp.Application.Logs.Queries.GetLogs
                         {
                             Id = log.Id,
                             HandlerName = log.HandlerName,
+                            Request = log.Request,
                             Message = log.Message,
                             Exception = log.Exception,
                             Content = log.Content,

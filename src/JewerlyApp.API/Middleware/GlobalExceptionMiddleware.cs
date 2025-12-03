@@ -17,6 +17,29 @@ namespace JewerlyApp.API.Middleware
 
         public async Task InvokeAsync(HttpContext context, IApplicationDbContext dbContext)
         {
+            // Enable buffering so we can read the request body multiple times
+            context.Request.EnableBuffering();
+            
+            // Read the request body
+            string? requestBody = null;
+            try
+            {
+                if (context.Request.Body.CanSeek)
+                {
+                    context.Request.Body.Position = 0;
+                    using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
+                    requestBody = await reader.ReadToEndAsync();
+                    context.Request.Body.Position = 0; // Reset for next middleware
+                }
+            }
+            catch
+            {
+                // If reading fails, continue without request body
+            }
+
+            // Store request body in HttpContext.Items for later use
+            context.Items["RequestBody"] = requestBody;
+
             try
             {
                 await _next(context);
@@ -43,6 +66,7 @@ namespace JewerlyApp.API.Middleware
             }
 
             var correlationId = context.Items["CorrelationId"]?.ToString();
+            var requestBody = context.Items["RequestBody"]?.ToString();
 
             // Determine handler name from exception stack trace
             string handlerName = GetHandlerNameFromException(exception);
@@ -58,6 +82,7 @@ namespace JewerlyApp.API.Middleware
                     null,
                     userId,
                     correlationId,
+                    requestBody,
                     CancellationToken.None);
             }
             catch

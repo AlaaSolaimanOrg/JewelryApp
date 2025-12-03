@@ -15,6 +15,7 @@ namespace JewerlyApp.Domain.Entities
 
         // Generic content storage (JSON serialized)
         public string? Content { get; set; } // Can store any request/response object as JSON
+        public string? Request { get; set; } // Stores the HTTP request body
 
         // User context
         public int? LoggedInUserId { get; set; }
