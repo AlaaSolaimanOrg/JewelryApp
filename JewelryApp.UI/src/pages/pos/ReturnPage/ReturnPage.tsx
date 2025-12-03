@@ -55,6 +55,16 @@ interface Sale {
   saleItems: SaleItem[];
 }
 
+interface SearchSale {
+  id: string;
+  serialNumber: string;
+  createdDate: string;
+  staffName: string;
+  customerName: string;
+  customerPhone: string;
+  total: number;
+}
+
 interface SaleItem {
   id: string;
   productName: string;
@@ -71,7 +81,7 @@ const ReturnPage: React.FC = () => {
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchBy, setSearchBy] = useState("");
+  const [selectedSale, setSelectedSale] = useState<SearchSale | null>(null);
   const [activeSearchTab, setActiveSearchTab] = useState<
     "receipt" | "phone" | "name"
   >("receipt");
@@ -92,25 +102,18 @@ const ReturnPage: React.FC = () => {
     isLoading: isLoadingSale,
   } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
-    payload: { serialNumber: searchBy },
-    extraEffectCheck: !!searchBy && activeSearchTab === "receipt",
-    effectDependency: [searchBy],
+    payload: { saleId: selectedSale?.id || "" },
+    extraEffectCheck: !!selectedSale,
+    effectDependency: [selectedSale],
     dataInitalValue: null,
   }) as {
-    data: Sale;
+    data: Sale | null;
     setData: React.Dispatch<React.SetStateAction<Sale | null>>;
     isLoading: boolean;
   };
 
-  const hasSearched = searchBy.trim() !== "";
+  const hasSearched = !!selectedSale;
   const transactionNotFound = hasSearched && !saleDetails;
-
-  useEffect(() => {
-    if (!searchQuery) {
-      setSearchBy("");
-      setSaleDetails(null);
-    }
-  }, [searchQuery, setSaleDetails]);
 
   useEffect(() => {
     if (!saleDetails) return;
@@ -279,6 +282,7 @@ const ReturnPage: React.FC = () => {
   };
 
   const handleConfirmReturn = async () => {
+    if (!saleDetails) return;
     const payload = {
       saleId: saleDetails.id,
       items: items
@@ -301,7 +305,7 @@ const ReturnPage: React.FC = () => {
     if (checkRequestSucceeded(response.statusCode)) {
       showSuccess(response.message);
       setSaleDetails(null);
-      setSearchBy("");
+      setSelectedSale(null);
       setSearchQuery("");
     }
 
@@ -354,7 +358,11 @@ const ReturnPage: React.FC = () => {
         setSearchQuery={setSearchQuery}
         activeSearchTab={activeSearchTab}
         setActiveSearchTab={setActiveSearchTab}
-        onEnterPress={(v) => setSearchBy(v)}
+        selectedSale={selectedSale}
+        setSelectedSale={setSelectedSale}
+        onEnterPress={() => {
+          // The selection is now handled by AsyncSelect onChange
+        }}
         onBack={() => navigate("/")}
       />
 
@@ -375,11 +383,12 @@ const ReturnPage: React.FC = () => {
       )}
 
       {/* Sale Found */}
-      {saleDetails && (
+      {saleDetails && !!selectedSale && (
         <section>
           <TransactionDetails
             saleId={saleDetails.id}
             receiptNumber={saleDetails.serialNumber}
+            status="Completed"
             date={formattedDate}
             time={formattedTime}
             employee={saleDetails.staffName}
