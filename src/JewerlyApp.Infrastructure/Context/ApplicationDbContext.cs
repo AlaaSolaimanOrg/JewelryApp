@@ -79,7 +79,7 @@ namespace JewerlyApp.Infrastructure.Context
 
             builder.Entity<ReturnItem>()
             .HasOne(r => r.SaleItem)
-            .WithMany()
+            .WithMany(s => s.ReturnItems)
             .HasForeignKey(r => r.SaleItemId)
             .OnDelete(DeleteBehavior.Restrict);
         }

@@ -69,8 +69,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         Subtotal = i.SubTotal -
                                 (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0),
                         Quantity = i.Quantity,
-                        //QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
-                        //AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
+                        QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
+                        AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
                     }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);

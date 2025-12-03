@@ -20,6 +20,7 @@ namespace JewerlyApp.Domain.Entities
         public int Quantity { get; set; }
         public Product? Product { get; set; }
         public Sale? Sale { get; set; }
+        public ICollection<ReturnItem> ReturnItems { get; set; } = new List<ReturnItem>();
 
     }
 }
