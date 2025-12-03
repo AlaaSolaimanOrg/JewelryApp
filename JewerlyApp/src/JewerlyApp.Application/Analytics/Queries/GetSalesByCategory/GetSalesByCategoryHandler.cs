@@ -23,54 +23,52 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
 
         public async Task<GenericResponse<List<SalesByCategoryVM>>> Handle(GetSalesByCategoryQuery request, CancellationToken cancellationToken)
         {
-            // Determine date range / filtering strategy
-            var hasExplicitDates = request.DateFrom.HasValue || request.DateTo.HasValue;
-            var hasReportType = request.ReportType.HasValue;
-            var noDateFilter = !hasExplicitDates && !hasReportType; // when true, treat as "all time"
-
-            DateTime dateFrom = DateTime.MinValue;
-            DateTime dateTo = DateTime.MaxValue;
-
-            if (hasReportType)
-            {
-                var (rFrom, rTo) = DateRangeHelper.GetDateRange(request.ReportType!.Value);
-                dateFrom = rFrom;
-                dateTo = rTo;
-            }
-
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
-
-            var saleItemsQuery = _context.SaleItems
+            var query = _context.SaleItems
                 .AsNoTracking()
                 .Include(si => si.Product)
                 .Include(si => si.Sale)
-                .Where(si => si.Product != null && si.Product.Category != null)
                 .AsQueryable();
 
-            if (!noDateFilter)
+            // Apply Date Range
+            DateTime dateFrom, dateTo;
+            if (request.ReportType.HasValue)
             {
-                saleItemsQuery = saleItemsQuery.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale.CreatedDate <= dateTo);
+                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
+            }
+            else
+            {
+                // All time
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
             }
 
-            var totalSales = await saleItemsQuery.SumAsync(si => si.SubTotal, cancellationToken);
+            // 2. Override with specific dates if provided
+            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
+            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
 
-            var categories = await saleItemsQuery
+            query = query.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale!.CreatedDate <= dateTo);
+
+            var categorySales = await query
+                .Where(si => si.Product != null && si.Product.Category != null)
                 .GroupBy(si => si.Product!.Category)
                 .Select(g => new
                 {
                     Category = g.Key,
                     Revenue = g.Sum(si => si.SubTotal)
                 })
-                .OrderByDescending(x => x.Revenue)
                 .ToListAsync(cancellationToken);
 
-            var result = categories.Select(c => new SalesByCategoryVM
-            {
-                Category = c.Category.ToString()!,
-                Revenue = c.Revenue,
-                Percentage = totalSales > 0 ? (c.Revenue / totalSales) * 100 : 0
-            }).ToList();
+            var totalRevenue = categorySales.Sum(x => x.Revenue);
+
+            var result = categorySales
+                .Select(x => new SalesByCategoryVM
+                {
+                    CategoryName = x.Category.ToString()!,
+                    Revenue = x.Revenue,
+                    Percentage = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                })
+                .OrderByDescending(x => x.Revenue)
+                .ToList();
 
             return new GenericResponse<List<SalesByCategoryVM>>
             {

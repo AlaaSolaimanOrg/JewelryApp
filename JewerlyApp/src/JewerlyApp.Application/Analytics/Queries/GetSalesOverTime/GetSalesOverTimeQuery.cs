@@ -12,6 +12,6 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
         public DateTime? DateTo { get; set; }
 
         // Nullable so callers can omit the report type and request all-time data.
-        public ReportType? ReportType { get; set; }
+        public ReportType? ReportType { get; set; } = null;
     }
 }

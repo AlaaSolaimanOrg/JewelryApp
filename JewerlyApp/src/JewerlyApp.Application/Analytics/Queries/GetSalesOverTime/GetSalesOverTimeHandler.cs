@@ -1,4 +1,5 @@
 using JewerlyApp.Application.Common.Helpers;
+using JewerlyApp.Domain.Enums;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,50 +25,117 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
 
         public async Task<GenericResponse<List<SalesOverTimeVM>>> Handle(GetSalesOverTimeQuery request, CancellationToken cancellationToken)
         {
-            // Determine date range / filtering strategy
-            var hasExplicitDates = request.DateFrom.HasValue || request.DateTo.HasValue;
-            var hasReportType = request.ReportType.HasValue;
-            var noDateFilter = !hasExplicitDates && !hasReportType; // when true, treat as "all time"
+            var query = _context.Sales.AsNoTracking().AsQueryable();
 
-            DateTime dateFrom = DateTime.MinValue;
-            DateTime dateTo = DateTime.MaxValue;
-
-            if (hasReportType)
+            // Apply Date Range
+            DateTime dateFrom, dateTo;
+            if (request.ReportType.HasValue)
             {
-                var (rFrom, rTo) = DateRangeHelper.GetDateRange(request.ReportType!.Value);
-                dateFrom = rFrom;
-                dateTo = rTo;
+                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
+            }
+            else
+            {
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
             }
 
+            // 2. Override with specific dates if provided
             if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
             if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
 
-            var salesQuery = _context.Sales
-                .AsNoTracking()
-                .AsQueryable();
+            query = query.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
 
-            if (!noDateFilter)
-            {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
-            }
-
-            // Group by day
-            var groups = await salesQuery
-                .GroupBy(s => s.CreatedDate.Date)
-                .Select(g => new
+            var salesData = await query
+                .Where(s => s.CreatedDate.HasValue)
+                .Select(s => new
                 {
-                    Date = g.Key,
-                    Total = g.Sum(s => s.Total)
+                    CreatedDate = s.CreatedDate!.Value,
+                    s.Total,
+                    ItemsCount = s.SaleItems.Sum(si => si.Quantity)
                 })
-                .OrderBy(x => x.Date)
                 .ToListAsync(cancellationToken);
 
-            var result = groups.Select(g => new SalesOverTimeVM
+            List<SalesOverTimeVM> result;
+
+            var effectiveReportType = request.ReportType ?? ReportType.Monthly; // default grouping when null - choose Monthly for broad timeline
+
+            switch (effectiveReportType)
             {
-                // If SalesOverTimeVM.Period is DateTime, this will match; if it's string, adjust accordingly elsewhere.
-                Period = g.Date,
-                Sales = g.Total
-            }).ToList();
+                case ReportType.Daily:
+                    // Group by Hour for the specific day
+                    result = salesData
+                        .GroupBy(s => s.CreatedDate.Hour)
+                        .Select(g => new SalesOverTimeVM
+                        {
+                            Date = dateFrom.Date.AddHours(g.Key),
+                            DateLabel = dateFrom.Date.AddHours(g.Key).ToString("h tt", CultureInfo.InvariantCulture),
+                            Revenue = g.Sum(x => x.Total),
+                            UnitsSold = g.Sum(x => x.ItemsCount)
+                        })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+                    break;
+
+                case ReportType.Weekly:
+                    // Group by Day for the week
+                    result = salesData
+                        .GroupBy(s => s.CreatedDate.Date)
+                        .Select(g => new SalesOverTimeVM
+                        {
+                            Date = g.Key,
+                            DateLabel = g.Key.ToString("ddd dd", CultureInfo.InvariantCulture),
+                            Revenue = g.Sum(x => x.Total),
+                            UnitsSold = g.Sum(x => x.ItemsCount)
+                        })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+                    break;
+
+                case ReportType.Monthly:
+                    // Group by Day for the month
+                    result = salesData
+                        .GroupBy(s => s.CreatedDate.Date)
+                        .Select(g => new SalesOverTimeVM
+                        {
+                            Date = g.Key,
+                            DateLabel = g.Key.ToString("MMM dd", CultureInfo.InvariantCulture),
+                            Revenue = g.Sum(x => x.Total),
+                            UnitsSold = g.Sum(x => x.ItemsCount)
+                        })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+                    break;
+
+                case ReportType.Yearly:
+                    // Group by Month for the year
+                    result = salesData
+                        .GroupBy(s => new { s.CreatedDate.Year, s.CreatedDate.Month })
+                        .Select(g => new SalesOverTimeVM
+                        {
+                            Date = new DateTime(g.Key.Year, g.Key.Month, 1),
+                            DateLabel = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMM yyyy", CultureInfo.InvariantCulture),
+                            Revenue = g.Sum(x => x.Total),
+                            UnitsSold = g.Sum(x => x.ItemsCount)
+                        })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+                    break;
+
+                default:
+                    // Default to Monthly grouping for broad timeline (when reportType is null)
+                    result = salesData
+                        .GroupBy(s => s.CreatedDate.Date)
+                        .Select(g => new SalesOverTimeVM
+                        {
+                            Date = g.Key,
+                            DateLabel = g.Key.ToString("MMM dd", CultureInfo.InvariantCulture),
+                            Revenue = g.Sum(x => x.Total),
+                            UnitsSold = g.Sum(x => x.ItemsCount)
+                        })
+                        .OrderBy(x => x.Date)
+                        .ToList();
+                    break;
+            }
 
             return new GenericResponse<List<SalesOverTimeVM>>
             {

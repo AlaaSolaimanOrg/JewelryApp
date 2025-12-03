@@ -11,6 +11,6 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
         public DateTime? DateTo { get; set; }
 
         // Made nullable so callers can omit the report-type filter and request all-time data.
-        public ReportType? ReportType { get; set; }
+        public ReportType? ReportType { get; set; } = null;
     }
 }

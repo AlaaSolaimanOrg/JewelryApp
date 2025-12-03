@@ -24,72 +24,43 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
         {
             var vm = new AnalyticsSummaryVM();
 
-            // Determine date range / filtering strategy
-            var hasExplicitDates = request.DateFrom.HasValue || request.DateTo.HasValue;
-            var hasReportType = request.ReportType.HasValue;
-            var noDateFilter = !hasExplicitDates && !hasReportType; // when true, treat as "all time"
-
-            DateTime dateFrom = DateTime.MinValue;
-            DateTime dateTo = DateTime.MaxValue;
-
-            if (hasReportType)
+            // Apply Date Range
+            DateTime dateFrom, dateTo;
+            if (request.ReportType.HasValue)
             {
-                var (rFrom, rTo) = DateRangeHelper.GetDateRange(request.ReportType!.Value);
-                dateFrom = rFrom;
-                dateTo = rTo;
+                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
+            }
+            else
+            {
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
             }
 
+            // 2. Override with specific dates if provided
             if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
             if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
 
             // 1. Avg Daily Sales
             var salesQuery = _context.Sales.AsNoTracking().AsQueryable();
-
-            if (!noDateFilter)
-            {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
-            }
+            salesQuery = salesQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
 
             var totalSales = await salesQuery.SumAsync(s => s.Total, cancellationToken);
-
-            // Calculate number of days for average
-            double days;
-            if (noDateFilter)
-            {
-                // When no date filter is applied, base the day range on actual sales data.
-                var anySales = await _context.Sales.AnyAsync(cancellationToken);
-                if (!anySales)
-                {
-                    days = 1; // avoid division by zero
-                }
-                else
-                {
-                    var minDate = await _context.Sales.MinAsync(s => s.CreatedDate, cancellationToken);
-                    var maxDate = await _context.Sales.MaxAsync(s => s.CreatedDate, cancellationToken);
-                    days = (maxDate - minDate).TotalDays;
-                    days = days < 1 ? 1 : days;
-                }
-            }
-            else
-            {
-                days = (dateTo - dateFrom).TotalDays;
-                days = days < 1 ? 1 : days;
-            }
+            
+            // Calculate number of days
+            var days = (dateTo - dateFrom).TotalDays;
+            days = days < 1 ? 1 : days; // Avoid division by zero
 
             vm.AvgDailySales = totalSales / (decimal)days;
+            
 
             // 2. Best Selling Category
             var categoryQuery = _context.SaleItems
                 .AsNoTracking()
                 .Include(si => si.Product)
                 .Include(si => si.Sale)
-                .Where(si => si.Product != null && si.Product.Category != null)
-                .AsQueryable();
+                .Where(si => si.Product != null && si.Product.Category != null);
 
-            if (!noDateFilter)
-            {
-                categoryQuery = categoryQuery.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale!.CreatedDate <= dateTo);
-            }
+            categoryQuery = categoryQuery.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale!.CreatedDate <= dateTo);
 
             var bestCategory = await categoryQuery
                 .GroupBy(si => si.Product!.Category)
@@ -114,10 +85,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
                 .Include(s => s.CreatedByUser)
                 .AsQueryable();
 
-            if (!noDateFilter)
-            {
-                staffQuery = staffQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
-            }
+            staffQuery = staffQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
 
             var topStaff = await staffQuery
                 .Where(s => s.CreatedByUser != null)
@@ -137,6 +105,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
             }
 
             // 4. Most Valuable Karat (Inventory Value)
+            // Note: Inventory value is current state, not historical, so date filters might not apply strictly, 
+            // but usually "Most Valuable Karat" implies current asset value.
             var inventoryValueByKarat = await _context.Products
                 .AsNoTracking()
                 .Where(p => p.Weight > 0 && p.Quantity > 0)
