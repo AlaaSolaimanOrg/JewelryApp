@@ -101,9 +101,7 @@ const RepairItemCard = ({
                     <option value={ProductType.Gold}>Gold</option>
                     <option value={ProductType.Silver}>Silver</option>
                   </select>
-                  {errors.metal && (
-                    <p className="error-text">{errors.metal}</p>
-                  )}
+                  {errors.metal && <p className="error-text">{errors.metal}</p>}
                 </div>
               </div>
 
@@ -174,17 +172,11 @@ const RepairItemCard = ({
 
               {/* NOTES */}
               <div className="form-group">
-                <label>Repair Notes *</label>
+                <label>Repair Notes</label>
                 <textarea
-                  className={errors.notes ? "input-error" : ""}
                   value={item.notes}
-                  onChange={(e) =>
-                    updateItem(item.id, "notes", e.target.value)
-                  }
+                  onChange={(e) => updateItem(item.id, "notes", e.target.value)}
                 />
-                {errors.notes && (
-                  <p className="error-text">{errors.notes}</p>
-                )}
               </div>
 
               {/* SECTION 3 */}

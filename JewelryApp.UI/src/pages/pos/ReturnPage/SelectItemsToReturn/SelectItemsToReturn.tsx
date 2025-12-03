@@ -60,6 +60,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   const data = items.map((item) => {
     const errors = itemErrors[item.id] || [];
 
+    console.log("item",item)
     const hasError = (msg: string) => errors.includes(msg);
 
     return {
@@ -74,9 +75,19 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
 
       Product: (
         <div className="product-cell">
-          <div className="product-icon">
-            {item.icon === "ring" ? <FaRing /> : <FaGem />}
-          </div>
+          {!!item.productImage && (
+            <img
+              src={`${import.meta.env.VITE_API_URL}${item.productImage}`}
+              alt={item.name ?? ""}
+              style={{
+                width: "70px",
+                height: "70px",
+                objectFit: "cover",
+                borderRadius: "6px",
+                marginRight: "10px",
+              }}
+            />
+          )}
           <span className="product-name">{item.name}</span>
         </div>
       ),

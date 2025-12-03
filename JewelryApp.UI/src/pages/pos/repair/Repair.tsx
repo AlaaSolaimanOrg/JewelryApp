@@ -149,7 +149,6 @@ const Repair = () => {
       if (!item.itemType) err.itemType = "Item type is required";
       if (!item.metal) err.metal = "Metal is required";
       if (!item.repairType) err.repairType = "Repair type is required";
-      if (!item.notes.trim()) err.notes = "Notes are required";
       if (!item.dueDate) err.dueDate = "Due date is required";
 
       if (Object.keys(err).length > 0) newErrors[item.id] = err;

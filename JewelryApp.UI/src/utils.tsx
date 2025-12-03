@@ -1,11 +1,11 @@
 import type { AxiosRequestConfig } from "axios";
-import axiosInstance from "./services/axios.service";
-import { toast } from "react-toastify";
-import qs from "qs";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import type React from "react";
-import { SortDirection } from "./types/enums";
 import heic2any from "heic2any";
+import qs from "qs";
+import type React from "react";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { toast } from "react-toastify";
+import axiosInstance from "./services/axios.service";
+import { SortDirection } from "./types/enums";
 
 const addParamsToObjKeys = (obj: Record<string, any>) => {
   return obj;

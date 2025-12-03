@@ -71,7 +71,7 @@ const Analytics = () => {
   const [fullViewChart, setFullViewChart] = useState<null | string>(null);
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
-  const [reportType, setReportType] = useState<ReportType>(ReportType.Monthly);
+  const [reportType, setReportType] = useState<ReportType>(ReportType.AllTime);
   const [appliedFilters, setAppliedFilters] = useState<{
     dateFrom: string;
     dateTo: string;
@@ -79,7 +79,7 @@ const Analytics = () => {
   }>({
     dateFrom: "",
     dateTo: "",
-    reportType: ReportType.Monthly,
+    reportType: reportType == ReportType.AllTime ? null : reportType,
   });
 
   const openFullView = (chartId: string) => setFullViewChart(chartId);
@@ -248,12 +248,12 @@ const Analytics = () => {
   const resetFilters = () => {
     setDateFrom("");
     setDateTo("");
-    setReportType(ReportType.Monthly);
+    setReportType(ReportType.AllTime);
 
     setAppliedFilters({
       dateFrom: "",
       dateTo: "",
-      reportType: ReportType.Monthly,
+      reportType: ReportType.AllTime,
     });
   };
 
@@ -315,6 +315,7 @@ const Analytics = () => {
                 value={reportType}
                 onChange={(e) => setReportType(Number(e.target.value))}
               >
+                <option value={ReportType.AllTime}>All Time</option>
                 <option value={ReportType.Daily}>Daily</option>
                 <option value={ReportType.Weekly}>Weekly</option>
                 <option value={ReportType.Monthly}>Monthly</option>

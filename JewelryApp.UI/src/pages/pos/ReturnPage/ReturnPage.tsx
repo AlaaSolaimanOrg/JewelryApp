@@ -13,7 +13,7 @@ import {
   type ReturnOption,
 } from "../../../types/enums";
 
-import { checkRequestSucceeded, showSuccess } from "../../../utils";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 
 import ConfirmReturnModal from "./ConfirmReturnModal/ConfirmReturnModal";
 import SelectItemsToReturn from "./SelectItemsToReturn/SelectItemsToReturn";
@@ -38,6 +38,7 @@ export interface TransactionItem {
   otherReason: string;
   condition: ItemCondition | null;
   returnOption: ReturnOption | null;
+  productImage?: string;
 }
 
 interface Sale {
@@ -74,6 +75,7 @@ interface SaleItem {
   pricePerGram: number;
   subtotal: number;
   quantity: number;
+  productImage: string;
 }
 
 const ReturnPage: React.FC = () => {
@@ -113,7 +115,6 @@ const ReturnPage: React.FC = () => {
   };
 
   const hasSearched = !!selectedSale;
-  const transactionNotFound = hasSearched && !saleDetails;
 
   useEffect(() => {
     if (!saleDetails) return;
@@ -121,6 +122,7 @@ const ReturnPage: React.FC = () => {
     const mappedItems: TransactionItem[] = saleDetails.saleItems.map(
       (item) => ({
         id: item.id,
+        productImage: item.productImage,
         name: item.productName,
         icon: item.productName.toLowerCase().includes("ring") ? "ring" : "gem",
         karat: item.karat,
@@ -307,6 +309,8 @@ const ReturnPage: React.FC = () => {
       setSaleDetails(null);
       setSelectedSale(null);
       setSearchQuery("");
+    } else {
+      showError(response?.message);
     }
 
     setModalVisible(false);
@@ -371,14 +375,6 @@ const ReturnPage: React.FC = () => {
         <div className="no-transaction-box">
           <h3>Search for a transaction to begin</h3>
           <p>Enter a receipt number, phone, or customer name.</p>
-        </div>
-      )}
-
-      {/* Not Found */}
-      {transactionNotFound && !isLoadingSale && (
-        <div className="no-transaction-box not-found">
-          <h3>No transaction found</h3>
-          <p>Please check the value you entered and try again.</p>
         </div>
       )}
 
