@@ -44,8 +44,6 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
 
             vm.AvgDailySales = totalSales / (decimal)days;
             
-            // Placeholder for change percentage (requires previous period calculation, keeping simple for now)
-            vm.AvgDailySalesChange = 5.2m; // Mock or calculate if needed
 
             // 2. Best Selling Category
             var categoryQuery = _context.SaleItems

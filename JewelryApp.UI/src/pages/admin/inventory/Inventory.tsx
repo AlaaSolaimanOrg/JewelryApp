@@ -158,8 +158,9 @@ const Inventory = () => {
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
+  console.log("products", products);
   const data = products?.map((product) => ({
-    Image: !!product.images[0]?.imageUrl && (
+    image: !!product.images[0]?.imageUrl && (
       <img
         src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
         alt={product.name ?? ""}
@@ -171,15 +172,15 @@ const Inventory = () => {
         }}
       />
     ),
-    Quantity: product.quantity,
-    Price: product.price,
-    ProductName: renderLongDescription(product.name, 14),
-    SKU: product.sku,
-    Karat: `${product.karatType}K`,
-    Weight: `${product.weight}g`,
-    Category: ProductCategory[product.category],
-    Tags: <TagsPopover tags={product.tags} />,
-    Actions: (
+    quantity: product.quantity,
+    price: product.price,
+    productName: renderLongDescription(product.name, 14),
+    sku: product.sku,
+    karat: `${product.karatType}K`,
+    weight: `${product.weight}g`,
+    category: ProductCategory[product.category],
+    tags: <TagsPopover tags={product.tags} />,
+    actions: (
       <>
         <button
           className="action-btn"
@@ -199,6 +200,7 @@ const Inventory = () => {
     ),
   }));
 
+  console.log("data", data);
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
   };

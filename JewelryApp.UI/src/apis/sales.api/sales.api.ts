@@ -61,3 +61,15 @@ export const getDashboardInsights = async () => {
 export const getTopSellingCategories = async () => {
   return requestApi("GET", apiRoutes.sales.getTopSellingCategories, {});
 };
+
+export const searchSales = async (payload: {
+  serialNumber: string;
+  customerPhone: string;
+  customerName: string;
+  pageSize: number;
+  pageNumber: number;
+  sortBy: string;
+  sortDirection: SortDirection;
+}) => {
+  return requestApi("GET", apiRoutes.sales.searchSales, payload);
+};

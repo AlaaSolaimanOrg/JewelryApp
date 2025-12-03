@@ -51,11 +51,6 @@ const AnalyticsSummary = ({ appliedFilters, refreshKey }) => {
           <div className="kpi-value">
             ${smartRound(analyticsSummary.avgDailySales)}
           </div>
-
-          <div className="kpi-trend">
-            <FaAward />
-            {smartRound(analyticsSummary.avgDailySalesChange)}% from last period
-          </div>
         </div>
 
         {/* Best Selling Category */}
