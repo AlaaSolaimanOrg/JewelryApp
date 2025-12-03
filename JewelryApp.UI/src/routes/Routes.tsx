@@ -6,6 +6,7 @@ import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 import Analytics from "../pages/admin/analytics/Analytics";
 import RepairManagement from "../pages/admin/repairManagement/RepairManagement";
+import Logs from "../pages/admin/logs/Logs";
 
 // Lazy load all components
 const AddEditProduct = lazy(
@@ -107,7 +108,10 @@ const AppRoutes = () => {
             <Route path="admin/sales-reports" element={<SalesReports />} />
             <Route path="admin/customers" element={<Customers />} />
             <Route path="admin/staff" element={<Staff />} />
-            <Route path="admin/repairManagement" element={<RepairManagement />} />
+            <Route
+              path="admin/repairManagement"
+              element={<RepairManagement />}
+            />
             <Route path="admin/settings" element={<Settings />} />
             <Route path="admin/print-tags" element={<TagPrinting />} />
             <Route path="admin/export-data" element={<ExportData />} />
@@ -129,6 +133,7 @@ const AppRoutes = () => {
             />
           </Route>
 
+          <Route path="admin/logs" element={<Logs />} />
           <Route path="admin/" element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="unauthorized" element={<Unauthorized />} />

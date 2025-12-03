@@ -1,4 +1,4 @@
-import type { SortDirection } from "./enums";
+import { SortDirection } from "./enums";
 
 export interface SortCriteria {
   sortBy: string;

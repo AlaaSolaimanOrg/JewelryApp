@@ -10,7 +10,7 @@ type TableRow = Record<
 
 export type TableHeader = {
   key: string;
-  label: string;
+  label: React.ReactNode;
   width?: string;
   sortable?: boolean;
   onHeaderClick?: () => void;
@@ -56,9 +56,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
             data.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {headers.map((header, colIndex) => (
-                  <td key={colIndex}>
-                    {row[header.key] ?? row[header.label?.replace(/\s/g, "")]}
-                  </td>
+                  <td key={colIndex}>{row[header.key] ?? null}</td>
                 ))}
               </tr>
             ))
