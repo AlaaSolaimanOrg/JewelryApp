@@ -143,12 +143,14 @@ const SideNav = () => {
               <small>Inventory System</small>
             </div>
           </div>
-          <button
-            className="close-sidebar-mobile"
-            onClick={() => setIsMobileOpen(false)}
-          >
-            <FaTimes />
-          </button>
+          {isMobileOpen && (
+            <button
+              className="close-sidebar-mobile"
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <FaTimes />
+            </button>
+          )}
         </div>
 
         <div className="nav-links">

@@ -6,9 +6,7 @@ import {
   deleteProduct,
   getProducts,
 } from "../../../apis/products.api/products.api";
-import InventoryFilterSideBar, {
-  type InventoryFilters,
-} from "../../../components/InventoryFilterSideBar/InventoryFilterSideBar";
+
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
@@ -30,6 +28,7 @@ import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 import type { TableHeader } from "../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../components/tables/Table/CustomTable";
+import InventoryFilter, { type InventoryFilters } from "../../../components/InventoryFilter/InventoryFilter";
 
 export interface Product {
   id: string;
@@ -247,11 +246,13 @@ const Inventory = () => {
 
       <div>
         <Row>
-          <Col md={12} lg={4} xl={3}>
-            <InventoryFilterSideBar setAppliedFilters={setAppliedFilters} />
+          {/* Sidebar column - ALWAYS FIRST */}
+          <Col xs={12} className="sidebar-column">
+            <InventoryFilter setAppliedFilters={setAppliedFilters} />
           </Col>
 
-          <Col md={12} lg={8} xl={9}>
+          {/* Content column - ALWAYS SECOND */}
+          <Col xs={12} className="content-column">
             <div className="inventory-content">
               <div className="card">
                 <div className="card-header">

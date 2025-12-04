@@ -9,14 +9,31 @@
   transition: var(--transition);
   left: 0;
   top: 0;
-
   .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; // keeps logo left, button right
     padding: 20px;
     height: var(--header-height);
     border-bottom: 1px solid var(--border);
+
+    .logo {
+      flex: 1; // take all remaining space
+      display: flex;
+      align-items: center;
+      min-width: 0; // allow text to shrink
+    }
+
+    .close-sidebar-mobile {
+      flex-shrink: 0; // don't shrink
+    }
+  }
+
+  .logo-text h1 {
+    font-size: 1.4rem;
+    white-space: nowrap; // keep text on one line
+    overflow: hidden; // hide overflow if needed
+    text-overflow: ellipsis;
   }
 
   .close-sidebar-mobile {
@@ -60,7 +77,6 @@
     font-size: 1.4rem;
     color: var(--dark-light);
     font-weight: 700;
-    line-height: 1.2;
   }
 
   .logo-text span {
@@ -151,8 +167,8 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
-
-@media (max-width: 992px) {
+/* Show toggle button ONLY below 1599px */
+@media (max-width: 1599px) {
   .mobile-toggle-btn {
     display: block;
   }
@@ -174,7 +190,8 @@
   }
 }
 
-@media (min-width: 993px) {
+/* From 1600px and above → Full sidebar, no toggle */
+@media (min-width: 1600px) {
   .sidebar {
     transform: translateX(0) !important;
   }
