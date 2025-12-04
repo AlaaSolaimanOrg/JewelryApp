@@ -32,13 +32,15 @@ export interface TransactionItem {
   unitPrice: number;
   qtyPurchased: number;
   qtyToReturn: number;
-  returnAmount: number;
+  apiAmountReturned: number; // value that came from the API
+  returnAmount: number; // editable amount entered by user for this return
   selected: boolean;
   returnReason: ReturnReason | null;
   otherReason: string;
   condition: ItemCondition | null;
   returnOption: ReturnOption | null;
   productImage?: string;
+  quantityReturned: number;
 }
 
 interface Sale {
@@ -76,6 +78,8 @@ interface SaleItem {
   subtotal: number;
   quantity: number;
   productImage: string;
+  quantityReturned: number;
+  amountReturned: number;
 }
 
 const ReturnPage: React.FC = () => {
@@ -130,8 +134,10 @@ const ReturnPage: React.FC = () => {
         unitPrice: item.subtotal / item.quantity,
         qtyPurchased: item.quantity,
         qtyToReturn: 0,
+        apiAmountReturned: item.amountReturned,
         returnAmount: 0,
         selected: false,
+        quantityReturned: item.quantityReturned || 0,
 
         // user-entry fields
         returnReason: null,
@@ -155,9 +161,13 @@ const ReturnPage: React.FC = () => {
           ? {
               ...item,
               selected: !item.selected,
-              qtyToReturn: !item.selected ? item.qtyPurchased : 0,
+              // compute new qtyToReturn based on current selected state
+              qtyToReturn: !item.selected
+                ? item.qtyPurchased - item.quantityReturned
+                : 0,
+              // set editable return amount when selecting an item to (qtyToReturn * unitPrice)
               returnAmount: !item.selected
-                ? item.unitPrice * item.qtyPurchased
+                ? (item.qtyPurchased - item.quantityReturned) * item.unitPrice
                 : 0,
             }
           : item
@@ -214,13 +224,34 @@ const ReturnPage: React.FC = () => {
       items.map((item) => {
         if (item.id !== id) return item;
 
-        const validQty = Math.min(qty, item.qtyPurchased);
+        const validQty = Math.min(
+          qty,
+          item.qtyPurchased - item.quantityReturned
+        );
 
         return {
           ...item,
           qtyToReturn: validQty,
+          // update the editable return amount when quantity changes
           returnAmount: validQty * item.unitPrice,
-          selected: validQty > 0,
+        };
+      })
+    );
+  };
+
+  const handleAmountReturnedChange = (id: string, value: string) => {
+    const amount = Math.max(0, parseFloat(value) || 0);
+
+    setItems(
+      items.map((item) => {
+        if (item.id !== id) return item;
+
+        const maxAmount = item.qtyToReturn * item.unitPrice;
+        const validAmount = Math.min(amount, maxAmount);
+
+        return {
+          ...item,
+          returnAmount: validAmount,
         };
       })
     );
@@ -403,6 +434,7 @@ const ReturnPage: React.FC = () => {
             itemErrors={itemErrors}
             onCheckboxChange={handleCheckboxChange}
             onQuantityChange={handleQuantityChange}
+            onAmountReturnedChange={handleAmountReturnedChange}
             onReturnReasonChange={handleReturnReasonChange}
             onOtherReasonChange={handleOtherReasonChange}
             onConditionChange={handleConditionChange}

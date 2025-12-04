@@ -22,6 +22,7 @@ interface SelectItemsToReturnProps {
   items: TransactionItem[];
   onCheckboxChange: (id: string) => void;
   onQuantityChange: (id: string, value: string) => void;
+  onAmountReturnedChange: (id: string, value: string) => void;
   totalReturnAmount: number;
   onReturnReasonChange: (id: string, value: ReturnReason | null) => void;
   onOtherReasonChange: (id: string, value: string) => void;
@@ -35,6 +36,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   items,
   onCheckboxChange,
   onQuantityChange,
+  onAmountReturnedChange,
   onReturnReasonChange,
   onOtherReasonChange,
   onConditionChange,
@@ -44,17 +46,19 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   isLoadingSale,
 }) => {
   const headers = [
-    { key: "Return", label: "Return", width: "50px" },
+    { key: "Return", label: "Return" },
     { key: "Product", label: "Product" },
     { key: "Karat", label: "Karat" },
     { key: "Weight", label: "Weight" },
     { key: "UnitPrice", label: "Unit Price" },
     { key: "QtyPurchased", label: "Qty Purchased" },
     { key: "QtytoReturn", label: "Qty to Return" },
+    { key: "ReturnedQuantity", label: "Returned Quantity" },
+    { key: "AmountReturned", label: "Amount Returned" },
     { key: "ReturnReason", label: "Return Reason" },
     { key: "Condition", label: "Condition" },
     { key: "ReturnOption", label: "Return Option" },
-    { key: "ReturnAmount", label: "Return Amount" },
+    { key: "ReturnAmount", label: "Amount to Return" },
   ];
 
   const data = items.map((item) => {
@@ -64,7 +68,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
     const hasError = (msg: string) => errors.includes(msg);
 
     return {
-      Return: (
+      Return: item.qtyPurchased - item.quantityReturned > 0 && (
         <input
           type="checkbox"
           className="return-checkbox"
@@ -108,9 +112,11 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
             }`}
             value={item.qtyToReturn}
             min="0"
-            max={item.qtyPurchased}
+            max={item.qtyPurchased - item.quantityReturned}
             onChange={(e) => onQuantityChange(item.id, e.target.value)}
-            disabled={!item.selected}
+            disabled={
+              !item.selected || item.qtyPurchased - item.quantityReturned === 0
+            }
           />
 
           {hasError("Quantity must be greater than 0.") && (
@@ -121,6 +127,15 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
         </div>
       ),
 
+      ReturnedQuantity: (
+        <span className="qty-purchased">{item.quantityReturned}</span>
+      ),
+      // display the amount that came from the API (non-editable)
+      AmountReturned: (
+        <span className="amount-returned">
+          ${item.apiAmountReturned.toFixed(2)}
+        </span>
+      ),
       ReturnReason: (
         <div className="return-reason-cell">
           <select
@@ -285,14 +300,21 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
         </div>
       ),
 
+      // editable input for the amount to return (user-entered)
       ReturnAmount: (
-        <span
-          className={`return-amount ${
-            item.returnAmount > 0 ? "has-amount" : ""
-          }`}
-        >
-          ${item.returnAmount.toFixed(2)}
-        </span>
+        <div>
+          <input
+            type="number"
+            className="return-amount-input"
+            placeholder={`$${(item.qtyToReturn * item.unitPrice).toFixed(2)}`}
+            value={item.returnAmount}
+            min="0"
+            max={item.qtyToReturn * item.unitPrice}
+            step="0.01"
+            onChange={(e) => onAmountReturnedChange(item.id, e.target.value)}
+            disabled={!item.selected || item.qtyToReturn === 0}
+          />
+        </div>
       ),
     };
   });
