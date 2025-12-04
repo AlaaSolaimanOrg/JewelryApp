@@ -61,6 +61,7 @@ export const apiRoutes = {
     getRepairById: "Repairs/GetRepairById",
     updateRepairStatus: "Repairs/UpdateRepairStatus",
     updateRepair: "Repairs/UpdateRepair",
+    updateRepairItem: "Repairs/UpdateRepairItem",
     getRepairAnalytics: "Repairs/GetRepairAnalytics",
   },
   analytics: {

@@ -19,6 +19,7 @@ import Paginator from "../../../components/Paginator/Paginator";
 import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
 import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
+import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
 
 export interface RepairItem {
   id: string;
@@ -338,85 +339,104 @@ const RepairManagement: React.FC = () => {
                                   <th>Urgent</th>
                                   <th>Discount</th>
                                   <th>Subtotal</th>
+                                  <th>Action</th>
                                 </tr>
                               </thead>
 
                               <tbody>
                                 {repair.items.map((item, index) => (
                                   <tr key={item.id}>
-                                    {/* I] */}
-                                    <td>{index + 1}</td>
-                                    {/* ITEM TYPE */}
-                                    <td>
-                                      <span className="badge-itemtype">
-                                        {ProductCategory[item.itemType]}
-                                      </span>
-                                    </td>
+                                      {/* I] */}
+                                      <td>{index + 1}</td>
+                                      {/* ITEM TYPE */}
+                                      <td>
+                                        <span className="badge-itemtype">
+                                          {ProductCategory[item.itemType]}
+                                        </span>
+                                      </td>
 
-                                    {/* METAL */}
-                                    <td>
-                                      <span className="badge-metal">
-                                        {ProductType[item.metal]}
-                                      </span>
-                                    </td>
+                                      {/* METAL */}
+                                      <td>
+                                        <span className="badge-metal">
+                                          {ProductType[item.metal]}
+                                        </span>
+                                      </td>
 
-                                    {/* WEIGHT */}
-                                    <td>{item.weight}g</td>
+                                      {/* WEIGHT */}
+                                      <td>{item.weight}g</td>
 
-                                    {/* STONE TYPE (NO BADGE) */}
-                                    <td>{item.stoneType || "None"}</td>
+                                      {/* STONE TYPE (NO BADGE) */}
+                                      <td>{item.stoneType || "None"}</td>
 
-                                    {/* REPAIR TYPE */}
-                                    <td>
-                                      <span className="badge-repairtype">
-                                        {splitCamelCaseWords(
-                                          RepairType[item.repairType]
+                                      {/* REPAIR TYPE */}
+                                      <td>
+                                        <span className="badge-repairtype">
+                                          {splitCamelCaseWords(
+                                            RepairType[item.repairType]
+                                          )}
+                                        </span>
+                                      </td>
+
+                                      {/* PAYMENT STATUS */}
+                                      <td>
+                                        <span
+                                          className={`badge-payment ${
+                                            PaymentStatus[item.paymentStatus]
+                                          }`}
+                                        >
+                                          {PaymentStatus[item.paymentStatus]}
+                                        </span>
+                                      </td>
+
+                                      {/* NOTES */}
+                                      <td className="item-notes">
+                                        {item.notes || "-"}
+                                      </td>
+
+                                      {/* COST */}
+                                      <td>
+                                        {formatCurrency(item.cost)}
+                                      </td>
+
+                                      {/* URGENT */}
+                                      <td>
+                                        {item.urgentFee > 0
+                                          ? formatCurrency(
+                                              item.urgentFee
+                                            )
+                                          : "-"}
+                                      </td>
+
+                                      {/* DISCOUNT */}
+                                      <td>
+                                        {item.discount > 0
+                                          ? formatCurrency(item.discount)
+                                          : "-"}
+                                      </td>
+
+                                      {/* SUBTOTAL */}
+                                      <td>
+                                        {formatCurrency(
+                                          item.cost +
+                                            item.urgentFee -
+                                            item.discount
                                         )}
-                                      </span>
-                                    </td>
+                                      </td>
 
-                                    {/* PAYMENT STATUS */}
-                                    <td>
-                                      <span
-                                        className={`badge-payment ${
-                                          PaymentStatus[item.paymentStatus]
-                                        }`}
-                                      >
-                                        {PaymentStatus[item.paymentStatus]}
-                                      </span>
-                                    </td>
-
-                                    {/* NOTES */}
-                                    <td className="item-notes">
-                                      {item.notes || "-"}
-                                    </td>
-
-                                    {/* COST */}
-                                    <td>{formatCurrency(item.cost)}</td>
-
-                                    {/* URGENT */}
-                                    <td>
-                                      {item.urgentFee > 0
-                                        ? formatCurrency(item.urgentFee)
-                                        : "-"}
-                                    </td>
-
-                                    {/* DISCOUNT */}
-                                    <td>
-                                      {item.discount > 0
-                                        ? formatCurrency(item.discount)
-                                        : "-"}
-                                    </td>
-
-                                    {/* SUBTOTAL */}
-                                    <td>{formatCurrency(item.subTotal)}</td>
-                                  </tr>
-                                ))}
+                                      {/* EDIT BUTTON */}
+                                      <td className="edit-cell">
+                                        <EditRepairItemModal
+                                          item={item}
+                                          onRefresh={recallGetRepairs}
+                                        />
+                                      </td>
+                                    </tr>
+                                  ))}
                               </tbody>
 
                               <tfoot>
                                 <tr>
-                                  <td colSpan={11} className="total-label">
+                                  <td colSpan={12} className="total-label">
                                     Total Cost:
                                   </td>
                                   <td className="total-cost">

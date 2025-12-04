@@ -39,3 +39,12 @@ export const updateRepairStatus = async (payload: {
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairStatus, payload);
 };
+
+export const updateRepairItem = async (payload: {
+  repairItemId: string;
+  cost: number;
+  urgentFee: number;
+  discount: number;
+}) => {
+  return requestApi("PUT", apiRoutes.repairs.updateRepairItem, payload);
+};
