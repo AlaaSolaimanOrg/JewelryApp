@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Col, Row, Stack } from "react-bootstrap";
-import { FaBox, FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
+import {
+  FaBox,
+  FaEdit,
+  FaPlus,
+  FaSearch,
+  FaTrash,
+  FaPrint,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   deleteProduct,
@@ -10,6 +17,7 @@ import {
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import Paginator from "../../../components/Paginator/Paginator";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
@@ -28,7 +36,9 @@ import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 import type { TableHeader } from "../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../components/tables/Table/CustomTable";
-import InventoryFilter, { type InventoryFilters } from "../../../components/InventoryFilter/InventoryFilter";
+import InventoryFilter, {
+  type InventoryFilters,
+} from "../../../components/InventoryFilter/InventoryFilter";
 
 export interface Product {
   id: string;
@@ -52,6 +62,9 @@ const Inventory = () => {
   const [scannedSkus, setScannedSkus] = useState([]);
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
+  const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
+  const [selectedProductForPrinting, setSelectedProductForPrinting] =
+    useState<Product | null>(null);
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
     karatTypes: [
@@ -183,6 +196,16 @@ const Inventory = () => {
       <>
         <button
           className="action-btn"
+          title="Print Tag"
+          onClick={() => {
+            setSelectedProductForPrinting(product);
+            setShowTagPrintingModal(true);
+          }}
+        >
+          <FaPrint />
+        </button>
+        <button
+          className="action-btn"
           title="Edit"
           onClick={() => handleEditProduct(product.id)}
         >
@@ -301,7 +324,11 @@ const Inventory = () => {
                   </div>
                 </div>
 
-                <CustomTable data={data} headers={headers} isLoading={isLoadingProducts} />
+                <CustomTable
+                  data={data}
+                  headers={headers}
+                  isLoading={isLoadingProducts}
+                />
 
                 <Paginator
                   totalRecords={pagination.totalRecords}
@@ -322,6 +349,14 @@ const Inventory = () => {
         setProducts={() => {}}
         scanOnly
         setScannedSkus={setScannedSkus}
+      />
+      <TagPrintingModal
+        show={showTagPrintingModal}
+        onClose={() => {
+          setShowTagPrintingModal(false);
+          setSelectedProductForPrinting(null);
+        }}
+        product={selectedProductForPrinting}
       />
       <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>
