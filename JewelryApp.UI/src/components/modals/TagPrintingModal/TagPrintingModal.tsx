@@ -100,6 +100,7 @@ interface DymoWindow extends Window {
   };
 }
 
+
 const DEFAULT_CONFIG: TagConfig = {
   scale: 1,
 };
