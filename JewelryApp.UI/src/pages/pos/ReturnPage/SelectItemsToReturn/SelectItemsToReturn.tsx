@@ -23,13 +23,12 @@ interface SelectItemsToReturnProps {
   onCheckboxChange: (id: string) => void;
   onQuantityChange: (id: string, value: string) => void;
   totalReturnAmount: number;
-
   onReturnReasonChange: (id: string, value: ReturnReason | null) => void;
   onOtherReasonChange: (id: string, value: string) => void;
   onConditionChange: (id: string, value: ItemCondition | null) => void;
   onReturnOptionChange: (id: string, value: ReturnOption | null) => void;
-
   itemErrors: { [key: number]: string[] };
+  isLoadingSale: boolean;
 }
 
 const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
@@ -42,6 +41,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   onReturnOptionChange,
   totalReturnAmount,
   itemErrors,
+  isLoadingSale,
 }) => {
   const headers = [
     { key: "Return", label: "Return", width: "50px" },
@@ -60,7 +60,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   const data = items.map((item) => {
     const errors = itemErrors[item.id] || [];
 
-    console.log("item",item)
+    console.log("item", item);
     const hasError = (msg: string) => errors.includes(msg);
 
     return {
@@ -303,7 +303,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
         <FaShoppingCart /> Select Items to Return
       </h2>
 
-      <CustomTable headers={headers} data={data} />
+      <CustomTable headers={headers} data={data} isLoading={isLoadingSale} />
 
       <div className="total-return-amount">
         Total Return Amount:{" "}

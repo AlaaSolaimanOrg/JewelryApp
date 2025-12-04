@@ -408,6 +408,7 @@ const ReturnPage: React.FC = () => {
             onConditionChange={handleConditionChange}
             onReturnOptionChange={handleReturnOptionChange}
             totalReturnAmount={totalReturnAmount}
+            isLoadingSale={isLoadingSale}
           />
 
           <div className="footer-buttons">

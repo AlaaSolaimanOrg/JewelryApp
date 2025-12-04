@@ -301,7 +301,7 @@ const Inventory = () => {
                   </div>
                 </div>
 
-                <CustomTable data={data} headers={headers} />
+                <CustomTable data={data} headers={headers} isLoading={isLoadingProducts} />
 
                 <Paginator
                   totalRecords={pagination.totalRecords}

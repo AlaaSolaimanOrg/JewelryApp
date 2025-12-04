@@ -10,7 +10,9 @@ import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./staff.scss";
-import CustomTable, { type TableHeader } from "../../../components/tables/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/tables/Table/CustomTable";
 
 export interface User {
   id: number;
@@ -29,7 +31,7 @@ const Staff = () => {
   const navigate = useNavigate();
   const {
     data: users,
-    // isLoading: isLoadingUsers,
+    isLoading: isLoadingUsers,
     fetchData: recallGetUsers,
     onSearchChange,
     onPaginationChange,
@@ -38,9 +40,10 @@ const Staff = () => {
     apiToCall: (data) => getAllUsers(data.payload),
   });
 
-  const { data: allRoles } = useLocalApiSearchSortPagination<string>({
-    apiToCall: () => getAllRoles(),
-  });
+  const { data: allRoles, isLoading: isLoadingAllRoles } =
+    useLocalApiSearchSortPagination<string>({
+      apiToCall: () => getAllRoles(),
+    });
 
   // Table headers
   const staffMembersHeaders: TableHeader[] = [
@@ -55,17 +58,17 @@ const Staff = () => {
 
   // Dynamic data mapping
   const staffMembersData = users?.map((user) => ({
-    Name: user.fullName ?? user.userName,
+    name: user.fullName ?? user.userName,
     roles: user.roles?.join(", "),
-    Email: user.email,
-    Phone: user.phoneNumber ?? "—",
+    email: user.email,
+    phone: user.phoneNumber ?? "—",
     createdAt: new Date(user.createdAt).toLocaleDateString(),
-    Status: user.isActive ? (
+    status: user.isActive ? (
       <span className="tag tag-new">Active</span>
     ) : (
       <span className="tag tag-featured">Inactive</span>
     ),
-    Actions: (
+    actions: (
       <>
         <button
           className="action-btn"
@@ -132,7 +135,11 @@ const Staff = () => {
             />
           </div>
         </div>
-        <CustomTable headers={staffMembersHeaders} data={staffMembersData} />
+        <CustomTable
+          headers={staffMembersHeaders}
+          data={staffMembersData}
+          isLoading={isLoadingUsers}
+        />
         <Paginator
           totalRecords={pagination.totalRecords}
           pageNumber={pagination.pageNumber}
@@ -150,9 +157,10 @@ const Staff = () => {
           headers={[{ key: "role", label: "Role", width: "200px" }]}
           data={allRoles.map((role) => {
             return {
-              Role: role,
+              role: role,
             };
           })}
+          isLoading={isLoadingAllRoles}
         />
       </div>
     </div>

@@ -30,8 +30,6 @@ axiosInstance.interceptors.response.use(
     const isRefreshEndpoint =
       error.request.responseURL.includes("Auth/RefreshTokens");
 
-      
-
     // Prevent infinite retry loop
     if (error.response?.status === 401 && !isRefreshEndpoint) {
       const refreshToken =
@@ -82,7 +80,7 @@ axiosInstance.interceptors.response.use(
 function redirectToLogin() {
   localStorage.clear();
   sessionStorage.clear();
-  window.location.href = "/login";
+  window.location.href = `${import.meta.env.VITE_ROUTE_PREFIX}/login`;
 }
 
 export default axiosInstance;

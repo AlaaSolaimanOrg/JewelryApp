@@ -1,4 +1,9 @@
-import React, { useCallback, type Dispatch, type SetStateAction } from "react";
+import React, {
+  useCallback,
+  useRef,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   FaBirthdayCake,
   FaEnvelope,
@@ -41,7 +46,12 @@ const CustomerSection: React.FC<Props> = ({
   actions = null,
   showScanProduct = false,
 }) => {
-  const loadOptions = useCallback(async (inputValue: string) => {
+  // Refs for debounce
+  const debouncedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resolversRef = useRef<Map<string, (value: any[]) => void>>(new Map());
+
+  // Actual API call
+  const performSearch = useCallback(async (inputValue: string): Promise<any[]> => {
     if (!inputValue) return [];
 
     try {
@@ -54,13 +64,35 @@ const CustomerSection: React.FC<Props> = ({
       return response.data?.map((customer: Customer) => ({
         label: customer.name,
         value: customer.id,
-        data: customer, // Include full customer data
-      }));
+        data: customer,
+      })) || [];
     } catch (error) {
       console.error(error);
       return [];
     }
   }, []);
+
+  // Debounced loadOptions
+  const loadOptions = useCallback(
+    (inputValue: string): Promise<any[]> => {
+      return new Promise((resolve) => {
+        if (debouncedTimeoutRef.current) clearTimeout(debouncedTimeoutRef.current);
+
+        resolversRef.current.set(inputValue, resolve);
+
+        debouncedTimeoutRef.current = setTimeout(async () => {
+          const results = await performSearch(inputValue);
+          const resolver = resolversRef.current.get(inputValue);
+          if (resolver) {
+            resolver(results);
+            resolversRef.current.delete(inputValue);
+          }
+        }, 500); // 500ms debounce
+      });
+    },
+    [performSearch]
+  );
+
   return (
     <div id="customerSection">
       <header className="header">
@@ -69,7 +101,7 @@ const CustomerSection: React.FC<Props> = ({
           <AsyncSelect
             className="customerSearch"
             cacheOptions
-            loadOptions={loadOptions}
+            loadOptions={loadOptions} // <-- Debounced search
             components={{
               DropdownIndicator: () => null,
               IndicatorSeparator: () => null,
@@ -81,9 +113,7 @@ const CustomerSection: React.FC<Props> = ({
             }
             loadingMessage={() => "Searching..."}
             inputValue={searchInput}
-            onInputChange={(value) => {
-              setSearchInput(value);
-            }}
+            onInputChange={(value) => setSearchInput(value)}
             onChange={(selected) => {
               if (selected) {
                 setCustomerInfoActive(true);
@@ -94,11 +124,7 @@ const CustomerSection: React.FC<Props> = ({
                 setSearchInput("");
               }
             }}
-            value={
-              customer
-                ? { label: customer.name, value: customer.id, data: customer }
-                : null
-            }
+            value={customer ? { label: customer.name, value: customer.id, data: customer } : null}
             isClearable
             styles={{
               control: (base) => ({
@@ -107,42 +133,18 @@ const CustomerSection: React.FC<Props> = ({
                 border: "none",
                 backgroundColor: "transparent",
                 boxShadow: "none",
-                "&:hover": {
-                  border: "none",
-                  boxShadow: "none",
-                },
+                "&:hover": { border: "none", boxShadow: "none" },
               }),
-              placeholder: (base) => ({
-                ...base,
-                color: "lightgray",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                color: "white",
-              }),
-              input: (base) => ({
-                ...base,
-                color: "white",
-                width: "100%",
-              }),
-              container: (base) => ({
-                ...base,
-                width: "100%",
-              }),
-              menu: (base) => ({
-                ...base,
-                marginTop: "20px",
-              }),
+              placeholder: (base) => ({ ...base, color: "lightgray" }),
+              singleValue: (base) => ({ ...base, color: "white" }),
+              input: (base) => ({ ...base, color: "white", width: "100%" }),
+              container: (base) => ({ ...base, width: "100%" }),
+              menu: (base) => ({ ...base, marginTop: "20px" }),
               option: (base, state) => ({
                 ...base,
-                backgroundColor: state.isFocused
-                  ? "var(--dark, #212529)"
-                  : "white",
+                backgroundColor: state.isFocused ? "var(--dark, #212529)" : "white",
                 color: state.isFocused ? "white" : "var(--dark, #212529)",
-                "&:hover": {
-                  backgroundColor: "var(--dark, #212529)",
-                  color: "white",
-                },
+                "&:hover": { backgroundColor: "var(--dark, #212529)", color: "white" },
               }),
             }}
           />
@@ -161,7 +163,7 @@ const CustomerSection: React.FC<Props> = ({
         )}
       </header>
 
-      {!!customer && (
+          {!!customer && (
         <div
           className={`customer-info${customerInfoActive ? " active" : ""}`}
           id="customerInfo"

@@ -52,6 +52,7 @@ const Customers = () => {
   const {
     data: customers,
     fetchData: recallGetCustomers,
+    isLoading,
     sortCriteria,
     onSortChange,
     onSearchChange,
@@ -203,7 +204,7 @@ const Customers = () => {
             </div>
           </div>
         </div>
-        <CustomTable headers={headers} data={data} />
+        <CustomTable headers={headers} data={data} isLoading={isLoading} />
 
         <Paginator
           totalRecords={pagination.totalRecords}

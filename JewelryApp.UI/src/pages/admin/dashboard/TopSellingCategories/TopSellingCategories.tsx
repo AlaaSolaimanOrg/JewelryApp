@@ -15,14 +15,14 @@ interface TopSellingCategory {
 }
 
 const TopSellingCategories = () => {
-  const { data: topSellingCategories } = useLocalApi({
+  const { data: topSellingCategories, isLoading } = useLocalApi({
     apiToCall: () => getTopSellingCategories(),
     payload: {
       topCount: 5,
     },
   }) as {
     data: TopSellingCategory[];
-    setData: any;
+    isLoading: boolean;
   };
 
   const headers: TableHeader[] = [
@@ -61,10 +61,7 @@ const TopSellingCategories = () => {
           </button>
         </div>
       </div>
-      <CustomTable
-        headers={headers}
-        data={tableData}
-      />
+      <CustomTable headers={headers} data={tableData} isLoading={isLoading} />
     </div>
   );
 };

@@ -18,6 +18,7 @@ import {
 import Paginator from "../../../components/Paginator/Paginator";
 import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
 import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
+import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 
 export interface RepairItem {
   id: string;
@@ -53,6 +54,7 @@ const RepairManagement: React.FC = () => {
 
   const {
     data: repairs,
+    isLoading,
     fetchData: recallGetRepairs,
     onSearchChange,
     pagination,
@@ -242,9 +244,12 @@ const RepairManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* REPAIR CARDS */}
         <div className="repairs-container">
-          {repairs.length === 0 ? (
+          {isLoading ? (
+            <div className="repairs-loader">
+              <CustomLoader />
+            </div>
+          ) : repairs.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">📋</div>
               <h3>No Repairs Found</h3>
