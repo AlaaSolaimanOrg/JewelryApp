@@ -13,10 +13,7 @@ import { useReactToPrint } from "react-to-print";
 import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import useLocalApi from "../../../hooks/useLocalApi";
-import {
-  ProductCategory,
-  RepairType
-} from "../../../types/enums";
+import { ProductCategory, RepairType } from "../../../types/enums";
 import { splitCamelCaseWords } from "../../../utils";
 import "./repairInvoiceModal.scss";
 
@@ -82,10 +79,6 @@ const RepairInvoiceModal = ({
                 6885 Ad Astra Blvd NW Edmonton, Alberta
               </div>
               <div className="receipt-subtitle">Phone: (780) 934-1455</div>
-
-              <strong style={{ marginTop: 10, fontSize: "1.2rem" }}>
-                Repair Invoice
-              </strong>
             </div>
 
             {/* DETAILS */}
