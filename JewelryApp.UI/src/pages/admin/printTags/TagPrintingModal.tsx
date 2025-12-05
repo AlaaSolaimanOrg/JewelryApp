@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Form, Spinner } from "react-bootstrap";
 import { FaPrint } from "react-icons/fa";
 import "./tagPrintingModal.scss";
-import type { Product } from "../../../pages/admin/inventory/Inventory";
+import type { Product } from "../inventory/Inventory";
 import Barcode from "react-barcode";
 
 interface TagPrintingModalProps {
@@ -22,7 +22,7 @@ interface DymoPrinter {
 }
 
 // Proxy configuration
-const PROXY_URL = 'http://localhost:8765/dymo';
+const PROXY_URL = "http://localhost:8765/dymo";
 
 const DEFAULT_CONFIG: TagConfig = {
   scale: 1,
@@ -58,10 +58,10 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   // Check if proxy is running
   const checkProxyConnection = async () => {
     try {
-      const response = await fetch(`${PROXY_URL.replace('/dymo', '')}/health`, {
-        method: 'GET',
+      const response = await fetch(`${PROXY_URL.replace("/dymo", "")}/health`, {
+        method: "GET",
       });
-      
+
       if (response.ok) {
         setProxyStatus({
           connected: true,
@@ -86,45 +86,50 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   // Load printers through proxy
   const loadPrinters = async () => {
     setIsLoadingPrinters(true);
-    
+
     try {
-      const response = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to get printers");
       }
 
       const xmlText = await response.text();
-      
+
       // Parse XML response
       const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-      const printerNodes = xmlDoc.getElementsByTagName('LabelWriterPrinter');
-      
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      const printerNodes = xmlDoc.getElementsByTagName("LabelWriterPrinter");
+
       const printersList: DymoPrinter[] = [];
-      
+
       for (let i = 0; i < printerNodes.length; i++) {
         const node = printerNodes[i];
-        const name = node.getElementsByTagName('Name')[0]?.textContent || '';
-        const isConnected = node.getElementsByTagName('IsConnected')[0]?.textContent === 'True';
-        const printerType = node.getElementsByTagName('PrinterType')[0]?.textContent || 'LabelWriter';
-        
+        const name = node.getElementsByTagName("Name")[0]?.textContent || "";
+        const isConnected =
+          node.getElementsByTagName("IsConnected")[0]?.textContent === "True";
+        const printerType =
+          node.getElementsByTagName("PrinterType")[0]?.textContent ||
+          "LabelWriter";
+
         printersList.push({
           name,
           isConnected,
           printerType,
         });
       }
-      
-      const connectedPrinters = printersList.filter(p => p.isConnected);
+
+      const connectedPrinters = printersList.filter((p) => p.isConnected);
       setPrinters(connectedPrinters);
-      
+
       if (connectedPrinters.length > 0) {
         setSelectedPrinter(connectedPrinters[0].name);
       }
-      
     } catch (error) {
       console.error("Error loading printers:", error);
       alert("Failed to load printers. Make sure DYMO Connect is running.");
@@ -141,42 +146,60 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   const testDymoConnection = async () => {
     try {
       // Test proxy
-      const proxyHealth = await fetch(`${PROXY_URL.replace('/dymo', '')}/health`);
+      const proxyHealth = await fetch(
+        `${PROXY_URL.replace("/dymo", "")}/health`
+      );
       if (!proxyHealth.ok) {
-        alert("❌ Proxy server not running.\n\nPlease start: node dymo-proxy-server.js");
+        alert(
+          "❌ Proxy server not running.\n\nPlease start: node dymo-proxy-server.js"
+        );
         return;
       }
 
       // Test DYMO
-      const dymoStatus = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/StatusConnected`);
+      const dymoStatus = await fetch(
+        `${PROXY_URL}/DYMO/DLS/Printing/StatusConnected`
+      );
       if (!dymoStatus.ok) {
-        alert("❌ DYMO Connect not accessible.\n\nMake sure DYMO Connect is running.");
+        alert(
+          "❌ DYMO Connect not accessible.\n\nMake sure DYMO Connect is running."
+        );
         return;
       }
 
       // Get printers
-      const printersResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`);
+      const printersResponse = await fetch(
+        `${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`
+      );
       const printersXml = await printersResponse.text();
-      
+
       const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(printersXml, 'text/xml');
-      const printerNodes = xmlDoc.getElementsByTagName('LabelWriterPrinter');
-      
+      const xmlDoc = parser.parseFromString(printersXml, "text/xml");
+      const printerNodes = xmlDoc.getElementsByTagName("LabelWriterPrinter");
+
       let message = `✅ Proxy Server: Running\n`;
       message += `✅ DYMO Connect: Connected\n`;
       message += `✅ ${printerNodes.length} printer(s) detected:\n\n`;
-      
+
       for (let i = 0; i < printerNodes.length; i++) {
         const node = printerNodes[i];
-        const name = node.getElementsByTagName('Name')[0]?.textContent || 'Unknown';
-        const isConnected = node.getElementsByTagName('IsConnected')[0]?.textContent === 'True';
-        message += `${i + 1}. ${name}\n   Status: ${isConnected ? 'Connected' : 'Offline'}\n\n`;
+        const name =
+          node.getElementsByTagName("Name")[0]?.textContent || "Unknown";
+        const isConnected =
+          node.getElementsByTagName("IsConnected")[0]?.textContent === "True";
+        message += `${i + 1}. ${name}\n   Status: ${
+          isConnected ? "Connected" : "Offline"
+        }\n\n`;
       }
-      
+
       alert(message);
     } catch (err) {
       console.error("DYMO Test Error:", err);
-      alert(`❌ Connection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      alert(
+        `❌ Connection failed: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
     }
   };
 
@@ -209,7 +232,10 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
         }
         labelXml = await response.text();
       } catch (fetchError) {
-        console.error("Failed to load label template, using default:", fetchError);
+        console.error(
+          "Failed to load label template, using default:",
+          fetchError
+        );
         labelXml = createDefaultLabelXml();
       }
 
@@ -217,7 +243,10 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       labelXml = labelXml
         .replace(/<Text>SKU<\/Text>/g, `<Text>${product.sku}</Text>`)
         .replace(/<Text>BARCODE<\/Text>/g, `<Text>${product.sku}</Text>`)
-        .replace(/<Text>PRICE<\/Text>/g, `<Text>$${product.price.toFixed(2)}</Text>`)
+        .replace(
+          /<Text>PRICE<\/Text>/g,
+          `<Text>$${product.price.toFixed(2)}</Text>`
+        )
         .replace(/<Text>WEIGHT<\/Text>/g, `<Text>${product.weight}g</Text>`)
         .replace(/<Text>KARAT<\/Text>/g, `<Text>${product.karatType}K</Text>`);
 
@@ -231,17 +260,20 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
 </LabelWriterPrintParams>`;
 
       // Send print request through proxy
-      const printResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/PrintLabel`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          printerName: selectedPrinter,
-          printParamsXml: printParamsXml,
-          labelXml: labelXml,
-        }).toString(),
-      });
+      const printResponse = await fetch(
+        `${PROXY_URL}/DYMO/DLS/Printing/PrintLabel`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            printerName: selectedPrinter,
+            printParamsXml: printParamsXml,
+            labelXml: labelXml,
+          }).toString(),
+        }
+      );
 
       if (!printResponse.ok) {
         const errorText = await printResponse.text();
@@ -249,11 +281,13 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       }
 
       alert(`✅ Sent ${tagCount} tag(s) to ${selectedPrinter}.`);
-      
     } catch (err) {
       console.error("PRINT ERROR:", err);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-      alert(`❌ Printing failed: ${errorMessage}\n\nCheck console for details.`);
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
+      alert(
+        `❌ Printing failed: ${errorMessage}\n\nCheck console for details.`
+      );
     } finally {
       setIsPrinting(false);
     }
@@ -434,18 +468,32 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             <div className="proxy-status mb-3">
               <div className="status-item">
                 <span className="status-label">Proxy Server:</span>
-                <span className={`status-value ${proxyStatus.connected ? "text-success" : "text-danger"}`}>
-                  {proxyStatus.connected ? "✓ Connected" : "✗ " + proxyStatus.message}
+                <span
+                  className={`status-value ${
+                    proxyStatus.connected ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {proxyStatus.connected
+                    ? "✓ Connected"
+                    : "✗ " + proxyStatus.message}
                 </span>
               </div>
             </div>
 
             {!proxyStatus.connected && (
               <div className="alert alert-warning p-2 mb-3">
-                <small><strong>Proxy server not running!</strong></small>
+                <small>
+                  <strong>Proxy server not running!</strong>
+                </small>
                 <ul className="mb-0 mt-1 ps-3">
-                  <li><small>Start proxy: <code>npm start</code></small></li>
-                  <li><small>Keep it running while printing</small></li>
+                  <li>
+                    <small>
+                      Start proxy: <code>npm start</code>
+                    </small>
+                  </li>
+                  <li>
+                    <small>Keep it running while printing</small>
+                  </li>
                 </ul>
               </div>
             )}
@@ -454,7 +502,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             <div className="control-group">
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <label className="control-label">Printer Selection</label>
-                <button 
+                <button
                   className="btn btn-sm btn-outline-secondary"
                   onClick={refreshPrinters}
                   disabled={isLoadingPrinters || !proxyStatus.connected}
@@ -464,7 +512,9 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                       <Spinner animation="border" size="sm" className="me-1" />
                       Loading...
                     </>
-                  ) : "Refresh"}
+                  ) : (
+                    "Refresh"
+                  )}
                 </button>
               </div>
               {isLoadingPrinters ? (
@@ -473,17 +523,14 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                   Loading printers...
                 </div>
               ) : printers.length > 0 ? (
-                <Form.Select 
-                  value={selectedPrinter} 
+                <Form.Select
+                  value={selectedPrinter}
                   onChange={(e) => setSelectedPrinter(e.target.value)}
                   className={!selectedPrinter ? "border-warning" : ""}
                 >
                   <option value="">Select a printer...</option>
-                  {printers.map(printer => (
-                    <option 
-                      key={printer.name} 
-                      value={printer.name}
-                    >
+                  {printers.map((printer) => (
+                    <option key={printer.name} value={printer.name}>
                       {printer.name} ({printer.printerType})
                     </option>
                   ))}
@@ -510,27 +557,33 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                   }
                 }}
               />
-              <div className="form-text">
-                Enter a number between 1 and 300
-              </div>
+              <div className="form-text">Enter a number between 1 and 300</div>
             </div>
 
             {/* PRODUCT INFO */}
             <div className="info-text">
               <div className="d-flex justify-content-between">
-                <small>SKU: <strong>{product.sku}</strong></small>
-                <small>Price: <strong>${product.price.toFixed(2)}</strong></small>
+                <small>
+                  SKU: <strong>{product.sku}</strong>
+                </small>
+                <small>
+                  Price: <strong>${product.price.toFixed(2)}</strong>
+                </small>
               </div>
               <div className="d-flex justify-content-between mt-1">
-                <small>Weight: <strong>{product.weight}g</strong></small>
-                <small>Karat: <strong>{product.karatType}K</strong></small>
+                <small>
+                  Weight: <strong>{product.weight}g</strong>
+                </small>
+                <small>
+                  Karat: <strong>{product.karatType}K</strong>
+                </small>
               </div>
             </div>
 
             {/* ACTION BUTTONS */}
             <div className="d-grid gap-2 mt-3">
-              <button 
-                className="btn btn-outline-info" 
+              <button
+                className="btn btn-outline-info"
                 onClick={testDymoConnection}
                 disabled={isPrinting}
               >
@@ -542,15 +595,15 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <button 
-          className="btn btn-secondary" 
+        <button
+          className="btn btn-secondary"
           onClick={onClose}
           disabled={isPrinting}
         >
           Cancel
         </button>
-        <button 
-          className="btn btn-primary btn-gold" 
+        <button
+          className="btn btn-primary btn-gold"
           onClick={handlePrint}
           disabled={!selectedPrinter || !proxyStatus.connected || isPrinting}
         >
