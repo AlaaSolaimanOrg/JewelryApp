@@ -27,30 +27,55 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             var validationResult = await ValidateRepair(request, cancellationToken);
             if (validationResult != null) return validationResult;
 
-            var repairItems = request.Items.Select(itemDto => new RepairItem
+            var nextRepairCode = await GenerateRepairCodeAsync(cancellationToken);
+
+            var repairItems = request.Items.Select(itemDto =>
             {
-                ItemType = itemDto.ItemType,
-                Metal = itemDto.Metal,
-                Weight = itemDto.Weight,
-                StoneType = itemDto.StoneType,
-                RepairType = itemDto.RepairType,
-                Notes = itemDto.Notes,
-                Cost = itemDto.Cost,
-                UrgentFee = itemDto.UrgentFee,
-                Discount = itemDto.Discount,
-                DueDate = itemDto.DueDate,
-                PaymentStatus = PaymentStatus.Unpaid,
-                SubTotal = itemDto.Cost + itemDto.UrgentFee - itemDto.Discount
+                // calculate total item cost
+                var total = itemDto.Cost + itemDto.UrgentFee - itemDto.Discount;
+
+                // calculate deposit based on status
+                var deposit = itemDto.PaymentStatus switch
+                {
+                    PaymentStatus.Unpaid => 0,
+                    PaymentStatus.Paid => total,
+                    PaymentStatus.Partial => itemDto.DepositPaid, 
+                    _ => 0
+                };
+
+                return new RepairItem
+                {
+                    ItemType = itemDto.ItemType,
+                    Metal = itemDto.Metal,
+                    Weight = itemDto.Weight,
+                    StoneType = itemDto.StoneType,
+                    RepairType = itemDto.RepairType,
+                    Notes = itemDto.Notes,
+                    Cost = itemDto.Cost,
+                    UrgentFee = itemDto.UrgentFee,
+                    Discount = itemDto.Discount,
+                    DueDate = itemDto.DueDate,
+                    PaymentStatus = itemDto.PaymentStatus,
+
+                    // ?? calculated deposit
+                    DepositPaid = deposit,
+
+                    // subtotal should remain unchanged (amount the item is worth)
+                    SubTotal = total
+                };
             }).ToList();
+
 
             var repair = new Repair
             {
+                RepairCode = nextRepairCode,
                 CustomerId = request.CustomerId,
                 OrderDate = DateOnly.FromDateTime(DateTime.Now),
                 Status = RepairStatus.InProgress,
                 Notes = request.Notes,
                 Items = repairItems,
                 TotalCost = repairItems.Sum(i => i.SubTotal)
+
             };
 
             _context.Repairs.Add(repair);
@@ -86,6 +111,26 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             }
 
             return null;
+        }
+        private async Task<string> GenerateRepairCodeAsync(CancellationToken cancellationToken)
+        {
+            // Example format: R-000123
+
+            var lastCode = await _context.Repairs
+                .OrderByDescending(r => r.CreatedDate) 
+                .Select(r => r.RepairCode)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            int number = 0;
+
+            if (!string.IsNullOrWhiteSpace(lastCode) && lastCode.StartsWith("R-"))
+            {
+                int.TryParse(lastCode.Substring(2), out number);
+            }
+
+            number++;
+
+            return $"R-{number.ToString("D6")}"; // R-000001
         }
     }
 }

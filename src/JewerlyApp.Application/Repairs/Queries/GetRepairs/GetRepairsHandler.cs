@@ -49,6 +49,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
             var result = paginatedRepairs.Select(r => new RepairDto
             {
                 Id = r.Id,
+                RepairCode = r.RepairCode,
                 CustomerId = r.CustomerId,
                 CustomerName = r.Customer.Name,
                 CustomerPhone = r.Customer.PhoneNumber,
@@ -69,6 +70,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                     Cost = i.Cost,
                     UrgentFee = i.UrgentFee,
                     Discount = i.Discount,
+                    DepositPaid = i.DepositPaid,
                     PaymentStatus = i.PaymentStatus,
                     DueDate = i.DueDate,
                     SubTotal = i.SubTotal

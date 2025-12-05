@@ -1,4 +1,5 @@
 import type {
+  PaymentStatus,
   ProductCategory,
   ProductType,
   RepairStatus,
@@ -21,6 +22,8 @@ export const createRepair = async (payload: {
     urgentFee: number;
     discount: number;
     dueDate?: string | null;
+    paymentStatus: PaymentStatus;
+    depositPaid: number;
   }[];
 }) => {
   return requestApi("POST", apiRoutes.repairs.createRepair, payload);

@@ -7,6 +7,7 @@ namespace JewerlyApp.Domain.Entities
 {
     public class Repair : Entity<Guid>
     {
+        public string RepairCode { get; set; } = string.Empty;
         public Guid CustomerId { get; set; }
         public Customer Customer { get; set; } = null!;
         public DateOnly OrderDate { get; set; }

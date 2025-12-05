@@ -97,9 +97,9 @@ export enum RepairStatus {
 }
 
 export enum PaymentStatus {
-  Unpaid,
-  Paid,
-  Partial,
+  Unpaid = 0,
+  Paid = 1,
+  Partial = 2,
 }
 
 export enum ReportType {
@@ -107,7 +107,7 @@ export enum ReportType {
   Weekly = 1,
   Monthly = 2,
   Yearly = 3,
-  AllTime = 99
+  AllTime = 99,
 }
 
 export enum LogLevel {

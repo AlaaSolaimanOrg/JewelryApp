@@ -8,6 +8,7 @@ import { FaArrowLeft, FaPlus, FaRing, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createRepair } from "../../../apis/repairs.api/repairs.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { PaymentStatus } from "../../../types/enums";
 
 export interface RepairItem {
   id: number;
@@ -20,10 +21,10 @@ export interface RepairItem {
   cost: string;
   urgent: string;
   discount: string;
-  paymentStatus: string;
+  paymentStatus: PaymentStatus | "";
+  depositPaid: string;
   dueDate: string;
 }
-
 const itemsInitialValue: RepairItem[] = [
   {
     id: 1,
@@ -36,7 +37,8 @@ const itemsInitialValue: RepairItem[] = [
     cost: "",
     urgent: "",
     discount: "",
-    paymentStatus: "Not Paid",
+    paymentStatus: PaymentStatus.Unpaid,
+    depositPaid: "",
     dueDate: "",
   },
 ];
@@ -52,7 +54,6 @@ const Repair = () => {
   >({});
 
   const [items, setItems] = useState<RepairItem[]>(itemsInitialValue);
-
   const addItem = () => {
     setItems((prev) => [
       ...prev,
@@ -67,7 +68,8 @@ const Repair = () => {
         cost: "",
         urgent: "",
         discount: "",
-        paymentStatus: "Not Paid",
+        paymentStatus: PaymentStatus.Unpaid,
+        depositPaid: "",
         dueDate: "",
       },
     ]);
@@ -110,18 +112,34 @@ const Repair = () => {
     const payload = {
       customerId: customer.id,
       notes: "",
-      items: items.map((i) => ({
-        itemType: Number(i.itemType),
-        metal: Number(i.metal),
-        weight: Number(i.weight) || 0,
-        repairType: Number(i.repairType),
-        stoneType: i.stone,
-        notes: i.notes,
-        cost: Number(i.cost) || 0,
-        urgentFee: Number(i.urgent) || 0,
-        discount: Number(i.discount) || 0,
-        dueDate: i.dueDate || null,
-      })),
+      items: items.map((i) => {
+        const paymentStatusNum = Number(i.paymentStatus);
+        const cost = Number(i.cost) || 0;
+        let depositPaid = 0;
+
+        if (paymentStatusNum === PaymentStatus.Unpaid) {
+          depositPaid = 0;
+        } else if (paymentStatusNum === PaymentStatus.Paid) {
+          depositPaid = cost;
+        } else if (paymentStatusNum === PaymentStatus.Partial) {
+          depositPaid = Number(i.depositPaid) || 0;
+        }
+
+        return {
+          itemType: Number(i.itemType),
+          metal: Number(i.metal),
+          weight: Number(i.weight) || 0,
+          repairType: Number(i.repairType),
+          stoneType: i.stone,
+          notes: i.notes,
+          cost: cost,
+          urgentFee: Number(i.urgent) || 0,
+          discount: Number(i.discount) || 0,
+          paymentStatus: paymentStatusNum as unknown as PaymentStatus,
+          depositPaid: depositPaid,
+          dueDate: i.dueDate || null,
+        };
+      }),
     };
 
     try {

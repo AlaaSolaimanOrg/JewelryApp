@@ -15,6 +15,7 @@ namespace JewerlyApp.Domain.Entities
         public RepairType RepairType { get; set; }
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
+        public decimal DepositPaid { get; set; }
         
         public decimal UrgentFee { get; set; }
         public decimal Discount { get; set; }

@@ -6,6 +6,7 @@ import {
   ProductCategory,
   ProductType,
   RepairType,
+  PaymentStatus,
 } from "../../../../types/enums";
 import { splitCamelCaseWords } from "../../../../utils";
 
@@ -226,16 +227,42 @@ const RepairItemCard = ({
                 <div className="form-col">
                   <label>Payment Status</label>
                   <select
-                    value={item.paymentStatus}
+                    value={item.paymentStatus || ""}
                     onChange={(e) =>
                       updateItem(item.id, "paymentStatus", e.target.value)
                     }
                   >
-                    <option>Not Paid</option>
-                    <option>Paid</option>
-                    <option>Deposit Paid</option>
+                    <option value="">Select</option>
+                    <option value={PaymentStatus.Unpaid}>Unpaid</option>
+                    <option value={PaymentStatus.Paid}>Paid</option>
+                    <option value={PaymentStatus.Partial}>
+                      Partial (Deposit Paid)
+                    </option>
                   </select>
                 </div>
+
+                {Number(item.paymentStatus) === PaymentStatus.Partial && (
+                  <div className="form-col">
+                    <label>Deposit Amount ($)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max={Number(item.cost) || 0}
+                      step="0.01"
+                      value={item.depositPaid}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value) || 0;
+                        const maxCost = Number(item.cost) || 0;
+                        if (value <= maxCost) {
+                          updateItem(item.id, "depositPaid", e.target.value);
+                        }
+                      }}
+                      placeholder={`Enter deposit amount (max: $${(
+                        Number(item.cost) || 0
+                      ).toFixed(2)})`}
+                    />
+                  </div>
+                )}
 
                 <div className="form-col">
                   <label>Due Date *</label>

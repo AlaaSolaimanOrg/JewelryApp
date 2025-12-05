@@ -22,7 +22,9 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
         public string StoneType { get; set; } = string.Empty;
         public RepairType RepairType { get; set; }
         public string Notes { get; set; } = string.Empty;
+        public decimal DepositPaid { get; set; }
         public decimal Cost { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
         public decimal UrgentFee { get; set; }
         public decimal Discount { get; set; }
         public DateOnly? DueDate { get; set; }

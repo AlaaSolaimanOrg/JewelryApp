@@ -7,6 +7,7 @@ namespace JewerlyApp.Application.Repairs.Dtos
     public class RepairDto
     {
         public Guid Id { get; set; }
+        public string RepairCode { get; set; } = string.Empty;
         public Guid CustomerId { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public string CustomerPhone { get; set; } = string.Empty;
@@ -27,6 +28,7 @@ namespace JewerlyApp.Application.Repairs.Dtos
         public RepairType RepairType { get; set; }
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
+        public decimal DepositPaid { get; set; }
         public decimal UrgentFee { get; set; }
         public decimal Discount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }

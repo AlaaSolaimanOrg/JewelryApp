@@ -33,12 +33,14 @@ export interface RepairItem {
   urgentFee: number;
   discount: number;
   paymentStatus: PaymentStatus;
+  depositPaid: number;
   dueDate: string | null;
   subTotal: number;
 }
 
 export interface Repair {
   id: string;
+  repairCode: string;
   customerId: string;
   customerName: string;
   customerPhone: string;
@@ -148,10 +150,18 @@ const RepairManagement: React.FC = () => {
         : getPreviousStatus(currentStatus);
 
     try {
-      const response = await updateRepairStatus({
+      // When status changes to PickedUp, auto-update items to Paid
+      const updatePayload: any = {
         id: repairId,
         status: newStatus,
-      });
+      };
+
+      if (newStatus === RepairStatus.PickedUp) {
+        updatePayload.updateItemsPaymentStatus = true;
+        updatePayload.newPaymentStatus = PaymentStatus.Paid;
+      }
+
+      const response = await updateRepairStatus(updatePayload);
 
       if (response.statusCode === 200 || response.success) {
         showSuccess("Status updated successfully");
@@ -297,7 +307,7 @@ const RepairManagement: React.FC = () => {
                     </div>
 
                     <div className="repair-card__actions">
-                      <div className="repair-id">#{repair.id.slice(-6)}</div>
+                      <div className="repair-id">{repair.repairCode}</div>
                       <div className="repair-date">
                         <FaCalendarAlt className="meta-icon" />
                         {formatDate(repair.orderDate)}
@@ -334,6 +344,7 @@ const RepairManagement: React.FC = () => {
                                   <th>Stone</th>
                                   <th>Repair Type</th>
                                   <th>Payment</th>
+                                  <th>Deposit Paid</th>
                                   <th>Notes</th>
                                   <th>Cost</th>
                                   <th>Urgent</th>
@@ -388,6 +399,13 @@ const RepairManagement: React.FC = () => {
                                       </span>
                                     </td>
 
+                                    {/* DEPOSIT PAID */}
+                                    <td>
+                                      {item.depositPaid > 0
+                                        ? formatCurrency(item.depositPaid)
+                                        : "-"}
+                                    </td>
+
                                     {/* NOTES */}
                                     <td className="item-notes">
                                       {item.notes || "-"}
@@ -432,7 +450,7 @@ const RepairManagement: React.FC = () => {
 
                               <tfoot>
                                 <tr>
-                                  <td colSpan={12} className="total-label">
+                                  <td colSpan={13} className="total-label">
                                     Total Cost:
                                   </td>
                                   <td className="total-cost">
