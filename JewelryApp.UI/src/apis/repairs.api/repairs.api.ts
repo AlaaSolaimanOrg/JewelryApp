@@ -51,3 +51,7 @@ export const updateRepairItem = async (payload: {
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairItem, payload);
 };
+
+export const getRepairById = async (payload: { id: string }) => {
+  return requestApi("GET", apiRoutes.repairs.getRepairById, payload);
+};

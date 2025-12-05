@@ -39,6 +39,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
             var repairDto = new RepairDto
             {
                 Id = repair.Id,
+                RepairCode = repair.RepairCode,
                 CustomerId = repair.CustomerId,
                 CustomerName = repair.Customer.Name,
                 CustomerPhone = repair.Customer.PhoneNumber,

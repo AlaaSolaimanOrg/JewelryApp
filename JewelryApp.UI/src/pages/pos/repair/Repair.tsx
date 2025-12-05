@@ -4,11 +4,13 @@ import type { Customer } from "../posSale/types";
 import "./repair.scss";
 import RepairItemCard from "./RepairItemCard/RepairItemCard";
 
-import { FaArrowLeft, FaPlus, FaRing, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createRepair } from "../../../apis/repairs.api/repairs.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { PaymentStatus } from "../../../types/enums";
+import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
+
 
 export interface RepairItem {
   id: number;
@@ -25,6 +27,7 @@ export interface RepairItem {
   depositPaid: string;
   dueDate: string;
 }
+
 const itemsInitialValue: RepairItem[] = [
   {
     id: 1,
@@ -42,18 +45,25 @@ const itemsInitialValue: RepairItem[] = [
     dueDate: "",
   },
 ];
+
 const Repair = () => {
   const navigate = useNavigate();
+
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
-
   const [searchInput, setSearchInput] = useState("");
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
+
   const [errors, setErrors] = useState<
     Record<number, Partial<Record<keyof RepairItem, string>>>
   >({});
 
   const [items, setItems] = useState<RepairItem[]>(itemsInitialValue);
+
+  // 🔥 NEW STATES FOR INVOICE MODAL
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
+
   const addItem = () => {
     setItems((prev) => [
       ...prev,
@@ -98,72 +108,11 @@ const Repair = () => {
     0
   );
 
-  const handleSaveRepair = async () => {
-    if (!customer) {
-      showError("Select a customer first");
-      return;
-    }
-
-    // 🔥 STOP if validation fails
-    if (!validateItems()) {
-      showError("Please fill required fields");
-      return;
-    }
-    const payload = {
-      customerId: customer.id,
-      notes: "",
-      items: items.map((i) => {
-        const paymentStatusNum = Number(i.paymentStatus);
-        const cost = Number(i.cost) || 0;
-        let depositPaid = 0;
-
-        if (paymentStatusNum === PaymentStatus.Unpaid) {
-          depositPaid = 0;
-        } else if (paymentStatusNum === PaymentStatus.Paid) {
-          depositPaid = cost;
-        } else if (paymentStatusNum === PaymentStatus.Partial) {
-          depositPaid = Number(i.depositPaid) || 0;
-        }
-
-        return {
-          itemType: Number(i.itemType),
-          metal: Number(i.metal),
-          weight: Number(i.weight) || 0,
-          repairType: Number(i.repairType),
-          stoneType: i.stone,
-          notes: i.notes,
-          cost: cost,
-          urgentFee: Number(i.urgent) || 0,
-          discount: Number(i.discount) || 0,
-          paymentStatus: paymentStatusNum as unknown as PaymentStatus,
-          depositPaid: depositPaid,
-          dueDate: i.dueDate || null,
-        };
-      }),
-    };
-
-    try {
-      const response = await createRepair(payload);
-      console.log("response", response);
-      if (checkRequestSucceeded(response.statusCode)) {
-        showSuccess(response.message);
-        setItems(itemsInitialValue);
-        setCustomer(null);
-        setCustomerInfoActive(false);
-      } else {
-        showError(response.message);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const validateItems = () => {
     const newErrors: Record<number, any> = {};
 
     items.forEach((item) => {
       const err: any = {};
-
       if (!item.itemType) err.itemType = "Item type is required";
       if (!item.metal) err.metal = "Metal is required";
       if (!item.repairType) err.repairType = "Repair type is required";
@@ -175,6 +124,69 @@ const Repair = () => {
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSaveRepair = async () => {
+    if (!customer) {
+      showError("Select a customer first");
+      return;
+    }
+
+    if (!validateItems()) {
+      showError("Please fill required fields");
+      return;
+    }
+
+    const payload = {
+      customerId: customer.id,
+      notes: "",
+      items: items.map((i) => {
+        const paymentStatusNum = Number(i.paymentStatus);
+        const cost = Number(i.cost) || 0;
+
+        let depositPaid = 0;
+        if (paymentStatusNum === PaymentStatus.Unpaid) depositPaid = 0;
+        else if (paymentStatusNum === PaymentStatus.Paid) depositPaid = cost;
+        else if (paymentStatusNum === PaymentStatus.Partial)
+          depositPaid = Number(i.depositPaid) || 0;
+
+        return {
+          itemType: Number(i.itemType),
+          metal: Number(i.metal),
+          weight: Number(i.weight) || 0,
+          repairType: Number(i.repairType),
+          stoneType: i.stone,
+          notes: i.notes,
+          cost: cost,
+          urgentFee: Number(i.urgent) || 0,
+          discount: Number(i.discount) || 0,
+          paymentStatus: paymentStatusNum,
+          depositPaid: depositPaid,
+          dueDate: i.dueDate || null,
+        };
+      }),
+    };
+
+    try {
+      const response = await createRepair(payload);
+
+      if (checkRequestSucceeded(response.statusCode)) {
+        showSuccess(response.message);
+
+        // 🔥 OPEN INVOICE MODAL WITH REPAIR ID
+        setCreatedRepairId(response.data);
+        setShowInvoice(true);
+
+        // Reset
+        setItems(itemsInitialValue);
+        setCustomer(null);
+        setCustomerInfoActive(false);
+      } else {
+        showError(response.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -199,12 +211,9 @@ const Repair = () => {
 
       <div className="section">
         <div className="section-title">
-          <span>
-            <FaRing /> Repair Items
-          </span>
-
+          <span>Repair Items</span>
           <button className="add-item-btn" onClick={addItem}>
-            <FaPlus className="plus-icon" /> Add Item
+            <FaPlus /> Add Item
           </button>
         </div>
 
@@ -238,6 +247,15 @@ const Repair = () => {
           <FaTimes /> Cancel
         </button>
       </div>
+
+      {/* 🔥 INVOICE MODAL */}
+      {createdRepairId && (
+        <RepairInvoiceModal
+          repairId={createdRepairId}
+          show={showInvoice}
+          onClose={() => setShowInvoice(false)}
+        />
+      )}
     </div>
   );
 };

@@ -20,6 +20,7 @@ import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
 import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
+import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
 
 export interface RepairItem {
   id: string;
@@ -54,6 +55,8 @@ const RepairManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [typeFilter, setTypeFilter] = useState("");
   const [expandedRepairId, setExpandedRepairId] = useState<string | null>(null);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [repairIdToView, setRepairIdToView] = useState<string>("");
 
   const {
     data: repairs,
@@ -464,7 +467,13 @@ const RepairManagement: React.FC = () => {
 
                         {/* ACTION BUTTONS */}
                         <div className="action-buttons">
-                          <button className="btn btn-outline">
+                          <button
+                            className="btn btn-outline"
+                            onClick={() => {
+                              setRepairIdToView(repair.id);
+                              setShowInvoice(true);
+                            }}
+                          >
                             View Invoice
                           </button>
                           <button
@@ -503,6 +512,14 @@ const RepairManagement: React.FC = () => {
             })
           )}
         </div>
+
+        {repairIdToView && (
+          <RepairInvoiceModal
+            repairId={repairIdToView}
+            show={showInvoice}
+            onClose={() => setShowInvoice(false)}
+          />
+        )}
 
         {/* PAGINATION */}
         <Paginator
