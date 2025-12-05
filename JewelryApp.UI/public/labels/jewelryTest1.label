@@ -8,7 +8,6 @@
     <RoundRectangle X="0" Y="0" Width="62.0" Height="23.0" Rx="2" Ry="2" />
   </DrawCommands>
 
-  <!-- BARCODE LEFT -->
   <ObjectInfo>
     <BarcodeObject>
       <Name>Barcode</Name>
@@ -16,60 +15,64 @@
       <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
       <Text>123456</Text>
       <Type>Code128Auto</Type>
-      <Size>Small</Size>
+      <Size>Medium</Size>
       <TextPosition>None</TextPosition>
       <HorizontalAlignment>Center</HorizontalAlignment>
       <VerticalAlignment>Middle</VerticalAlignment>
     </BarcodeObject>
-    <Bounds X="3" Y="2" Width="22" Height="19" />
+    <Bounds X="4" Y="2" Width="22" Height="19" />
   </ObjectInfo>
 
-  <!-- SKU -->
   <ObjectInfo>
     <TextObject>
       <Name>SKU</Name>
-      <Font Family="Helvetica" Size="8" Bold="True"/>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+      <Font Family="Helvetica" Size="8" Bold="True" />
       <Text>SKU123</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
       <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
-    <Bounds X="28" Y="2" Width="32" Height="5" />
+    <Bounds X="30" Y="2" Width="30" Height="5" />
   </ObjectInfo>
 
-  <!-- PRICE -->
   <ObjectInfo>
     <TextObject>
       <Name>Price</Name>
-      <Font Family="Helvetica" Size="9" Bold="True"/>
-      <Text>$1200</Text>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+      <Font Family="Helvetica" Size="9" Bold="True" />
+      <Text>$2450</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
-    <Bounds X="28" Y="8" Width="32" Height="6" />
+    <Bounds X="30" Y="8" Width="30" Height="6" />
   </ObjectInfo>
 
-  <!-- WEIGHT -->
   <ObjectInfo>
     <TextObject>
       <Name>Weight</Name>
-      <Font Family="Helvetica" Size="7" Bold="False"/>
-      <Text>2.5g</Text>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+      <Font Family="Helvetica" Size="7" Bold="False" />
+      <Text>4.2g</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
-    <Bounds X="28" Y="15" Width="32" Height="5" />
+    <Bounds X="30" Y="15" Width="30" Height="5" />
   </ObjectInfo>
 
-  <!-- KARAT -->
   <ObjectInfo>
     <TextObject>
       <Name>Karat</Name>
-      <Font Family="Helvetica" Size="7" Bold="False"/>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+      <Font Family="Helvetica" Size="7" Bold="False" />
       <Text>18K</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
-    <Bounds X="28" Y="20" Width="32" Height="5" />
+    <Bounds X="30" Y="20" Width="30" Height="5" />
   </ObjectInfo>
 
 </DieCutLabel>
