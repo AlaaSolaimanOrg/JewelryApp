@@ -43,7 +43,7 @@
       <Font Family="Helvetica" Size="9" Bold="True"/>
       <Text>$1200</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
     <Bounds X="28" Y="8" Width="32" Height="6" />
   </ObjectInfo>
@@ -55,7 +55,7 @@
       <Font Family="Helvetica" Size="7" Bold="False"/>
       <Text>2.5g</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
     <Bounds X="28" Y="15" Width="32" Height="5" />
   </ObjectInfo>
@@ -67,7 +67,7 @@
       <Font Family="Helvetica" Size="7" Bold="False"/>
       <Text>18K</Text>
       <HorizontalAlignment>Left</HorizontalAlignment>
-      <VerticalAlignment>Top"/>
+      <VerticalAlignment>Top</VerticalAlignment>
     </TextObject>
     <Bounds X="28" Y="20" Width="32" Height="5" />
   </ObjectInfo>
