@@ -1,438 +1,574 @@
 import React, { useState, useEffect } from "react";
-import CustomTable, { type TableHeader } from "../../../components/tables/Table/CustomTable";
-import "./tagPrinting.scss";
-import { FaPrint, FaSearch, FaRedo, FaGem, FaHeart, FaCog } from "react-icons/fa";
-import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
-import type { Product } from "./Inventory";
+import { Modal, Form, Spinner } from "react-bootstrap";
+import { FaPrint } from "react-icons/fa";
+import "./tagPrintingModal.scss";
+import type { Product } from "../../../pages/admin/inventory/Inventory";
+import Barcode from "react-barcode";
+
+interface TagPrintingModalProps {
+  show: boolean;
+  onClose: () => void;
+  product: Product | null;
+}
+
+interface TagConfig {
+  scale: number;
+}
+
+interface DymoPrinter {
+  name: string;
+  isConnected: boolean;
+  printerType: string;
+}
 
 // Proxy configuration
 const PROXY_URL = 'http://localhost:8765/dymo';
-const USE_PROXY = true;
 
-interface DymoStatus {
-  proxyRunning: boolean;
-  dymoConnected: boolean;
-  printersFound: number;
-}
+const DEFAULT_CONFIG: TagConfig = {
+  scale: 1,
+};
 
-const TagPrinting = () => {
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set(["GL-PND-042", "GL-ERN-112"]));
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showPrintModal, setShowPrintModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [dymoStatus, setDymoStatus] = useState<DymoStatus>({
-    proxyRunning: false,
-    dymoConnected: false,
-    printersFound: 0,
+const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
+  show,
+  onClose,
+  product,
+}) => {
+  const [tagCount, setTagCount] = useState<number>(1);
+  const [config, setConfig] = useState<TagConfig>(DEFAULT_CONFIG);
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+  const [printers, setPrinters] = useState<DymoPrinter[]>([]);
+  const [isLoadingPrinters, setIsLoadingPrinters] = useState<boolean>(false);
+  const [isPrinting, setIsPrinting] = useState<boolean>(false);
+  const [proxyStatus, setProxyStatus] = useState<{
+    connected: boolean;
+    message: string;
+  }>({
+    connected: false,
+    message: "Checking...",
   });
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
 
-  // Mock products data - replace with actual data from your API
-  const allProducts: Product[] = [
-    {
-      id: "1",
-      sku: "GL-RNG-001",
-      name: "Diamond Engagement Ring",
-      karatType: 18,
-      weight: 4.2,
-      price: 1920,
-      category: "Rings",
-      status: "active",
-    },
-    {
-      id: "2",
-      sku: "GL-PND-042",
-      name: "Sapphire Pendant",
-      karatType: 21,
-      weight: 7.8,
-      price: 2480,
-      category: "Pendants",
-      status: "active",
-    },
-    {
-      id: "3",
-      sku: "GL-BGL-205",
-      name: "Gold Bangle Set",
-      karatType: 22,
-      weight: 24.5,
-      price: 5980,
-      category: "Bangles",
-      status: "active",
-    },
-    {
-      id: "4",
-      sku: "GL-ERN-112",
-      name: "Emerald Earrings",
-      karatType: 18,
-      weight: 3.5,
-      price: 1250,
-      category: "Earrings",
-      status: "active",
-    },
-  ];
-
-  const productsHeaders: TableHeader[] = [
-    { key: "select", label: "Select", width: "60px" },
-    { key: "product", label: "Product", width: "250px" },
-    { key: "sku", label: "SKU", width: "120px" },
-    { key: "karat", label: "Karat", width: "80px" },
-    { key: "weight", label: "Weight", width: "100px" },
-    { key: "price", label: "Price", width: "120px" },
-    { key: "actions", label: "Actions", width: "100px" },
-  ];
-
-  // Filter products by search query
-  const filteredProducts = allProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.sku.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Convert to table data format
-  const productsData = filteredProducts.map(product => ({
-    Select: (
-      <input
-        type="checkbox"
-        checked={selectedProducts.has(product.sku)}
-        onChange={() => handleToggleProduct(product.sku)}
-      />
-    ),
-    Product: product.name,
-    SKU: product.sku,
-    Karat: `${product.karatType}K`,
-    Weight: `${product.weight}g`,
-    Price: `$${product.price.toLocaleString()}`,
-    Actions: (
-      <button
-        className="btn-sm btn-primary"
-        onClick={() => handlePrintSingle(product)}
-        title="Print tags for this product"
-      >
-        <FaPrint />
-      </button>
-    ),
-  }));
-
-  // Check DYMO proxy status on mount
   useEffect(() => {
-    checkDymoStatus();
-  }, []);
-
-  const handleToggleProduct = (sku: string) => {
-    setSelectedProducts(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(sku)) {
-        newSet.delete(sku);
-      } else {
-        newSet.add(sku);
-      }
-      return newSet;
-    });
-  };
-
-  const handlePrintSingle = (product: Product) => {
-    setSelectedProduct(product);
-    setShowPrintModal(true);
-  };
-
-  const handlePrintSelected = () => {
-    if (selectedProducts.size === 0) {
-      alert("❌ Please select at least one product to print.");
-      return;
+    if (show) {
+      checkProxyConnection();
     }
+  }, [show]);
 
-    // For bulk printing, open modal with first selected product
-    const firstSku = Array.from(selectedProducts)[0];
-    const product = allProducts.find(p => p.sku === firstSku);
-    if (product) {
-      setSelectedProduct(product);
-      setShowPrintModal(true);
-    }
-  };
+  if (!product) return null;
 
-  const checkDymoStatus = async () => {
-    setIsCheckingStatus(true);
-    
+  // Check if proxy is running
+  const checkProxyConnection = async () => {
     try {
-      // Check if proxy is running
-      const proxyResponse = await fetch(`${PROXY_URL.replace('/dymo', '')}/health`, {
+      const response = await fetch(`${PROXY_URL.replace('/dymo', '')}/health`, {
         method: 'GET',
       });
       
-      const proxyRunning = proxyResponse.ok;
-      
-      if (!proxyRunning) {
-        setDymoStatus({
-          proxyRunning: false,
-          dymoConnected: false,
-          printersFound: 0,
+      if (response.ok) {
+        setProxyStatus({
+          connected: true,
+          message: "Connected",
         });
+        loadPrinters();
+      } else {
+        setProxyStatus({
+          connected: false,
+          message: "Proxy server not responding",
+        });
+      }
+    } catch (error) {
+      console.error("Proxy connection error:", error);
+      setProxyStatus({
+        connected: false,
+        message: "Proxy server not running",
+      });
+    }
+  };
+
+  // Load printers through proxy
+  const loadPrinters = async () => {
+    setIsLoadingPrinters(true);
+    
+    try {
+      const response = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get printers");
+      }
+
+      const xmlText = await response.text();
+      
+      // Parse XML response
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+      const printerNodes = xmlDoc.getElementsByTagName('LabelWriterPrinter');
+      
+      const printersList: DymoPrinter[] = [];
+      
+      for (let i = 0; i < printerNodes.length; i++) {
+        const node = printerNodes[i];
+        const name = node.getElementsByTagName('Name')[0]?.textContent || '';
+        const isConnected = node.getElementsByTagName('IsConnected')[0]?.textContent === 'True';
+        const printerType = node.getElementsByTagName('PrinterType')[0]?.textContent || 'LabelWriter';
+        
+        printersList.push({
+          name,
+          isConnected,
+          printerType,
+        });
+      }
+      
+      const connectedPrinters = printersList.filter(p => p.isConnected);
+      setPrinters(connectedPrinters);
+      
+      if (connectedPrinters.length > 0) {
+        setSelectedPrinter(connectedPrinters[0].name);
+      }
+      
+    } catch (error) {
+      console.error("Error loading printers:", error);
+      alert("Failed to load printers. Make sure DYMO Connect is running.");
+    } finally {
+      setIsLoadingPrinters(false);
+    }
+  };
+
+  const handleConfigChange = (key: keyof TagConfig, value: number) => {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+  };
+
+  // Test DYMO connection through proxy
+  const testDymoConnection = async () => {
+    try {
+      // Test proxy
+      const proxyHealth = await fetch(`${PROXY_URL.replace('/dymo', '')}/health`);
+      if (!proxyHealth.ok) {
+        alert("❌ Proxy server not running.\n\nPlease start: node dymo-proxy-server.js");
         return;
       }
 
-      // Check DYMO connection through proxy
-      const dymoResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/StatusConnected`);
-      const dymoConnected = dymoResponse.ok;
-
-      // Get printers count
-      let printersFound = 0;
-      if (dymoConnected) {
-        try {
-          const printersResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`);
-          const printersXml = await printersResponse.text();
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(printersXml, 'text/xml');
-          const printerNodes = xmlDoc.getElementsByTagName('LabelWriterPrinter');
-          printersFound = printerNodes.length;
-        } catch (e) {
-          console.error("Error counting printers:", e);
-        }
+      // Test DYMO
+      const dymoStatus = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/StatusConnected`);
+      if (!dymoStatus.ok) {
+        alert("❌ DYMO Connect not accessible.\n\nMake sure DYMO Connect is running.");
+        return;
       }
 
-      setDymoStatus({
-        proxyRunning,
-        dymoConnected,
-        printersFound,
+      // Get printers
+      const printersResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/GetPrinters`);
+      const printersXml = await printersResponse.text();
+      
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(printersXml, 'text/xml');
+      const printerNodes = xmlDoc.getElementsByTagName('LabelWriterPrinter');
+      
+      let message = `✅ Proxy Server: Running\n`;
+      message += `✅ DYMO Connect: Connected\n`;
+      message += `✅ ${printerNodes.length} printer(s) detected:\n\n`;
+      
+      for (let i = 0; i < printerNodes.length; i++) {
+        const node = printerNodes[i];
+        const name = node.getElementsByTagName('Name')[0]?.textContent || 'Unknown';
+        const isConnected = node.getElementsByTagName('IsConnected')[0]?.textContent === 'True';
+        message += `${i + 1}. ${name}\n   Status: ${isConnected ? 'Connected' : 'Offline'}\n\n`;
+      }
+      
+      alert(message);
+    } catch (err) {
+      console.error("DYMO Test Error:", err);
+      alert(`❌ Connection failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+  };
+
+  // Print tags through proxy
+  const handlePrint = async () => {
+    if (!selectedPrinter) {
+      alert("❌ Please select a printer first.");
+      return;
+    }
+
+    if (tagCount < 1 || tagCount > 300) {
+      alert("❌ Please enter a valid number of tags (1-300).");
+      return;
+    }
+
+    if (!proxyStatus.connected) {
+      alert("❌ Proxy server not connected. Please start the proxy server.");
+      return;
+    }
+
+    setIsPrinting(true);
+
+    try {
+      // Load label template
+      let labelXml: string;
+      try {
+        const response = await fetch("/labels/jewelry.label");
+        if (!response.ok) {
+          throw new Error(`Failed to load label template: ${response.status}`);
+        }
+        labelXml = await response.text();
+      } catch (fetchError) {
+        console.error("Failed to load label template, using default:", fetchError);
+        labelXml = createDefaultLabelXml();
+      }
+
+      // Replace placeholders in label XML
+      labelXml = labelXml
+        .replace(/<Text>SKU<\/Text>/g, `<Text>${product.sku}</Text>`)
+        .replace(/<Text>BARCODE<\/Text>/g, `<Text>${product.sku}</Text>`)
+        .replace(/<Text>PRICE<\/Text>/g, `<Text>$${product.price.toFixed(2)}</Text>`)
+        .replace(/<Text>WEIGHT<\/Text>/g, `<Text>${product.weight}g</Text>`)
+        .replace(/<Text>KARAT<\/Text>/g, `<Text>${product.karatType}K</Text>`);
+
+      // Create print params XML
+      const printParamsXml = `<?xml version="1.0" encoding="utf-8"?>
+<LabelWriterPrintParams>
+  <Copies>${tagCount}</Copies>
+  <JobTitle>Jewelry Tag - ${product.sku}</JobTitle>
+  <PrintQuality>Text</PrintQuality>
+  <FlowDirection>LeftToRight</FlowDirection>
+</LabelWriterPrintParams>`;
+
+      // Send print request through proxy
+      const printResponse = await fetch(`${PROXY_URL}/DYMO/DLS/Printing/PrintLabel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          printerName: selectedPrinter,
+          printParamsXml: printParamsXml,
+          labelXml: labelXml,
+        }).toString(),
       });
 
-    } catch (error) {
-      console.error("Error checking DYMO status:", error);
-      setDymoStatus({
-        proxyRunning: false,
-        dymoConnected: false,
-        printersFound: 0,
-      });
+      if (!printResponse.ok) {
+        const errorText = await printResponse.text();
+        throw new Error(`Print failed: ${errorText}`);
+      }
+
+      alert(`✅ Sent ${tagCount} tag(s) to ${selectedPrinter}.`);
+      
+    } catch (err) {
+      console.error("PRINT ERROR:", err);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+      alert(`❌ Printing failed: ${errorMessage}\n\nCheck console for details.`);
     } finally {
-      setIsCheckingStatus(false);
+      setIsPrinting(false);
     }
   };
 
-  const getSelectedProductsData = () => {
-    return allProducts.filter(p => selectedProducts.has(p.sku));
+  // Helper function for default label XML
+  const createDefaultLabelXml = (): string => {
+    return `<?xml version="1.0" encoding="utf-8"?>
+<DieCutLabel Version="8.0" Units="twips">
+  <PaperOrientation>Landscape</PaperOrientation>
+  <Id>JewelryTag</Id>
+  <PaperName>30252 Address</PaperName>
+  <DrawCommands>
+    <RoundRectangle X="0" Y="0" Width="1440" Height="1440" Rx="270" Ry="270"/>
+  </DrawCommands>
+  <ObjectInfo>
+    <TextObject>
+      <Name>SKU</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <VerticalAlignment>Middle</VerticalAlignment>
+      <TextFitMode>ShrinkToFit</TextFitMode>
+      <UseFullFontHeight>True</UseFullFontHeight>
+      <Verticalized>False</Verticalized>
+      <StyledText/>
+    </TextObject>
+    <BarcodeObject>
+      <Name>Barcode</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <Text>SKU12345</Text>
+      <Type>Code128Auto</Type>
+      <Size>Medium</Size>
+      <TextPosition>Bottom</TextPosition>
+      <TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+      <CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
+      <TextEmbedding>None</TextEmbedding>
+      <ECLevel>0</ECLevel>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
+    </BarcodeObject>
+    <TextObject>
+      <Name>Price</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <VerticalAlignment>Middle</VerticalAlignment>
+      <TextFitMode>ShrinkToFit</TextFitMode>
+      <UseFullFontHeight>True</UseFullFontHeight>
+      <Verticalized>False</Verticalized>
+      <StyledText/>
+    </TextObject>
+    <TextObject>
+      <Name>Weight</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <VerticalAlignment>Middle</VerticalAlignment>
+      <TextFitMode>ShrinkToFit</TextFitMode>
+      <UseFullFontHeight>True</UseFullFontHeight>
+      <Verticalized>False</Verticalized>
+      <StyledText/>
+    </TextObject>
+    <TextObject>
+      <Name>Karat</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <VerticalAlignment>Middle</VerticalAlignment>
+      <TextFitMode>ShrinkToFit</TextFitMode>
+      <UseFullFontHeight>True</UseFullFontHeight>
+      <Verticalized>False</Verticalized>
+      <StyledText/>
+    </TextObject>
+  </ObjectInfo>
+</DieCutLabel>`;
   };
 
-  const renderStatusBadge = () => {
-    if (isCheckingStatus) {
-      return (
-        <div className="status-badge status-checking">
-          <span className="status-dot"></span>
-          Checking...
-        </div>
-      );
-    }
-
-    if (!dymoStatus.proxyRunning) {
-      return (
-        <div className="status-badge status-error" title="Proxy server not running">
-          <span className="status-dot"></span>
-          Proxy Offline
-        </div>
-      );
-    }
-
-    if (!dymoStatus.dymoConnected) {
-      return (
-        <div className="status-badge status-warning" title="DYMO Connect not accessible">
-          <span className="status-dot"></span>
-          DYMO Offline
-        </div>
-      );
-    }
-
-    if (dymoStatus.printersFound === 0) {
-      return (
-        <div className="status-badge status-warning" title="No printers detected">
-          <span className="status-dot"></span>
-          No Printers
-        </div>
-      );
-    }
-
-    return (
-      <div className="status-badge status-success" title={`${dymoStatus.printersFound} printer(s) ready`}>
-        <span className="status-dot"></span>
-        Ready ({dymoStatus.printersFound})
-      </div>
-    );
+  const refreshPrinters = () => {
+    checkProxyConnection();
   };
 
   return (
-    <div id="tag-printing" className="page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">
-            <FaPrint className="icon" /> <span>Tag Printing</span>
-          </h1>
-          <div className="status-container">
-            {renderStatusBadge()}
-            <button
-              className="btn-sm btn-outline-secondary"
-              onClick={checkDymoStatus}
-              disabled={isCheckingStatus}
-              title="Refresh connection status"
-            >
-              <FaRedo />
-            </button>
-          </div>
-        </div>
-        <div className="page-actions">
-          <button 
-            className="btn-md btn-gold"
-            onClick={handlePrintSelected}
-            disabled={selectedProducts.size === 0}
-          >
-            <FaPrint /> Print Selected ({selectedProducts.size})
-          </button>
-        </div>
-      </div>
+    <Modal
+      show={show}
+      onHide={onClose}
+      centered
+      size="xl"
+      className="tag-printing-modal-wrapper"
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>
+          Print Butterfly Tags — {product.sku}
+          <small className="ms-2 text-muted">(via Proxy)</small>
+        </Modal.Title>
+      </Modal.Header>
 
-      {/* Setup Instructions Card */}
-      {!dymoStatus.proxyRunning && (
-        <div className="card card-warning">
-          <div className="card-header">
-            <h3 className="card-title">⚠️ Proxy Server Required</h3>
-          </div>
-          <div className="card-body">
-            <p><strong>To print labels from this website, you need to run the DYMO Proxy Server on your computer.</strong></p>
-            <ol style={{ marginLeft: "20px", marginTop: "10px" }}>
-              <li>Download the proxy server files from IT support</li>
-              <li>Install Node.js if not already installed</li>
-              <li>Run: <code>npm install</code> in the proxy folder</li>
-              <li>Run: <code>npm start</code> to start the proxy</li>
-              <li>Keep the proxy running while using this page</li>
-              <li>Click the refresh button above to reconnect</li>
-            </ol>
-            <p style={{ marginTop: "15px", fontSize: "14px", color: "#666" }}>
-              <strong>Note:</strong> Make sure DYMO Connect is also installed and running.
-            </p>
-          </div>
-        </div>
-      )}
+      <Modal.Body className="tag-modal-body">
+        <div className="tag-modal-content">
+          {/* PREVIEW SECTION */}
+          <div className="preview-section">
+            <h6 className="section-title">Tag Preview</h6>
 
-      {!dymoStatus.dymoConnected && dymoStatus.proxyRunning && (
-        <div className="card card-warning">
-          <div className="card-header">
-            <h3 className="card-title">⚠️ DYMO Connect Not Detected</h3>
-          </div>
-          <div className="card-body">
-            <p><strong>The proxy server is running, but DYMO Connect is not accessible.</strong></p>
-            <ol style={{ marginLeft: "20px", marginTop: "10px" }}>
-              <li>Make sure DYMO Connect is installed</li>
-              <li>Check if DYMO Connect is running (system tray icon)</li>
-              <li>Restart DYMO Connect if needed</li>
-              <li>Click the refresh button to reconnect</li>
-            </ol>
-          </div>
-        </div>
-      )}
+            <div className="dymo-preview-container">
+              <div
+                className="dymo-jewelry-tag"
+                style={{ transform: `scale(${config.scale})` }}
+              >
+                {/* LEFT LOBE - BARCODE */}
+                <div className="tag-lobe left-lobe">
+                  <div className="barcode-box">
+                    <Barcode
+                      className="barCode"
+                      value={product.sku}
+                      width={1.5}
+                      height={40}
+                      margin={0}
+                    />
+                  </div>
+                  <div className="sku">{product.sku}</div>
+                </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Select Products</h3>
-          <div>
-            <div className="search-bar" style={{ width: "250px" }}>
-              <FaSearch className="icon" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                {/* CENTER BRIDGE */}
+                <div className="tag-bridge"></div>
+
+                {/* RIGHT LOBE - DETAILS */}
+                <div className="tag-lobe right-lobe">
+                  <div className="price">${product.price.toFixed(2)}</div>
+                  <div className="weight">{product.weight}g</div>
+                  <div className="karat">{product.karatType}K</div>
+                </div>
+              </div>
+            </div>
+
+            {/* PREVIEW SCALE CONTROL */}
+            <div className="control-group mt-3">
+              <label className="control-label">
+                Preview Scale: {(config.scale * 100).toFixed(0)}%
+              </label>
+              <Form.Range
+                min={0.5}
+                max={1.5}
+                step={0.1}
+                value={config.scale}
+                onChange={(e) =>
+                  handleConfigChange("scale", parseFloat(e.target.value))
+                }
               />
             </div>
           </div>
-        </div>
 
-        <CustomTable headers={productsHeaders} data={productsData} />
-      </div>
+          {/* SETTINGS SECTION */}
+          <div className="settings-section">
+            <h6 className="section-title">Print Settings</h6>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Selected Products Preview</h3>
-          <div>
-            <button className="btn-md btn-gray" onClick={checkDymoStatus}>
-              <FaRedo /> Refresh Status
-            </button>
-          </div>
-        </div>
-
-        {selectedProducts.size === 0 ? (
-          <div className="card-body" style={{ textAlign: "center", padding: "40px" }}>
-            <FaGem style={{ fontSize: "48px", color: "#ccc", marginBottom: "15px" }} />
-            <p style={{ color: "#666" }}>No products selected. Select products from the table above.</p>
-          </div>
-        ) : (
-          <>
-            <div className="tag-preview-grid">
-              {getSelectedProductsData().map(product => (
-                <div key={product.sku} className="tag-preview">
-                  <div className="product-img">
-                    {product.category === "Pendants" ? <FaHeart /> : <FaGem />}
-                  </div>
-                  <h4>{product.name}</h4>
-                  <p>SKU: {product.sku}</p>
-                  <p>{product.karatType}K Gold - {product.weight}g</p>
-                  <p style={{ fontWeight: "bold", color: "var(--gold)" }}>
-                    ${product.price.toLocaleString()}
-                  </p>
-                  <button
-                    className="btn-sm btn-outline-primary"
-                    onClick={() => handlePrintSingle(product)}
-                    style={{ marginTop: "8px" }}
-                  >
-                    <FaPrint /> Print
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            <div className="form-row" style={{ marginTop: "25px" }}>
-              <div className="form-col">
-                <div className="form-group">
-                  <label className="form-label">Tag Size</label>
-                  <select className="form-control">
-                    <option>Standard (2" x 3")</option>
-                    <option>Large (3" x 4")</option>
-                    <option>Small (1.5" x 2")</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-col">
-                <div className="form-group">
-                  <label className="form-label">Fields to Include</label>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-                    <label className="filter-option" style={{ margin: 0 }}>
-                      <input type="checkbox" defaultChecked /> SKU
-                    </label>
-                    <label className="filter-option" style={{ margin: 0 }}>
-                      <input type="checkbox" defaultChecked /> Weight
-                    </label>
-                    <label className="filter-option" style={{ margin: 0 }}>
-                      <input type="checkbox" defaultChecked /> Karat
-                    </label>
-                    <label className="filter-option" style={{ margin: 0 }}>
-                      <input type="checkbox" defaultChecked /> Price
-                    </label>
-                  </div>
-                </div>
+            {/* PROXY STATUS */}
+            <div className="proxy-status mb-3">
+              <div className="status-item">
+                <span className="status-label">Proxy Server:</span>
+                <span className={`status-value ${proxyStatus.connected ? "text-success" : "text-danger"}`}>
+                  {proxyStatus.connected ? "✓ Connected" : "✗ " + proxyStatus.message}
+                </span>
               </div>
             </div>
-          </>
-        )}
-      </div>
 
-      {/* Print Modal */}
-      {showPrintModal && selectedProduct && (
-        <TagPrintingModal
-          show={showPrintModal}
-          onClose={() => {
-            setShowPrintModal(false);
-            setSelectedProduct(null);
-          }}
-          product={selectedProduct}
-        />
-      )}
-    </div>
+            {!proxyStatus.connected && (
+              <div className="alert alert-warning p-2 mb-3">
+                <small><strong>Proxy server not running!</strong></small>
+                <ul className="mb-0 mt-1 ps-3">
+                  <li><small>Start proxy: <code>npm start</code></small></li>
+                  <li><small>Keep it running while printing</small></li>
+                </ul>
+              </div>
+            )}
+
+            {/* PRINTER SELECTION */}
+            <div className="control-group">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <label className="control-label">Printer Selection</label>
+                <button 
+                  className="btn btn-sm btn-outline-secondary"
+                  onClick={refreshPrinters}
+                  disabled={isLoadingPrinters || !proxyStatus.connected}
+                >
+                  {isLoadingPrinters ? (
+                    <>
+                      <Spinner animation="border" size="sm" className="me-1" />
+                      Loading...
+                    </>
+                  ) : "Refresh"}
+                </button>
+              </div>
+              {isLoadingPrinters ? (
+                <div className="text-center py-2">
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Loading printers...
+                </div>
+              ) : printers.length > 0 ? (
+                <Form.Select 
+                  value={selectedPrinter} 
+                  onChange={(e) => setSelectedPrinter(e.target.value)}
+                  className={!selectedPrinter ? "border-warning" : ""}
+                >
+                  <option value="">Select a printer...</option>
+                  {printers.map(printer => (
+                    <option 
+                      key={printer.name} 
+                      value={printer.name}
+                    >
+                      {printer.name} ({printer.printerType})
+                    </option>
+                  ))}
+                </Form.Select>
+              ) : (
+                <div className="alert alert-warning p-2 mb-0">
+                  <small>No connected DYMO printers found.</small>
+                </div>
+              )}
+            </div>
+
+            {/* TAG COUNT */}
+            <div className="control-group">
+              <label className="control-label">Number of Tags</label>
+              <Form.Control
+                type="number"
+                min={1}
+                max={300}
+                value={tagCount}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value >= 1 && value <= 300) {
+                    setTagCount(value);
+                  }
+                }}
+              />
+              <div className="form-text">
+                Enter a number between 1 and 300
+              </div>
+            </div>
+
+            {/* PRODUCT INFO */}
+            <div className="info-text">
+              <div className="d-flex justify-content-between">
+                <small>SKU: <strong>{product.sku}</strong></small>
+                <small>Price: <strong>${product.price.toFixed(2)}</strong></small>
+              </div>
+              <div className="d-flex justify-content-between mt-1">
+                <small>Weight: <strong>{product.weight}g</strong></small>
+                <small>Karat: <strong>{product.karatType}K</strong></small>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="d-grid gap-2 mt-3">
+              <button 
+                className="btn btn-outline-info" 
+                onClick={testDymoConnection}
+                disabled={isPrinting}
+              >
+                Test Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <button 
+          className="btn btn-secondary" 
+          onClick={onClose}
+          disabled={isPrinting}
+        >
+          Cancel
+        </button>
+        <button 
+          className="btn btn-primary btn-gold" 
+          onClick={handlePrint}
+          disabled={!selectedPrinter || !proxyStatus.connected || isPrinting}
+        >
+          {isPrinting ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Printing {tagCount} Tag(s)...
+            </>
+          ) : (
+            <>
+              <FaPrint className="me-2" />
+              Print {tagCount} Tag(s)
+            </>
+          )}
+        </button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 
-export default TagPrinting;
+export default TagPrintingModal;
