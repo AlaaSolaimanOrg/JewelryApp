@@ -281,7 +281,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       // Load label template
       let labelXml: string;
       try {
-        const response = await fetch("/labels/jewelry.label");
+        const response = await fetch("/dev/labels/jewelry.label");
         if (!response.ok) {
           throw new Error(`Failed to load label template: ${response.status}`);
         }
