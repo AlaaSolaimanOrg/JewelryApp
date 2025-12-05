@@ -13,6 +13,7 @@ const Clock = () => {
     });
   };
 
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(getCurrentTime());
