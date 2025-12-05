@@ -1,6 +1,6 @@
 /**
  * DYMO Backend Proxy Setup Guide
- * 
+ *
  * This file provides example implementations for proxying DYMO Connect requests
  * through your backend to solve CORS issues in production.
  */

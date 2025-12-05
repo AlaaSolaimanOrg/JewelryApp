@@ -1,20 +1,25 @@
 # DYMO CORS Fix - Quick Reference
 
 ## 🎯 Problem
+
 CORS error when accessing DYMO Connect at `https://127.0.0.1:41951` in deployed environment.
 
 ## ✅ Solution Applied
 
 ### Development (Local)
+
 ```
 Browser → Vite Dev Server → DYMO Connect (127.0.0.1:41951)
 ```
+
 ✅ **Configured** - Proxy added to `vite.config.ts`
 
 ### Production (Deployed)
+
 ```
 Browser → Your Backend → DYMO Connect (127.0.0.1:41951)
 ```
+
 ⚠️ **TODO** - Implement backend proxy (see examples)
 
 ---
@@ -39,13 +44,13 @@ npm run dev
 
 ## 📁 Files Changed
 
-| File | Change | Purpose |
-|------|--------|---------|
-| `vite.config.ts` | Added proxy | Dev CORS fix |
-| `src/utils/dymoConfig.ts` | Created | Environment detection |
-| `DYMO_CORS_SOLUTION.md` | Created | Full documentation |
-| `DYMO_FIX_SUMMARY.md` | Created | Action items & summary |
-| `src/utils/BACKEND_PROXY_EXAMPLES.ts` | Created | Backend implementation |
+| File                                  | Change      | Purpose                |
+| ------------------------------------- | ----------- | ---------------------- |
+| `vite.config.ts`                      | Added proxy | Dev CORS fix           |
+| `src/utils/dymoConfig.ts`             | Created     | Environment detection  |
+| `DYMO_CORS_SOLUTION.md`               | Created     | Full documentation     |
+| `DYMO_FIX_SUMMARY.md`                 | Created     | Action items & summary |
+| `src/utils/BACKEND_PROXY_EXAMPLES.ts` | Created     | Backend implementation |
 
 ---
 
@@ -54,12 +59,15 @@ npm run dev
 Choose one backend framework and implement the proxy:
 
 ### C# / ASP.NET Core
+
 📄 File: `src/utils/BACKEND_PROXY_EXAMPLES.ts` (lines 7-80)
 
-### Node.js / Express  
+### Node.js / Express
+
 📄 File: `src/utils/BACKEND_PROXY_EXAMPLES.ts` (lines 85-140)
 
 ### Python / Flask
+
 📄 File: `src/utils/BACKEND_PROXY_EXAMPLES.ts` (lines 145-200)
 
 ---
@@ -76,8 +84,9 @@ VITE_DYMO_API_BASE=/DYMO      # Development
 ```
 
 Then use in code:
+
 ```typescript
-const apiBase = import.meta.env.VITE_DYMO_API_BASE || '/DYMO';
+const apiBase = import.meta.env.VITE_DYMO_API_BASE || "/DYMO";
 ```
 
 ---
@@ -85,24 +94,27 @@ const apiBase = import.meta.env.VITE_DYMO_API_BASE || '/DYMO';
 ## 🛠️ Debugging Commands
 
 ### Check DYMO Connect Status
+
 ```powershell
 # Windows - Check if port 41951 is open
 netstat -ano | findstr :41951
 ```
 
 ### Browser Console
+
 ```javascript
 // Test DYMO framework
-window.dymo.label.framework.checkEnvironment()
+window.dymo.label.framework.checkEnvironment();
 
 // Get printers
-window.dymo.label.framework.getPrinters()
+window.dymo.label.framework.getPrinters();
 
 // Check version
-window.dymo.label.framework.VERSION
+window.dymo.label.framework.VERSION;
 ```
 
 ### Network Tab
+
 1. Open DevTools → Network tab
 2. Click "Test DYMO Connection"
 3. Look for `/DYMO/DLS/Printing/StatusConnected` request

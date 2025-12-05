@@ -3,11 +3,13 @@
 ## 📋 Quick Start
 
 ### For Development (Ready Now)
+
 1. Ensure DYMO Connect is running
 2. Run: `npm run dev`
 3. Test printing → should work ✅
 
 ### For Production (Implement Next)
+
 See "Production Setup" section below
 
 ---
@@ -15,11 +17,13 @@ See "Production Setup" section below
 ## ✅ What's Included
 
 ### Configuration Files
+
 - ✅ `vite.config.ts` - Proxy configured
 - ✅ `src/utils/dymoConfig.ts` - Helper utilities
 - ✅ `src/utils/BACKEND_PROXY_EXAMPLES.ts` - Backend code
 
 ### Documentation
+
 - ✅ `README_DYMO_FIX.md` - Overview
 - ✅ `DYMO_QUICK_REFERENCE.md` - Quick answers
 - ✅ `DYMO_FIX_SUMMARY.md` - Detailed steps
@@ -31,6 +35,7 @@ See "Production Setup" section below
 ## 🚀 Test Development Setup
 
 ### Prerequisites
+
 - DYMO Connect installed: https://www.dymo.com/en-US/dymo-web-service
 - DYMO Label Writer 550 Turbo connected via USB
 - Node.js and npm installed
@@ -64,6 +69,7 @@ npm run dev
 ## 🔧 How the Fix Works
 
 ### The CORS Problem
+
 ```
 Browser                                  DYMO Connect
   ↓                                         ↓
@@ -75,6 +81,7 @@ Browser blocks it!
 ```
 
 ### The Solution (Development)
+
 ```
 Browser                   Vite Dev Server              DYMO Connect
   ↓                              ↓                           ↓
@@ -93,6 +100,7 @@ Browser receives response
 ```
 
 ### The Solution (Production)
+
 ```
 Browser                  Your Backend              DYMO Connect
   ↓                           ↓                           ↓
@@ -118,12 +126,14 @@ Browser receives response
 ## 📦 Production Setup
 
 ### Step 1: Choose Your Backend
+
 - [ ] C# / ASP.NET Core
 - [ ] Node.js / Express
 - [ ] Python / Flask
 - [ ] Other
 
 ### Step 2: Implement Proxy
+
 1. Open: `src/utils/BACKEND_PROXY_EXAMPLES.ts`
 2. Find your backend language section
 3. Copy the proxy controller code
@@ -131,20 +141,23 @@ Browser receives response
 5. Test locally first
 
 ### Step 3: Configure Frontend
+
 Update `src/utils/dymoConfig.ts` (optional):
+
 ```typescript
 export function getDymoConfig(): DymoConfig {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return {
     isDevelopment,
-    apiBaseUrl: isDevelopment ? '/DYMO' : '/api/dymo', // Update endpoint
+    apiBaseUrl: isDevelopment ? "/DYMO" : "/api/dymo", // Update endpoint
     useBackendProxy: !isDevelopment,
   };
 }
 ```
 
 ### Step 4: Test Backend Proxy
+
 ```bash
 # With backend running locally:
 1. Start frontend: npm run dev
@@ -154,6 +167,7 @@ export function getDymoConfig(): DymoConfig {
 ```
 
 ### Step 5: Deploy
+
 1. Deploy backend with proxy endpoints
 2. Update API endpoint in production build
 3. Test on staging environment
@@ -166,12 +180,14 @@ export function getDymoConfig(): DymoConfig {
 ### Issue: "DYMO Framework not detected"
 
 **Check 1:** DYMO Connect Running
+
 ```
 Look for DYMO Connect icon in system tray (bottom right)
 If not there → Download from: https://www.dymo.com/en-US/dymo-web-service
 ```
 
 **Check 2:** USB Connection
+
 ```
 Verify DYMO printer is connected via USB
 Check Device Manager for "DYMO LabelWriter"
@@ -179,15 +195,17 @@ If not appearing → Check USB port
 ```
 
 **Check 3:** Browser Console
+
 ```javascript
 // Paste in browser console:
-window.dymo
+window.dymo;
 // Should see an object with label.framework
 ```
 
 ### Issue: "CORS error in development"
 
 **Check 1:** Vite Config
+
 ```
 Open vite.config.ts
 Verify proxy section exists (see below)
@@ -195,6 +213,7 @@ Should have /DYMO proxy to 127.0.0.1:41951
 ```
 
 **Check 2:** Dev Server Restarted
+
 ```bash
 # Stop current dev server (Ctrl+C)
 # Clear node_modules cache
@@ -202,6 +221,7 @@ npm run dev
 ```
 
 **Check 3:** Clear Browser Cache
+
 ```
 Browser DevTools → Application → Clear Site Data
 Reload page (Ctrl+Shift+R)
@@ -210,6 +230,7 @@ Reload page (Ctrl+Shift+R)
 ### Issue: "Port 41951 blocked"
 
 **Check Windows Firewall:**
+
 ```powershell
 # Run as Administrator
 netstat -ano | findstr :41951
@@ -217,6 +238,7 @@ netstat -ano | findstr :41951
 ```
 
 **Firewall Exception:**
+
 ```
 1. Windows Defender Firewall → Allow app through
 2. Add DYMO Connect to allowed apps
@@ -226,6 +248,7 @@ netstat -ano | findstr :41951
 ### Issue: "In production, still getting CORS error"
 
 **Check 1:** Backend Proxy Implemented
+
 ```
 Backend should have /api/dymo endpoints
 Test with: curl https://yourserver/api/dymo/status
@@ -233,6 +256,7 @@ Should return JSON response
 ```
 
 **Check 2:** DYMO Connect on Client Machine
+
 ```
 DYMO Connect must run on user's machine
 Not on server
@@ -240,8 +264,9 @@ Verify with: netstat -ano | findstr :41951 (on client)
 ```
 
 **Check 3:** Backend Proxy Routes Correctly
+
 ```
-Backend /api/dymo/... 
+Backend /api/dymo/...
   → should proxy to http://127.0.0.1:41951/DYMO/...
 Check backend logs for proxy requests
 ```
@@ -268,19 +293,19 @@ Start-Service -Name "DymoConnectService"
 
 ```javascript
 // Check DYMO framework
-window.dymo
-window.dymo.label
-window.dymo.label.framework
-window.dymo.label.framework.VERSION
+window.dymo;
+window.dymo.label;
+window.dymo.label.framework;
+window.dymo.label.framework.VERSION;
 
 // Check environment
-window.dymo.label.framework.checkEnvironment()
+window.dymo.label.framework.checkEnvironment();
 
 // Get printers
-window.dymo.label.framework.getPrinters()
+window.dymo.label.framework.getPrinters();
 
 // Get connected printers only
-window.dymo.label.framework.getPrinters().filter(p => p.isConnected)
+window.dymo.label.framework.getPrinters().filter((p) => p.isConnected);
 ```
 
 ### Network Debugging
@@ -327,6 +352,7 @@ JewelryApp.UI/
 ## ✨ Key Configuration
 
 ### vite.config.ts (Development Proxy)
+
 ```typescript
 server: {
   port: 5173,
@@ -342,6 +368,7 @@ server: {
 ```
 
 ### What It Does
+
 - Intercepts requests to `/DYMO/...`
 - Forwards to `http://127.0.0.1:41951/DYMO/...`
 - Returns response to browser
@@ -351,20 +378,21 @@ server: {
 
 ## 📚 Documentation Map
 
-| Document | Purpose | Read When |
-|----------|---------|-----------|
-| `README_DYMO_FIX.md` | Overview & status | First time |
-| `DYMO_QUICK_REFERENCE.md` | Quick answers | Need fast help |
-| `DYMO_CORS_SOLUTION.md` | Technical deep-dive | Want to understand |
-| `DYMO_FIX_SUMMARY.md` | Action items | Planning next steps |
-| `DYMO_FIX_VERIFICATION.md` | Detailed guide | Setting up production |
-| This file | Implementation | Actually implementing |
+| Document                   | Purpose             | Read When             |
+| -------------------------- | ------------------- | --------------------- |
+| `README_DYMO_FIX.md`       | Overview & status   | First time            |
+| `DYMO_QUICK_REFERENCE.md`  | Quick answers       | Need fast help        |
+| `DYMO_CORS_SOLUTION.md`    | Technical deep-dive | Want to understand    |
+| `DYMO_FIX_SUMMARY.md`      | Action items        | Planning next steps   |
+| `DYMO_FIX_VERIFICATION.md` | Detailed guide      | Setting up production |
+| This file                  | Implementation      | Actually implementing |
 
 ---
 
 ## ✅ Verification Checklist
 
 ### Development Setup
+
 - [ ] vite.config.ts has /DYMO proxy
 - [ ] DYMO Connect installed and running
 - [ ] DYMO printer connected via USB
@@ -373,6 +401,7 @@ server: {
 - [ ] Can print test label
 
 ### Production Setup
+
 - [ ] Backend proxy code copied to backend project
 - [ ] Backend proxy endpoints implemented
 - [ ] Backend proxy tested locally
@@ -385,6 +414,7 @@ server: {
 ## 🎯 Success Criteria
 
 ### Development ✅
+
 ```
 ✓ npm run dev starts without errors
 ✓ Modal "Test DYMO Connection" button works
@@ -394,6 +424,7 @@ server: {
 ```
 
 ### Production ✅
+
 ```
 ✓ Backend proxy endpoint responds
 ✓ Frontend calls /api/dymo/... (not /DYMO/...)
@@ -411,6 +442,7 @@ All the code, examples, and documentation are in place.
 **Next:** Test printing in development right now! 🖨️
 
 Questions? Check:
+
 - `DYMO_QUICK_REFERENCE.md` for quick help
 - `DYMO_CORS_SOLUTION.md` for technical details
 - Browser console for error messages

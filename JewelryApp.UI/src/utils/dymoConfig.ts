@@ -13,13 +13,13 @@ export interface DymoConfig {
  * Get DYMO API configuration based on environment
  */
 export function getDymoConfig(): DymoConfig {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return {
     isDevelopment,
     // In development: use Vite proxy (/DYMO -> http://127.0.0.1:41951)
     // In production: use backend proxy (/api/dymo -> backend -> http://127.0.0.1:41951)
-    apiBaseUrl: isDevelopment ? '/DYMO' : '/api/dymo',
+    apiBaseUrl: isDevelopment ? "/DYMO" : "/api/dymo",
     useBackendProxy: !isDevelopment,
   };
 }
@@ -33,19 +33,22 @@ export async function checkDymoConnectStatus(): Promise<{
 }> {
   try {
     const config = getDymoConfig();
-    
+
     // Try to fetch DYMO status
-    const response = await fetch(`${config.apiBaseUrl}/DLS/Printing/StatusConnected`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${config.apiBaseUrl}/DLS/Printing/StatusConnected`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
 
     if (response.ok) {
       return {
         isAccessible: true,
-        message: 'DYMO Connect is accessible',
+        message: "DYMO Connect is accessible",
       };
     } else {
       return {
@@ -54,7 +57,8 @@ export async function checkDymoConnectStatus(): Promise<{
       };
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return {
       isAccessible: false,
       message: `Failed to connect to DYMO: ${errorMessage}`,
@@ -70,12 +74,14 @@ export async function makeDymoRequest(
   options: RequestInit = {}
 ): Promise<Response> {
   const config = getDymoConfig();
-  const url = `${config.apiBaseUrl}${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+  const url = `${config.apiBaseUrl}${
+    endpoint.startsWith("/") ? endpoint : "/" + endpoint
+  }`;
 
   return fetch(url, {
     ...options,
     headers: {
-      'Accept': 'application/json',
+      Accept: "application/json",
       ...options.headers,
     },
   });
@@ -86,9 +92,12 @@ export async function makeDymoRequest(
  */
 export function logDymoConfig(): void {
   const config = getDymoConfig();
-  console.group('DYMO Configuration');
-  console.log('Environment:', config.isDevelopment ? 'Development' : 'Production');
-  console.log('API Base URL:', config.apiBaseUrl);
-  console.log('Using Backend Proxy:', config.useBackendProxy);
+  console.group("DYMO Configuration");
+  console.log(
+    "Environment:",
+    config.isDevelopment ? "Development" : "Production"
+  );
+  console.log("API Base URL:", config.apiBaseUrl);
+  console.log("Using Backend Proxy:", config.useBackendProxy);
   console.groupEnd();
 }
