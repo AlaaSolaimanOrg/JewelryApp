@@ -291,10 +291,10 @@ const handlePrint = async () => {
     const label = dymoWindow.dymo.label.framework.openLabelXml(labelXml);
     
     // Validate label
-    if (!label.isValidLabel()) {
-      alert("❌ Invalid label format. Please use a .label file format.");
-      return;
-    }
+    // if (!label.isValidLabel()) {
+    //   alert("❌ Invalid label format. Please use a .label file format.");
+    //   return;
+    // }
 
     console.log("Is DCD Label:", label.isDCDLabel());
     console.log("Is DLS Label:", label.isDLSLabel());
