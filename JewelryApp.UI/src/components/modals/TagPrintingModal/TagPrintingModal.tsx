@@ -304,11 +304,11 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       console.log("Is DLS Label:", label.isDLSLabel());
 
       // Set label content
-      label.setObjectText("SKU", product.sku);
-      label.setObjectText("Barcode", product.sku);
-      label.setObjectText("Price", `$${product.price.toFixed(2)}`);
-      label.setObjectText("Weight", `${product.weight}g`);
-      label.setObjectText("Karat", `${product.karatType}K`);
+      // label.setObjectText("SKU", product.sku);
+      // label.setObjectText("Barcode", product.sku);
+      // label.setObjectText("Price", `$${product.price.toFixed(2)}`);
+      // label.setObjectText("Weight", `${product.weight}g`);
+      // label.setObjectText("Karat", `${product.karatType}K`);
 
       // Verify printer is still available
       const currentPrinters = dymoWindow.dymo.label.framework.getPrinters();
