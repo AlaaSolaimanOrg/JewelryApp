@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <DieCutLabel Version="8.0" Units="twips">
   <PaperOrientation>Landscape</PaperOrientation>
-  <Id>Address</Id>
+  <Id>JewelryTag</Id>
   <PaperName>30252 Address</PaperName>
   <DrawCommands>
-    <RoundRectangle X="0" Y="0" Width="1581" Height="5040" Rx="270" Ry="270" />
+    <RoundRectangle X="0" Y="0" Width="5040" Height="1581" Rx="270" Ry="270" />
   </DrawCommands>
   <ObjectInfo>
     <TextObject>
@@ -15,16 +15,39 @@
       <Rotation>Rotation0</Rotation>
       <IsMirrored>False</IsMirrored>
       <IsVariable>True</IsVariable>
-      <HorizontalAlignment>Left</HorizontalAlignment>
+      <HorizontalAlignment>Center</HorizontalAlignment>
+      <VerticalAlignment>Top</VerticalAlignment>
+      <TextFitMode>ShrinkToFit</TextFitMode>
+      <UseFullFontHeight>True</UseFullFontHeight>
+      <Verticalized>False</Verticalized>
+      <StyledText>
+        <Element>
+          <String>SKU123</String>
+          <Attributes>
+            <Font Family="Arial" Size="10" Bold="True" Italic="False" Underline="False" Strikeout="False" />
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+          </Attributes>
+        </Element>
+      </StyledText>
+    </TextObject>
+    <TextObject>
+      <Name>PRICE</Name>
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+      <LinkedObjectName></LinkedObjectName>
+      <Rotation>Rotation0</Rotation>
+      <IsMirrored>False</IsMirrored>
+      <IsVariable>True</IsVariable>
+      <HorizontalAlignment>Center</HorizontalAlignment>
       <VerticalAlignment>Middle</VerticalAlignment>
       <TextFitMode>ShrinkToFit</TextFitMode>
       <UseFullFontHeight>True</UseFullFontHeight>
       <Verticalized>False</Verticalized>
       <StyledText>
         <Element>
-          <String>SKU12345</String>
+          <String>$0.00</String>
           <Attributes>
-            <Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+            <Font Family="Arial" Size="14" Bold="True" Italic="False" Underline="False" Strikeout="False" />
             <ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
           </Attributes>
         </Element>

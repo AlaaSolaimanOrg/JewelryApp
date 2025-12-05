@@ -300,7 +300,7 @@ const handlePrint = async () => {
     console.log("Is DLS Label:", label.isDLSLabel());
 
     // Set label content - use the correct object names from your label
-    label.setObjectText("TextObject1", product.sku); // Match your label's object names
+    // label.setObjectText("TextObject1", product.sku); // Match your label's object names
     
     // Create print params
     const printParamsXml = dymoWindow.dymo.label.framework.createLabelWriterPrintParamsXml({
