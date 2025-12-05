@@ -254,92 +254,81 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   // ----------------------------------------
   // 🖨 PRINT TAGS - UPDATED FOR DYMO 3.0.0
   // ----------------------------------------
-  const handlePrint = async () => {
-    if (!selectedPrinter) {
-      alert("❌ Please select a printer first.");
-      return;
-    }
+const handlePrint = async () => {
+  if (!selectedPrinter) {
+    alert("❌ Please select a printer first.");
+    return;
+  }
 
-    if (tagCount < 1 || tagCount > 300) {
-      alert("❌ Please enter a valid number of tags (1-300).");
-      return;
-    }
+  const dymoWindow = window as DymoWindow;
+  
+  if (!dymoWindow.dymo) {
+    alert("DYMO Label Framework not detected.");
+    return;
+  }
 
-    const dymoWindow = window as DymoWindow;
-    
-    if (!dymoWindow.dymo) {
-      alert("DYMO Label Framework not detected. Please install DYMO Connect.");
-      return;
-    }
+  setIsPrinting(true);
 
-    setIsPrinting(true);
+  try {
+    // Initialize framework
+    await dymoWindow.dymo.label.framework.init();
 
+    // Load label template - MUST be a .label file, not .dymo
+    let labelXml: string;
     try {
-      // Initialize framework (if not already)
-      await dymoWindow.dymo.label.framework.init();
-
-      // Load label template
-      let labelXml: string;
-      try {
-        const response = await fetch("/dev/labels/jewelry.label");
-        if (!response.ok) {
-          throw new Error(`Failed to load label template: ${response.status}`);
-        }
-        labelXml = await response.text();
-      } catch (fetchError) {
-        console.error("Failed to load label template, using default:", fetchError);
-        labelXml = createDefaultLabelXml();
+      const response = await fetch("/dev/labels/jewelry.label"); // Changed from .dymo
+      if (!response.ok) {
+        throw new Error(`Failed to load label template: ${response.status}`);
       }
-
-      // Open label
-      const label = dymoWindow.dymo.label.framework.openLabelXml(labelXml);
-      
-      // Validate label
-      if (!label.isValidLabel()) {
-        alert("❌ Invalid label format.");
-        return;
-      }
-
-      console.log("Is DCD Label:", label.isDCDLabel());
-      console.log("Is DLS Label:", label.isDLSLabel());
-
-      // Set label content
-      // label.setObjectText("SKU", product.sku);
-      // label.setObjectText("Barcode", product.sku);
-      // label.setObjectText("Price", `$${product.price.toFixed(2)}`);
-      // label.setObjectText("Weight", `${product.weight}g`);
-      // label.setObjectText("Karat", `${product.karatType}K`);
-
-      // Verify printer is still available
-      const currentPrinters = dymoWindow.dymo.label.framework.getPrinters();
-      const printer = currentPrinters.find(p => p.name === selectedPrinter && p.isConnected);
-      
-      if (!printer) {
-        alert("❌ Selected printer is no longer available. Please select another printer.");
-        return;
-      }
-
-      // METHOD 1: Simple print (multiple copies)
-      // Using print() method which should handle copies based on DYMO 3.0.0
-      label.print(printer.name, "", tagCount.toString());
-
-      // Alternative METHOD 2: Using printLabel function
-      // dymoWindow.dymo.label.framework.printLabel(
-      //   printer.name,
-      //   "", // printParamsXml (empty for default)
-      //   labelXml
-      // );
-
-      alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
-      
-    } catch (err) {
-      console.error("PRINT ERROR:", err);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-      alert(`❌ Printing failed: ${errorMessage}\n\nCheck console for details.`);
-    } finally {
-      setIsPrinting(false);
+      labelXml = await response.text();
+    } catch (fetchError) {
+      console.error("Failed to load label template:", fetchError);
+      alert("❌ Failed to load label template. Make sure jewelry.label exists.");
+      return;
     }
-  };
+
+    // Open label using the framework
+    const label = dymoWindow.dymo.label.framework.openLabelXml(labelXml);
+    
+    // Validate label
+    if (!label.isValidLabel()) {
+      alert("❌ Invalid label format. Please use a .label file format.");
+      return;
+    }
+
+    console.log("Is DCD Label:", label.isDCDLabel());
+    console.log("Is DLS Label:", label.isDLSLabel());
+
+    // Set label content - use the correct object names from your label
+    label.setObjectText("TextObject1", product.sku); // Match your label's object names
+    
+    // Create print params
+    const printParamsXml = dymoWindow.dymo.label.framework.createLabelWriterPrintParamsXml({
+      copies: tagCount
+    });
+
+    // Verify printer exists
+    const printers = dymoWindow.dymo.label.framework.getPrinters();
+    const printer = printers[selectedPrinter];
+    
+    if (!printer) {
+      alert("❌ Selected printer is no longer available.");
+      return;
+    }
+
+    // Print the label
+    label.print(printer.name, printParamsXml);
+
+    alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
+    
+  } catch (err) {
+    console.error("PRINT ERROR:", err);
+    const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+    alert(`❌ Printing failed: ${errorMessage}\n\nCheck console for details.`);
+  } finally {
+    setIsPrinting(false);
+  }
+};
 
   // Helper function for default label XML
   const createDefaultLabelXml = (): string => {
