@@ -120,8 +120,9 @@ interface DymoWindow extends Window {
 async function printDymo(labelXml, printerName: string) {
   const payload = {
     printerName: printerName,
-    labelData: labelXml,
-    jobTitle: "My Label",
+    labelXml: labelXml,
+    labelSetXml: "",
+    printParamsXml: "",
   };
 
   const res = await fetch(
