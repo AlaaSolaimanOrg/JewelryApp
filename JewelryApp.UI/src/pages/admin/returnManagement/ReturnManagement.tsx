@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Badge } from "react-bootstrap";
 import { FaUndo, FaFire } from "react-icons/fa";
 import "./returnManagement.scss";
 
@@ -199,36 +200,36 @@ const ReturnManagement: React.FC = () => {
                                                     </td>
                                                     <td>{item.sku}</td>
                                                     <td>
-                                                        <span className="badge-karat">{item.karat}K</span>
+                                                        <Badge bg="" className="badge-karat">{item.karat}K</Badge>
                                                     </td>
                                                     <td>{item.weight}g</td>
                                                     <td>{item.quantityReturned}</td>
                                                     <td>{formatCurrency(item.amountReturned)}</td>
                                                     <td>
-                                                        <span className="badge-reason">
+                                                        <Badge bg="" className="badge-reason">
                                                             {getReturnReasonLabel(item.reason)}
-                                                        </span>
+                                                        </Badge>
                                                         {item.reasonNote && (
                                                             <div className="reason-note">{item.reasonNote}</div>
                                                         )}
                                                     </td>
                                                     <td>
-                                                        <span
-                                                            className={`badge-condition ${ItemCondition[item.condition]
-                                                                }`}
+                                                        <Badge
+                                                            bg=""
+                                                            className={`badge-condition ${ItemCondition[item.condition]}`}
                                                         >
                                                             {getConditionLabel(item.condition)}
-                                                        </span>
+                                                        </Badge>
                                                     </td>
                                                     <td>
-                                                        <span
-                                                            className={`badge-option ${ReturnOption[item.option]
-                                                                }`}
+                                                        <Badge
+                                                            bg=""
+                                                            className={`badge-option ${ReturnOption[item.option]}`}
                                                         >
                                                             {item.option === ReturnOption.ReturnToStock
                                                                 ? "Return to Stock"
                                                                 : "Melt"}
-                                                        </span>
+                                                        </Badge>
                                                     </td>
                                                 </tr>
                                             ))}
@@ -298,13 +299,19 @@ const ReturnManagement: React.FC = () => {
                     Returned to Stock
                 </h2>
                 <span className="return-count">
-                    {returnedToStock?.length} {returnedToStock?.length === 1 ? 'return' : 'returns'}
+                    {returnedToStock?.length || 0} {returnedToStock?.length === 1 ? 'return' : 'returns'}
                 </span>
 
                 <div className="returns-container">
                     {isLoading ? (
                         <div className="returns-loader">
                             <CustomLoader />
+                        </div>
+                    ) : !returns || returns.length === 0 ? (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">🔍</div>
+                            <h3>No Results Found</h3>
+                            <p>No returns match your search criteria</p>
                         </div>
                     ) : returnedToStock?.length === 0 ? (
                         <div className="empty-state">
@@ -318,32 +325,7 @@ const ReturnManagement: React.FC = () => {
                 </div>
             </section>
 
-            {/* MELTED ITEMS SECTION */}
-            <section className="section">
-                <h2 className="section-title">
-                    <FaFire className="icon" />
-                    Items to Melt
-                </h2>
-                <span className="return-count melt">
-                    {toMelt?.length} {toMelt?.length === 1 ? 'return' : 'returns'}
-                </span>
 
-                <div className="returns-container">
-                    {isLoading ? (
-                        <div className="returns-loader">
-                            <CustomLoader />
-                        </div>
-                    ) : toMelt?.length === 0 ? (
-                        <div className="empty-state">
-                            <div className="empty-state-icon">🔥</div>
-                            <h3>No Items to Melt</h3>
-                            <p>No items have been marked for melting yet</p>
-                        </div>
-                    ) : (
-                        toMelt?.map(renderReturnCard)
-                    )}
-                </div>
-            </section>
 
             {/* PAGINATION */}
             <Paginator

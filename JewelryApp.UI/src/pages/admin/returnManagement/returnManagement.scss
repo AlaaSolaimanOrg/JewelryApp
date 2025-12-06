@@ -461,6 +461,15 @@
 
   // Responsive Design
   @media (max-width: 768px) {
+    .page-title {
+      font-size: 1.5rem;
+
+      .icon {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
     .headerFilter {
       padding: 12px;
     }
@@ -472,12 +481,56 @@
 
     .section-title {
       font-size: 18px;
+      margin-bottom: 15px;
     }
 
     .return-count {
       position: static;
       display: inline-block;
       margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .return-card {
+      &__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+      }
+
+      &__customer {
+        width: 100%;
+      }
+
+      &__actions {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      &__content {
+        padding: 15px;
+      }
+    }
+
+    .return-id {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+
+    .items-count {
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
+    .expand-toggle {
+      width: 28px;
+      height: 28px;
+      font-size: 12px;
     }
 
     .items-table {
@@ -485,12 +538,32 @@
 
       thead th,
       tbody td {
-        padding: 8px;
+        padding: 8px 6px;
       }
+    }
+
+    .badge-karat,
+    .badge-reason,
+    .badge-condition,
+    .badge-option {
+      font-size: 11px;
+      padding: 3px 8px;
     }
   }
 
   @media (max-width: 480px) {
+    .page-title {
+      font-size: 1.3rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      .icon {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
     .headerFilter {
       padding: 10px;
     }
@@ -504,6 +577,24 @@
       font-size: 16px;
     }
 
+    .return-card {
+      &__header {
+        padding: 12px;
+      }
+
+      &__customer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      &__actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
     .customer-avatar {
       width: 40px;
       height: 40px;
@@ -514,12 +605,61 @@
       font-size: 16px !important;
     }
 
-    .items-table {
+    .customer-meta {
+      width: 100%;
 
+      .meta-item {
+        font-size: 13px;
+        width: 100%;
+      }
+    }
+
+    .return-id {
+      font-size: 12px;
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .items-count {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+
+    .expand-toggle {
+      width: 26px;
+      height: 26px;
+      font-size: 11px;
+      align-self: flex-end;
+    }
+
+    .items-table {
       thead th,
       tbody td {
-        padding: 6px;
-        font-size: 11px;
+        padding: 6px 4px;
+        font-size: 10px;
+      }
+    }
+
+    .badge-karat,
+    .badge-reason,
+    .badge-condition,
+    .badge-option {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+
+    .product-cell {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+
+      .product-image {
+        width: 30px;
+        height: 30px;
+      }
+
+      span {
+        font-size: 10px;
       }
     }
   }
