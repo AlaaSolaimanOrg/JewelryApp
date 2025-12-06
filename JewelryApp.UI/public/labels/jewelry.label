@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DieCutLabel Version="8.0" Units="twips">
-  <PaperOrientation>Landscape</PaperOrientation>
-  <Id>Address</Id>
-  <PaperName>30252 Address</PaperName>
-  <DrawCommands/>
-  <ObjectInfo>
+<Label Version="3.0" Units="twips">
+  <Description>Test Label</Description>
+  <Orientation>Landscape</Orientation>
+  <LabelName>LW_30252_Address</LabelName>
+  <Objects>
     <TextObject>
-      <Name>Text</Name>
+      <Name>Text1</Name>
       <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
       <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <Text>{TEXT}</Text>
-      <Font Family="Arial" Size="14" Bold="True"/>
       <HorizontalAlignment>Left</HorizontalAlignment>
+      <Text>TEST LABEL</Text>
+      <Font Family="Arial" Size="12" Bold="True" Italic="False" Underline="False" Strikeout="False"/>
+      <Bounds X="200" Y="100" Width="3000" Height="500"/>
     </TextObject>
-    <Bounds X="200" Y="200" Width="2500" Height="600"/>
-  </ObjectInfo>
-</DieCutLabel>
+
+    <BarcodeObject>
+      <Name>Barcode1</Name>
+      <Text>123456</Text>
+      <Type>Code128Auto</Type>
+      <Size>Medium</Size>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <Bounds X="200" Y="700" Width="3500" Height="1200"/>
+    </BarcodeObject>
+  </Objects>
+</Label>
+

@@ -377,7 +377,54 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     } finally {
       setIsPrinting(false);
     }
+<<<<<<< HEAD
   };
+=======
+
+    // Open label using the framework
+    const label = dymoWindow.dymo.label.framework.openLabelXml(labelXml);
+    
+    // Validate label
+    // if (!label.isValidLabel()) {
+    //   alert("❌ Invalid label format. Please use a .label file format.");
+    //   return;
+    // }
+
+    console.log("Is DCD Label:", label.isDCDLabel());
+    console.log("Is DLS Label:", label.isDLSLabel());
+
+    // Set label content - use the correct object names from your label
+    // label.setObjectText("TextObject1", product.sku); // Match your label's object names
+    
+    // Create print params
+    const printParamsXml = dymoWindow.dymo.label.framework.createLabelWriterPrintParamsXml({
+      copies: tagCount
+    });
+
+    // Verify printer exists
+    const printers = dymoWindow.dymo.label.framework.getPrinters();
+    const printer = printers[selectedPrinter];
+    
+    if (!printer) {
+      alert("❌ Selected printer is no longer available.");
+      return;
+    }
+
+    // Print the label
+    label.print(printer.name, printParamsXml);
+
+    alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
+    
+  } catch (err) {
+    console.error("PRINT ERROR:", err);
+    const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+    alert(`❌ Printing failed: ${errorMessage}\n\nCheck console for details.`);
+  } finally {
+    setIsPrinting(false);
+  }
+};
+
+>>>>>>> 549d89c3cb7c9c2b9bec5816d0e96738aafc12b5
 
   // Helper function for default label XML
   const createDefaultLabelXml = (): string => {
