@@ -118,18 +118,23 @@ interface DymoWindow extends Window {
 }
 
 async function printDymo(labelXml, printerName: string) {
-  const payload = {
-    printerName: printerName,
-    labelXml: labelXml,
-    labelSetXml: "",
-    printParamsXml: "",
-  };
+  // const payload = {
+  //   printerName: printerName,
+  //   labelXml: labelXml,
+  //   labelSetXml: "",
+  //   printParamsXml: "",
+  // };
+  const params = new URLSearchParams();
+  params.append("printerName", printerName);
+  params.append("labelXml", labelXml);
+  params.append("labelSetXml", "");
+  params.append("printParamsXml", "");
 
   const res = await fetch(
     "https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel",
     {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: params.toString(), // This is correct form encoding
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
