@@ -373,7 +373,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
 
       // Print the label
       // label.print(printer.name, printParamsXml);
-      printDymo(printParamsXml, printer.name);
+      printDymo(labelXml, printer.name);
 
       alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
     } catch (err) {
