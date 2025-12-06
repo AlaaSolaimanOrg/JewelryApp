@@ -117,6 +117,22 @@ interface DymoWindow extends Window {
   };
 }
 
+function updateLabelXml(xml: string, sku: string) {
+  // Replace TextObject1 text
+  xml = xml.replace(
+    /<TextSpan>\s*<Text>[\s\S]*?<\/Text>/,
+    `<TextSpan><Text>${sku}</Text>`
+  );
+
+  // Replace BarcodeObject data string
+  xml = xml.replace(
+    /<DataString>[\s\S]*?<\/DataString>/,
+    `<DataString>${sku}</DataString>`
+  );
+
+  return xml;
+}
+
 async function printDymo(labelXml, printerName: string) {
   // const payload = {
   //   printerName: printerName,
@@ -356,12 +372,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       // Set label content - use the correct object names from your label
       // label.setObjectText("TextObject1", product.sku); // Match your label's object names
 
-      // Create print params
-      const printParamsXml =
-        dymoWindow.dymo.label.framework.createLabelWriterPrintParamsXml({
-          copies: tagCount,
-        });
-
       // Verify printer exists
       const printers = dymoWindow.dymo.label.framework.getPrinters();
       const printer = printers[selectedPrinter];
@@ -371,9 +381,11 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
         return;
       }
 
+      const updatedLabelXml = updateLabelXml(labelXml, product.sku);
+      console.log("Updated Label XML:", updatedLabelXml);
       // Print the label
       // label.print(printer.name, printParamsXml);
-      printDymo(labelXml, printer.name);
+      printDymo(updatedLabelXml, printer.name);
 
       alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
     } catch (err) {
@@ -386,100 +398,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     } finally {
       setIsPrinting(false);
     }
-  };
-
-  // Helper function for default label XML
-  const createDefaultLabelXml = (): string => {
-    return `<?xml version="1.0" encoding="utf-8"?>
-<DieCutLabel Version="8.0" Units="twips">
-  <PaperOrientation>Landscape</PaperOrientation>
-  <Id>JewelryTag</Id>
-  <PaperName>30252 Address</PaperName>
-  <DrawCommands>
-    <RoundRectangle X="0" Y="0" Width="1440" Height="1440" Rx="270" Ry="270"/>
-  </DrawCommands>
-  <ObjectInfo>
-    <TextObject>
-      <Name>SKU</Name>
-      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <LinkedObjectName></LinkedObjectName>
-      <Rotation>Rotation0</Rotation>
-      <IsMirrored>False</IsMirrored>
-      <IsVariable>True</IsVariable>
-      <HorizontalAlignment>Center</HorizontalAlignment>
-      <VerticalAlignment>Middle</VerticalAlignment>
-      <TextFitMode>ShrinkToFit</TextFitMode>
-      <UseFullFontHeight>True</UseFullFontHeight>
-      <Verticalized>False</Verticalized>
-      <StyledText/>
-    </TextObject>
-    <BarcodeObject>
-      <Name>Barcode</Name>
-      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <LinkedObjectName></LinkedObjectName>
-      <Rotation>Rotation0</Rotation>
-      <IsMirrored>False</IsMirrored>
-      <IsVariable>True</IsVariable>
-      <Text>SKU12345</Text>
-      <Type>Code128Auto</Type>
-      <Size>Medium</Size>
-      <TextPosition>Bottom</TextPosition>
-      <TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-      <CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False"/>
-      <TextEmbedding>None</TextEmbedding>
-      <ECLevel>0</ECLevel>
-      <HorizontalAlignment>Center</HorizontalAlignment>
-      <QuietZonesPadding Left="0" Right="0" Top="0" Bottom="0"/>
-    </BarcodeObject>
-    <TextObject>
-      <Name>Price</Name>
-      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <LinkedObjectName></LinkedObjectName>
-      <Rotation>Rotation0</Rotation>
-      <IsMirrored>False</IsMirrored>
-      <IsVariable>True</IsVariable>
-      <HorizontalAlignment>Center</HorizontalAlignment>
-      <VerticalAlignment>Middle</VerticalAlignment>
-      <TextFitMode>ShrinkToFit</TextFitMode>
-      <UseFullFontHeight>True</UseFullFontHeight>
-      <Verticalized>False</Verticalized>
-      <StyledText/>
-    </TextObject>
-    <TextObject>
-      <Name>Weight</Name>
-      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <LinkedObjectName></LinkedObjectName>
-      <Rotation>Rotation0</Rotation>
-      <IsMirrored>False</IsMirrored>
-      <IsVariable>True</IsVariable>
-      <HorizontalAlignment>Center</HorizontalAlignment>
-      <VerticalAlignment>Middle</VerticalAlignment>
-      <TextFitMode>ShrinkToFit</TextFitMode>
-      <UseFullFontHeight>True</UseFullFontHeight>
-      <Verticalized>False</Verticalized>
-      <StyledText/>
-    </TextObject>
-    <TextObject>
-      <Name>Karat</Name>
-      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>
-      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>
-      <LinkedObjectName></LinkedObjectName>
-      <Rotation>Rotation0</Rotation>
-      <IsMirrored>False</IsMirrored>
-      <IsVariable>True</IsVariable>
-      <HorizontalAlignment>Center</HorizontalAlignment>
-      <VerticalAlignment>Middle</VerticalAlignment>
-      <TextFitMode>ShrinkToFit</TextFitMode>
-      <UseFullFontHeight>True</UseFullFontHeight>
-      <Verticalized>False</Verticalized>
-      <StyledText/>
-    </TextObject>
-  </ObjectInfo>
-</DieCutLabel>`;
   };
 
   // Refresh printers list
@@ -739,7 +657,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
         <button
           className="btn btn-primary btn-gold"
           onClick={handlePrint}
-          disabled={!selectedPrinter || !dymoStatus.installed || isPrinting}
+          // disabled={!selectedPrinter || !dymoStatus.installed || isPrinting}
         >
           {isPrinting ? (
             <>
