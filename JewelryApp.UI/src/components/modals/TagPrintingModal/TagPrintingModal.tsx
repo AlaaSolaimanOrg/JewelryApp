@@ -124,13 +124,16 @@ async function printDymo(labelXml, printerName: string) {
     jobTitle: "My Label",
   };
 
-  const res = await fetch("https://127.0.0.1:41951/DYMO/Connect/Label/Print", {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const res = await fetch(
+    "https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   const text = await res.text();
   console.log("DYMO Response:", text);
