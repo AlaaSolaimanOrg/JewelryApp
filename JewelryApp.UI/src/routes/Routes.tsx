@@ -38,6 +38,8 @@ const TransactionHistory = lazy(
 
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
+const ReturnManagement = lazy(() => import("../pages/admin/returnManagement/ReturnManagement"));
+
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -111,6 +113,10 @@ const AppRoutes = () => {
             <Route
               path="admin/repairManagement"
               element={<RepairManagement />}
+            />
+            <Route
+              path="admin/returnManagement"
+              element={<ReturnManagement />}
             />
             <Route path="admin/settings" element={<Settings />} />
             <Route path="admin/print-tags" element={<TagPrinting />} />

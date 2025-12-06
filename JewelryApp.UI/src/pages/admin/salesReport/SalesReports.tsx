@@ -82,11 +82,11 @@ const SalesReports = () => {
       dateFrom: appliedDateFilter
         ? appliedDateFilter?.startDate
         : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-            ?.startDate,
+          ?.startDate,
       dateTo: appliedDateFilter
         ? appliedDateFilter?.endDate
         : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-            ?.endDate,
+          ?.endDate,
     },
     effectDependency: [dateFilterPill, appliedDateFilter],
   }) as {
@@ -108,6 +108,13 @@ const SalesReports = () => {
 
   return (
     <div id="sales-reports" className="page">
+      <div className="page-header">
+        <h1 className="page-title">
+          <FaChartBar className="icon" />
+          <span>Sales Reports</span>
+        </h1>
+      </div>
+
       <header className="headerFilter">
         <div className="filters-container">
           <div className="pills-row">
@@ -116,9 +123,8 @@ const SalesReports = () => {
                 {pillOptions.map((pill) => (
                   <div
                     key={pill.value}
-                    className={`dateFilterPill ${
-                      dateFilterPill === pill.value ? " activePillFilter" : ""
-                    }`}
+                    className={`dateFilterPill ${dateFilterPill === pill.value ? " activePillFilter" : ""
+                      }`}
                     onClick={() => {
                       setAppliedDateFilter(null);
                       setDateFilterPill(pill.value);
@@ -239,13 +245,13 @@ const SalesReports = () => {
 
           {(!salesInsights?.goldByKarat ||
             salesInsights.goldByKarat.length === 0) && (
-            <div className="karat-card">
-              <h3>No Gold Sales Data</h3>
-              <div className="grams">0g</div>
-              <div className="price">$0.00/g</div>
-              <div className="value">$0.00</div>
-            </div>
-          )}
+              <div className="karat-card">
+                <h3>No Gold Sales Data</h3>
+                <div className="grams">0g</div>
+                <div className="price">$0.00/g</div>
+                <div className="value">$0.00</div>
+              </div>
+            )}
         </div>
       </section>
 

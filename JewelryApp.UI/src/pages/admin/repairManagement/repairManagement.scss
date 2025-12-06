@@ -3,6 +3,34 @@
   color: var(--dark);
   font-family: "Inter", -apple-system, sans-serif;
 
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--dark-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon {
+      color: var(--gold);
+      background: var(--primary-light);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+  }
+
   /* ============================
         SECTION HEADER
   ============================= */
@@ -282,6 +310,7 @@
       opacity: 0;
       transform: translateY(-10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -458,12 +487,15 @@
     .cost {
       color: #333;
     }
+
     .urgent {
       color: #f44336;
     }
+
     .discount {
       color: #4caf50;
     }
+
     .subtotal {
       color: var(--gold);
     }
@@ -480,10 +512,12 @@
       background: #e8f5e9;
       color: #2e7d32;
     }
+
     &.Unpaid {
       background: #ffebee;
       color: #c62828;
     }
+
     &.Partial {
       background: #fff3e0;
       color: #ef6c00;
@@ -568,6 +602,7 @@
         }
       }
     }
+
     .status-btn {
       position: relative;
 

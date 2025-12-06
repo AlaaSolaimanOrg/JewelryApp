@@ -20,3 +20,14 @@ export const createReturn = async (payload: {
 }) => {
   return requestApi("POST", apiRoutes.returns.createReturn, payload);
 };
+
+export const getReturns = async (payload: {
+  searchQuery?: string;
+  pageNumber?: number;
+  pageSize?: number;
+  sortColumn?: string;
+  sortDirection?: number;
+  returnOption?: ReturnOption | string;
+}) => {
+  return requestApi("GET", apiRoutes.returns.getReturns, payload);
+};

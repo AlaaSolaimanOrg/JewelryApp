@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaCalendarAlt, FaDollarSign, FaList, FaPhone } from "react-icons/fa";
+import { FaCalendarAlt, FaDollarSign, FaList, FaPhone, FaTools } from "react-icons/fa";
 import "./repairManagement.scss";
 
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
@@ -186,6 +186,13 @@ const RepairManagement: React.FC = () => {
 
   return (
     <div className="repair-management-page">
+      <div className="page-header">
+        <h1 className="page-title">
+          <FaTools className="icon" />
+          <span>Repair Management</span>
+        </h1>
+      </div>
+
       <RepairStatsCards />
 
       <section className="section repair-list-section">
@@ -277,9 +284,8 @@ const RepairManagement: React.FC = () => {
               return (
                 <div
                   key={repair.id}
-                  className={`repair-card ${isExpanded ? "expanded" : ""} ${
-                    repair.status
-                  }`}
+                  className={`repair-card ${isExpanded ? "expanded" : ""} ${repair.status
+                    }`}
                 >
                   {/* CARD HEADER */}
                   <div
@@ -394,9 +400,8 @@ const RepairManagement: React.FC = () => {
                                     {/* PAYMENT STATUS */}
                                     <td>
                                       <span
-                                        className={`badge-payment ${
-                                          PaymentStatus[item.paymentStatus]
-                                        }`}
+                                        className={`badge-payment ${PaymentStatus[item.paymentStatus]
+                                          }`}
                                       >
                                         {PaymentStatus[item.paymentStatus]}
                                       </span>
@@ -435,8 +440,8 @@ const RepairManagement: React.FC = () => {
                                     <td>
                                       {formatCurrency(
                                         item.cost +
-                                          item.urgentFee -
-                                          item.discount
+                                        item.urgentFee -
+                                        item.discount
                                       )}
                                     </td>
 
@@ -477,9 +482,8 @@ const RepairManagement: React.FC = () => {
                             View Invoice
                           </button>
                           <button
-                            className={`btn status-btn ${
-                              NEXT_STATUS_BUTTON_CLASS[repair.status]
-                            }`}
+                            className={`btn status-btn ${NEXT_STATUS_BUTTON_CLASS[repair.status]
+                              }`}
                             onClick={() =>
                               handleStatusUpdate(
                                 repair.id,
@@ -500,8 +504,8 @@ const RepairManagement: React.FC = () => {
                             {repair.status === RepairStatus.InProgress
                               ? "Completed"
                               : repair.status === RepairStatus.Completed
-                              ? "Picked Up"
-                              : "In Progress"}
+                                ? "Picked Up"
+                                : "In Progress"}
                           </button>
                         </div>
                       </div>

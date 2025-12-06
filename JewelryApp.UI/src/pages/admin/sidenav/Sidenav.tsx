@@ -9,6 +9,7 @@ import {
   FaBars,
   FaTimes,
   FaTools,
+  FaUndo,
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
@@ -60,6 +61,11 @@ const SideNav = () => {
       label: "Repair Management",
       icon: <FaTools className="icon" />,
       path: "/admin/repairManagement",
+    },
+    {
+      label: "Return Management",
+      icon: <FaUndo className="icon" />,
+      path: "/admin/returnManagement",
     },
   ];
 
