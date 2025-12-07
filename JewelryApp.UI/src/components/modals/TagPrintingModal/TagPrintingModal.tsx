@@ -340,10 +340,10 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   // 🖨 PRINT TAGS - UPDATED FOR DYMO 3.0.0
   // ----------------------------------------
   const handlePrint = async () => {
-    // if (!selectedPrinter) {
-    //   alert("❌ Please select a printer first.");
-    //   return;
-    // }
+    if (!selectedPrinter) {
+      alert("❌ Please select a printer first.");
+      return;
+    }
 
     const dymoWindow = window as DymoWindow;
 
@@ -361,7 +361,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       // Load label template - MUST be a .label file, not .dymo
       let labelXml: string;
       try {
-        const response = await fetch("/labels/jewelry.label"); // Changed from .dymo
+        const response = await fetch("/dev/labels/jewelry.label"); // Changed from .dymo
         if (!response.ok) {
           throw new Error(`Failed to load label template: ${response.status}`);
         }
@@ -390,10 +390,10 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       const printers = dymoWindow.dymo.label.framework.getPrinters();
       const printer = printers[selectedPrinter];
 
-      // if (!printer) {
-      //   alert("❌ Selected printer is no longer available.");
-      //   return;
-      // }
+      if (!printer) {
+        alert("❌ Selected printer is no longer available.");
+        return;
+      }
 
       const updatedLabelXml = updateLabelXml(labelXml, product);
       console.log("updatedLabelXml", updatedLabelXml);
