@@ -135,7 +135,7 @@
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
           <Size>AutoFit</Size>
-          <TextPosition>Bottom</TextPosition>
+          <TextPosition>None</TextPosition>
           <FontInfo>
             <FontName>Arial</FontName>
             <FontSize>6</FontSize>
