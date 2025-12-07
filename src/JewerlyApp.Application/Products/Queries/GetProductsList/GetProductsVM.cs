@@ -21,6 +21,8 @@ using JewerlyApp.Domain.Enums;
             public string? Description { get; set; }
             public decimal? PricePerGram { get; set; } = null;
             public decimal? Price { get; set; } = null;
+            public bool IsManualEntry { get; set; }
+            public string? Specification { get; set; }
             public List<ProductImageVM> Images { get; set; } = new();
             public List<string> Tags { get; set; } = new();
         }

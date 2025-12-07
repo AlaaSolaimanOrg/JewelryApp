@@ -64,7 +64,6 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   const data = items.map((item) => {
     const errors = itemErrors[item.id] || [];
 
-    console.log("item", item);
     const hasError = (msg: string) => errors.includes(msg);
 
     return {

@@ -38,6 +38,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Sku = request.Sku,
                 Weight = request.Weight,
                 Category = request.Category,
+                Specification = request.Specification,
                 Type = request.Type,
                 Description = request.Description,
                 Quantity = request.Quantity,

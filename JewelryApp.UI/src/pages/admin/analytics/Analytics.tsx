@@ -72,7 +72,6 @@ const Analytics = () => {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [reportType, setReportType] = useState<ReportType>(ReportType.AllTime);
-  console.log("reportType", reportType);
   const [appliedFilters, setAppliedFilters] = useState<{
     dateFrom: string;
     dateTo: string;

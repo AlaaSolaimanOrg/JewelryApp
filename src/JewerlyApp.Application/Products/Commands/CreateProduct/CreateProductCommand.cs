@@ -22,6 +22,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 
         [Required]
         public ProductCategory Category { get; set; }
+        public string? Specification { get; set; }
 
         [Required]
         public ProductType Type { get; set; }

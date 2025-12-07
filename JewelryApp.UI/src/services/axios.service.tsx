@@ -26,7 +26,6 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log("error 401", error);
     const isRefreshEndpoint =
       error.request.responseURL.includes("Auth/RefreshTokens");
 
@@ -46,7 +45,6 @@ axiosInstance.interceptors.response.use(
         // Use await instead of .then() for better control flow
         const response = await callRefreshToken({ refreshToken });
 
-        console.log("response from refresh token:", response);
         if (checkRequestSucceeded(response.statusCode)) {
           const newAccessToken = response.data.accessToken;
           const newRefreshToken = response.data.refreshToken;
@@ -66,7 +64,6 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
       } catch (error) {
-        console.log("error", error);
         redirectToLogin();
         return Promise.reject(error);
       }

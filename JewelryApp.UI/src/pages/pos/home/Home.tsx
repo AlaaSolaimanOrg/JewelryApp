@@ -34,7 +34,6 @@ const Home = () => {
     initialSortBy: "createdDate",
     initialSortDirection: SortDirection.Descending,
   });
-  console.log("in home");
 
   return (
     <div className="page-content active">

@@ -119,6 +119,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Description = product.Description,
                     PricePerGram = pricePerGram,
                     Price = product.Weight * pricePerGram,
+                    IsManualEntry = product.IsManualEntry,
+                    Specification = product.Specification,
                     Tags = product.Tags.Select(productTag=>productTag.Tag).ToList(),
                     Images = product.Images.Select(i => new ProductImageVM
                     {

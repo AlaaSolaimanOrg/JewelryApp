@@ -383,8 +383,6 @@ const ReturnPage: React.FC = () => {
   const totalReturnAmount = calculateTotalReturn();
   const selectedItemsCount = items.filter((i) => i.selected).length;
 
-  console.log("selectedItemsCount", selectedItemsCount);
-
   return (
     <div className="return-page-container">
       {/* 🔥 NEW CLEAN HEADER COMPONENT */}

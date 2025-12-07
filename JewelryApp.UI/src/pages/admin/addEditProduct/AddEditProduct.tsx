@@ -34,7 +34,8 @@ const productFieldsInitialState = {
   category: "",
   description: "",
   quantity: 1,
-  tags: [] as string[], // Explicitly type tags as string array
+  tags: [] as string[],
+  specification: "", // ✅ NEW FIELD
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -127,7 +128,8 @@ const AddEditProduct = ({ isEdit }) => {
         category: product.category,
         description: product.description,
         quantity: product.quantity,
-        tags: product.tags || [], // Initialize tags from product data
+        tags: product.tags || [],
+        specification: product.specification || [],
       });
 
       const loadFiles = async () => {
@@ -209,7 +211,8 @@ const AddEditProduct = ({ isEdit }) => {
 
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
-      if (key === "description" || key === "tags") return false;
+      if (key === "description" || key === "tags" || key == "specification")
+        return false;
 
       if (key === "weight" || key === "quantity") {
         return Number(value) <= 0;
@@ -222,6 +225,13 @@ const AddEditProduct = ({ isEdit }) => {
     }
   );
 
+  console.log("checkAnyProductFieldHasNoValue", checkAnyProductFieldHasNoValue);
+
+  const categoriesRequiringSize = [
+    ProductCategory.Necklaces,
+    ProductCategory.Bracelets,
+    ProductCategory.Rings,
+  ];
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
@@ -290,12 +300,10 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
-          <div className="form-row">
-        
-          </div>
+          <div className="form-row"></div>
 
           <div className="form-row">
-                <div className="form-col">
+            <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Quantity</label>
                 <input
@@ -336,11 +344,10 @@ const AddEditProduct = ({ isEdit }) => {
                 </select>
               </div>
             </div>
-          
           </div>
 
           <div className="form-row">
-              <div className="form-col">
+            <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Weight (grams)</label>
                 <input
@@ -383,6 +390,25 @@ const AddEditProduct = ({ isEdit }) => {
                 </select>
               </div>
             </div>
+
+            {/* LENGTH for Necklaces */}
+            {categoriesRequiringSize.includes(
+              Number(productFields.category)
+            ) && (
+              <div className="form-group">
+                <label className="form-label required">Size</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g., 45"
+                  value={productFields.specification}
+                  onChange={(e) =>
+                    handleProductField("specification", e.target.value)
+                  }
+                  required
+                />
+              </div>
+            )}
 
             <div className="form-col">
               <div className="form-group">
