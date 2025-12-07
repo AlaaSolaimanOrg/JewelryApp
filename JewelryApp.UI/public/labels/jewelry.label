@@ -73,7 +73,7 @@
                 <Text>karatType</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>5</FontSize>
+                  <FontSize>6</FontSize>
                   <IsBold>False</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -204,7 +204,7 @@
                 <Text>weight</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>5</FontSize>
+                  <FontSize>6</FontSize>
                   <IsBold>False</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -273,7 +273,7 @@
                 <Text>size</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>5</FontSize>
+                  <FontSize>6</FontSize>
                   <IsBold>False</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>

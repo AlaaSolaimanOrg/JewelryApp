@@ -48,6 +48,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
             product.Description = request.Description;
             product.LastUpdatedDate = DateTime.UtcNow;
             product.Quantity = request.Quantity;
+            product.Specification = request.Specification;
             // --- ✅ FIX: Properly update Tags ---
             // Remove existing tags
             if (product.Tags != null && product.Tags.Any())

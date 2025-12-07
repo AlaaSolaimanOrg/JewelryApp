@@ -170,6 +170,7 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Name", productFields.productName);
     formData.append("Sku", productFields.SKU);
     formData.append("Category", productFields.category);
+    formData.append("Specification", productFields.specification);
     formData.append("Type", productFields.productType.toString());
     formData.append("KaratType", productFields.karat);
     formData.append("Description", productFields.description);
@@ -209,7 +210,6 @@ const AddEditProduct = ({ isEdit }) => {
       });
   };
 
-  
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
       if (key === "description" || key === "tags" || key == "specification")
