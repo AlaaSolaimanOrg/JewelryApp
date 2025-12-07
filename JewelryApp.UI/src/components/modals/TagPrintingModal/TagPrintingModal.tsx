@@ -336,7 +336,22 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     }
   };
 
-  
+  async function printCopiesSequentially(
+    labelXml: string,
+    printerName: string,
+    copies: number
+  ) {
+    for (let i = 0; i < copies; i++) {
+      console.log(`Printing copy ${i + 1} of ${copies}`);
+
+      // WAIT for printDymo to finish before sending next
+      await printDymo(labelXml, printerName);
+
+      // Optional: small delay for safety (DYMO gets overwhelmed easily)
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  }
+
   // ----------------------------------------
   // 🖨 PRINT TAGS - UPDATED FOR DYMO 3.0.0
   // ----------------------------------------
@@ -400,7 +415,8 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       console.log("updatedLabelXml", updatedLabelXml);
       // Print the label
       // label.print(printer.name, printParamsXml);
-      printDymo(updatedLabelXml, printer.name);
+      // printDymo(updatedLabelXml, printer.name);
+      await printCopiesSequentially(updatedLabelXml, selectedPrinter, tagCount);
 
       alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
     } catch (err) {
