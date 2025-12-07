@@ -209,6 +209,7 @@ const AddEditProduct = ({ isEdit }) => {
       });
   };
 
+  
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
       if (key === "description" || key === "tags" || key == "specification")
