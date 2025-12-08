@@ -66,10 +66,10 @@
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
           <Size>AutoFit</Size>
-          <TextPosition>None</TextPosition>
+          <TextPosition>Bottom</TextPosition>
           <FontInfo>
             <FontName>Arial</FontName>
-            <FontSize>12</FontSize>
+            <FontSize>6</FontSize>
             <IsBold>False</IsBold>
             <IsItalic>False</IsItalic>
             <IsUnderline>False</IsUnderline>
@@ -82,10 +82,10 @@
           <ObjectLayout>
             <DYMOPoint>
               <X>1.140027</X>
-              <Y>0.060000964</Y>
+              <Y>0.039968915</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7975119</Width>
+              <Width>0.7883603</Width>
               <Height>0.3539094</Height>
             </Size>
           </ObjectLayout>
