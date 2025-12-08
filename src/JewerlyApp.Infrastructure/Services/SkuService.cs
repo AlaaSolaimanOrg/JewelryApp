@@ -50,7 +50,7 @@ namespace JewerlyApp.Infrastructure.Services
             };
 
             // Final SKU: NEC2500001
-            return $"{categoryCode}{year:D2}{sequence.LastNumber:D5}";
+            return $"{categoryCode}{year:D2}{sequence.LastNumber:D4}";
         }
     }
 }
