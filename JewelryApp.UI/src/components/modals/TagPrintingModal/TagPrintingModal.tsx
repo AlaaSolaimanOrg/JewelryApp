@@ -377,7 +377,9 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       // Load label template - MUST be a .label file, not .dymo
       let labelXml: string;
       try {
-        const response = await fetch("/dev/labels/jewelry.label"); // Changed from .dymo
+        const response = await fetch(
+          `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`
+        ); // Changed from .dymo
         if (!response.ok) {
           throw new Error(`Failed to load label template: ${response.status}`);
         }

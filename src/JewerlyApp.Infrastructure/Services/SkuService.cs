@@ -17,9 +17,11 @@ namespace JewerlyApp.Infrastructure.Services
 
         public async Task<string> GenerateSkuAsync(ProductCategory category, KaratType karat)
         {
-            var year = DateTime.UtcNow.Year;
+            var fullYear = DateTime.UtcNow.Year;
+            var year = fullYear % 100; // LAST TWO DIGITS (2025 -> 25)
+
             var sequence = await _context.SkuSequences
-                .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == year);
+                .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == fullYear);
 
             if (sequence == null)
             {
@@ -27,7 +29,7 @@ namespace JewerlyApp.Infrastructure.Services
                 {
                     Category = category,
                     Karat = karat,
-                    Year = year,
+                    Year = fullYear,
                     LastNumber = 0
                 };
                 _context.SkuSequences.Add(sequence);
@@ -47,7 +49,8 @@ namespace JewerlyApp.Infrastructure.Services
                 _ => "GEN"
             };
 
-            return $"{categoryCode}-{(int)karat}-{year}-{sequence.LastNumber:D5}";
+            // Final SKU: NEC2500001
+            return $"{categoryCode}{year:D2}{sequence.LastNumber:D5}";
         }
     }
 }
