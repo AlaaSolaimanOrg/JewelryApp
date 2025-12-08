@@ -40,13 +40,13 @@ namespace JewerlyApp.Infrastructure.Services
 
             var categoryCode = category switch
             {
-                ProductCategory.Necklaces => "NEC",
-                ProductCategory.Bracelets => "BRC",
-                ProductCategory.Rings => "RNG",
-                ProductCategory.Earrings => "EAR",
-                ProductCategory.Pendants => "PND",
-                ProductCategory.Bullion => "BUL",
-                _ => "GEN"
+                ProductCategory.Necklaces => "NC",
+                ProductCategory.Bracelets => "BC",
+                ProductCategory.Rings => "RG",
+                ProductCategory.Earrings => "ER",
+                ProductCategory.Pendants => "PD",
+                ProductCategory.Bullion => "BL",
+                _ => "GN"
             };
 
             // Final SKU: NEC2500001
