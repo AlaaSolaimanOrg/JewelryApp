@@ -26,6 +26,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
             var saleItemsQuery = _context.SaleItems
                 .Include(si => si.Product)
                 .Include(si => si.Sale)
+                .Where(si => si.Quantity > 0)
                 .AsQueryable();
 
             // Apply date range filter
