@@ -61,7 +61,7 @@
           </Margin>
           <BarcodeFormat>Code128Auto</BarcodeFormat>
           <Data>
-            <DataString>123</DataString>
+            <DataString>sku</DataString>
           </Data>
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
