@@ -132,7 +132,7 @@ function updateLabelXml(xml: string, product: Product) {
   xml = xml.replace(
     /<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<TextSpan>[\s\S]*?<Text>([\s\S]*?)<\/Text>/,
     (match) =>
-      match.replace(/<Text>[\s\S]*?<\/Text>/, `<Text>${product.weight}g</Text>`)
+      match.replace(/<Text>[\s\S]*?<\/Text>/, `<Text>${product.weight} g</Text>`)
   );
 
   // Replace size inside TextObject2

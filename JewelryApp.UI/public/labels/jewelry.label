@@ -59,9 +59,9 @@
           <Margin>
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
-          <BarcodeFormat>Code128Auto</BarcodeFormat>
+          <BarcodeFormat>Code128A</BarcodeFormat>
           <Data>
-            <DataString>sku</DataString>
+            <DataString>SKU</DataString>
           </Data>
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
@@ -81,12 +81,12 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.139045</X>
-              <Y>0.47</Y>
+              <X>1.140027</X>
+              <Y>0.060000964</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7954682</Width>
-              <Height>0.41</Height>
+              <Width>0.7975119</Width>
+              <Height>0.3539094</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -122,13 +122,13 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
+          <VerticalAlignment>Top</VerticalAlignment>
           <FitMode>None</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>None</FitMode>
             <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Middle</VerticalAlignment>
+            <VerticalAlignment>Top</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
@@ -150,12 +150,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.2204831</X>
-              <Y>0.06134689</Y>
+              <X>1.2224871</X>
+              <Y>0.4845147</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.63259244</Width>
-              <Height>0.14153896</Height>
+              <Width>0.6325923</Width>
+              <Height>0.17115542</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -219,8 +219,8 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.3474685</X>
-              <Y>0.20288585</Y>
+              <X>1.349472</X>
+              <Y>0.58089423</Y>
             </DYMOPoint>
             <Size>
               <Width>0.37862173</Width>
@@ -260,13 +260,13 @@
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
           <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
+          <VerticalAlignment>Top</VerticalAlignment>
           <FitMode>None</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>None</FitMode>
             <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Middle</VerticalAlignment>
+            <VerticalAlignment>Top</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
@@ -288,8 +288,8 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.333446</X>
-              <Y>0.34499994</Y>
+              <X>1.3214271</X>
+              <Y>0.7304459</Y>
             </DYMOPoint>
             <Size>
               <Width>0.40666664</Width>
