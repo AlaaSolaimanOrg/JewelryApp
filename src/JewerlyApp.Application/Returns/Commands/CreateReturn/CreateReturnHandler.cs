@@ -79,7 +79,12 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                         Option = itemDto.Option
                     };
 
-                    ret.Items.Add(returnItem);
+                    // Update SaleItem SubTotal
+                    saleItem.SubTotal -= itemDto.ReturnAmount;
+                    saleItem.Quantity -= itemDto.QuantityToReturn;
+
+
+                ret.Items.Add(returnItem);
                     totalRefund += itemDto.ReturnAmount;
 
                     //-----------------------------------------------------
@@ -89,9 +94,13 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 }
 
                 //-----------------------------------------------------
-                // 6. SET RETURN TOTAL
+                // 6. SET RETURN TOTAL AND UPDATE SALE TOTALS
                 //-----------------------------------------------------
                 ret.TotalAmount = totalRefund;
+                
+                // Update Sale Totals
+                sale.SubTotal -= totalRefund;
+                sale.Total -= totalRefund;
 
                 //-----------------------------------------------------
                 // 7. SAVE RETURN
