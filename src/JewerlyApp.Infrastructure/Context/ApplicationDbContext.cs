@@ -82,6 +82,51 @@ namespace JewerlyApp.Infrastructure.Context
             .WithMany(s => s.ReturnItems)
             .HasForeignKey(r => r.SaleItemId)
             .OnDelete(DeleteBehavior.Restrict);
+
+            // Precision Configuration
+            builder.Entity<Sale>(entity =>
+            {
+                entity.Property(e => e.Discount).HasPrecision(18, 2);
+                entity.Property(e => e.DiscountPercentage).HasPrecision(18, 2);
+                entity.Property(e => e.CashAmount).HasPrecision(18, 2);
+                entity.Property(e => e.CardAmount).HasPrecision(18, 2);
+                entity.Property(e => e.SubTotal).HasPrecision(18, 2);
+                entity.Property(e => e.Total).HasPrecision(18, 2);
+            });
+
+            builder.Entity<SaleItem>(entity =>
+            {
+                entity.Property(e => e.Weight).HasPrecision(18, 2);
+                entity.Property(e => e.OriginalPricePerGram).HasPrecision(18, 2);
+                entity.Property(e => e.OverriddenPricePerGram).HasPrecision(18, 2);
+                entity.Property(e => e.SubTotal).HasPrecision(18, 2);
+            });
+
+            builder.Entity<Return>(entity =>
+            {
+                entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+            });
+
+            builder.Entity<ReturnItem>(entity =>
+            {
+                entity.Property(e => e.UnitPrice).HasPrecision(18, 2);
+                entity.Property(e => e.ReturnAmount).HasPrecision(18, 2);
+            });
+
+            builder.Entity<Repair>(entity =>
+            {
+                entity.Property(e => e.TotalCost).HasPrecision(18, 2);
+            });
+
+            builder.Entity<RepairItem>(entity =>
+            {
+                entity.Property(e => e.Weight).HasPrecision(18, 2);
+                entity.Property(e => e.Cost).HasPrecision(18, 2);
+                entity.Property(e => e.DepositPaid).HasPrecision(18, 2);
+                entity.Property(e => e.UrgentFee).HasPrecision(18, 2);
+                entity.Property(e => e.Discount).HasPrecision(18, 2);
+                entity.Property(e => e.SubTotal).HasPrecision(18, 2);
+            });
         }
     }
 }
