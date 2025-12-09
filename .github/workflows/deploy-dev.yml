@@ -22,6 +22,7 @@ jobs:
           script: |
             echo "== Pull latest code =="
             cd /var/www/jewelryApp-dev
+            git reset --hard
             git pull
 
             echo "== Apply migrations =="
