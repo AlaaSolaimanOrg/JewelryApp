@@ -5,6 +5,7 @@ import useLocalApi from "../../../../hooks/useLocalApi";
 import type { KaratType } from "../../../../types/enums";
 import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
+import { useEffect } from "react";
 
 interface TopSellingCategory {
   categoryName: string;
@@ -14,16 +15,28 @@ interface TopSellingCategory {
   percentageOfTotal: number;
 }
 
-const TopSellingCategories = () => {
-  const { data: topSellingCategories, isLoading } = useLocalApi({
+const TopSellingCategories = ({ isRefreshing, setIsRefreshing }) => {
+  const {
+    data: topSellingCategories,
+    fetchData: recallGetTopSellingCategories,
+    isLoading,
+  } = useLocalApi({
     apiToCall: () => getTopSellingCategories(),
     payload: {
       topCount: 5,
     },
   }) as {
     data: TopSellingCategory[];
+    fetchData: () => void;
     isLoading: boolean;
   };
+
+  useEffect(() => {
+    if (isRefreshing) {
+      recallGetTopSellingCategories();
+      setIsRefreshing(false);
+    }
+  }, [isRefreshing]);
 
   const headers: TableHeader[] = [
     { key: "categoryName", label: "Category", width: "150px" },

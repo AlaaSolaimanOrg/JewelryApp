@@ -61,7 +61,7 @@ namespace JewerlyApp.Application.Sales.Queries.SearchSales
                     Weight = i.Weight,
                     PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
                     Subtotal = Math.Round(i.SubTotal -
-                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0), 4),
+                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0), 2),
                     Quantity = i.Quantity,                    
                 }).ToList(),
             });

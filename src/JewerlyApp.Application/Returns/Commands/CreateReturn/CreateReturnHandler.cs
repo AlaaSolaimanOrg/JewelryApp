@@ -24,91 +24,98 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
         {
             var loggedInUser = await _userService.GetLoggedInUser();
 
-                //-----------------------------------------------------
-                // 1. VALIDATION
-                //-----------------------------------------------------
-                var validation = await ValidateRequestAsync(request, cancellationToken);
-                if (validation != null)
-                    return validation;
+            //-----------------------------------------------------
+            // 1. VALIDATION
+            //-----------------------------------------------------
+            var validation = await ValidateRequestAsync(request, cancellationToken);
+            if (validation != null)
+                return validation;
 
-                //-----------------------------------------------------
-                // 2. LOAD SALE & ITEMS
-                //-----------------------------------------------------
-                var sale = await _context.Sales
-                    .Include(s => s.SaleItems)
-                    .FirstOrDefaultAsync(s => s.Id == request.SaleId, cancellationToken);
+            //-----------------------------------------------------
+            // 2. LOAD SALE & ITEMS
+            //-----------------------------------------------------
+            var sale = await _context.Sales
+                .Include(s => s.SaleItems)
+                .FirstOrDefaultAsync(s => s.Id == request.SaleId, cancellationToken);
 
-                var saleItemsMap = sale!.SaleItems.ToDictionary(x => x.Id);
+            var saleItemsMap = sale!.SaleItems.ToDictionary(x => x.Id);
 
-                //-----------------------------------------------------
-                // 3. PREPARE RETURN HEADER
-                //-----------------------------------------------------
-                var ret = new Return
+            //-----------------------------------------------------
+            // 3. PREPARE RETURN HEADER
+            //-----------------------------------------------------
+            var ret = new Return
+            {
+                Id = Guid.NewGuid(),
+                SerialNumber = await GenerateReturnSerialNumber(),
+                SaleId = sale.Id,
+                CreatedBy = loggedInUser.Id,
+                Items = new List<ReturnItem>()
+            };
+
+            decimal totalRefund = 0;
+            decimal oldSaleSubtotal = sale.SubTotal;
+            decimal oldDiscount = sale.Discount ?? 0;
+
+            //-----------------------------------------------------
+            // 4. PROCESS EACH RETURN ITEM
+            //-----------------------------------------------------
+            foreach (var itemDto in request.Items)
+            {
+                var saleItem = saleItemsMap[itemDto.SaleItemId];
+
+                var returnItem = new ReturnItem
                 {
                     Id = Guid.NewGuid(),
-                    SerialNumber = await GenerateReturnSerialNumber(),
-                    SaleId = sale.Id,
-                    CreatedBy = loggedInUser.Id,
-                    Items = new List<ReturnItem>()
+                    ReturnId = ret.Id,
+                    SaleItemId = saleItem.Id,
+                    QuantityPurchased = saleItem.Quantity,
+                    QuantityReturned = itemDto.QuantityToReturn,
+
+                    // ❗ Provided by frontend
+                    ReturnAmount = itemDto.ReturnAmount,
+                    UnitPrice = saleItem.SubTotal / saleItem.Quantity,
+
+                    Reason = itemDto.Reason,
+                    ReasonNote = itemDto.ReasonNote,
+                    Condition = itemDto.Condition,
+                    Option = itemDto.Option
                 };
 
-                decimal totalRefund = 0;
-
-                //-----------------------------------------------------
-                // 4. PROCESS EACH RETURN ITEM
-                //-----------------------------------------------------
-                foreach (var itemDto in request.Items)
-                {
-                    var saleItem = saleItemsMap[itemDto.SaleItemId];
-
-                    var returnItem = new ReturnItem
-                    {
-                        Id = Guid.NewGuid(),
-                        ReturnId = ret.Id,
-                        SaleItemId = saleItem.Id,
-                        QuantityPurchased = saleItem.Quantity,
-                        QuantityReturned = itemDto.QuantityToReturn,
-
-                        // ❗ Provided by frontend
-                        ReturnAmount = itemDto.ReturnAmount,
-                        UnitPrice = saleItem.SubTotal / saleItem.Quantity,
-
-                        Reason = itemDto.Reason,
-                        ReasonNote = itemDto.ReasonNote,
-                        Condition = itemDto.Condition,
-                        Option = itemDto.Option
-                    };
-
-                    // Update SaleItem SubTotal
-                    saleItem.SubTotal -= itemDto.ReturnAmount;
-                    saleItem.Quantity -= itemDto.QuantityToReturn;
+            // Update SaleItem SubTotal
+                var ratio = (saleItem.Quantity - itemDto.QuantityToReturn) / (decimal)saleItem.Quantity;
+                saleItem.SubTotal *= ratio;
+                saleItem.Quantity -= itemDto.QuantityToReturn;
 
 
                 ret.Items.Add(returnItem);
-                    totalRefund += itemDto.ReturnAmount;
-
-                    //-----------------------------------------------------
-                    // 5. INVENTORY UPDATE
-                    //-----------------------------------------------------
-                    await ApplyInventoryAdjustmentAsync(saleItem.ProductId, itemDto);
-                }
+                totalRefund += itemDto.ReturnAmount;
 
                 //-----------------------------------------------------
-                // 6. SET RETURN TOTAL AND UPDATE SALE TOTALS
+                // 5. INVENTORY UPDATE
                 //-----------------------------------------------------
-                ret.TotalAmount = totalRefund;
-                
-                // Update Sale Totals
-                sale.SubTotal -= totalRefund;
-                sale.Total -= totalRefund;
+                await ApplyInventoryAdjustmentAsync(saleItem.ProductId, itemDto);
+            }
 
-                //-----------------------------------------------------
-                // 7. SAVE RETURN
-                //-----------------------------------------------------
-                _context.Returns.Add(ret);
-                await _context.SaveChangesAsync(cancellationToken);
+            //-----------------------------------------------------
+            // 6. SET RETURN TOTAL AND UPDATE SALE TOTALS
+            //-----------------------------------------------------
+            ret.TotalAmount = totalRefund;
 
-                return GenericResponse<string>.Success(ret.Id.ToString());
+            // Update Sale Totals
+            sale.SubTotal = sale.SaleItems.Sum(i => i.SubTotal);
+            sale.Total -= totalRefund;
+
+            sale.Discount = oldDiscount * (sale.SubTotal / oldSaleSubtotal);
+            sale.DiscountPercentage = sale.Total == 0 ? 0 : sale.Discount / sale.Total * 100;
+
+
+            //-----------------------------------------------------
+            // 7. SAVE RETURN
+            //-----------------------------------------------------
+            _context.Returns.Add(ret);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return GenericResponse<string>.Success(ret.Id.ToString());
         }
 
 
@@ -174,7 +181,7 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 var totalQuantityAfterReturn = previouslyReturned + item.QuantityToReturn;
 
                 // If item was fully returned already
-                if (previouslyReturned >= saleItem.Quantity)
+                if (saleItem.Quantity == 0)
                 {
                     return GenericResponse<string>.Error(
                         ResponseStatusCode.BadRequest,
@@ -182,7 +189,7 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
                 }
 
                 // Qty exceeds available amount (purchased - previously returned)
-                if (totalQuantityAfterReturn > saleItem.Quantity)
+                if (item.QuantityToReturn > saleItem.Quantity)
                 {
                     var availableToReturn = saleItem.Quantity - previouslyReturned;
                     return GenericResponse<string>.Error(

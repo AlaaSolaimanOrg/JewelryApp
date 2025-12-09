@@ -132,7 +132,10 @@ function updateLabelXml(xml: string, product: Product) {
   xml = xml.replace(
     /<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<TextSpan>[\s\S]*?<Text>([\s\S]*?)<\/Text>/,
     (match) =>
-      match.replace(/<Text>[\s\S]*?<\/Text>/, `<Text>${product.weight} g</Text>`)
+      match.replace(
+        /<Text>[\s\S]*?<\/Text>/,
+        `<Text>${product.weight} g</Text>`
+      )
   );
 
   // Replace size inside TextObject2
@@ -206,6 +209,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     version: "",
   });
 
+  console.log("product", product);
   useEffect(() => {
     if (show) {
       checkDymoEnvironment();
@@ -611,7 +615,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                   SKU: <strong>{product.sku}</strong>
                 </small>
                 <small>
-                  Price: <strong>${product.price.toFixed(2)}</strong>
+                  Price: <strong>${product.price?.toFixed(2)}</strong>
                 </small>
               </div>
               <div className="d-flex justify-content-between mt-1">

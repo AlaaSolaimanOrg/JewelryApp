@@ -24,10 +24,11 @@ import preventSignOnKeyDown, {
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 
 const productFieldsInitialState = {
   productName: "",
-  SKU: "",
+  sku: "",
   karat: "",
   productType: ProductType.Gold,
   weight: "",
@@ -44,12 +45,9 @@ const AddEditProduct = ({ isEdit }) => {
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
   const [tagInput, setTagInput] = useState(""); // For new tag input
+  const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
 
   const { productId } = useParams();
-
-  const barCodeRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = useReactToPrint({ contentRef: barCodeRef });
 
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
@@ -121,7 +119,7 @@ const AddEditProduct = ({ isEdit }) => {
     if (isEdit && product) {
       setProductFields({
         productName: product.name,
-        SKU: product.sku,
+        sku: product.sku,
         karat: product.karatType,
         productType: product.productType,
         weight: product.weight,
@@ -168,7 +166,7 @@ const AddEditProduct = ({ isEdit }) => {
     }
 
     formData.append("Name", productFields.productName);
-    formData.append("Sku", productFields.SKU);
+    formData.append("Sku", productFields.sku);
     formData.append("Category", productFields.category);
     formData.append("Specification", productFields.specification);
     formData.append("Type", productFields.productType.toString());
@@ -498,7 +496,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <span className="title">Barcode</span>
               </div>
 
-              <div ref={barCodeRef} className="barCodeWrapper">
+              <div className="barCodeWrapper">
                 <Barcode className="barCode" value={generatedSKU} />
               </div>
 
@@ -506,7 +504,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <AiFillPrinter
                   className="icon"
                   onClick={() => {
-                    handlePrint();
+                    setShowTagPrintingModal(true);
                   }}
                 />
               </div>
@@ -516,6 +514,21 @@ const AddEditProduct = ({ isEdit }) => {
           <ImageUpload files={files} setFiles={setFiles} />
         </form>
       </div>
+      <TagPrintingModal
+        show={showTagPrintingModal}
+        onClose={() => {
+          setShowTagPrintingModal(false);
+        }}
+        product={
+          {
+            sku: generatedSKU,
+            weight: productFields.weight,
+            karatType: productFields.karat,
+            specification: productFields.specification,
+            price: 333,
+          } as any
+        }
+      />
       <LoadingScreen isLoading={isLoadingCreateProduct} />
     </div>
   );

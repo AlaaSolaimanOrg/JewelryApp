@@ -77,7 +77,8 @@ axiosInstance.interceptors.response.use(
 function redirectToLogin() {
   localStorage.clear();
   sessionStorage.clear();
-  window.location.href = `${import.meta.env.VITE_ROUTE_PREFIX}/login`;
+  const prefix = import.meta.env.VITE_ROUTE_PREFIX || "";
+  window.location.href = `${window.location.origin}${prefix}login`;
 }
 
 export default axiosInstance;
