@@ -26,6 +26,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
             var saleItemsQuery = _context.SaleItems
                 .Include(si => si.Product)
                 .Include(si => si.Sale)
+                .Where(si => si.Quantity > 0)
                 .AsQueryable();
 
             // Apply date range filter
@@ -58,7 +59,11 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
                     Category = g.Key.Category,
                     KaratType = g.Key.KaratType,
                     ItemsSold = g.Sum(si => si.Quantity), // FIXED: Sum quantities instead of counting rows
-                    Revenue = g.Sum(si => si.SubTotal) // This should already account for quantity, but verify
+                    Revenue = g.Sum(si => Math.Round(si.SubTotal -
+                                (si.Sale.Discount ?? 0) * (si.SubTotal > 0 ? si.SubTotal / si.Sale.SubTotal : 0), 2)) 
+
+                    
+                    // This should already account for quantity, but verify
                 })
                 .ToListAsync(cancellationToken);
 
@@ -73,7 +78,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopSellingCategories
                     Karat = x.KaratType,
                     ItemsSold = x.ItemsSold,
                     Revenue = x.Revenue,
-                    PercentageOfTotal = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                    PercentageOfTotal = totalRevenue > 0 ? Math.Round(x.Revenue / totalRevenue, 2) * 100 : 0
                 })
                 .OrderByDescending(x => x.Revenue) // Primary order by revenue
                 .ThenByDescending(x => x.ItemsSold) // Secondary order by items sold

@@ -38,6 +38,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
                 Sku = request.Sku,
                 Weight = request.Weight,
                 Category = request.Category,
+                Specification = request.Specification,
                 Type = request.Type,
                 Description = request.Description,
                 Quantity = request.Quantity,
@@ -52,6 +53,18 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             };
 
             await _context.Products.AddAsync(product, cancellationToken);
+
+            // update sku sequence
+            var fullYear = DateTime.UtcNow.Year;
+
+            var sequence = await _context.SkuSequences
+                .FirstOrDefaultAsync(x => x.Category == request.Category && x.Karat == request.KaratType && x.Year == fullYear);
+            if (sequence != null)
+            {
+                sequence.LastNumber++;
+            }
+
+
             await _context.SaveChangesAsync(cancellationToken);
 
             if (request.Images != null && request.Images.Count > 0)

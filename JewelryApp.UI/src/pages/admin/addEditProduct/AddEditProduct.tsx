@@ -24,17 +24,19 @@ import preventSignOnKeyDown, {
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 
 const productFieldsInitialState = {
   productName: "",
-  SKU: "",
+  sku: "",
   karat: "",
   productType: ProductType.Gold,
   weight: "",
   category: "",
   description: "",
   quantity: 1,
-  tags: [] as string[], // Explicitly type tags as string array
+  tags: [] as string[],
+  specification: "", // ✅ NEW FIELD
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -43,12 +45,9 @@ const AddEditProduct = ({ isEdit }) => {
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
   const [tagInput, setTagInput] = useState(""); // For new tag input
+  const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
 
   const { productId } = useParams();
-
-  const barCodeRef = useRef<HTMLDivElement>(null);
-
-  const handlePrint = useReactToPrint({ contentRef: barCodeRef });
 
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
@@ -120,14 +119,15 @@ const AddEditProduct = ({ isEdit }) => {
     if (isEdit && product) {
       setProductFields({
         productName: product.name,
-        SKU: product.sku,
+        sku: product.sku,
         karat: product.karatType,
         productType: product.productType,
         weight: product.weight,
         category: product.category,
         description: product.description,
         quantity: product.quantity,
-        tags: product.tags || [], // Initialize tags from product data
+        tags: product.tags || [],
+        specification: product.specification || [],
       });
 
       const loadFiles = async () => {
@@ -166,8 +166,9 @@ const AddEditProduct = ({ isEdit }) => {
     }
 
     formData.append("Name", productFields.productName);
-    formData.append("Sku", productFields.SKU);
+    formData.append("Sku", productFields.sku);
     formData.append("Category", productFields.category);
+    formData.append("Specification", productFields.specification);
     formData.append("Type", productFields.productType.toString());
     formData.append("KaratType", productFields.karat);
     formData.append("Description", productFields.description);
@@ -209,7 +210,8 @@ const AddEditProduct = ({ isEdit }) => {
 
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
-      if (key === "description" || key === "tags") return false;
+      if (key === "description" || key === "tags" || key == "specification")
+        return false;
 
       if (key === "weight" || key === "quantity") {
         return Number(value) <= 0;
@@ -222,6 +224,13 @@ const AddEditProduct = ({ isEdit }) => {
     }
   );
 
+  console.log("checkAnyProductFieldHasNoValue", checkAnyProductFieldHasNoValue);
+
+  const categoriesRequiringSize = [
+    ProductCategory.Necklaces,
+    ProductCategory.Bracelets,
+    ProductCategory.Rings,
+  ];
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
@@ -290,12 +299,10 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
-          <div className="form-row">
-        
-          </div>
+          <div className="form-row"></div>
 
           <div className="form-row">
-                <div className="form-col">
+            <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Quantity</label>
                 <input
@@ -336,11 +343,10 @@ const AddEditProduct = ({ isEdit }) => {
                 </select>
               </div>
             </div>
-          
           </div>
 
           <div className="form-row">
-              <div className="form-col">
+            <div className="form-col">
               <div className="form-group">
                 <label className="form-label required">Weight (grams)</label>
                 <input
@@ -383,6 +389,25 @@ const AddEditProduct = ({ isEdit }) => {
                 </select>
               </div>
             </div>
+
+            {/* LENGTH for Necklaces */}
+            {categoriesRequiringSize.includes(
+              Number(productFields.category)
+            ) && (
+              <div className="form-group">
+                <label className="form-label required">Size</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g., 45"
+                  value={productFields.specification}
+                  onChange={(e) =>
+                    handleProductField("specification", e.target.value)
+                  }
+                  required
+                />
+              </div>
+            )}
 
             <div className="form-col">
               <div className="form-group">
@@ -471,7 +496,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <span className="title">Barcode</span>
               </div>
 
-              <div ref={barCodeRef} className="barCodeWrapper">
+              <div className="barCodeWrapper">
                 <Barcode className="barCode" value={generatedSKU} />
               </div>
 
@@ -479,7 +504,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <AiFillPrinter
                   className="icon"
                   onClick={() => {
-                    handlePrint();
+                    setShowTagPrintingModal(true);
                   }}
                 />
               </div>
@@ -489,6 +514,21 @@ const AddEditProduct = ({ isEdit }) => {
           <ImageUpload files={files} setFiles={setFiles} />
         </form>
       </div>
+      <TagPrintingModal
+        show={showTagPrintingModal}
+        onClose={() => {
+          setShowTagPrintingModal(false);
+        }}
+        product={
+          {
+            sku: generatedSKU,
+            weight: productFields.weight,
+            karatType: productFields.karat,
+            specification: productFields.specification,
+            price: 333,
+          } as any
+        }
+      />
       <LoadingScreen isLoading={isLoadingCreateProduct} />
     </div>
   );

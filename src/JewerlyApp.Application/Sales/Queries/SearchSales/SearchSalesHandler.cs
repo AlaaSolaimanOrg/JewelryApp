@@ -60,8 +60,8 @@ namespace JewerlyApp.Application.Sales.Queries.SearchSales
                     Karat = i.KaratType,
                     Weight = i.Weight,
                     PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
-                    Subtotal = i.SubTotal -
-                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0),
+                    Subtotal = Math.Round(i.SubTotal -
+                                (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0), 2),
                     Quantity = i.Quantity,                    
                 }).ToList(),
             });

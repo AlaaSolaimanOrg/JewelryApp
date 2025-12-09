@@ -98,6 +98,7 @@ const ReturnPage: React.FC = () => {
   // Return items
   const [items, setItems] = useState<TransactionItem[]>([]);
 
+  console.log("items", items);
   // Modal visibility
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -131,7 +132,7 @@ const ReturnPage: React.FC = () => {
         icon: item.productName.toLowerCase().includes("ring") ? "ring" : "gem",
         karat: item.karat,
         weight: item.weight + "g",
-        unitPrice: item.subtotal / item.quantity,
+        unitPrice: item.quantity > 0 ? item.subtotal / item.quantity : 0,
         qtyPurchased: item.quantity,
         qtyToReturn: 0,
         apiAmountReturned: item.amountReturned,
@@ -162,12 +163,10 @@ const ReturnPage: React.FC = () => {
               ...item,
               selected: !item.selected,
               // compute new qtyToReturn based on current selected state
-              qtyToReturn: !item.selected
-                ? item.qtyPurchased - item.quantityReturned
-                : 0,
+              qtyToReturn: !item.selected ? item.qtyPurchased : 0,
               // set editable return amount when selecting an item to (qtyToReturn * unitPrice)
               returnAmount: !item.selected
-                ? (item.qtyPurchased - item.quantityReturned) * item.unitPrice
+                ? item.qtyPurchased * item.unitPrice
                 : 0,
             }
           : item
@@ -224,10 +223,7 @@ const ReturnPage: React.FC = () => {
       items.map((item) => {
         if (item.id !== id) return item;
 
-        const validQty = Math.min(
-          qty,
-          item.qtyPurchased - item.quantityReturned
-        );
+        const validQty = Math.min(qty, item.qtyPurchased);
 
         return {
           ...item,
@@ -382,8 +378,6 @@ const ReturnPage: React.FC = () => {
 
   const totalReturnAmount = calculateTotalReturn();
   const selectedItemsCount = items.filter((i) => i.selected).length;
-
-  console.log("selectedItemsCount", selectedItemsCount);
 
   return (
     <div className="return-page-container">

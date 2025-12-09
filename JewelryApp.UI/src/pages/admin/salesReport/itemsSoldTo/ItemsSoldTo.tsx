@@ -31,7 +31,6 @@ const ItemsSoldTo = () => {
   const [dateTo, setDateTo] = useState<any>(null);
   const [timeRangeFilter, setTimeRangeFilter] = useState<string>("");
 
-  console.log("dateFrom", dateFrom);
   // Handle time range selection
   const handleTimeRangeChange = (range: string) => {
     setTimeRangeFilter(range);

@@ -45,6 +45,7 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 KaratType = product.KaratType,
                 Weight = product.Weight,
                 Category = product.Category,
+                Specification = product.Specification,
                 ProductType = product.Type,
                 Description = product.Description,
                 Tags = product.Tags.Select(productTag => productTag.Tag).ToList(),

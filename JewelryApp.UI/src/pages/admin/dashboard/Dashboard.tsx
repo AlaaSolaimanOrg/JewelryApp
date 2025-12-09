@@ -3,6 +3,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import "./dashboard.scss";
 
 // Import icons from react-icons/fa
+import { useState } from "react";
 import {
   FaArrowDown,
   FaArrowUp,
@@ -14,8 +15,8 @@ import {
   FaUsers,
   FaWeightHanging,
 } from "react-icons/fa";
-import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
 import { KaratType } from "../../../types/enums";
+import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
 
 export interface DashboardInsights {
   salesToday: {
@@ -42,6 +43,8 @@ export interface DashboardInsights {
 }
 
 const Dashboard = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const { data: dashboardInsights, fetchData: recallGetDashboardInsights } =
     useLocalApi({
       apiToCall: () => getDashboardInsights(),
@@ -52,6 +55,7 @@ const Dashboard = () => {
 
   const handleRefresh = () => {
     recallGetDashboardInsights();
+    setIsRefreshing(true);
   };
 
   // Format currency
@@ -60,7 +64,7 @@ const Dashboard = () => {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -200,7 +204,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <TopSellingCategories />
+      <TopSellingCategories isRefreshing={isRefreshing} setIsRefreshing={setIsRefreshing} />
     </div>
   );
 };

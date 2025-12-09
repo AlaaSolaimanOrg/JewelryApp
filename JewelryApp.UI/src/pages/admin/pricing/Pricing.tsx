@@ -80,7 +80,6 @@ const Pricing = () => {
   ]);
 
   const [prices, setPrices] = useState<PriceItem[]>([...initialPrices]);
-  console.log("prices", prices);
 
   const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
     {

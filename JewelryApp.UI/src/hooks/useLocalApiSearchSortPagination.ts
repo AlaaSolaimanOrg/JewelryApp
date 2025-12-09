@@ -37,8 +37,6 @@ const useLocalApiSearchSortPagination = <T = any>({
     totalRecords: number;
   }>({ pageSize: initialPageSize, pageNumber: 1, totalRecords: 0 });
 
-  console.log("extraEffectDependency", extraEffectDependency);
-  console.log("pagination", pagination);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
     sortDirection: initialSortDirection,
     sortBy: initialSortBy,

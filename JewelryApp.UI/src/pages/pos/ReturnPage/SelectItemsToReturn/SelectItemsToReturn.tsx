@@ -64,11 +64,10 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
   const data = items.map((item) => {
     const errors = itemErrors[item.id] || [];
 
-    console.log("item", item);
     const hasError = (msg: string) => errors.includes(msg);
 
     return {
-      Return: item.qtyPurchased - item.quantityReturned > 0 && (
+      Return: item.qtyPurchased > 0 && (
         <input
           type="checkbox"
           className="return-checkbox"
@@ -112,11 +111,9 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
             }`}
             value={item.qtyToReturn}
             min="0"
-            max={item.qtyPurchased - item.quantityReturned}
+            max={item.qtyPurchased}
             onChange={(e) => onQuantityChange(item.id, e.target.value)}
-            disabled={
-              !item.selected || item.qtyPurchased - item.quantityReturned === 0
-            }
+            disabled={!item.selected || item.qtyPurchased === 0}
           />
 
           {hasError("Quantity must be greater than 0.") && (

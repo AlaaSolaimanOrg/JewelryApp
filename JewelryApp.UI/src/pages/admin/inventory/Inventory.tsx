@@ -54,6 +54,8 @@ export interface Product {
   price: number;
   images: { imageUrl: string }[];
   tags: string[];
+  specification?: string;
+  isManualEntry: boolean;
 }
 
 const Inventory = () => {
@@ -79,8 +81,6 @@ const Inventory = () => {
     priceTo: 999999,
     category: null,
   });
-
-  console.log("appliedFilters", appliedFilters);
 
   const {
     data: products,
@@ -170,7 +170,6 @@ const Inventory = () => {
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
-  console.log("products", products);
   const data = products?.map((product) => ({
     image: !!product.images[0]?.imageUrl && (
       <img
@@ -193,17 +192,19 @@ const Inventory = () => {
     category: ProductCategory[product.category],
     tags: <TagsPopover tags={product.tags} />,
     actions: (
-      <>
-        <button
-          className="action-btn"
-          title="Print Tag"
-          onClick={() => {
-            setSelectedProductForPrinting(product);
-            setShowTagPrintingModal(true);
-          }}
-        >
-          <FaPrint />
-        </button>
+      <div className="d-flex justify-content-end">
+        {!product.isManualEntry && (
+          <button
+            className="action-btn"
+            title="Print Tag"
+            onClick={() => {
+              setSelectedProductForPrinting(product);
+              setShowTagPrintingModal(true);
+            }}
+          >
+            <FaPrint />
+          </button>
+        )}
         <button
           className="action-btn"
           title="Edit"
@@ -218,11 +219,10 @@ const Inventory = () => {
         >
           <FaTrash />
         </button>
-      </>
+      </div>
     ),
   }));
 
-  console.log("data", data);
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
   };

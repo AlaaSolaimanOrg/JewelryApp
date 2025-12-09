@@ -26,7 +26,6 @@ const MainPosPage: React.FC = () => {
   const [cardAmount, setCardAmount] = useState(0);
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
 
-  console.log("searchInput", searchInput);
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
     const quantity = product.quantityForSale || 1;

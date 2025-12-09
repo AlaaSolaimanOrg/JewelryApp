@@ -42,7 +42,7 @@ const AnalyticsSummary = ({ appliedFilters, refreshKey }) => {
         <h3 className="card-title">Analytics Summary</h3>
       </div>
 
-      <div className="kpi-grid">
+      <div className="kpi-grid-analytics">
         {/* Avg Daily Sales */}
         <div className="kpi-card">
           <div className="kpi-header">

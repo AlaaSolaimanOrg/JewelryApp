@@ -29,8 +29,6 @@ const ProductsSection: React.FC<Props> = ({
     handleManualProductChange(idx, "quantityForSale", numValue);
   };
 
-  console.log("products", products);
-
   return (
     <section className="products-section">
       <h2 className="section-title">Cart Summary</h2>

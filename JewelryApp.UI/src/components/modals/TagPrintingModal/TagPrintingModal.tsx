@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Form, Spinner } from "react-bootstrap";
-import { FaPrint } from "react-icons/fa";
-import "./tagPrintingModal.scss";
-import type { Product } from "../../../pages/admin/inventory/Inventory";
+import React, { useEffect, useState } from "react";
 import Barcode from "react-barcode";
+import { Form, Modal, Spinner } from "react-bootstrap";
+import { FaPrint } from "react-icons/fa";
+import type { Product } from "../../../pages/admin/inventory/Inventory";
+import "./tagPrintingModal.scss";
 
 interface TagPrintingModalProps {
   show: boolean;
@@ -117,29 +117,51 @@ interface DymoWindow extends Window {
   };
 }
 
-function updateLabelXml(xml: string, sku: string) {
-  // Replace TextObject1 text
+function updateLabelXml(xml: string, product: Product) {
+  // Replace karatType inside TextObject1
   xml = xml.replace(
-    /<TextSpan>\s*<Text>[\s\S]*?<\/Text>/,
-    `<TextSpan><Text>${sku}</Text>`
+    /<TextObject>\s*<Name>TextObject1<\/Name>[\s\S]*?<TextSpan>[\s\S]*?<Text>([\s\S]*?)<\/Text>/,
+    (match) =>
+      match.replace(
+        /<Text>[\s\S]*?<\/Text>/,
+        `<Text>${product.karatType}k</Text>`
+      )
   );
 
-  // Replace BarcodeObject data string
+  // Replace weight inside TextObject12
   xml = xml.replace(
-    /<DataString>[\s\S]*?<\/DataString>/,
-    `<DataString>${sku}</DataString>`
+    /<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<TextSpan>[\s\S]*?<Text>([\s\S]*?)<\/Text>/,
+    (match) =>
+      match.replace(
+        /<Text>[\s\S]*?<\/Text>/,
+        `<Text>${product.weight} g</Text>`
+      )
+  );
+
+  // Replace size inside TextObject2
+  xml = xml.replace(
+    /<TextObject>\s*<Name>TextObject2<\/Name>[\s\S]*?<TextSpan>[\s\S]*?<Text>([\s\S]*?)<\/Text>/,
+    (match) =>
+      match.replace(
+        /<Text>[\s\S]*?<\/Text>/,
+        `<Text>${product?.specification ?? ""}</Text>`
+      )
+  );
+
+  // Replace barcode data inside BarcodeObject0
+  xml = xml.replace(
+    /<BarcodeObject>\s*<Name>BarcodeObject0<\/Name>[\s\S]*?<DataString>[\s\S]*?<\/DataString>/,
+    (match) =>
+      match.replace(
+        /<DataString>[\s\S]*?<\/DataString>/,
+        `<DataString>${product.sku}</DataString>`
+      )
   );
 
   return xml;
 }
 
 async function printDymo(labelXml, printerName: string) {
-  // const payload = {
-  //   printerName: printerName,
-  //   labelXml: labelXml,
-  //   labelSetXml: "",
-  //   printParamsXml: "",
-  // };
   const params = new URLSearchParams();
   params.append("printerName", printerName);
   params.append("labelXml", labelXml);
@@ -158,7 +180,6 @@ async function printDymo(labelXml, printerName: string) {
   );
 
   const text = await res.text();
-  console.log("DYMO Response:", text);
 }
 
 const DEFAULT_CONFIG: TagConfig = {
@@ -188,6 +209,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     version: "",
   });
 
+  console.log("product", product);
   useEffect(() => {
     if (show) {
       checkDymoEnvironment();
@@ -249,7 +271,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
 
       // Get all printers
       const allPrinters = dymoWindow.dymo.label.framework.getPrinters();
-      console.log("All printers:", allPrinters);
 
       // Filter for connected printers
       const connectedPrinters = allPrinters.filter((p) => p.isConnected);
@@ -319,6 +340,22 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     }
   };
 
+  async function printCopiesSequentially(
+    labelXml: string,
+    printerName: string,
+    copies: number
+  ) {
+    for (let i = 0; i < copies; i++) {
+      console.log(`Printing copy ${i + 1} of ${copies}`);
+
+      // WAIT for printDymo to finish before sending next
+      await printDymo(labelXml, printerName);
+
+      // Optional: small delay for safety (DYMO gets overwhelmed easily)
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+  }
+
   // ----------------------------------------
   // 🖨 PRINT TAGS - UPDATED FOR DYMO 3.0.0
   // ----------------------------------------
@@ -344,7 +381,9 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       // Load label template - MUST be a .label file, not .dymo
       let labelXml: string;
       try {
-        const response = await fetch("/dev/labels/jewelry.label"); // Changed from .dymo
+        const response = await fetch(
+          `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`
+        ); // Changed from .dymo
         if (!response.ok) {
           throw new Error(`Failed to load label template: ${response.status}`);
         }
@@ -366,9 +405,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       //   return;
       // }
 
-      console.log("Is DCD Label:", label.isDCDLabel());
-      console.log("Is DLS Label:", label.isDLSLabel());
-
       // Set label content - use the correct object names from your label
       // label.setObjectText("TextObject1", product.sku); // Match your label's object names
 
@@ -381,11 +417,12 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
         return;
       }
 
-      const updatedLabelXml = updateLabelXml(labelXml, product.sku);
-      console.log("Updated Label XML:", updatedLabelXml);
+      const updatedLabelXml = updateLabelXml(labelXml, product);
+      console.log("updatedLabelXml", updatedLabelXml);
       // Print the label
       // label.print(printer.name, printParamsXml);
-      printDymo(updatedLabelXml, printer.name);
+      // printDymo(updatedLabelXml, printer.name);
+      await printCopiesSequentially(updatedLabelXml, selectedPrinter, tagCount);
 
       alert(`✅ Sent ${tagCount} tag(s) to ${printer.name}.`);
     } catch (err) {
@@ -403,17 +440,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   // Refresh printers list
   const refreshPrinters = () => {
     loadPrinters();
-  };
-
-  // Debug function to check DYMO object
-  const debugDymoObject = () => {
-    const dymoWindow = window as DymoWindow;
-    console.log("Full DYMO object:", dymoWindow.dymo);
-    console.log("Framework version:", dymoWindow.dymo?.label.framework.VERSION);
-    console.log(
-      "Available methods:",
-      Object.keys(dymoWindow.dymo?.label.framework || {})
-    );
   };
 
   // ----------------------------------------
@@ -449,46 +475,23 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                 className="dymo-jewelry-tag"
                 style={{ transform: `scale(${config.scale})` }}
               >
-                {/* LEFT LOBE - BARCODE */}
-                <div className="tag-lobe left-lobe">
-                  <div className="barcode-box">
+                <div className="butterfly-tag">
+                  <div className="tag-lobe left-lobe">
                     <Barcode
                       className="barCode"
                       value={product.sku}
-                      width={1.5}
-                      height={40}
-                      margin={0}
+                      height={180}
+                      fontSize={40}
                     />
                   </div>
-                  <div className="sku">{product.sku}</div>
-                </div>
-
-                {/* CENTER BRIDGE */}
-                <div className="tag-bridge"></div>
-
-                {/* RIGHT LOBE - DETAILS */}
-                <div className="tag-lobe right-lobe">
-                  <div className="price">${product.price.toFixed(2)}</div>
-                  <div className="weight">{product.weight}g</div>
-                  <div className="karat">{product.karatType}K</div>
+                  <div className="bridge"></div>
+                  <div className="tag-lobe right-lobe">
+                    <div className="tag-sku">{product.karatType}k</div>
+                    <div className="tag-sku">{product.weight}g</div>
+                    <div className="tag-sku">{product.specification}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* PREVIEW SCALE CONTROL */}
-            <div className="control-group mt-3">
-              <label className="control-label">
-                Preview Scale: {(config.scale * 100).toFixed(0)}%
-              </label>
-              <Form.Range
-                min={0.5}
-                max={1.5}
-                step={0.1}
-                value={config.scale}
-                onChange={(e) =>
-                  handleConfigChange("scale", parseFloat(e.target.value))
-                }
-              />
             </div>
           </div>
 
@@ -612,7 +615,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                   SKU: <strong>{product.sku}</strong>
                 </small>
                 <small>
-                  Price: <strong>${product.price.toFixed(2)}</strong>
+                  Price: <strong>${product.price?.toFixed(2)}</strong>
                 </small>
               </div>
               <div className="d-flex justify-content-between mt-1">
@@ -633,13 +636,6 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                 disabled={isPrinting}
               >
                 Test DYMO Connection
-              </button>
-              <button
-                className="btn btn-outline-secondary btn-sm"
-                onClick={debugDymoObject}
-                disabled={isPrinting}
-              >
-                Debug DYMO Object
               </button>
             </div>
           </div>

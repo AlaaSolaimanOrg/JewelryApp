@@ -17,9 +17,13 @@ namespace JewerlyApp.Infrastructure.Services
 
         public async Task<string> GenerateSkuAsync(ProductCategory category, KaratType karat)
         {
-            var year = DateTime.UtcNow.Year;
+            var fullYear = DateTime.UtcNow.Year;
+            var year = fullYear % 100; // LAST TWO DIGITS (2025 -> 25)
+
             var sequence = await _context.SkuSequences
-                .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == year);
+                .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == fullYear);
+
+            
 
             if (sequence == null)
             {
@@ -27,27 +31,28 @@ namespace JewerlyApp.Infrastructure.Services
                 {
                     Category = category,
                     Karat = karat,
-                    Year = year,
+                    Year = fullYear,
                     LastNumber = 0
                 };
                 _context.SkuSequences.Add(sequence);
+                await _context.SaveChangesAsync();
             }
 
             sequence.LastNumber++;
-            await _context.SaveChangesAsync();
 
             var categoryCode = category switch
             {
-                ProductCategory.Necklaces => "NEC",
-                ProductCategory.Bracelets => "BRC",
-                ProductCategory.Rings => "RNG",
-                ProductCategory.Earrings => "EAR",
-                ProductCategory.Pendants => "PND",
-                ProductCategory.Bullion => "BUL",
-                _ => "GEN"
+                ProductCategory.Necklaces => "NC",
+                ProductCategory.Bracelets => "BC",
+                ProductCategory.Rings => "RG",
+                ProductCategory.Earrings => "ER",
+                ProductCategory.Pendants => "PD",
+                ProductCategory.Bullion => "BL",
+                _ => "GN"
             };
 
-            return $"{categoryCode}-{(int)karat}-{year}-{sequence.LastNumber:D5}";
+            // Final SKU: NEC2500001
+            return $"{categoryCode}{year:D2}{sequence.LastNumber:D4}";
         }
     }
 }

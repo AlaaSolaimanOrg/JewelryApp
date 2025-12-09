@@ -14,6 +14,7 @@ namespace JewerlyApp.Application.Products.Commands.EditProduct
         public string Name { get; set; }
         public string Sku { get; set; }
         public ProductCategory Category { get; set; }
+        public string? Specification { get; set; }
         public ProductType Type { get; set; }
         public KaratType KaratType { get; set; }
         public string? Description { get; set; }
