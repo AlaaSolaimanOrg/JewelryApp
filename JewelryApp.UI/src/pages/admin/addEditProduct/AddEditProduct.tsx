@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { IoBarcodeSharp } from "react-icons/io5";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import {
   createProduct,
   editProduct,
@@ -14,6 +13,7 @@ import {
 } from "../../../apis/products.api/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
@@ -24,7 +24,6 @@ import preventSignOnKeyDown, {
   urlToFile,
 } from "../../../utils";
 import "./addEditProduct.scss";
-import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 
 const productFieldsInitialState = {
   productName: "",
@@ -146,7 +145,7 @@ const AddEditProduct = ({ isEdit }) => {
   }, [product, isEdit]);
 
   useEffect(() => {
-    handleProductField("SKU", generatedSKU);
+    handleProductField("sku", generatedSKU);
   }, [generatedSKU]);
 
   const handleClearClick = () => {
@@ -208,6 +207,7 @@ const AddEditProduct = ({ isEdit }) => {
       });
   };
 
+  console.log("productFields",productFields)
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
       if (key === "description" || key === "tags" || key == "specification")
