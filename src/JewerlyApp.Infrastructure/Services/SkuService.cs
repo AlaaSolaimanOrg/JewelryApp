@@ -23,6 +23,8 @@ namespace JewerlyApp.Infrastructure.Services
             var sequence = await _context.SkuSequences
                 .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == fullYear);
 
+            
+
             if (sequence == null)
             {
                 sequence = new SkuSequence
@@ -33,10 +35,10 @@ namespace JewerlyApp.Infrastructure.Services
                     LastNumber = 0
                 };
                 _context.SkuSequences.Add(sequence);
+                await _context.SaveChangesAsync();
             }
 
             sequence.LastNumber++;
-            await _context.SaveChangesAsync();
 
             var categoryCode = category switch
             {
