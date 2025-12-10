@@ -3,11 +3,11 @@ import { Button, Modal } from "react-bootstrap";
 import { FaReceipt } from "react-icons/fa";
 import "./receiptHistoryModal.scss";
 
-import ReceiptModal from "../ReceiptModal/ReceiptModal";
 import { getCustomerPurhcaseHistory } from "../../../apis/customers.api/customers.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { TableHeader } from "../../tables/Table/CustomTable";
 import CustomTable from "../../tables/Table/CustomTable";
+import ReceiptModal from "../ReceiptModal/ReceiptModal";
 
 interface PurchaseHistory {
   saleId: string;
@@ -66,21 +66,18 @@ const ReceiptHistoryModal = ({
     }).format(amount);
   };
 
-  // Define table headers
   const headers: TableHeader[] = [
     {
       key: "purchaseDate",
       label: "Purchase Date",
       width: "40%",
       sortable: true,
-      onHeaderClick: () => console.log("Sort by date"), // Add your sort logic here
     },
     {
       key: "amount",
       label: "Amount",
       width: "30%",
       sortable: true,
-      onHeaderClick: () => console.log("Sort by amount"), // Add your sort logic here
     },
     {
       key: "actions",
@@ -136,11 +133,15 @@ const ReceiptHistoryModal = ({
                   </div>
                   <div className="col-md-3">
                     <h6>Total Amount</h6>
-                    <p className="mb-0 fw-bold">{formatCurrency(totalAmount)}</p>
+                    <p className="mb-0 fw-bold">
+                      {formatCurrency(totalAmount)}
+                    </p>
                   </div>
                   <div className="col-md-3">
                     <h6>Total Discount</h6>
-                    <p className="mb-0 fw-bold">{formatCurrency(totalDiscount)}</p>
+                    <p className="mb-0 fw-bold">
+                      {formatCurrency(totalDiscount)}
+                    </p>
                   </div>
                 </div>
               </div>

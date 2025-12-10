@@ -29,6 +29,7 @@ interface Sale {
   tax: number;
   discount: number;
   saleItems: SaleItem[];
+  totalReturnAmount: string;
 }
 
 interface SaleItem {
@@ -39,6 +40,8 @@ interface SaleItem {
   pricePerGram: number;
   subtotal: number;
   quantity: number;
+  quantityReturned: number;
+  amountReturned: number;
 }
 interface ReceiptModalProps {
   saleId: string;
@@ -82,7 +85,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         show={showModal}
         onHide={onClose}
         centered
-        size="lg"
+        size="xl"
         className="receipt-modal"
       >
         <Modal.Header closeButton>
@@ -161,27 +164,43 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 <table className="receipt-table">
                   <thead>
                     <tr>
-                      <th style={{ width: "20%" }}>Product</th>
-                      <th style={{ width: "20%" }}>SKU</th>
-                      <th style={{ width: "12%" }}>Karat</th>
-                      <th style={{ width: "12%" }}>Quantity</th>
+                      <th style={{ width: "16%" }}>Product</th>
+                      <th style={{ width: "16%" }}>SKU</th>
+                      <th style={{ width: "10%" }}>Karat</th>
+                      <th style={{ width: "10%" }}>Qty</th>
+                      <th style={{ width: "10%" }}>Ret. Qty</th>
                       <th style={{ width: "12%" }}>Weight</th>
                       <th style={{ width: "12%" }}>Price/Gram</th>
-                      <th style={{ width: "12%" }}>Subtotal</th>
+                      <th style={{ width: "14%" }}>Subtotal</th>
+                      <th style={{ width: "14%" }}>Returned Amt</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
                     {saleDetails.saleItems?.map((item, index) => (
                       <tr key={index}>
-                        <td style={{ width: "20%" }}>
+                        <td style={{ width: "16%" }}>
                           {renderLongDescription(item.productName)}
                         </td>
-                        <td style={{ width: "20%" }}>{item.sku}</td>
-                        <td style={{ width: "12%" }}>{item.karat}</td>
-                        <td style={{ width: "12%" }}>{item.quantity}</td>
+
+                        <td style={{ width: "16%" }}>{item.sku}</td>
+
+                        <td style={{ width: "10%" }}>{item.karat}</td>
+
+                        <td style={{ width: "10%" }}>{item.quantity}</td>
+
+                        <td style={{ width: "10%" }}>
+                          {item.quantityReturned || 0}
+                        </td>
+
                         <td style={{ width: "12%" }}>{item.weight}g</td>
+
                         <td style={{ width: "12%" }}>${item.pricePerGram}</td>
-                        <td style={{ width: "12%" }}>${item.subtotal}</td>
+
+                        <td style={{ width: "14%" }}>${item.subtotal}</td>
+
+                        <td style={{ width: "14%" }}>
+                          ${item.amountReturned?.toFixed(2) || "0.00"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -212,6 +231,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     <span>${saleDetails.cardAmount}</span>
                   </div>
                 )}
+
+                {saleDetails.totalReturnAmount &&
+                  Number(saleDetails.totalReturnAmount) > 0 && (
+                    <div className="summary-item returned-item">
+                      <span>Total Returned Amount:</span>
+                      <span>${saleDetails.totalReturnAmount}</span>
+                    </div>
+                  )}
               </div>
 
               {/* Totals */}
@@ -220,7 +247,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <div className="total-label">Total (incl. 5% GST)</div>
                   <div className="total-value">${saleDetails.total}</div>
                 </div>
-                
               </div>
 
               <div className="receipt-footer">
