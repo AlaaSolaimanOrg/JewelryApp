@@ -226,7 +226,6 @@ const MainPosPage: React.FC = () => {
     });
   };
 
-  console.log("discountAmount", discountAmount);
   const handleCreateSale = () => {
     setIsLoadingCreateSale(true);
 

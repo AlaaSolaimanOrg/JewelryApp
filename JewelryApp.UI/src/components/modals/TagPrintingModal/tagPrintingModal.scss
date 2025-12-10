@@ -1,7 +1,7 @@
 /* MATCH RECEIPT MODAL THEME */
 .tag-printing-modal-wrapper {
   .modal-dialog {
-    max-width: 900px;
+    max-width: 700px;
     width: 95vw;
   }
 
@@ -42,18 +42,16 @@
     padding: 18px 30px;
   }
 
-  /* CONTENT GRID */
+  /**********************************
+   * CONTENT LAYOUT (NO PREVIEW)
+   **********************************/
   .tag-modal-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-
-    @media (max-width: 1200px) {
-      grid-template-columns: 1fr;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  /* SECTION TITLES (match receipt style) */
+  /* SECTION TITLES */
   .section-title {
     font-size: 14px;
     font-weight: 700;
@@ -65,66 +63,9 @@
     padding-bottom: 8px;
   }
 
-  /* PREVIEW PANEL */
-  .preview-section {
-    background: white;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--box-shadow);
-    .butterfly-tag {
-      width: 320px;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .left-lobe {
-        width: 110px;
-        height: 80px;
-        border-radius: 10px;
-        background-color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .barCode {
-          width: 90%;
-          height: 200px;
-        }
-      }
-      .bridge {
-        width: 80px;
-        height: 40px;
-        background-color: white;
-      }
-      .right-lobe {
-        width: 110px;
-        height: 80px;
-        border-radius: 10px;
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .tag-sku{
-          flex: 1;
-        }
-      }
-    }
-  }
-
-  .dymo-preview-container {
-    background: var(--gold);
-    padding: 20px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--box-shadow);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 250px;
-  }
-
-  /* SETTINGS PANEL */
+  /**********************************
+   * SETTINGS PANEL
+   **********************************/
   .settings-section {
     background: white;
     padding: 20px;
@@ -157,7 +98,9 @@
     }
   }
 
-  /* STATUS BOX MATCHING RECEIPT STYLE */
+  /**********************************
+   * DYMO STATUS BOX
+   **********************************/
   .dymo-status {
     background: #f8f9fa;
     border-radius: 6px;
@@ -170,6 +113,26 @@
       justify-content: space-between;
       font-size: 12px;
       margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  /**********************************
+   * INFORMATION TEXT
+   **********************************/
+  .info-text {
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    box-shadow: var(--box-shadow);
+
+    small {
+      color: var(--text-dark);
     }
   }
 }

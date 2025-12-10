@@ -98,7 +98,6 @@ const ReturnPage: React.FC = () => {
   // Return items
   const [items, setItems] = useState<TransactionItem[]>([]);
 
-  console.log("items", items);
   // Modal visibility
   const [modalVisible, setModalVisible] = useState(false);
 

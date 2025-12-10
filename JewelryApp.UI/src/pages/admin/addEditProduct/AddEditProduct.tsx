@@ -207,7 +207,6 @@ const AddEditProduct = ({ isEdit }) => {
       });
   };
 
-  console.log("productFields",productFields)
   const checkAnyProductFieldHasNoValue = Object.entries(productFields).some(
     ([key, value]) => {
       if (key === "description" || key === "tags" || key == "specification")
@@ -223,8 +222,6 @@ const AddEditProduct = ({ isEdit }) => {
       return !value;
     }
   );
-
-  console.log("checkAnyProductFieldHasNoValue", checkAnyProductFieldHasNoValue);
 
   const categoriesRequiringSize = [
     ProductCategory.Necklaces,
