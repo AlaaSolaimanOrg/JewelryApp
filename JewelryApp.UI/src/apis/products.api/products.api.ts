@@ -38,3 +38,9 @@ export const deleteProduct = async (payload: { id: string }) => {
 export const getProductsBySkus = async (payload: { skus: string[] }) => {
   return requestApi("GET", apiRoutes.product.getProductsBySkus, payload);
 };
+
+export const exportProductsToExcel = async (payload: any) => {
+  return requestApi("GET", apiRoutes.product.exportProductsToExcel, payload, {
+    responseType: "blob",
+  });
+};

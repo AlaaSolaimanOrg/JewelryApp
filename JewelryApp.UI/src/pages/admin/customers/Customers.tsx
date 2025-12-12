@@ -84,11 +84,17 @@ const Customers = () => {
       key: "totalProductsPurchased",
       label: "Items Sold",
       width: "150px",
+      onHeaderClick: () => {
+        handleSort("totalProductsPurchased", sortCriteria, onSortChange);
+      },
     },
     {
       key: "totalPurchasesValue",
       label: "Total Purchases Value",
       width: "150px",
+      onHeaderClick: () => {
+        handleSort("totalPurchasesValue", sortCriteria, onSortChange);
+      },
     },
 
     { key: "actions", label: "Actions", width: "150px" },

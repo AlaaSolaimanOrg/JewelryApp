@@ -2,6 +2,7 @@
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
+using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Application.Products.Queries.GetProductsBySku;
@@ -110,5 +111,21 @@ namespace JewerlyApp.API.Controllers.Products
             var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
+        /// <summary>
+        /// Export products to Excel
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExportProductsToExcel(
+            [FromQuery] ExportProductsToExcelQuery query)
+        {
+            var file = await Mediator.Send(query);
+
+            return File(
+                file.Content,
+                file.ContentType,
+                file.FileName
+            );
+        }
+
     }
 }

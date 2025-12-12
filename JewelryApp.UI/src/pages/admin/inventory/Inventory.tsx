@@ -7,10 +7,12 @@ import {
   FaSearch,
   FaTrash,
   FaPrint,
+  FaFileExcel,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   deleteProduct,
+  exportProductsToExcel,
   getProducts,
 } from "../../../apis/products.api/products.api";
 
@@ -248,6 +250,35 @@ const Inventory = () => {
       });
   };
 
+  const handleExport = async () => {
+    const payload = {
+      skus: scannedSkus,
+      karatTypeFilter: appliedFilters?.karatTypes,
+      weightFromFilter: appliedFilters?.weightFrom,
+      weightToFilter: appliedFilters?.weightTo,
+      priceFromFilter: appliedFilters?.priceFrom,
+      priceToFilter: appliedFilters?.priceTo,
+      productCategoryFilter: appliedFilters?.category,
+    };
+    const response = await exportProductsToExcel(payload);
+
+    // Create file download
+    const blob = new Blob([response], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Products_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div id="inventory" className="page">
       <div className="page-header">
@@ -256,6 +287,13 @@ const Inventory = () => {
           <span>Inventory Management</span>
         </h1>
         <div className="page-actions">
+          <button
+            className="btn-md btn-success me-2"
+            onClick={() => handleExport()}
+          >
+            <FaFileExcel className="me-1" />
+            Export
+          </button>
           <button
             className="btn-md btn-gold"
             onClick={() => {

@@ -85,6 +85,28 @@
     color: var(--text-dark);
   }
 
+  .returned-cell {
+    text-align: left;
+    line-height: 1.5;
+
+
+    .returned-qty {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #b91c1c; // red-ish
+    }
+
+    .returned-amount {
+      font-size: 0.8rem;
+      color: #991b1b;
+    }
+
+    .no-return {
+      color: #999;
+      font-size: 0.85rem;
+    }
+  }
+
   .table-wrapper {
     margin-bottom: 30px;
     border: 1px solid #eee;

@@ -2,123 +2,128 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace JewerlyApp.Application.Customers.Queries.GetCustomers
 {
-    public class GetCustomersQueryHandler : IRequestHandler<GetCustomersQuery, PaginatedResponse<GetCustomersVM>>
+    public class GetCustomersQueryHandler
+        : IRequestHandler<GetCustomersQuery, PaginatedResponse<GetCustomersVM>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IUserService _userService;
 
-        public GetCustomersQueryHandler(IApplicationDbContext context, IUserService userService)
+        public GetCustomersQueryHandler(
+            IApplicationDbContext context,
+            IUserService userService)
         {
             _context = context;
             _userService = userService;
         }
 
-        public async Task<PaginatedResponse<GetCustomersVM>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<GetCustomersVM>> Handle(
+            GetCustomersQuery request,
+            CancellationToken cancellationToken)
         {
             var loggedInUser = await _userService.GetLoggedInUser();
-
             if (loggedInUser == null)
             {
                 return new PaginatedResponse<GetCustomersVM>
                 {
-                    Data = new List<GetCustomersVM>(),
+                    Data = new(),
                     StatusCode = ResponseStatusCode.Unauthorized,
                     Message = Messages.ErrorGeneral
                 };
             }
 
-            IQueryable<Customer> customersQuery = _context.Customers.AsNoTracking();
-
-            // APPLY SEARCH
-            customersQuery = ApplySearch(customersQuery, request.SearchBy);
-
-            // TOTAL COUNT
-            int totalRecords = await customersQuery.CountAsync(cancellationToken);
-
-
-            var paginatedCustomers = await customersQuery.ApplySorting(request.SortBy, request.SortDirection)
-                .ApplyPagination(request.PageNumber, request.PageSize)
-                .ToListAsync(cancellationToken);
-
-            var customerIds = paginatedCustomers.Select(c => c.Id).ToList();
-
-            // AGGREGATION QUERY (SQL ONLY)
-            var salesAgg = await _context.Sales
-                .Where(s => customerIds.Contains(s.CustomerId))
-                .GroupBy(s => s.CustomerId)
-                .Select(g => new
+            // =========================================
+            // BASE QUERY (CUSTOMERS + SALES AGGREGATION)
+            // =========================================
+            var query =
+                from c in _context.Customers.AsNoTracking()
+                join s in _context.Sales
+                    on c.Id equals s.CustomerId into sales
+                select new GetCustomersVM
                 {
-                    CustomerId = g.Key,
-                    TotalProducts = g.SelectMany(s => s.SaleItems).Sum(si => si.Quantity),
-                    TotalSales = g.SelectMany(s => s.SaleItems).Sum(si => si.Quantity * si.Weight * si.OverriddenPricePerGram) - g.Sum(s => s.Discount),
+                    Id = c.Id,
+                    Name = c.Name,
+                    PhoneNumber = c.PhoneNumber ?? "",
+                    Email = c.Email ?? "",
+                    Birthday = c.Birthday,
 
-                    TotalDiscount = g.Sum(s => s.Discount),
+                    TotalProductsPurchased =
+                        sales.SelectMany(x => x.SaleItems)
+                             .Sum(si => (int?)si.Quantity) ?? 0,
 
-                    Total18K = g.SelectMany(s => s.SaleItems)
-                               .Where(si => si.KaratType == KaratType.Karat18)
-                               .Sum(si => si.Quantity * si.Weight),
+                    TotalPurchasesValue =
+                        (sales.SelectMany(x => x.SaleItems)
+                              .Sum(si => (decimal?)
+                                  (si.Quantity * si.Weight * si.OverriddenPricePerGram)) ?? 0)
+                        - (sales.Sum(x => (decimal?)x.Discount) ?? 0),
 
-                    Total21K = g.SelectMany(s => s.SaleItems)
-                               .Where(si => si.KaratType == KaratType.Karat21)
-                               .Sum(si => si.Quantity * si.Weight)
-                })
-                .ToDictionaryAsync(g => g.CustomerId, cancellationToken);
+                    TotalDiscount =
+                        sales.Sum(x => (decimal?)x.Discount) ?? 0,
 
-            // MAP RESULTS
-            var result = paginatedCustomers
-                .Select(c =>
-                {
-                    salesAgg.TryGetValue(c.Id, out var s);
+                    Total18K =
+                        sales.SelectMany(x => x.SaleItems)
+                             .Where(si => si.KaratType == KaratType.Karat18)
+                             .Sum(si => (decimal?)(si.Quantity * si.Weight)) ?? 0,
 
-                    return new GetCustomersVM
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        PhoneNumber = c.PhoneNumber ?? "",
-                        Email = c.Email ?? "",
-                        Birthday = c.Birthday,
-                        TotalProductsPurchased = s?.TotalProducts ?? 0,
-                        TotalPurchasesValue = s?.TotalSales ?? 0,
-                        TotalDiscount = s?.TotalDiscount ?? 0,
-                        Total18K = s?.Total18K ?? 0,
-                        Total21K = s?.Total21K ?? 0
-                    };
-                })
-                .ToList();
+                    Total21K =
+                        sales.SelectMany(x => x.SaleItems)
+                             .Where(si => si.KaratType == KaratType.Karat21)
+                             .Sum(si => (decimal?)(si.Quantity * si.Weight)) ?? 0
+                };
+
+            // =========================================
+            // SEARCH (SQL)
+            // =========================================
+            if (!string.IsNullOrWhiteSpace(request.SearchBy))
+            {
+                var search = request.SearchBy.ToLower();
+
+                query = query.Where(c =>
+                    c.Name.ToLower().Contains(search) ||
+                    c.Email.ToLower().Contains(search) ||
+                    c.PhoneNumber.Contains(search));
+            }
+
+            // =========================================
+            // TOTAL COUNT (SQL)
+            // =========================================
+            int totalRecords =
+                await query.CountAsync(cancellationToken);
+
+            // =========================================
+            // SORTING (SQL)
+            // =========================================
+            query = query.ApplySorting(
+                request.SortBy,
+                request.SortDirection
+            );
+
+            // =========================================
+            // PAGINATION (SQL)
+            // =========================================
+            var result =
+                await query
+                    .ApplyPagination(
+                        request.PageNumber,
+                        request.PageSize)
+                    .ToListAsync(cancellationToken);
 
             return new PaginatedResponse<GetCustomersVM>
             {
                 Data = result,
-                StatusCode = totalRecords > 0 ? ResponseStatusCode.Success : ResponseStatusCode.NoContent,
+                StatusCode = totalRecords > 0
+                    ? ResponseStatusCode.Success
+                    : ResponseStatusCode.NoContent,
                 Message = Messages.Success,
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize,
                 TotalRecords = totalRecords
             };
         }
-
-        private IQueryable<Customer> ApplySearch(IQueryable<Customer> query, string? searchTerm)
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-                return query;
-
-            searchTerm = searchTerm.ToLower();
-
-            return query.Where(c =>
-                c.Name.ToLower().Contains(searchTerm) ||
-                c.Email.ToLower().Contains(searchTerm) ||
-                (c.PhoneNumber != null && c.PhoneNumber.Contains(searchTerm)));
-        }
-
-
-
-
     }
 }

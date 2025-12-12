@@ -168,11 +168,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                       <th style={{ width: "16%" }}>SKU</th>
                       <th style={{ width: "10%" }}>Karat</th>
                       <th style={{ width: "10%" }}>Qty</th>
-                      <th style={{ width: "10%" }}>Ret. Qty</th>
+                      <th style={{ width: "18%" }}>Returned</th>
                       <th style={{ width: "12%" }}>Weight</th>
                       <th style={{ width: "12%" }}>Price/Gram</th>
                       <th style={{ width: "14%" }}>Subtotal</th>
-                      <th style={{ width: "14%" }}>Returned Amt</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
@@ -188,8 +187,20 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
                         <td style={{ width: "10%" }}>{item.quantity}</td>
 
-                        <td style={{ width: "10%" }}>
-                          {item.quantityReturned || 0}
+                        <td style={{ width: "18%" }} className="returned-cell">
+                          {item.quantityReturned > 0 ||
+                          item.amountReturned > 0 ? (
+                            <>
+                              <div className="returned-qty">
+                                {item.quantityReturned || 0} pcs
+                              </div>
+                              <div className="returned-amount">
+                                ${item.amountReturned?.toFixed(2) || "0.00"}
+                              </div>
+                            </>
+                          ) : (
+                            <span className="no-return">—</span>
+                          )}
                         </td>
 
                         <td style={{ width: "12%" }}>{item.weight}g</td>
@@ -197,10 +208,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                         <td style={{ width: "12%" }}>${item.pricePerGram}</td>
 
                         <td style={{ width: "14%" }}>${item.subtotal}</td>
-
-                        <td style={{ width: "14%" }}>
-                          ${item.amountReturned?.toFixed(2) || "0.00"}
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -236,7 +243,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   Number(saleDetails.totalReturnAmount) > 0 && (
                     <div className="summary-item returned-item">
                       <span>Total Returned Amount:</span>
-                      <span>${saleDetails.totalReturnAmount}</span>
+                      <span className="text-danger fw-600">
+                        ${saleDetails.totalReturnAmount}
+                      </span>
                     </div>
                   )}
               </div>
