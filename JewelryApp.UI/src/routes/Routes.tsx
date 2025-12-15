@@ -2,10 +2,11 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
+import Analytics from "../pages/admin/analytics/Analytics";
+import InventoryReports from "../pages/admin/InventoryReports/InventoryReports";
+import RepairManagement from "../pages/admin/repairManagement/RepairManagement";
 import Login from "../pages/general/login/Login";
 import Unauthorized from "../pages/general/unauthorized/Unauthorized";
-import Analytics from "../pages/admin/analytics/Analytics";
-import RepairManagement from "../pages/admin/repairManagement/RepairManagement";
 
 // Lazy load all components
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
@@ -20,6 +21,7 @@ const Customers = lazy(() => import("../pages/admin/customers/Customers"));
 const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
 const ExportData = lazy(() => import("../pages/admin/exportData/ExportData"));
 const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
+
 const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
 const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
 const SalesReports = lazy(
@@ -38,8 +40,9 @@ const TransactionHistory = lazy(
 
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
-const ReturnManagement = lazy(() => import("../pages/admin/returnManagement/ReturnManagement"));
-
+const ReturnManagement = lazy(
+  () => import("../pages/admin/returnManagement/ReturnManagement")
+);
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -105,7 +108,11 @@ const AppRoutes = () => {
           >
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/analytics" element={<Analytics />} />
-            <Route path="admin/inventory" element={<Inventory />} />
+            <Route path="/admin/inventory/products" element={<Inventory />} />
+            <Route
+              path="/admin/inventory/reports"
+              element={<InventoryReports />}
+            />
             <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />
             <Route path="admin/customers" element={<Customers />} />

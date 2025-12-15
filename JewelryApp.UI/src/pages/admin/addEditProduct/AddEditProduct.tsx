@@ -191,7 +191,7 @@ const AddEditProduct = ({ isEdit }) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           if (isEdit) {
-            navigate("/admin/inventory");
+            navigate("/admin/inventory/products");
           } else {
             handleClearClick();
           }
@@ -243,7 +243,7 @@ const AddEditProduct = ({ isEdit }) => {
           <button
             className="btn-md btn-info"
             onClick={() => {
-              navigate("/admin/inventory");
+              navigate("/admin/inventory/products");
             }}
           >
             <FaTimes className="icon" />

@@ -44,3 +44,10 @@ export const exportProductsToExcel = async (payload: any) => {
     responseType: "blob",
   });
 };
+
+export const getInventoryReports = async (payload: {
+  dateFrom: string;
+  date: string;
+}) => {
+  return requestApi("GET", apiRoutes.product.getInventoryReports, payload);
+};

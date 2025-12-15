@@ -10,6 +10,7 @@ import {
   FaTimes,
   FaTools,
   FaUndo,
+  FaChevronDown,
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
@@ -24,6 +25,17 @@ const SideNav = () => {
   const location = useLocation();
   const { setUserInfo, userInfo } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = (label: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
+  };
+
+  const isSubItemActive = (subItems) =>
+    subItems?.some((sub) => location.pathname === sub.path);
 
   const navItems = [
     {
@@ -39,7 +51,17 @@ const SideNav = () => {
     {
       label: "Inventory",
       icon: <FaBox className="icon" />,
-      path: "/admin/inventory",
+      path: "/admin/inventory/products",
+      subItems: [
+        {
+          label: "Products",
+          path: "/admin/inventory/products",
+        },
+        {
+          label: "Inventory Reports",
+          path: "/admin/inventory/reports",
+        },
+      ],
     },
     {
       label: "Pricing",
@@ -161,22 +183,68 @@ const SideNav = () => {
 
         <div className="nav-links">
           <div className="nav-section">Inventory</div>
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={`nav-item ${isActive(item.path) ? "active" : ""}`}
-              onClick={() => handleNavClick(item.path)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const hasSubItems = !!item.subItems?.length;
+            const expanded = openSections[item.label];
+            const active =
+              isActive(item.path) ||
+              (hasSubItems && isSubItemActive(item.subItems));
+
+            return (
+              <div key={item.label}>
+                <button
+                  className={`nav-item ${active ? "active" : ""}`}
+                  onClick={() => {
+                    if (hasSubItems) {
+                      toggleSection(item.label);
+
+                      // Navigate to first sub item
+                      if (item.subItems?.length) {
+                        handleNavClick(item.subItems[0].path);
+                      }
+                    } else {
+                      handleNavClick(item.path);
+                    }
+                  }}
+                >
+                  {/* LEFT SIDE */}
+                  <div className="nav-left">
+                    {item.icon}
+                    <span className="nav-text">{item.label}</span>
+                  </div>
+
+                  {/* RIGHT SIDE ARROW */}
+                  {hasSubItems && (
+                    <FaChevronDown
+                      className={`nav-arrow ${expanded ? "open" : ""}`}
+                    />
+                  )}
+                </button>
+
+                {hasSubItems && expanded && (
+                  <div className="sub-nav">
+                    {item?.subItems?.map((sub) => (
+                      <button
+                        key={sub.label}
+                        className={`sub-nav-item ${
+                          location.pathname === sub.path ? "active" : ""
+                        }`}
+                        onClick={() => handleNavClick(sub.path)}
+                      >
+                        {sub.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
 
           {hasPosRole && (
             <div>
               <div className="nav-section">System</div>
 
-              <button className="nav-item " onClick={handlePosRedirect}>
+              <button className="nav-item no-subItems" onClick={handlePosRedirect}>
                 <MdOutlinePointOfSale className="icon" />
                 <span>POS</span>
               </button>
@@ -187,7 +255,7 @@ const SideNav = () => {
           {operationItems.map((item) => (
             <button
               key={item.label}
-              className={`nav-item ${isActive(item.path) ? "active" : ""}`}
+              className={`nav-item no-subItems ${isActive(item.path) ? "active" : ""}`}
               onClick={() => handleNavClick(item.path)}
             >
               {item.icon}
@@ -196,7 +264,7 @@ const SideNav = () => {
           ))}
 
           <button
-            className="nav-item"
+            className="nav-item no-subItems"
             onClick={handleLogout}
             style={{ marginTop: "16px", color: "#d9534f" }}
           >

@@ -3,11 +3,11 @@ import { Col, Row, Stack } from "react-bootstrap";
 import {
   FaBox,
   FaEdit,
+  FaFileExcel,
   FaPlus,
+  FaPrint,
   FaSearch,
   FaTrash,
-  FaPrint,
-  FaFileExcel,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,10 +17,15 @@ import {
 } from "../../../apis/products.api/products.api";
 
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
-import Paginator from "../../../components/Paginator/Paginator";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
+import Paginator from "../../../components/Paginator/Paginator";
 
+import InventoryFilter, {
+  type InventoryFilters,
+} from "../../../components/InventoryFilter/InventoryFilter";
+import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   KaratType,
@@ -36,11 +41,6 @@ import {
 } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
-import CustomTable from "../../../components/tables/Table/CustomTable";
-import InventoryFilter, {
-  type InventoryFilters,
-} from "../../../components/InventoryFilter/InventoryFilter";
 
 export interface Product {
   id: string;

@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Products.Commands.CreateProduct;
+﻿using JewerlyApp.Application.InventoryReports.Queries;
+using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
@@ -125,6 +126,18 @@ namespace JewerlyApp.API.Controllers.Products
                 file.ContentType,
                 file.FileName
             );
+        }
+
+        /// <summary>
+        /// Get product by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetInventoryReports([FromQuery] GetInventoryReportsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
         }
 
     }

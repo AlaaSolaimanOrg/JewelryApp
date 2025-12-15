@@ -9,44 +9,27 @@
   transition: var(--transition);
   left: 0;
   top: 0;
+
+  /* =============================
+     HEADER
+  ============================== */
   .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: space-between; // keeps logo left, button right
+    justify-content: space-between;
     padding: 20px;
     height: var(--header-height);
     border-bottom: 1px solid var(--border);
 
     .logo {
-      flex: 1; // take all remaining space
+      flex: 1;
       display: flex;
       align-items: center;
-      min-width: 0; // allow text to shrink
+      min-width: 0;
     }
 
     .close-sidebar-mobile {
-      flex-shrink: 0; // don't shrink
-    }
-  }
-
-  .logo-text h1 {
-    font-size: 1.4rem;
-    white-space: nowrap; // keep text on one line
-    overflow: hidden; // hide overflow if needed
-    text-overflow: ellipsis;
-  }
-
-  .close-sidebar-mobile {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--secondary);
-    cursor: pointer;
-    padding: 5px;
-
-    &:hover {
-      color: var(--dark-light);
+      flex-shrink: 0;
     }
   }
 
@@ -71,35 +54,66 @@
   .logo-text {
     display: flex;
     flex-direction: column;
+
+    h1 {
+      font-size: 1.4rem;
+      color: var(--dark-light);
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      span {
+        color: var(--gold);
+      }
+    }
+
+    small {
+      font-size: 0.75rem;
+      color: var(--secondary);
+      font-weight: 300;
+    }
   }
 
-  .logo-text h1 {
-    font-size: 1.4rem;
-    color: var(--dark-light);
-    font-weight: 700;
-  }
-
-  .logo-text span {
-    color: var(--gold);
-  }
-
-  .logo-text small {
-    font-size: 0.75rem;
+  .close-sidebar-mobile {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
     color: var(--secondary);
-    font-weight: 300;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--dark-light);
+    }
   }
 
+  /* =============================
+     NAV LINKS
+  ============================== */
   .nav-links {
     padding: 20px 0;
   }
 
+  .nav-section {
+    padding: 15px 20px 5px;
+    font-size: 0.85rem;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+
+  /* =============================
+     MAIN NAV ITEM
+  ============================== */
   .nav-item {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* ← arrow goes right */
     padding: 12px 20px;
     margin: 4px 10px;
     color: var(--secondary);
-    text-decoration: none;
     transition: var(--transition);
     border-radius: 8px;
     font-size: 0.95rem;
@@ -116,27 +130,90 @@
     }
   }
 
+  .no-subItems{
+    display: flex;
+    justify-content: start;
+    gap: 8px;
+  }
+  /* Left group: icon + text */
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .nav-item .icon {
-    margin-right: 12px;
     font-size: 18px;
     width: 24px;
     text-align: center;
+    flex-shrink: 0;
   }
 
   .nav-item .addIcon {
     font-size: 24px;
   }
 
-  .nav-section {
-    padding: 15px 20px 5px;
+  /* =============================
+     ARROW (MAIN ITEM ONLY)
+  ============================== */
+  .nav-arrow {
+    font-size: 12px;
+    color: var(--secondary);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .nav-arrow.open {
+    transform: rotate(180deg);
+  }
+
+  .nav-item.active .nav-arrow {
+    color: var(--gold);
+  }
+
+  /* =============================
+     SUB NAV
+  ============================== */
+  .sub-nav {
+    margin-left: 42px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    padding-left: 10px;
+    border-left: 2px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .sub-nav-item {
+    display: block;
+    width: calc(100% - 16px);
+    padding: 8px 16px;
+    margin: 4px 0;
+    background: none;
+    border: none;
+    text-align: left;
     font-size: 0.85rem;
     color: var(--secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+
+    &:hover,
+    &.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
   }
 }
 
+/* =============================
+   MOBILE TOGGLE
+============================== */
 .mobile-toggle-btn {
   display: none;
   position: fixed;
@@ -167,7 +244,12 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
-/* Show toggle button ONLY below 1599px */
+
+/* =============================
+   RESPONSIVE
+============================== */
+
+/* Mobile & Tablet */
 @media (max-width: 1599px) {
   .mobile-toggle-btn {
     display: block;
@@ -190,7 +272,7 @@
   }
 }
 
-/* From 1600px and above → Full sidebar, no toggle */
+/* Desktop (1600px+) */
 @media (min-width: 1600px) {
   .sidebar {
     transform: translateX(0) !important;
