@@ -23,3 +23,6 @@ export const getStaffPerformance = async (payload: AnalyticsFilterPayload) => {
 export const getAnalyticsSummary = async (payload: AnalyticsFilterPayload) => {
   return requestApi("GET", apiRoutes.analytics.getAnalyticsSummary, payload);
 };
+export const getPriceOverTime = async (payload: AnalyticsFilterPayload) => {
+  return requestApi("GET", apiRoutes.analytics.getPriceOverTime, payload);
+};

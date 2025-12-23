@@ -72,6 +72,7 @@ export const apiRoutes = {
     getSalesByCategory: "Analytics/GetSalesByCategory",
     getStaffPerformance: "Analytics/GetStaffPerformance",
     getAnalyticsSummary: "Analytics/GetAnalyticsSummary",
+    getPriceOverTime: "Analytics/GetPriceOverTime",
   },
   logs: {
     getLogs: "Logs/GetLogs",

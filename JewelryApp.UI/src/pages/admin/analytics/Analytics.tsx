@@ -30,6 +30,7 @@ import AnalyticsSummary from "./analyticsSummary/AnalyticsSummary";
 import { ReportType } from "../../../types/enums";
 import useLocalApi from "../../../hooks/useLocalApi";
 import {
+  getPriceOverTime,
   getSalesByCategory,
   getSalesOverTime,
   getStaffPerformance,
@@ -53,6 +54,14 @@ export interface StaffPerformanceItem {
   staffName: string;
   salesAmount: number;
   commission: number;
+}
+
+export interface PriceOverTimeAnalytic {
+  dateLabel: string;
+  karat18: number;
+  karat21: number;
+  karat22: number;
+  karat24: number;
 }
 
 ChartJS.register(
@@ -123,6 +132,15 @@ const Analytics = () => {
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: StaffPerformanceItem[] };
+
+  const { data: priceOverTimeAnalytics } = useLocalApi({
+    apiToCall: (data) => getPriceOverTime(data.payload),
+    payload: {
+      dateFrom: appliedFilters.dateFrom,
+      dateTo: appliedFilters.dateTo,
+    },
+    effectDependency: [appliedFilters, refreshKey],
+  }) as { data: PriceOverTimeAnalytic[] };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -264,6 +282,38 @@ const Analytics = () => {
       dateTo: "",
       reportType: ReportType.AllTime,
     });
+  };
+
+  const karatTypes = [18, 21, 22, 24];
+  const karatColors = {
+    18: "#D4AF37",
+    21: "#B5942D",
+    22: "#E6C55C",
+    24: "#1a3a5f",
+  };
+
+  const priceOverTimeData = {
+    labels: priceOverTimeAnalytics.map((d) => d.dateLabel),
+    datasets: karatTypes.map((karat) => ({
+      label: `${karat}K`,
+      data: priceOverTimeAnalytics.map((d) => d[`karat${karat}`]), // ✅ fix
+      borderColor: karatColors[karat],
+      backgroundColor: karatColors[karat] + "33", // transparent fill
+      tension: 0.4,
+      fill: false,
+      pointRadius: 3,
+      borderWidth: 2,
+    })),
+  };
+
+  const priceOverTimeOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: "top" } },
+    scales: {
+      y: { beginAtZero: false, grid: { color: "rgba(0,0,0,0.05)" } },
+      x: { grid: { display: false } },
+    },
   };
 
   return (
@@ -470,6 +520,29 @@ const Analytics = () => {
             ) : (
               <div className="no-data">
                 <FaUser />
+                No data available
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* PRICE OVER TIME - MULTIPLE KARAT TYPES */}
+        <div className="analytics-card">
+          <div className="analytics-header">
+            <h3 className="analytics-title">
+              <span className="icon-circle">
+                <FaChartLine />
+              </span>
+              Gold Price Over Time
+            </h3>
+          </div>
+
+          <div className="chart-container">
+            {priceOverTimeAnalytics && priceOverTimeAnalytics.length > 0 ? (
+              <Line data={priceOverTimeData} options={priceOverTimeOptions} />
+            ) : (
+              <div className="no-data">
+                <FaChartLine />
                 No data available
               </div>
             )}

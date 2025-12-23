@@ -27,6 +27,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<ReturnItem> ReturnItems { get; set; }
         DbSet<Repair> Repairs { get; set; }
         DbSet<RepairItem> RepairItems { get; set; }
+        DbSet<PricingSettingLog> PricingSettingLogs { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

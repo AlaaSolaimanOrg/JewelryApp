@@ -28,6 +28,7 @@ namespace JewerlyApp.Infrastructure
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<ISmsService, TwilioSmsService>();
 
             return services;
         }

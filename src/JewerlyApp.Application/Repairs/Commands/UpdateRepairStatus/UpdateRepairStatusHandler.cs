@@ -12,15 +12,18 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
     public class UpdateRepairStatusHandler : IRequestHandler<UpdateRepairStatusCommand, GenericResponse<Unit>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly ISmsService _smsService;
 
-        public UpdateRepairStatusHandler(IApplicationDbContext context)
+        public UpdateRepairStatusHandler(IApplicationDbContext context, ISmsService smsService)
         {
             _context = context;
+            _smsService = smsService;
         }
 
         public async Task<GenericResponse<Unit>> Handle(UpdateRepairStatusCommand request, CancellationToken cancellationToken)
         {
             var repair = await _context.Repairs
+                .Include(x=>x.Customer)
                 .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
 
             if (repair == null)
@@ -33,6 +36,18 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
             }
 
             repair.Status = request.Status;
+            
+            if (!string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
+            {
+                var message =
+                 "Adi Jewelry\n" +
+                 "Your repair is ready for pickup.";
+
+                await _smsService.SendAsync(
+                    repair.Customer.PhoneNumber,
+                    message
+                );
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JewerlyApp.API.Middleware;
+using JewerlyApp.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,6 +124,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
+
 
 var app = builder.Build();
 
