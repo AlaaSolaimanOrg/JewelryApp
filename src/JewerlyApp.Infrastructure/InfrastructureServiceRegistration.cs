@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Infrastructure.Context;
 using JewerlyApp.Infrastructure.Services;
+using JewerlyApp.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,9 @@ namespace JewerlyApp.Infrastructure
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
+
+            // Twilio
+            services.Configure<TwilioSettings>(config.GetSection("Twilio"));
             services.AddScoped<ISmsService, TwilioSmsService>();
 
             return services;

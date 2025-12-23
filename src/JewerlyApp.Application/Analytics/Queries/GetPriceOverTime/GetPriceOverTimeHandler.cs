@@ -58,22 +58,17 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                     0, 0),
 
                 // Daily
-                ReportType.Weekly  => x => new DateTime(
+                ReportType.Weekly or ReportType.Monthly => x => new DateTime(
                     x.CreatedDate!.Value.Year,
                     x.CreatedDate!.Value.Month,
                     x.CreatedDate!.Value.Day),
 
-                // Monthly ✅
-                ReportType.Monthly => x => new DateTime(
+                // Monthly
+                ReportType.Yearly => x => new DateTime(
                     x.CreatedDate!.Value.Year,
                     x.CreatedDate!.Value.Month,
                     1),
 
-                // Yearly ✅
-                ReportType.Yearly => x => new DateTime(
-                    x.CreatedDate!.Value.Year,
-                    1,
-                    1),
                 // AllTime (fallback) → minute precision
                 _ => x => new DateTime(
                     x.CreatedDate!.Value.Year,
@@ -92,10 +87,9 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                     DateLabel = request.ReportType switch
                     {
                         ReportType.Daily => g.Key.ToString("HH:mm", CultureInfo.InvariantCulture),
-                        ReportType.Weekly  => g.Key.ToString("MMM dd", CultureInfo.InvariantCulture),
-                        ReportType.Monthly => g.Key.ToString("MMM", CultureInfo.InvariantCulture),
+                        ReportType.Weekly or ReportType.Monthly => g.Key.ToString("MMM dd", CultureInfo.InvariantCulture),
                         ReportType.Yearly => g.Key.ToString("MMM yyyy", CultureInfo.InvariantCulture),
-                        _ => g.Key.ToString("MMM dd HH:mm", CultureInfo.InvariantCulture)
+                        _ => g.Key.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)
                     },
                     Karat18 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat18)?.NewPrice ?? 0,
                     Karat21 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat21)?.NewPrice ?? 0,
@@ -105,10 +99,30 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                 .OrderBy(x => x.DateLabel)
                 .ToList();
 
-            // 5️⃣ Return response
+            // 5️⃣ Limit to max 6 points, evenly sampled
+            int maxPoints = 6;
+            List<PriceOverTimeChartVM> limitedResult;
+
+            if (result.Count <= maxPoints)
+            {
+                limitedResult = result; // not enough points, keep all
+            }
+            else
+            {
+                limitedResult = new List<PriceOverTimeChartVM>();
+                double step = (double)(result.Count - 1) / (maxPoints - 1); // spacing between points
+
+                for (int i = 0; i < maxPoints; i++)
+                {
+                    int index = (int)Math.Round(i * step);
+                    limitedResult.Add(result[index]);
+                }
+            }
+
+            // 6️⃣ Return response
             return new GenericResponse<List<PriceOverTimeChartVM>>
             {
-                Data = result,
+                Data = limitedResult,
                 StatusCode = ResponseStatusCode.Success,
                 Message = Messages.Success
             };

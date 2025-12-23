@@ -1,29 +1,27 @@
 ﻿using JewerlyApp.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
+using JewerlyApp.Infrastructure.Settings;
+using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 public class TwilioSmsService : ISmsService
 {
-    private readonly IConfiguration _config;
+    private readonly TwilioSettings _settings;
 
-    public TwilioSmsService(IConfiguration config)
+    public TwilioSmsService(IOptions<TwilioSettings> options)
     {
-        _config = config;
+        _settings = options.Value;
 
-        TwilioClient.Init(
-            _config["Twilio:AccountSid"],
-            _config["Twilio:AuthToken"]
-        );
+        TwilioClient.Init(_settings.AccountSid, _settings.AuthToken);
     }
 
     public async Task SendAsync(string toPhoneNumber, string message)
     {
-        
         await MessageResource.CreateAsync(
             body: message,
-            from: new Twilio.Types.PhoneNumber(_config["Twilio:FromNumber"]),
-            to: new Twilio.Types.PhoneNumber(toPhoneNumber)
+            from: new PhoneNumber(_settings.FromNumber),
+            to: new PhoneNumber(toPhoneNumber)
         );
     }
 }

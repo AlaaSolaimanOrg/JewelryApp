@@ -312,7 +312,7 @@ const Analytics = () => {
       backgroundColor: karatColors[karat] + "33", // transparent fill
       tension: 0.4,
       fill: false,
-      pointRadius: 5,
+      pointRadius: 4,
       borderWidth: 2,
     })),
   };
