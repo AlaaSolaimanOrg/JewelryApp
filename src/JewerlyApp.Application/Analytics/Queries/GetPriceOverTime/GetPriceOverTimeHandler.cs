@@ -2,10 +2,12 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Linq;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
 {
@@ -27,13 +29,13 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
             DateTime dateFrom = request.DateFrom ?? DateTime.MinValue;
             DateTime dateTo = request.DateTo ?? DateTime.MaxValue;
 
-            if (request.ReportType.HasValue)
+            // Only auto-calc range if user did NOT provide dates
+            if (request.ReportType.HasValue && !request.DateFrom.HasValue && !request.DateTo.HasValue)
             {
-                // Optional: you can use your helper for report type ranges
                 (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
             }
 
-            // 2️⃣ Load gold pricing logs
+            // 2️⃣ Load pricing logs
             var logs = await _context.PricingSettingLogs
                 .AsNoTracking()
                 .Where(x =>
@@ -44,27 +46,66 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync(cancellationToken);
 
-            // 3️⃣ Group by CreatedDate (full timestamp)
+            // 3️⃣ Decide grouping based on ReportType
+            Func<PricingSettingLog, DateTime> groupKey = request.ReportType switch
+            {
+                // Hourly
+                ReportType.Daily => x => new DateTime(
+                    x.CreatedDate!.Value.Year,
+                    x.CreatedDate!.Value.Month,
+                    x.CreatedDate!.Value.Day,
+                    x.CreatedDate!.Value.Hour,
+                    0, 0),
+
+                // Daily
+                ReportType.Weekly  => x => new DateTime(
+                    x.CreatedDate!.Value.Year,
+                    x.CreatedDate!.Value.Month,
+                    x.CreatedDate!.Value.Day),
+
+                // Monthly ✅
+                ReportType.Monthly => x => new DateTime(
+                    x.CreatedDate!.Value.Year,
+                    x.CreatedDate!.Value.Month,
+                    1),
+
+                // Yearly ✅
+                ReportType.Yearly => x => new DateTime(
+                    x.CreatedDate!.Value.Year,
+                    1,
+                    1),
+                // AllTime (fallback) → minute precision
+                _ => x => new DateTime(
+                    x.CreatedDate!.Value.Year,
+                    x.CreatedDate!.Value.Month,
+                    x.CreatedDate!.Value.Day,
+                    x.CreatedDate!.Value.Hour,
+                    x.CreatedDate!.Value.Minute,
+                    0)
+            };
+
+            // 4️⃣ Group & project
             var result = logs
-      .GroupBy(x => new DateTime(
-          x.CreatedDate!.Value.Year,
-          x.CreatedDate!.Value.Month,
-          x.CreatedDate!.Value.Day,
-          x.CreatedDate!.Value.Hour,
-          x.CreatedDate!.Value.Minute,
-          0)) // round to minute
-      .Select(g => new PriceOverTimeChartVM
-      {
-          DateLabel = g.Key.ToString("MMM dd HH:mm", CultureInfo.InvariantCulture),
-          Karat18 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat18)?.NewPrice ?? 0,
-          Karat21 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat21)?.NewPrice ?? 0,
-          Karat22 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat22)?.NewPrice ?? 0,
-          Karat24 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat24)?.NewPrice ?? 0
-      })
-      .OrderBy(x => x.DateLabel)
-      .ToList();
+                .GroupBy(groupKey)
+                .Select(g => new PriceOverTimeChartVM
+                {
+                    DateLabel = request.ReportType switch
+                    {
+                        ReportType.Daily => g.Key.ToString("HH:mm", CultureInfo.InvariantCulture),
+                        ReportType.Weekly  => g.Key.ToString("MMM dd", CultureInfo.InvariantCulture),
+                        ReportType.Monthly => g.Key.ToString("MMM", CultureInfo.InvariantCulture),
+                        ReportType.Yearly => g.Key.ToString("MMM yyyy", CultureInfo.InvariantCulture),
+                        _ => g.Key.ToString("MMM dd HH:mm", CultureInfo.InvariantCulture)
+                    },
+                    Karat18 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat18)?.NewPrice ?? 0,
+                    Karat21 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat21)?.NewPrice ?? 0,
+                    Karat22 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat22)?.NewPrice ?? 0,
+                    Karat24 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat24)?.NewPrice ?? 0
+                })
+                .OrderBy(x => x.DateLabel)
+                .ToList();
 
-
+            // 5️⃣ Return response
             return new GenericResponse<List<PriceOverTimeChartVM>>
             {
                 Data = result,

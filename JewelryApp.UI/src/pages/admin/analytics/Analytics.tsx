@@ -138,6 +138,10 @@ const Analytics = () => {
     payload: {
       dateFrom: appliedFilters.dateFrom,
       dateTo: appliedFilters.dateTo,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
     },
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: PriceOverTimeAnalytic[] };
@@ -286,10 +290,17 @@ const Analytics = () => {
 
   const karatTypes = [18, 21, 22, 24];
   const karatColors = {
-    18: "#D4AF37",
-    21: "#B5942D",
-    22: "#E6C55C",
-    24: "#1a3a5f",
+    18: "#D4AF37", // Gold
+    21: "#2F80ED", // Blue
+    22: "#27AE60", // Green
+    24: "#EB5757", // Red
+  };
+
+  const karatPointStyles = {
+    18: "circle",
+    21: "triangle",
+    22: "rect",
+    24: "star",
   };
 
   const priceOverTimeData = {
@@ -301,7 +312,7 @@ const Analytics = () => {
       backgroundColor: karatColors[karat] + "33", // transparent fill
       tension: 0.4,
       fill: false,
-      pointRadius: 3,
+      pointRadius: 5,
       borderWidth: 2,
     })),
   };
