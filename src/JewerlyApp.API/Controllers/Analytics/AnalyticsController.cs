@@ -1,4 +1,5 @@
 using JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary;
+using JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime;
 using JewerlyApp.Application.Analytics.Queries.GetSalesByCategory;
 using JewerlyApp.Application.Analytics.Queries.GetSalesOverTime;
 using JewerlyApp.Application.Analytics.Queries.GetStaffPerformance;
@@ -54,6 +55,18 @@ namespace JewerlyApp.API.Controllers.Analytics
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAnalyticsSummary([FromQuery] GetAnalyticsSummaryQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get Price Over Time
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetPriceOverTime([FromQuery] GetPriceOverTimeQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

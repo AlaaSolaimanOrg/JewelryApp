@@ -1,22 +1,15 @@
-﻿using JewerlyApp.Application.Common.Responses;
+﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings;
 
 namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
 {
-    /// <summary>
-    /// Handles the EditPricingSettingsCommand to either create or update a pricing setting.
-    /// </summary>
-    public class EditPricingSettingsHandler : IRequestHandler<EditPricingSettingsCommand, GenericResponse<bool>>
+    public class EditPricingSettingsHandler
+        : IRequestHandler<EditPricingSettingsCommand, GenericResponse<bool>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -25,40 +18,59 @@ namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
             _context = context;
         }
 
-        public async Task<GenericResponse<bool>> Handle(EditPricingSettingsCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<bool>> Handle(
+            EditPricingSettingsCommand request,
+            CancellationToken cancellationToken)
         {
+            var productTypes = request.PricingSettings
+                .Select(x => x.ProductType)
+                .Distinct()
+                .ToList();
 
-            var productTypes = request.PricingSettings.Select(r => r.ProductType).ToList();
-
-            var settings = await _context.PricingSettings
+            var existingSettings = await _context.PricingSettings
                 .Where(x => productTypes.Contains(x.ProductType))
                 .ToListAsync(cancellationToken);
 
-            settings = settings
-                .Where(x => request.PricingSettings
-                    .Any(r => r.ProductType == x.ProductType && r.KaratType == x.KaratType))
-                .ToList();
-
-            foreach (var pricingSettingVm in request.PricingSettings)
+            foreach (var vm in request.PricingSettings)
             {
-                var pricingSetting =settings
-                    .FirstOrDefault(ps =>
-                        ps.ProductType == pricingSettingVm.ProductType &&
-                        ps.KaratType == pricingSettingVm.KaratType);
+                var existing = existingSettings.FirstOrDefault(x =>
+                    x.ProductType == vm.ProductType &&
+                    x.KaratType == vm.KaratType);
 
-                if (pricingSetting == null)
+                if (existing == null)
                 {
-                    pricingSetting = new PricingSetting
+                    // Create new pricing setting
+                    var newSetting = new PricingSetting
                     {
-                        ProductType = pricingSettingVm.ProductType,
-                        KaratType = pricingSettingVm.KaratType,
-                        Price = pricingSettingVm.PricePerGram
+                        ProductType = vm.ProductType,
+                        KaratType = vm.KaratType,
+                        Price = vm.PricePerGram
                     };
-                    _context.PricingSettings.Add(pricingSetting);
+
+                    _context.PricingSettings.Add(newSetting);
+
+                    // Log creation
+                    _context.PricingSettingLogs.Add(new PricingSettingLog
+                    {
+                        ProductType = vm.ProductType,
+                        KaratType = vm.KaratType,
+                        OldPrice = 0,
+                        NewPrice = vm.PricePerGram,
+                    
+                    });
                 }
-                else
+                else if (existing.Price != vm.PricePerGram)
                 {
-                    pricingSetting.Price = pricingSettingVm.PricePerGram;
+                    // Log update ONLY if price changed
+                    _context.PricingSettingLogs.Add(new PricingSettingLog
+                    {
+                        ProductType = existing.ProductType,
+                        KaratType = existing.KaratType,
+                        OldPrice = existing.Price,
+                        NewPrice = vm.PricePerGram
+                    });
+
+                    existing.Price = vm.PricePerGram;
                 }
             }
 
