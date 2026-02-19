@@ -58,7 +58,7 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             var fullYear = DateTime.UtcNow.Year;
 
             var sequence = await _context.SkuSequences
-                .FirstOrDefaultAsync(x => x.Category == request.Category && x.Karat == request.KaratType && x.Year == fullYear);
+                .FirstOrDefaultAsync(x => x.Category == request.Category && x.Year == fullYear);
             if (sequence != null)
             {
                 sequence.LastNumber++;

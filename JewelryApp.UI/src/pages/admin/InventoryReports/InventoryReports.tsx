@@ -34,7 +34,6 @@ const InventoryReports = () => {
     };
     isLoading: boolean;
   };
-  console.log(dateRange);
 
   /* ================= HANDLERS ================= */
 
