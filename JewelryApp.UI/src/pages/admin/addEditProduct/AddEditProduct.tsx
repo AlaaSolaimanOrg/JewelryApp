@@ -87,11 +87,10 @@ const AddEditProduct = ({ isEdit }) => {
   const { data: generatedSKU, setData: setGeneratedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
-      karatType: productFields.karat,
       category: productFields.category,
     },
-    extraEffectCheck: !!productFields.karat && !!productFields.category,
-    effectDependency: [productFields.karat, productFields.category],
+    extraEffectCheck: !!productFields.category,
+    effectDependency: [productFields.category],
   }) as {
     data: any;
     setData: any;
@@ -135,7 +134,7 @@ const AddEditProduct = ({ isEdit }) => {
             const fullUrl = `${import.meta.env.VITE_API_URL}${file.imageUrl}`;
             const fetchedFile = await urlToFile(fullUrl, `image-${index}.jpg`);
             return Object.assign(fetchedFile, { preview: fullUrl });
-          })
+          }),
         );
         setFiles(apiFiles);
       };
@@ -145,8 +144,10 @@ const AddEditProduct = ({ isEdit }) => {
   }, [product, isEdit]);
 
   useEffect(() => {
-    handleProductField("sku", generatedSKU);
-  }, [generatedSKU]);
+    if (!isEdit) {
+      handleProductField("sku", generatedSKU);
+    }
+  }, [generatedSKU, isEdit]);
 
   const handleClearClick = () => {
     setProductFields(productFieldsInitialState);
@@ -220,7 +221,7 @@ const AddEditProduct = ({ isEdit }) => {
         return value.length === 0;
       }
       return !value;
-    }
+    },
   );
 
   const categoriesRequiringSize = [
@@ -284,11 +285,11 @@ const AddEditProduct = ({ isEdit }) => {
               <div className="form-group">
                 <label className="form-label">SKU</label>
                 <input
-                  key={generatedSKU}
+                  key={productFields.sku}
                   type="text"
                   className="form-control disabled-gold"
                   placeholder="Auto Generated SKU"
-                  value={generatedSKU}
+                  value={productFields.sku}
                   disabled={true}
                   required
                 />
@@ -369,7 +370,8 @@ const AddEditProduct = ({ isEdit }) => {
               <div className="form-group">
                 <label className="form-label required">Category</label>
                 <select
-                  className="form-control"
+                  className={`form-control ${isEdit ? "disabled-gold" : ""}`}
+                  disabled={isEdit}
                   value={productFields.category}
                   onChange={(e) =>
                     handleProductField("category", e.target.value)
@@ -389,7 +391,7 @@ const AddEditProduct = ({ isEdit }) => {
 
             {/* LENGTH for Necklaces */}
             {categoriesRequiringSize.includes(
-              Number(productFields.category)
+              Number(productFields.category),
             ) && (
               <div className="form-group">
                 <label className="form-label required">Size</label>
@@ -486,7 +488,7 @@ const AddEditProduct = ({ isEdit }) => {
             </div>
           </div>
 
-          {generatedSKU && (
+          {productFields.sku && (
             <div className="barcodeGenerator">
               <div className="titleContainer">
                 <IoBarcodeSharp className="icon" />
@@ -494,7 +496,7 @@ const AddEditProduct = ({ isEdit }) => {
               </div>
 
               <div className="barCodeWrapper">
-                <Barcode className="barCode" value={generatedSKU} />
+                <Barcode className="barCode" value={productFields.sku} />
               </div>
 
               <div className="actionsContainer">
@@ -518,7 +520,7 @@ const AddEditProduct = ({ isEdit }) => {
         }}
         product={
           {
-            sku: generatedSKU,
+            sku: productFields.sku,
             weight: productFields.weight,
             karatType: productFields.karat,
             specification: productFields.specification,

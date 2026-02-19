@@ -22,7 +22,7 @@ namespace JewerlyApp.Application.Products.Queries.GenerateSku
 
         public async Task<GenericResponse<string>> Handle(GenerateSkuQuery request, CancellationToken cancellationToken)
         {
-            var sku = await _skuService.GenerateSkuAsync(request.Category, request.KaratType);
+            var sku = await _skuService.GenerateSkuAsync(request.Category);
             var test = ResponseStatusCode.Success;
             return new GenericResponse<string>
             {

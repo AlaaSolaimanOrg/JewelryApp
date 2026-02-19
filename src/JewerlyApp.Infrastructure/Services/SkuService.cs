@@ -15,13 +15,13 @@ namespace JewerlyApp.Infrastructure.Services
             _context = context;
         }
 
-        public async Task<string> GenerateSkuAsync(ProductCategory category, KaratType karat)
+        public async Task<string> GenerateSkuAsync(ProductCategory category)
         {
             var fullYear = DateTime.UtcNow.Year;
             var year = fullYear % 100; // LAST TWO DIGITS (2025 -> 25)
 
             var sequence = await _context.SkuSequences
-                .FirstOrDefaultAsync(x => x.Category == category && x.Karat == karat && x.Year == fullYear);
+                .FirstOrDefaultAsync(x => x.Category == category && x.Year == fullYear);
 
             
 
@@ -30,7 +30,6 @@ namespace JewerlyApp.Infrastructure.Services
                 sequence = new SkuSequence
                 {
                     Category = category,
-                    Karat = karat,
                     Year = fullYear,
                     LastNumber = 0
                 };

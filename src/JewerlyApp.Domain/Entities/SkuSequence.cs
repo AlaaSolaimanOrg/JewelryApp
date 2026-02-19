@@ -11,7 +11,6 @@ namespace JewerlyApp.Domain.Entities
     public class SkuSequence : Entity<Guid>
     {
         public ProductCategory Category { get; set; }
-        public KaratType Karat { get; set; }
         public int Year { get; set; }
         public int LastNumber { get; set; }
     }

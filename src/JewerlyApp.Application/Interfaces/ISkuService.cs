@@ -9,6 +9,6 @@ namespace JewerlyApp.Application.Interfaces
 {
     public interface ISkuService
     {
-        Task<string> GenerateSkuAsync(ProductCategory category, KaratType karat);
+        Task<string> GenerateSkuAsync(ProductCategory category);
     }
 }
