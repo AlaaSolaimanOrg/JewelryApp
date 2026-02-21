@@ -354,6 +354,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             <FaPrint /> Print Receipt
           </Button>
 
+
           {/* <Button
             variant="primary"
             onClick={handleEpsonPrint}
