@@ -107,7 +107,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         crypto: false,
         buffer: false,
         paperWidthPx: 576, // 80mm; use 384 for 58mm
-        scale: 3,
+        scale: 4,
       });
     } catch (e) {
       console.error(e);
