@@ -16,7 +16,6 @@ import { renderLongDescription } from "../../../utils";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { printSaleReceiptEpson } from "../../../epsonPrinter.ts";
 import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 
 interface Sale {
@@ -346,21 +345,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
+          {/* <Button
             variant="primary"
             onClick={handlePrint}
             disabled={!saleDetails}
           >
             <FaPrint /> Print Receipt
-          </Button>
-
-
-          {/* <Button
-            variant="primary"
-            onClick={handleEpsonPrint}
-            disabled={!saleDetails || epsonBusy}
-          >
-            <FaPrint /> {epsonBusy ? "Printing..." : "Print Receipt (Epson)"}
           </Button> */}
 
           <Button
@@ -368,7 +358,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             onClick={handleEpsonPrintHTML}
             disabled={!saleDetails || epsonBusy}
           >
-            <FaPrint /> {epsonBusy ? "Printing..." : "Print DOM"}
+            <FaPrint /> {epsonBusy ? "Printing..." : "Print"}
           </Button>
 
           <Button variant="secondary" onClick={onClose}>
