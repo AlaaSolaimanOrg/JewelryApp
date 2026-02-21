@@ -106,7 +106,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         port: 8008,
         crypto: false,
         buffer: false,
-        paperWidthPx: 576, // 80mm; use 384 for 58mm
+        paperWidthPx: 384, // 80mm; use 384 for 58mm
         scale: 2,
       });
     } catch (e) {
