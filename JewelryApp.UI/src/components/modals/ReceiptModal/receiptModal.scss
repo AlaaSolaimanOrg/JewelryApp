@@ -388,3 +388,50 @@
   }
 }
 
+.receipt-container.thermal-print {
+  width: 576px;            /* 80mm paper */
+  max-width: 576px;
+  background: #fff !important;
+
+  /* Thermal likes big/dark text */
+  color: #000 !important;
+  font-size: 18px;
+  font-weight: 600;
+
+  /* kill gold/gray colors that dither badly */
+  --gold: #000; /* your QR uses var(--gold) */
+
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .receipt-subtitle { opacity: 1 !important; }
+  .receipt-table th, .receipt-table td { border-width: 2px !important; }
+}
+
+.receipt-container.thermal-print {
+  width: 576px;            /* 80mm paper */
+  max-width: 576px;
+  background: #fff !important;
+
+  /* Thermal likes big/dark text */
+  color: #000 !important;
+  font-size: 18px;
+  font-weight: 600;
+
+  /* kill gold/gray colors that dither badly */
+  --gold: #000; /* your QR uses var(--gold) */
+
+  * {
+    color: #000 !important;
+    border-color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .receipt-subtitle { opacity: 1 !important; }
+  .receipt-table th, .receipt-table td { border-width: 2px !important; }
+}

@@ -142,7 +142,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <p>Loading sale details...</p>
             </div>
           ) : (
-            <div ref={contentRef} className="receipt-container">
+            <div ref={contentRef} className={`receipt-container thermal-print`}>
               {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">
@@ -155,7 +155,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </div>
                 <div className="receipt-subtitle">Phone: (780) 934-1455</div>
               </div>
-
               {/* Details */}
               <div className="receipt-details">
                 <div>
@@ -200,7 +199,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </div>
                 </div>
               </div>
-
               {/* Table */}
               <div className="table-wrapper">
                 <table className="receipt-table">
@@ -255,14 +253,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </tbody>
                 </table>
               </div>
-
               {!!saleDetails.discount && (
                 <div className="receipt-discount">
                   <span>Discount:</span>
                   <span>${saleDetails.discount}</span>
                 </div>
               )}
-
               {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
@@ -291,7 +287,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     </div>
                   )}
               </div>
-
               {/* Totals */}
               <div className="receipt-totals">
                 <div className="receipt-total">
@@ -299,7 +294,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <div className="total-value">${saleDetails.total}</div>
                 </div>
               </div>
-
               <div className="receipt-footer">
                 <div className="social-links">
                   <Link to="https://adijewelry.ca/" target="_blank">
