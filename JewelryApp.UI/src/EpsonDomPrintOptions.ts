@@ -100,7 +100,7 @@ export async function printDomToEpson(
     finalCanvas.width,
     finalCanvas.height,
     printer.COLOR_1,
-    printer.MODE_MONO
+    printer.MODE_GRAY16
   );
 
   printer.addFeedLine(2);
