@@ -17,6 +17,7 @@ import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { printSaleReceiptEpson } from "../../../epsonPrinter.ts";
+import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 
 interface Sale {
   id: string;
