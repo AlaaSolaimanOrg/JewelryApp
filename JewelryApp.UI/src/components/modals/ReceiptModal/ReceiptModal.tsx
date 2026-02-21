@@ -367,7 +367,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             onClick={handleEpsonPrintHTML}
             disabled={!saleDetails || epsonBusy}
           >
-            <FaPrint /> {epsonBusy ? "Printing..." : "Print Receipt (Epson)"}
+            <FaPrint /> {epsonBusy ? "Printing..." : "Print DOM"}
           </Button>
 
           <Button variant="secondary" onClick={onClose}>
