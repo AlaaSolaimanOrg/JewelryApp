@@ -16,6 +16,7 @@ import { renderLongDescription } from "../../../utils";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
+import { printSaleReceiptEpson } from "../../../epsonPrinter.ts";
 
 interface Sale {
   id: string;
@@ -51,6 +52,7 @@ interface ReceiptModalProps {
 const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [epsonBusy, setEpsonBusy] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -74,6 +76,25 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   };
 
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
+
+  const handleEpsonPrint = async () => {
+    if (!saleDetails) return;
+
+    setEpsonBusy(true);
+    try {
+      await printSaleReceiptEpson(saleDetails, {
+        ip: "192.168.0.19",
+        port: 8008,
+        crypto: false,
+        buffer: false,
+      });
+    } catch (e) {
+      console.error(e);
+      alert(String(e));
+    } finally {
+      setEpsonBusy(false);
+    }
+  };
 
   return (
     <div>
@@ -151,10 +172,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     {saleDetails.cashAmount && saleDetails.cardAmount
                       ? "Cash & Card"
                       : saleDetails.cashAmount
-                      ? "Cash"
-                      : saleDetails.cardAmount
-                      ? "Card"
-                      : "N/A"}
+                        ? "Cash"
+                        : saleDetails.cardAmount
+                          ? "Card"
+                          : "N/A"}
                   </div>
                 </div>
               </div>
@@ -309,6 +330,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             disabled={!saleDetails}
           >
             <FaPrint /> Print Receipt
+          </Button>
+
+          <Button
+            variant="primary"
+            onClick={handleEpsonPrint}
+            disabled={!saleDetails || epsonBusy}
+          >
+            <FaPrint /> {epsonBusy ? "Printing..." : "Print Receipt (Epson)"}
           </Button>
 
           <Button variant="secondary" onClick={onClose}>
