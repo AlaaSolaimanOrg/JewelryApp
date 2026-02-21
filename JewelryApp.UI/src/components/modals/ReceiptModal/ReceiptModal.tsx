@@ -96,6 +96,27 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     }
   };
 
+  const handleEpsonPrintHTML = async () => {
+    if (!contentRef.current) return;
+
+    setEpsonBusy(true);
+    try {
+      await printDomToEpson(contentRef.current, {
+        ip: "192.168.0.19",
+        port: 8008,
+        crypto: false,
+        buffer: false,
+        paperWidthPx: 576, // 80mm; use 384 for 58mm
+        scale: 2,
+      });
+    } catch (e) {
+      console.error(e);
+      alert(String(e));
+    } finally {
+      setEpsonBusy(false);
+    }
+  };
+
   return (
     <div>
       <div onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
@@ -332,9 +353,17 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             <FaPrint /> Print Receipt
           </Button>
 
-          <Button
+          {/* <Button
             variant="primary"
             onClick={handleEpsonPrint}
+            disabled={!saleDetails || epsonBusy}
+          >
+            <FaPrint /> {epsonBusy ? "Printing..." : "Print Receipt (Epson)"}
+          </Button> */}
+
+          <Button
+            variant="primary"
+            onClick={handleEpsonPrintHTML}
             disabled={!saleDetails || epsonBusy}
           >
             <FaPrint /> {epsonBusy ? "Printing..." : "Print Receipt (Epson)"}
