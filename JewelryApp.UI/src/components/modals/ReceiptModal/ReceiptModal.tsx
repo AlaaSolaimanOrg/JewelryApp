@@ -39,7 +39,8 @@ interface SaleItem {
   karat: KaratType;
   weight: number;
   pricePerGram: number;
-  subtotal: number;
+  subtotalAfterDiscount: number;
+  subtotalBeforeDiscount: number;
   quantity: number;
   quantityReturned: number;
   amountReturned: number;
@@ -123,7 +124,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <p>Loading sale details...</p>
             </div>
           ) : (
-            <div ref={contentRef} className={`receipt-container thermal-print`}>
+            <div ref={contentRef} className={`receipt-container`}>
               {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">
@@ -228,7 +229,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
                         <td style={{ width: "12%" }}>${item.pricePerGram}</td>
 
-                        <td style={{ width: "14%" }}>${item.subtotal}</td>
+                        <td style={{ width: "14%" }}>${item.subtotalBeforeDiscount}</td>
                       </tr>
                     ))}
                   </tbody>

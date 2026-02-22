@@ -8,7 +8,6 @@ import {
   FaTiktok,
 } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
@@ -38,13 +37,16 @@ interface SaleItem {
   karat: KaratType;
   weight: number;
   pricePerGram: number;
-  subtotal: number;
+  subtotalAfterDiscount: number;
+  subtotalBeforeDiscount: number;
   quantity: number;
 }
 
 const Receipt = () => {
   const { saleId } = useParams();
   const [epsonBusy, setEpsonBusy] = useState(false);
+
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -70,13 +72,16 @@ const Receipt = () => {
   const dateObj = new Date(saleDetails.createdDate);
 
   const contentRef = useRef<HTMLDivElement>(null);
-  const handlePrint = useReactToPrint({ contentRef });
 
   const handleEpsonPrintHTML = async () => {
     if (!contentRef.current) return;
 
+    setShowThermalPrint(true);
     setEpsonBusy(true);
     try {
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => resolve(null)),
+      );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
         port: 8008,
@@ -89,6 +94,7 @@ const Receipt = () => {
       console.error(e);
       alert(String(e));
     } finally {
+      setShowThermalPrint(false);
       setEpsonBusy(false);
     }
   };
@@ -99,7 +105,11 @@ const Receipt = () => {
       </h2>
       <p className="subtitle">Review receipt before finalizing</p>
 
-      <div ref={contentRef} id="receipt-container thermal-print">
+      <div
+        ref={contentRef}
+        id="receipt-container"
+        className={showThermalPrint ? "thermal-print" : ""}
+      >
         <div className="receipt-header">
           <div className="receipt-title">
             <img
@@ -178,7 +188,7 @@ const Receipt = () => {
                 <td>{item.quantity}</td>
                 <td>{item.weight}g</td>
                 <td>${item.pricePerGram}</td>
-                <td>${item.subtotal}</td>
+                <td>${item.subtotalBeforeDiscount}</td>
               </tr>
             ))}
           </tbody>

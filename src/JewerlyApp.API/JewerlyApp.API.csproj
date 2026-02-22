@@ -8,17 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\images\products\18K\**" />
-    <Compile Remove="wwwroot\images\products\21K\**" />
-    <Content Remove="wwwroot\images\products\18K\**" />
-    <Content Remove="wwwroot\images\products\21K\**" />
-    <EmbeddedResource Remove="wwwroot\images\products\18K\**" />
-    <EmbeddedResource Remove="wwwroot\images\products\21K\**" />
-    <None Remove="wwwroot\images\products\18K\**" />
-    <None Remove="wwwroot\images\products\21K\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.19">
       <PrivateAssets>all</PrivateAssets>
@@ -30,10 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\JewerlyApp.Application\JewerlyApp.Application.csproj" />
     <ProjectReference Include="..\JewerlyApp.Infrastructure\JewerlyApp.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
 </Project>
