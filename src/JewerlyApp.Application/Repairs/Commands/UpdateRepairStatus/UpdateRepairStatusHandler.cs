@@ -22,7 +22,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
         public async Task<GenericResponse<Unit>> Handle(UpdateRepairStatusCommand request, CancellationToken cancellationToken)
         {
-            var repair = await _context.Repairs
+            var repair = await _context.Repairs.Include(x => x.Items)
                 .Include(x=>x.Customer)
                 .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
 
@@ -32,6 +32,15 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                 {
                     StatusCode = ResponseStatusCode.NotFound,
                     Message = Messages.Error_Repair_Not_Found
+                };
+            }
+
+            if(request.Status == RepairStatus.Completed && repair.Items.Any(i => i.PaymentStatus != PaymentStatus.Paid))
+            {
+                return new GenericResponse<Unit>
+                {
+                    StatusCode = ResponseStatusCode.NotFound,
+                    Message = Messages.Error_RepairCantBeCompleted
                 };
             }
 

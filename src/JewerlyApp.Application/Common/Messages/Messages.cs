@@ -131,6 +131,7 @@
         public const string Error_Repair_Not_Found = "Repair order not found.";
         public const string Error_Repair_Customer_Not_Found = "Customer not found for repair.";
         public const string Error_RepairItem_Not_Found = "Repair item not found.";
+        public const string Error_RepairCantBeCompleted = "Repair can't be completed";
     }
 
 
