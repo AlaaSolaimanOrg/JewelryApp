@@ -16,6 +16,7 @@ import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo
 import QRCode from "react-qr-code";
 import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import { Button } from "react-bootstrap";
+import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 
 interface Sale {
   id: string;
@@ -114,7 +115,11 @@ const Receipt = () => {
           <div className="receipt-title">
             <img
               className="receipt-logo"
-              src={ADI_Jewelry_Logo_Horizontal}
+              src={
+                showThermalPrint
+                  ? ADI_Jewelry_Logo_Horizontal_Black
+                  : ADI_Jewelry_Logo_Horizontal
+              }
               alt="Logo"
             />
           </div>
@@ -278,7 +283,7 @@ const Receipt = () => {
               value="https://share.google/gxvrM3GV4YzjE232x"
               size={80}
               bgColor="#ffffff"
-              fgColor="var(--gold)"
+              fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
               style={{ border: "1px solid #eee", padding: "4px" }}
             />
           </div>

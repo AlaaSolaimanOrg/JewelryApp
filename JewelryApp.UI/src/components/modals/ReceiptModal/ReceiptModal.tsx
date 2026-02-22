@@ -14,6 +14,7 @@ import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { renderLongDescription } from "../../../utils";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
+import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
@@ -54,6 +55,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -81,8 +83,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const handleEpsonPrintHTML = async () => {
     if (!contentRef.current) return;
 
+    setShowThermalPrint(true);
     setEpsonBusy(true);
     try {
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => resolve(null)),
+      );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
         port: 8008,
@@ -95,10 +101,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
       console.error(e);
       alert(String(e));
     } finally {
+      setShowThermalPrint(false);
       setEpsonBusy(false);
     }
   };
-
   return (
     <div>
       <div onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
@@ -124,12 +130,22 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <p>Loading sale details...</p>
             </div>
           ) : (
-            <div ref={contentRef} className={`receipt-container`}>
+            <div
+              ref={contentRef}
+              className={`receipt-container ${showThermalPrint ? "thermal-print" : ""}`}
+            >
               {/* Header */}
               <div className="receipt-header">
                 <div className="receipt-title">
                   <div className="receipt-logo">
-                    <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
+                    <img
+                      src={
+                        showThermalPrint
+                          ? ADI_Jewelry_Logo_Horizontal_Black
+                          : ADI_Jewelry_Logo_Horizontal
+                      }
+                      alt="Logo"
+                    />
                   </div>
                 </div>
                 <div className="receipt-subtitle">
@@ -190,9 +206,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                       <th style={{ width: "16%" }}>SKU</th>
                       <th style={{ width: "10%" }}>Karat</th>
                       <th style={{ width: "10%" }}>Qty</th>
-                      <th style={{ width: "18%" }}>Returned</th>
-                      <th style={{ width: "12%" }}>Weight</th>
-                      <th style={{ width: "12%" }}>Price/Gram</th>
+                      <th style={{ width: "16%" }}>Returned</th>
+                      <th style={{ width: "13%" }}>Weight</th>
+                      <th style={{ width: "13%" }}>Price(g)</th>
                       <th style={{ width: "14%" }}>Subtotal</th>
                     </tr>
                   </thead>
@@ -221,7 +237,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                               </div>
                             </>
                           ) : (
-                            <span className="no-return">—</span>
+                            <span className="no-return">-</span>
                           )}
                         </td>
 
@@ -229,7 +245,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
                         <td style={{ width: "12%" }}>${item.pricePerGram}</td>
 
-                        <td style={{ width: "14%" }}>${item.subtotalBeforeDiscount}</td>
+                        <td style={{ width: "14%" }}>
+                          ${item.subtotalBeforeDiscount}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -311,7 +329,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     value="https://share.google/gxvrM3GV4YzjE232x"
                     size={80}
                     bgColor="#ffffff"
-                    fgColor="var(--gold)"
+                    fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
                     style={{ border: "1px solid #eee", padding: "4px" }}
                   />
                 </div>

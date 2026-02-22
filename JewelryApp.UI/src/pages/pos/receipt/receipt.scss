@@ -219,28 +219,31 @@
 }
 
 #receipt-container.thermal-print {
-  width: 576px;
+  width: 576px; /* 80mm paper */
   max-width: 576px;
   background: #fff !important;
 
-  color: #000 !important;
-  font-size: 18px;
+  /* Thermal likes big/dark text */
+  font-size: 14px;
   font-weight: 600;
 
-  --gold: #000;
+  color: black !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
 
-  * {
-    color: #000 !important;
-    border-color: #000 !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+  .receipt-header {
+    border-color: black !important;
   }
-
   .receipt-subtitle {
     opacity: 1 !important;
   }
-  .receipt-table th,
-  .receipt-table td {
-    border-width: 2px !important;
+  .receipt-table {
+    th,
+    td {
+      border-width: 2px !important;
+      font-size: 11px;
+      border: none !important;
+    }
   }
 }
