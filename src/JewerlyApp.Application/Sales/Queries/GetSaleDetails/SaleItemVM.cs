@@ -16,7 +16,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
         public KaratType Karat { get; set; }
         public decimal Weight { get; set; }
         public decimal? PricePerGram { get; set; }
-        public decimal Subtotal { get; set; }
+        public decimal SubtotalAfterDiscount { get; set; }
+        public decimal SubtotalBeforeDiscount { get; set; }
         public int Quantity { get; set; }
         public int? QuantityReturned { get; set; }
         public decimal? AmountReturned { get; set; }

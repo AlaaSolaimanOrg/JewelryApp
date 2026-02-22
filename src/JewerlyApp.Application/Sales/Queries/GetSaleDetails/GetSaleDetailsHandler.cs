@@ -53,6 +53,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     StaffName = x.CreatedByUser!.FullName!,
                     CustomerName = x.Customer!.Name,
                     CustomerPhone = x.Customer!.PhoneNumber,
+                    TotalBeforeDiscount = x.SaleItems.Sum(i => i.SubTotal),
                     Total = x.Total,
                     CashAmount = x.CashAmount,
                     CardAmount = x.CardAmount,
@@ -66,7 +67,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         Karat = i.KaratType,
                         Weight = i.Weight,
                         PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
-                        Subtotal = Math.Round(i.SubTotal -
+                        SubtotalBeforeDiscount = i.SubTotal,
+                        SubtotalAfterDiscount = Math.Round(i.SubTotal -
                                 (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0), 2),
                         Quantity = i.Quantity,
                         QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),

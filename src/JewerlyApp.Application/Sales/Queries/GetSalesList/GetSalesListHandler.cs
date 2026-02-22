@@ -34,7 +34,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesList
                 .Select(x => new GetSalesListVM
                 {
                     Id = x.Id,
-                    SerialNumber = 1,
+                    SerialNumber = x.SerialNumber,
                     CreatedDate = x.CreatedDate,
                     Total = x.Total,
                     CardPayment = x.CardAmount != 0,
