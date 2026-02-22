@@ -7,32 +7,35 @@ namespace JewerlyApp.Application.Common.Helpers
     {
             public static (DateTime Start, DateTime End) GetDateRange(ReportType reportType)
             {
-                var today = DateTime.Today;
-                DateTime start = today;
-                DateTime end = today.AddDays(1).AddTicks(-1);
+                var today = BusinessTimeZoneHelper.GetEdmontonDate();
+                var startDate = today;
+                var endDate = today;
 
                 switch (reportType)
                 {
                     case ReportType.Daily:
-                        start = today;
-                        end = today.AddDays(1).AddTicks(-1);
+                        startDate = today;
+                        endDate = today;
                         break;
                     case ReportType.Weekly:
                         var diff = (7 + (today.DayOfWeek - DayOfWeek.Monday)) % 7;
-                        start = today.AddDays(-1 * diff).Date;
-                        end = start.AddDays(7).AddTicks(-1);
+                        startDate = today.AddDays(-1 * diff);
+                        endDate = startDate.AddDays(6);
                         break;
                     case ReportType.Monthly:
-                        start = new DateTime(today.Year, today.Month, 1);
-                        end = start.AddMonths(1).AddTicks(-1);
+                        startDate = new DateOnly(today.Year, today.Month, 1);
+                        endDate = startDate.AddMonths(1).AddDays(-1);
                         break;
                     case ReportType.Yearly:
-                        start = new DateTime(today.Year, 1, 1);
-                        end = start.AddYears(1).AddTicks(-1);
+                        startDate = new DateOnly(today.Year, 1, 1);
+                        endDate = startDate.AddYears(1).AddDays(-1);
                         break;
                 }
 
-                return (start, end);
+                var (startUtc, _) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(startDate);
+                var (_, endUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(endDate);
+
+                return (startUtc, endUtc);
             }
     }
 }

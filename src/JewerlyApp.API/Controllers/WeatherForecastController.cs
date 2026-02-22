@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using JewerlyApp.Application.Common.Helpers;
 
 namespace JewerlyApp.API.Controllers
 {
@@ -23,7 +24,7 @@ namespace JewerlyApp.API.Controllers
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                Date = BusinessTimeZoneHelper.GetEdmontonDate().AddDays(index),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })

@@ -46,42 +46,51 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync(cancellationToken);
 
+            var logsInEdmonton = logs
+                .Where(x => x.CreatedDate.HasValue)
+                .Select(x => new
+                {
+                    Log = x,
+                    LocalCreatedDate = BusinessTimeZoneHelper.ConvertUtcToEdmonton(x.CreatedDate!.Value)
+                })
+                .ToList();
+
             // 3️⃣ Decide grouping based on ReportType
-            Func<PricingSettingLog, DateTime> groupKey = request.ReportType switch
+            Func<DateTime, DateTime> groupKey = request.ReportType switch
             {
                 // Hourly
                 ReportType.Daily => x => new DateTime(
-                    x.CreatedDate!.Value.Year,
-                    x.CreatedDate!.Value.Month,
-                    x.CreatedDate!.Value.Day,
-                    x.CreatedDate!.Value.Hour,
+                    x.Year,
+                    x.Month,
+                    x.Day,
+                    x.Hour,
                     0, 0),
 
                 // Daily
                 ReportType.Weekly or ReportType.Monthly => x => new DateTime(
-                    x.CreatedDate!.Value.Year,
-                    x.CreatedDate!.Value.Month,
-                    x.CreatedDate!.Value.Day),
+                    x.Year,
+                    x.Month,
+                    x.Day),
 
                 // Monthly
                 ReportType.Yearly => x => new DateTime(
-                    x.CreatedDate!.Value.Year,
-                    x.CreatedDate!.Value.Month,
+                    x.Year,
+                    x.Month,
                     1),
 
                 // AllTime (fallback) → minute precision
                 _ => x => new DateTime(
-                    x.CreatedDate!.Value.Year,
-                    x.CreatedDate!.Value.Month,
-                    x.CreatedDate!.Value.Day,
-                    x.CreatedDate!.Value.Hour,
-                    x.CreatedDate!.Value.Minute,
+                    x.Year,
+                    x.Month,
+                    x.Day,
+                    x.Hour,
+                    x.Minute,
                     0)
             };
 
             // 4️⃣ Group & project
-            var result = logs
-                .GroupBy(groupKey)
+            var result = logsInEdmonton
+                .GroupBy(x => groupKey(x.LocalCreatedDate))
                 .Select(g => new PriceOverTimeChartVM
                 {
                     DateLabel = request.ReportType switch
@@ -91,10 +100,10 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                         ReportType.Yearly => g.Key.ToString("MMM yyyy", CultureInfo.InvariantCulture),
                         _ => g.Key.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)
                     },
-                    Karat18 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat18)?.NewPrice ?? 0,
-                    Karat21 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat21)?.NewPrice ?? 0,
-                    Karat22 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat22)?.NewPrice ?? 0,
-                    Karat24 = g.FirstOrDefault(x => x.KaratType == KaratType.Karat24)?.NewPrice ?? 0
+                    Karat18 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat18)?.Log.NewPrice ?? 0,
+                    Karat21 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat21)?.Log.NewPrice ?? 0,
+                    Karat22 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat22)?.Log.NewPrice ?? 0,
+                    Karat24 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat24)?.Log.NewPrice ?? 0
                 })
                 .OrderBy(x => x.DateLabel)
                 .ToList();

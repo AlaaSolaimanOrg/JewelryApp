@@ -1,6 +1,7 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +25,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
 
         public async Task<GenericResponse<GetDashboardInsightsVM>> Handle(GetDashboardInsightsQuery request, CancellationToken cancellationToken)
         {
-            var targetDate = DateTime.Today;
+            var targetDate = BusinessTimeZoneHelper.GetEdmontonDate();
             var yesterday = targetDate.AddDays(-1);
             var lastWeek = targetDate.AddDays(-7);
-            var lastMonth = targetDate.AddMonths(-1);
 
             var result = new GetDashboardInsightsVM();
 
@@ -76,10 +76,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
             };
         }
 
-        private async Task<decimal> GetSalesForDate(DateTime date)
+        private async Task<decimal> GetSalesForDate(DateOnly date)
         {
-            var startDate = date.Date;
-            var endDate = date.Date.AddDays(1).AddTicks(-1);
+            var (startDate, endDate) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(date);
 
             return await _context.Sales
                 .Where(s => s.CreatedDate >= startDate && s.CreatedDate <= endDate)
@@ -110,17 +109,18 @@ namespace JewerlyApp.Application.Sales.Queries.GetDashboardInsights
             return await _context.Customers.CountAsync();
         }
 
-        private async Task<int> GetCustomersCountBeforeDate(DateTime date, CancellationToken cancellationToken)
+        private async Task<int> GetCustomersCountBeforeDate(DateOnly date, CancellationToken cancellationToken)
         {
+            var (startDate, _) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(date);
+
             return await _context.Customers
-                .Where(c => c.CreatedDate < date)
+                .Where(c => c.CreatedDate < startDate)
                 .CountAsync(cancellationToken);
         }
 
-        private async Task<int> GetItemsSoldForDate(DateTime date)
+        private async Task<int> GetItemsSoldForDate(DateOnly date)
         {
-            var startDate = date.Date;
-            var endDate = date.Date.AddDays(1).AddTicks(-1);
+            var (startDate, endDate) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(date);
 
             // Fixed: Sum the quantities sold instead of counting rows
             return await _context.SaleItems

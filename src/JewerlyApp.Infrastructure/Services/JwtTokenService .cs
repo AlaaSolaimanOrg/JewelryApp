@@ -54,7 +54,7 @@ namespace JewerlyApp.Infrastructure.Services
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]!));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var expires = DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpiryMinutes"] ?? "60"));
+                var expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpiryMinutes"] ?? "60"));
 
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JwtSettings:Issuer"],

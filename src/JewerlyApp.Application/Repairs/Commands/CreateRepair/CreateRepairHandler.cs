@@ -1,5 +1,6 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
@@ -70,7 +71,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             {
                 RepairCode = nextRepairCode,
                 CustomerId = request.CustomerId,
-                OrderDate = DateOnly.FromDateTime(DateTime.Now),
+                OrderDate = BusinessTimeZoneHelper.GetEdmontonDate(),
                 Status = RepairStatus.InProgress,
                 Notes = request.Notes,
                 Items = repairItems,

@@ -16,7 +16,7 @@ namespace JewerlyApp.Domain.Entities.Common
         /// <summary>
         /// Created Date
         /// </summary>
-        public DateTime? CreatedDate { get;  set; } = DateTime.Now;
+        public DateTime? CreatedDate { get;  set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Created By
@@ -41,7 +41,7 @@ namespace JewerlyApp.Domain.Entities.Common
         /// <param name="user"></param>
         public void AddCreatedByData(int? userId)
         {
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             if (userId is not null && CreatedBy == null)
             {
                 CreatedBy = userId;
@@ -57,7 +57,7 @@ namespace JewerlyApp.Domain.Entities.Common
         public void AddUpdatedByData(int? userId)
         {
 
-            LastUpdatedDate = DateTime.Now;
+            LastUpdatedDate = DateTime.UtcNow;
             if (userId is not null)
             {
                 LastUpdatedBy = userId;

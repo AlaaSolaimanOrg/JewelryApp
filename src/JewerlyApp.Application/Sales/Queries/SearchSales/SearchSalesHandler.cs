@@ -51,6 +51,7 @@ namespace JewerlyApp.Application.Sales.Queries.SearchSales
                 CashAmount = x.CashAmount,
                 CardAmount = x.CardAmount,
                 Discount = x.Discount,
+                TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
                 SaleItems = x.SaleItems.Select(i => new SaleItemVM
                 {
                     Id = i.Id,
@@ -60,7 +61,8 @@ namespace JewerlyApp.Application.Sales.Queries.SearchSales
                     Karat = i.KaratType,
                     Weight = i.Weight,
                     PricePerGram = i.OverriddenPricePerGram ?? i.OriginalPricePerGram,
-                    Subtotal = Math.Round(i.SubTotal -
+                    SubtotalBeforeDiscount = i.SubTotal,
+                    SubtotalAfterDiscount = Math.Round(i.SubTotal -
                                 (x.Discount ?? 0) * (x.SubTotal > 0 ? i.SubTotal / x.SubTotal : 0), 2),
                     Quantity = i.Quantity,                    
                 }).ToList(),

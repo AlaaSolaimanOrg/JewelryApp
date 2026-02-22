@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using JewerlyApp.API.Middleware;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.API.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +61,12 @@ builder.Services.AddCors(options =>
 });
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new EdmontonDateTimeJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new EdmontonNullableDateTimeJsonConverter());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

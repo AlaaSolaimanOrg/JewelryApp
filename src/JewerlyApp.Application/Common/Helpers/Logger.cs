@@ -38,7 +38,7 @@ namespace JewerlyApp.Application.Common.Helpers
                 LoggedInUserId = userId,
                 CorrelationId = correlationId,
                 Request = request,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
 
             context.Logs.Add(log);

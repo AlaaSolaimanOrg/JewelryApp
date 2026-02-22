@@ -55,6 +55,14 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
                 })
                 .ToListAsync(cancellationToken);
 
+            // Group by business local time, not UTC storage time.
+            var salesDataInEdmonton = salesData.Select(s => new
+            {
+                CreatedDate = BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.CreatedDate),
+                s.Total,
+                s.ItemsCount
+            }).ToList();
+
             List<SalesOverTimeVM> result;
 
             var effectiveReportType = request.ReportType ?? ReportType.Monthly; // default grouping when null - choose Monthly for broad timeline
@@ -63,7 +71,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
             {
                 case ReportType.Daily:
                     // Group by Hour for the specific day
-                    result = salesData
+                    result = salesDataInEdmonton
                         .GroupBy(s => s.CreatedDate.Hour)
                         .Select(g => new SalesOverTimeVM
                         {
@@ -78,7 +86,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
 
                 case ReportType.Weekly:
                     // Group by Day for the week
-                    result = salesData
+                    result = salesDataInEdmonton
                         .GroupBy(s => s.CreatedDate.Date)
                         .Select(g => new SalesOverTimeVM
                         {
@@ -93,7 +101,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
 
                 case ReportType.Monthly:
                     // Group by Day for the month
-                    result = salesData
+                    result = salesDataInEdmonton
                         .GroupBy(s => s.CreatedDate.Date)
                         .Select(g => new SalesOverTimeVM
                         {
@@ -108,7 +116,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
 
                 case ReportType.Yearly:
                     // Group by Month for the year
-                    result = salesData
+                    result = salesDataInEdmonton
                         .GroupBy(s => new { s.CreatedDate.Year, s.CreatedDate.Month })
                         .Select(g => new SalesOverTimeVM
                         {
@@ -123,7 +131,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
 
                 default:
                     // Default to Monthly grouping for broad timeline (when reportType is null)
-                    result = salesData
+                    result = salesDataInEdmonton
                         .GroupBy(s => s.CreatedDate.Date)
                         .Select(g => new SalesOverTimeVM
                         {
