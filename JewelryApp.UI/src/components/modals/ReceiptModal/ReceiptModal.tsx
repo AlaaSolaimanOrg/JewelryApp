@@ -77,25 +77,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
 
-  const handleEpsonPrint = async () => {
-    if (!saleDetails) return;
-
-    setEpsonBusy(true);
-    try {
-      await printSaleReceiptEpson(saleDetails, {
-        ip: "192.168.0.19",
-        port: 8008,
-        crypto: false,
-        buffer: false,
-      });
-    } catch (e) {
-      console.error(e);
-      alert(String(e));
-    } finally {
-      setEpsonBusy(false);
-    }
-  };
-
   const handleEpsonPrintHTML = async () => {
     if (!contentRef.current) return;
 

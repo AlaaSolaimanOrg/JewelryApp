@@ -175,6 +175,36 @@
       }
     }
   }
+
+  .thermal-print {
+    width: 576px; /* 80mm paper */
+    max-width: 576px;
+    background: #fff !important;
+
+    /* Thermal likes big/dark text */
+    color: #000 !important;
+    font-size: 18px;
+    font-weight: 600;
+
+    /* kill gold/gray colors that dither badly */
+    --gold: #000; /* your QR uses var(--gold) */
+
+    * {
+      color: #000 !important;
+      border-color: #000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+    }
+
+    .receipt-subtitle {
+      opacity: 1 !important;
+    }
+    .receipt-table th,
+    .receipt-table td {
+      border-width: 2px !important;
+    }
+  }
+
   @media (max-width: 480px) {
     .receipt-logo {
       width: 95%;
@@ -182,36 +212,6 @@
 
       img {
         width: 100%;
-      }
-    }
-  }
-}
-@media print {
-  .receipt-actions {
-    display: none !important;
-  }
-  .receipt-container {
-    width: 100%;
-    box-shadow: none !important;
-    border: none !important;
-    position: absolute;
-    top: 0;
-  }
-
-  .receipt-footer {
-    .social-links {
-      .social-item {
-        font-size: 0.8rem;
-
-        svg {
-          font-size: 1rem;
-        }
-      }
-    }
-
-    .qr-section {
-      .qr-label {
-        font-size: 0.7rem;
       }
     }
   }

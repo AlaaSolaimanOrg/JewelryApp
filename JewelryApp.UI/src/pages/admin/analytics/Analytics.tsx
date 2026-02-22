@@ -72,7 +72,7 @@ ChartJS.register(
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const Analytics = () => {

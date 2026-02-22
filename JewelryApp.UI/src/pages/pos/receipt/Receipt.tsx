@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   FaCheck,
   FaGlobe,
@@ -15,6 +15,8 @@ import type { KaratType } from "../../../types/enums";
 import "./receipt.scss";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import QRCode from "react-qr-code";
+import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
+import { Button } from "react-bootstrap";
 
 interface Sale {
   id: string;
@@ -42,6 +44,7 @@ interface SaleItem {
 
 const Receipt = () => {
   const { saleId } = useParams();
+  const [epsonBusy, setEpsonBusy] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -69,6 +72,26 @@ const Receipt = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({ contentRef });
 
+  const handleEpsonPrintHTML = async () => {
+    if (!contentRef.current) return;
+
+    setEpsonBusy(true);
+    try {
+      await printDomToEpson(contentRef.current, {
+        ip: "192.168.0.19",
+        port: 8008,
+        crypto: false,
+        buffer: false,
+        paperWidthPx: 576, // 80mm; use 384 for 58mm
+        scale: 4,
+      });
+    } catch (e) {
+      console.error(e);
+      alert(String(e));
+    } finally {
+      setEpsonBusy(false);
+    }
+  };
   return (
     <div id="receipt-page" className="page-content">
       <h2 className="title">
@@ -76,7 +99,7 @@ const Receipt = () => {
       </h2>
       <p className="subtitle">Review receipt before finalizing</p>
 
-      <div ref={contentRef} id="receipt-container">
+      <div ref={contentRef} id="receipt-container thermal-print">
         <div className="receipt-header">
           <div className="receipt-title">
             <img
@@ -126,10 +149,10 @@ const Receipt = () => {
               {saleDetails.cashAmount && saleDetails.cardAmount
                 ? "Cash & Card"
                 : saleDetails.cashAmount
-                ? "Cash"
-                : saleDetails.cardAmount
-                ? "Card"
-                : "N/A"}
+                  ? "Cash"
+                  : saleDetails.cardAmount
+                    ? "Card"
+                    : "N/A"}
             </div>
           </div>
         </div>
@@ -194,9 +217,17 @@ const Receipt = () => {
         </div>
 
         <div className="receipt-actions">
-          <button className="btn btn-primary" onClick={handlePrint}>
+          {/* <button className="btn btn-primary" onClick={handlePrint}>
             <FaPrint /> Print Receipt
-          </button>
+          </button> */}
+
+          <Button
+            variant="primary"
+            onClick={handleEpsonPrintHTML}
+            disabled={!saleDetails || epsonBusy}
+          >
+            <FaPrint /> {epsonBusy ? "Printing..." : "Print"}
+          </Button>
 
           <Link to={"/"} className="text-decoration-none">
             <button className="btn btn-secondary">
