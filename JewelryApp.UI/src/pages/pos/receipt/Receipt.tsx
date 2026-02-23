@@ -48,7 +48,7 @@ const Receipt = () => {
   const { saleId } = useParams();
   const [epsonBusy, setEpsonBusy] = useState(false);
 
-  const [showThermalPrint, setShowThermalPrint] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(true);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -133,11 +133,11 @@ const Receipt = () => {
         <div className="receipt-details">
           <div>
             <div>
-              <strong>Transaction ID:</strong>{" "}
+              <strong>Trans ID:</strong>
               {saleDetails.serialNumber || saleDetails.id}
             </div>
             <div>
-              <strong>Date:</strong>{" "}
+              <strong>Date:</strong>
               {dateObj.toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "long",
@@ -145,7 +145,7 @@ const Receipt = () => {
               })}
             </div>
             <div>
-              <strong>Time:</strong>{" "}
+              <strong>Time:</strong>
               {dateObj.toLocaleTimeString(undefined, {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -161,7 +161,7 @@ const Receipt = () => {
               <strong>Customer:</strong> {saleDetails.customerName || "Walk-in"}
             </div>
             <div>
-              <strong>Payment Method:</strong>{" "}
+              <strong>Payment:</strong>
               {saleDetails.cashAmount && saleDetails.cardAmount
                 ? "Cash & Card"
                 : saleDetails.cashAmount
@@ -176,13 +176,13 @@ const Receipt = () => {
           <table className="receipt-table">
             <thead>
               <tr>
-                <th style={{ width: "20%" }}>Product</th>
+                <th style={{ width: "16%" }}>Product</th>
                 <th style={{ width: "16%" }}>Sku</th>
                 <th style={{ width: "10%" }}>Karat</th>
                 <th style={{ width: "10%" }}>Qty</th>
-                <th style={{ width: "14%" }}>Weight(g)</th>
-                <th style={{ width: "14%" }}>Price(g)</th>
-                <th style={{ width: "16%" }}>Subtotal</th>
+                <th style={{ width: "13%" }}>Weight</th>
+                <th style={{ width: "13%" }}>Price(g)</th>
+                <th style={{ width: "14%" }}>Subtotal</th>
               </tr>
             </thead>
             <tbody>

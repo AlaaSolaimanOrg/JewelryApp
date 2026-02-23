@@ -37,7 +37,7 @@ const SalesReports = () => {
   const [startDate, setStartDate] = useState<any>(new Date());
   const [endDate, setEndDate] = useState<any>(addDays(new Date(), 1));
   const [dateFilterPill, setDateFilterPill] = useState<DatePillFilter | null>(
-    DatePillFilter.All
+    DatePillFilter.All,
   );
   const [appliedDateFilter, setAppliedDateFilter] = useState<any>(null);
 
@@ -82,11 +82,11 @@ const SalesReports = () => {
       dateFrom: appliedDateFilter
         ? appliedDateFilter?.startDate
         : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-          ?.startDate,
+            ?.startDate,
       dateTo: appliedDateFilter
         ? appliedDateFilter?.endDate
         : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-          ?.endDate,
+            ?.endDate,
     },
     effectDependency: [dateFilterPill, appliedDateFilter],
   }) as {
@@ -123,8 +123,9 @@ const SalesReports = () => {
                 {pillOptions.map((pill) => (
                   <div
                     key={pill.value}
-                    className={`dateFilterPill ${dateFilterPill === pill.value ? " activePillFilter" : ""
-                      }`}
+                    className={`dateFilterPill ${
+                      dateFilterPill === pill.value ? " activePillFilter" : ""
+                    }`}
                     onClick={() => {
                       setAppliedDateFilter(null);
                       setDateFilterPill(pill.value);
@@ -226,7 +227,7 @@ const SalesReports = () => {
 
       <section className="section">
         <h2 className="section-title">
-          <FaWeightHanging className="icon" style={{ marginRight: "8px" }} />{" "}
+          <FaWeightHanging className="icon" style={{ marginRight: "8px" }} />
           Gold Sold by Karat
         </h2>
         <div className="karat-cards">
@@ -245,13 +246,13 @@ const SalesReports = () => {
 
           {(!salesInsights?.goldByKarat ||
             salesInsights.goldByKarat.length === 0) && (
-              <div className="karat-card">
-                <h3>No Gold Sales Data</h3>
-                <div className="grams">0g</div>
-                <div className="price">$0.00/g</div>
-                <div className="value">$0.00</div>
-              </div>
-            )}
+            <div className="karat-card">
+              <h3>No Gold Sales Data</h3>
+              <div className="grams">0g</div>
+              <div className="price">$0.00/g</div>
+              <div className="value">$0.00</div>
+            </div>
+          )}
         </div>
       </section>
 

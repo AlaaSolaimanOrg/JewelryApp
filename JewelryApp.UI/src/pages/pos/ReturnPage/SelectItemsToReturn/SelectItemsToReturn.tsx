@@ -143,7 +143,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
             onChange={(e) =>
               onReturnReasonChange(
                 item.id,
-                e.target.value ? Number(e.target.value) : null
+                e.target.value ? Number(e.target.value) : null,
               )
             }
             disabled={!item.selected}
@@ -325,7 +325,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
       <CustomTable headers={headers} data={data} isLoading={isLoadingSale} />
 
       <div className="total-return-amount">
-        Total Return Amount:{" "}
+        Total Return Amount:
         <span id="totalReturnAmount">${totalReturnAmount.toFixed(2)}</span>
       </div>
     </section>

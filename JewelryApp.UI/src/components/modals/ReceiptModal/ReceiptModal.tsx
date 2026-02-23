@@ -55,7 +55,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
-  const [showThermalPrint, setShowThermalPrint] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(true);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -169,7 +169,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     })}
                   </div>
                   <div>
-                    <strong>Time:</strong>{" "}
+                    <strong>Time:</strong>
                     {dateObj.toLocaleTimeString(undefined, {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -182,11 +182,11 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                     <strong>Staff:</strong> {saleDetails.staffName || "N/A"}
                   </div>
                   <div>
-                    <strong>Customer:</strong>{" "}
+                    <strong>Customer:</strong>
                     {saleDetails.customerName || "Walk-in"}
                   </div>
                   <div>
-                    <strong>Payment Method:</strong>{" "}
+                    <strong>Payment:</strong>
                     {saleDetails.cashAmount && saleDetails.cardAmount
                       ? "Cash & Card"
                       : saleDetails.cashAmount
@@ -209,7 +209,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                       {!showThermalPrint && (
                         <th style={{ width: "16%" }}>Returned</th>
                       )}
-                      <th style={{ width: "13%" }}>Weight(g)</th>
+                      <th style={{ width: "13%" }}>Weight</th>
                       <th style={{ width: "13%" }}>Price(g)</th>
                       <th style={{ width: "14%" }}>Subtotal</th>
                     </tr>

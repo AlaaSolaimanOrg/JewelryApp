@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { FaCalendarAlt, FaDollarSign, FaList, FaPhone, FaTools } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaDollarSign,
+  FaList,
+  FaPhone,
+  FaTools,
+} from "react-icons/fa";
 import "./repairManagement.scss";
 
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
@@ -145,7 +151,7 @@ const RepairManagement: React.FC = () => {
   const handleStatusUpdate = async (
     repairId: string,
     currentStatus: RepairStatus,
-    direction: "next" | "prev"
+    direction: "next" | "prev",
   ) => {
     const newStatus =
       direction === "next"
@@ -284,8 +290,9 @@ const RepairManagement: React.FC = () => {
               return (
                 <div
                   key={repair.id}
-                  className={`repair-card ${isExpanded ? "expanded" : ""} ${repair.status
-                    }`}
+                  className={`repair-card ${isExpanded ? "expanded" : ""} ${
+                    repair.status
+                  }`}
                 >
                   {/* CARD HEADER */}
                   <div
@@ -392,7 +399,7 @@ const RepairManagement: React.FC = () => {
                                     <td>
                                       <span className="badge-repairtype">
                                         {splitCamelCaseWords(
-                                          RepairType[item.repairType]
+                                          RepairType[item.repairType],
                                         )}
                                       </span>
                                     </td>
@@ -400,8 +407,9 @@ const RepairManagement: React.FC = () => {
                                     {/* PAYMENT STATUS */}
                                     <td>
                                       <span
-                                        className={`badge-payment ${PaymentStatus[item.paymentStatus]
-                                          }`}
+                                        className={`badge-payment ${
+                                          PaymentStatus[item.paymentStatus]
+                                        }`}
                                       >
                                         {PaymentStatus[item.paymentStatus]}
                                       </span>
@@ -440,8 +448,8 @@ const RepairManagement: React.FC = () => {
                                     <td>
                                       {formatCurrency(
                                         item.cost +
-                                        item.urgentFee -
-                                        item.discount
+                                          item.urgentFee -
+                                          item.discount,
                                       )}
                                     </td>
 
@@ -482,13 +490,14 @@ const RepairManagement: React.FC = () => {
                             View Invoice
                           </button>
                           <button
-                            className={`btn status-btn ${NEXT_STATUS_BUTTON_CLASS[repair.status]
-                              }`}
+                            className={`btn status-btn ${
+                              NEXT_STATUS_BUTTON_CLASS[repair.status]
+                            }`}
                             onClick={() =>
                               handleStatusUpdate(
                                 repair.id,
                                 repair.status,
-                                "next"
+                                "next",
                               )
                             }
                             onContextMenu={(e) => {
@@ -496,11 +505,11 @@ const RepairManagement: React.FC = () => {
                               handleStatusUpdate(
                                 repair.id,
                                 repair.status,
-                                "prev"
+                                "prev",
                               );
                             }}
                           >
-                            Mark As{" "}
+                            Mark As
                             {repair.status === RepairStatus.InProgress
                               ? "Completed"
                               : repair.status === RepairStatus.Completed
