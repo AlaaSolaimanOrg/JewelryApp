@@ -28,8 +28,208 @@
     <DynamicLayoutManager>
       <RotationBehavior>ClearObjects</RotationBehavior>
       <LabelObjects>
+        <BarcodeObject>
+          <Name>BarcodeObject0</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="1" R="1" G="1" B="1"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <BarcodeFormat>Code128A</BarcodeFormat>
+          <Data>
+            <DataString>SKU</DataString>
+          </Data>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
+          <Size>AutoFit</Size>
+          <TextPosition>Bottom</TextPosition>
+          <FontInfo>
+            <FontName>Arial</FontName>
+            <FontSize>6</FontSize>
+            <IsBold>False</IsBold>
+            <IsItalic>False</IsItalic>
+            <IsUnderline>False</IsUnderline>
+            <FontBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FontBrush>
+          </FontInfo>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>1.2280654</X>
+              <Y>0.061446134</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>0.6272018</Width>
+              <Height>0.3365595</Height>
+            </Size>
+          </ObjectLayout>
+        </BarcodeObject>
         <TextObject>
-          <Name>TextObject0</Name>
+          <Name>TextObject1</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <HorizontalAlignment>Left</HorizontalAlignment>
+          <VerticalAlignment>Top</VerticalAlignment>
+          <FitMode>None</FitMode>
+          <IsVertical>False</IsVertical>
+          <FormattedText>
+            <FitMode>None</FitMode>
+            <HorizontalAlignment>Left</HorizontalAlignment>
+            <VerticalAlignment>Top</VerticalAlignment>
+            <IsVertical>False</IsVertical>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>karatType</Text>
+                <FontInfo>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>10</FontSize>
+                  <IsBold>False</IsBold>
+                  <IsItalic>False</IsItalic>
+                  <IsUnderline>False</IsUnderline>
+                  <FontBrush>
+                    <SolidColorBrush>
+                      <Color A="1" R="0" G="0" B="0"></Color>
+                    </SolidColorBrush>
+                  </FontBrush>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>1.135</X>
+              <Y>0.5067677</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>0.4066667</Width>
+              <Height>0.20306616</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+        <TextObject>
+          <Name>TextObject12</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <HorizontalAlignment>Right</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
+          <FitMode>None</FitMode>
+          <IsVertical>False</IsVertical>
+          <FormattedText>
+            <FitMode>None</FitMode>
+            <HorizontalAlignment>Right</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
+            <IsVertical>False</IsVertical>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>weight</Text>
+                <FontInfo>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>10</FontSize>
+                  <IsBold>False</IsBold>
+                  <IsItalic>False</IsItalic>
+                  <IsUnderline>False</IsUnderline>
+                  <FontBrush>
+                    <SolidColorBrush>
+                      <Color A="1" R="0" G="0" B="0"></Color>
+                    </SolidColorBrush>
+                  </FontBrush>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>1.5416665</X>
+              <Y>0.51529515</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>0.4066666</Width>
+              <Height>0.19190525</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+        <TextObject>
+          <Name>TextObject2</Name>
           <Brushes>
             <BackgroundBrush>
               <SolidColorBrush>
@@ -61,19 +261,19 @@
           </Margin>
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
-          <FitMode>AlwaysFit</FitMode>
+          <FitMode>None</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
-            <FitMode>AlwaysFit</FitMode>
+            <FitMode>None</FitMode>
             <HorizontalAlignment>Center</HorizontalAlignment>
             <VerticalAlignment>Middle</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
-                <Text>test</Text>
+                <Text>size</Text>
                 <FontInfo>
                   <FontName>Segoe UI</FontName>
-                  <FontSize>14.6</FontSize>
+                  <FontSize>10</FontSize>
                   <IsBold>False</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -88,12 +288,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.3383332</X>
-              <Y>0.255</Y>
+              <X>1.3569344</X>
+              <Y>0.6850001</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.40666667</Width>
-              <Height>0.43</Height>
+              <Width>0.40666676</Width>
+              <Height>0.25515002</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
