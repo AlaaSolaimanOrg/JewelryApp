@@ -171,33 +171,34 @@ const Receipt = () => {
             </div>
           </div>
         </div>
-
-        <table className="receipt-table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Sku</th>
-              <th>Karat</th>
-              <th>Quantity</th>
-              <th>Weight (g)</th>
-              <th>Price/Gram</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {saleDetails.saleItems?.map((item, index) => (
-              <tr key={index}>
-                <td>{item.productName}</td>
-                <td>{item.sku}</td>
-                <td>{item.karat}</td>
-                <td>{item.quantity}</td>
-                <td>{item.weight}g</td>
-                <td>${item.pricePerGram}</td>
-                <td>${item.subtotalBeforeDiscount}</td>
+        <div className="table-wrapper">
+          <table className="receipt-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Sku</th>
+                <th>Karat</th>
+                <th>Quantity</th>
+                <th>Weight (g)</th>
+                <th>Price/Gram</th>
+                <th>Subtotal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {saleDetails.saleItems?.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.productName}</td>
+                  <td>{item.sku}</td>
+                  <td>{item.karat}</td>
+                  <td>{item.quantity}</td>
+                  <td>{item.weight}g</td>
+                  <td>${item.pricePerGram}</td>
+                  <td>${item.subtotalBeforeDiscount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {!!saleDetails.discount && (
           <div className="receipt-discount">
@@ -229,26 +230,6 @@ const Receipt = () => {
             <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
-        </div>
-
-        <div className="receipt-actions">
-          {/* <button className="btn btn-primary" onClick={handlePrint}>
-            <FaPrint /> Print Receipt
-          </button> */}
-
-          <Button
-            variant="primary"
-            onClick={handleEpsonPrintHTML}
-            disabled={!saleDetails || epsonBusy}
-          >
-            <FaPrint /> {epsonBusy ? "Printing..." : "Print"}
-          </Button>
-
-          <Link to={"/"} className="text-decoration-none">
-            <button className="btn btn-secondary">
-              <FaCheck /> Start New Sale
-            </button>
-          </Link>
         </div>
 
         <div className="receipt-footer">
@@ -288,6 +269,25 @@ const Receipt = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="receipt-actions">
+        {/* <button className="btn btn-primary" onClick={handlePrint}>
+            <FaPrint /> Print Receipt
+          </button> */}
+
+        <Button
+          variant="primary"
+          onClick={handleEpsonPrintHTML}
+          disabled={!saleDetails || epsonBusy}
+        >
+          <FaPrint /> {epsonBusy ? "Printing..." : "Print"}
+        </Button>
+
+        <Link to={"/"} className="text-decoration-none">
+          <button className="btn btn-secondary">
+            <FaCheck /> Start New Sale
+          </button>
+        </Link>
       </div>
     </div>
   );

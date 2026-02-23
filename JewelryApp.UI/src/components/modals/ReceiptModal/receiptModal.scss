@@ -286,107 +286,6 @@
   }
 }
 
-@media print {
-  .receipt-modal {
-    .modal-header,
-    .modal-footer {
-      display: none !important;
-    }
-
-    .modal-content {
-      border: none !important;
-      box-shadow: none !important;
-      background: white !important;
-    }
-
-    .modal-body {
-      padding: 0 !important;
-    }
-  }
-
-  .receipt-container {
-    border: none !important;
-    box-shadow: none !important;
-    padding: 20px !important;
-    max-width: 100% !important;
-
-    .table-wrapper {
-      border: none !important;
-
-      .receipt-table {
-        display: table !important;
-
-        thead {
-          display: table-header-group !important;
-          width: 100% !important;
-
-          tr {
-            display: table-row !important;
-
-            th {
-              display: table-cell !important;
-            }
-          }
-        }
-
-        .table-body-scrollable {
-          display: table-row-group !important;
-          max-height: none !important;
-          overflow-y: visible !important;
-
-          tr {
-            display: table-row !important;
-
-            td {
-              display: table-cell !important;
-            }
-          }
-        }
-      }
-    }
-  }
-  .table-body-scrollable::-webkit-scrollbar {
-    display: none !important;
-  }
-  body,
-  html,
-  .modal,
-  .modal-dialog,
-  .modal-content,
-  .modal-body {
-    height: auto !important;
-    overflow: visible !important;
-    width: 100% !important;
-  }
-  table {
-    table-layout: fixed !important;
-    width: 100% !important;
-  }
-
-  th,
-  td {
-    display: table-cell !important;
-  }
-
-  .receipt-footer {
-    .social-links {
-      .social-item {
-        font-size: 0.8rem;
-
-        svg {
-          font-size: 1rem;
-        }
-      }
-    }
-
-    .qr-section {
-      .qr-label {
-        font-size: 0.7rem;
-      }
-    }
-  }
-}
-
 .receipt-container.thermal-print {
   width: 576px; /* 80mm paper */
   max-width: 576px;
@@ -401,15 +300,32 @@
   box-shadow: none !important;
   text-shadow: none !important;
 
+  .receipt-details {
+    font-weight: bold;
+  }
+
+  .receipt-header,
+  .receipt-discount,
+  .receipt-footer,
+  .payment-breakdown .summary-item {
+    border-color: black;
+  }
+
   .receipt-subtitle {
     opacity: 1 !important;
   }
-  .receipt-table {
-    th,
-    td {
-      border-width: 2px !important;
-      font-size: 11px;
-      border: none !important;
+  .table-wrapper {
+    border: none !important;
+    .receipt-table {
+      th {
+        background-color: white;
+      }
+      th,
+      td {
+        font-size: 11px;
+        font-weight: bold !important;
+        border-bottom: 1px solid black !important;
+      }
     }
   }
 }
