@@ -43,7 +43,7 @@ export const DYMO = {
     body.append("labelSetXml", "");
 
     const res = await fetch(
-      "https://127.0.0.1:41951/DYMO/DLS/Printing/print-label",
+      "https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel",
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
