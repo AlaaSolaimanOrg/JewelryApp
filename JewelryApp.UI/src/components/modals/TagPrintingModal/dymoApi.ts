@@ -14,7 +14,7 @@ export const DYMO = {
 
   async getPrinters() {
     try {
-      const res = await fetch("https://127.0.0.1:41951/dcd/api/printers");
+      const res = await fetch("https://127.0.0.1:41951/dcd/api/get-printers");
       const data = await res.json();
       return data.printers || [];
     } catch (error) {
