@@ -204,9 +204,9 @@
   text-shadow: none !important;
   .social-links {
     .social-item {
-      color: black;
+      color: black !important;
       .instagram-icon {
-        color: black;
+        color: black !important;
       }
     }
   }
@@ -233,6 +233,7 @@
 
   .receipt-subtitle {
     opacity: 1 !important;
+    color: black !important;
   }
   .table-wrapper {
     border: none !important;
