@@ -69,26 +69,43 @@ export const DYMO = {
 /* ---------------------------------------------
    Label XML Updater — Replace fields dynamically
 ---------------------------------------------- */
-export function updateLabelXml(xml: string, product: any) {
-  xml = xml.replace(
-    /<TextObject>\s*<Name>TextObject1<\/Name>[\s\S]*?<Text>[\s\S]*?<\/Text>/,
-    `<TextObject><Name>TextObject1</Name><Text>${product.karatType}k</Text></TextObject>`,
+export function updateLabelXml(xml: string, product: Product) {
+  let updated = xml;
+
+  // --- SKU ---
+  updated = updated.replace(
+    /<DataString>.*?<\/DataString>/g,
+    `<DataString>${product.sku}</DataString>`,
   );
 
-  xml = xml.replace(
-    /<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<Text>[\s\S]*?<\/Text>/,
-    `<TextObject><Name>TextObject12</Name><Text>${product.weight} g</Text></TextObject>`,
+  // --- Price ---
+  updated = updated.replace(
+    /<Price>.*?<\/Price>/g,
+    `<Price>${product.price.toFixed(2)}</Price>`,
   );
 
-  xml = xml.replace(
-    /<TextObject>\s*<Name>TextObject2<\/Name>[\s\S]*?<Text>[\s\S]*?<\/Text>/,
-    `<TextObject><Name>TextObject2</Name><Text>${product.specification ?? ""}</Text></TextObject>`,
+  // --- Weight ---
+  updated = updated.replace(
+    /<Weight>.*?<\/Weight>/g,
+    `<Weight>${product.weight}</Weight>`,
   );
 
-  xml = xml.replace(
-    /<BarcodeObject>\s*<Name>BarcodeObject0<\/Name>[\s\S]*?<DataString>[\s\S]*?<\/DataString>/,
-    `<BarcodeObject><Name>BarcodeObject0</Name><DataString>${product.sku}</DataString></BarcodeObject>`,
+  // --- Karat ---
+  updated = updated.replace(
+    /<Karat>.*?<\/Karat>/g,
+    `<Karat>${product.karatType}</Karat>`,
   );
 
-  return xml;
+  // --- Optional: validate XML before returning ---
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(updated, "application/xml");
+    if (doc.getElementsByTagName("parsererror").length > 0) {
+      console.warn("Malformed XML after update!");
+    }
+  } catch (err) {
+    console.error("Error parsing XML after update:", err);
+  }
+
+  return updated;
 }

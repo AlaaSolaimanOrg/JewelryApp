@@ -114,14 +114,14 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     try {
       // Load the .label file
       const response = await fetch(
-        `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`,
+        `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`
       );
       const xml = await response.text();
 
       const updatedXml = updateLabelXml(xml, product);
 
       // Print X copies
-      await DYMO.printMultipleCopies(selectedPrinter, xml, tagCount);
+      await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
 
       showSuccess(`Printed ${tagCount} tag(s) successfully.`);
     } catch (err) {
