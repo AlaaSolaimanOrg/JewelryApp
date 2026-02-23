@@ -209,7 +209,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                       {!showThermalPrint && (
                         <th style={{ width: "16%" }}>Returned</th>
                       )}
-                      <th style={{ width: "13%" }}>Weight</th>
+                      <th style={{ width: "13%" }}>Weight(g)</th>
                       <th style={{ width: "13%" }}>Price(g)</th>
                       <th style={{ width: "14%" }}>Subtotal</th>
                     </tr>

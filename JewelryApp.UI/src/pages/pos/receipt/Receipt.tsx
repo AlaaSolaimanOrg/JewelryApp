@@ -179,8 +179,8 @@ const Receipt = () => {
                 <th>Sku</th>
                 <th>Karat</th>
                 <th>Quantity</th>
-                <th>Weight (g)</th>
-                <th>Price/Gram</th>
+                <th>Weight(g)</th>
+                <th>Price(g)</th>
                 <th>Subtotal</th>
               </tr>
             </thead>
