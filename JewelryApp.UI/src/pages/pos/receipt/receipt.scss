@@ -238,14 +238,16 @@
   .table-wrapper {
     border: none !important;
     .receipt-table {
-      th {
-        background-color: white !important;
-      }
-      th,
-      td {
-        font-size: 15px;
-        font-weight: bold !important;
-        border-bottom: 1px solid black !important;
+      thead {
+        th {
+          background-color: white !important;
+        }
+        th,
+        td {
+          font-size: 15px !important;
+          font-weight: bold !important;
+          border-bottom: 1px solid black !important;
+        }
       }
     }
   }
