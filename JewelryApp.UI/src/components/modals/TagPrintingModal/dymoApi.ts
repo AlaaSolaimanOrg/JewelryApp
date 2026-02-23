@@ -2,6 +2,8 @@
    🔥 Minimal DYMO REST API Helper (No SDK Needed)
 ---------------------------------------------- */
 
+import type { Product } from "../../../pages/admin/inventory/Inventory";
+
 export const DYMO = {
   async checkEnvironment() {
     try {
@@ -66,46 +68,32 @@ export const DYMO = {
   },
 };
 
-/* ---------------------------------------------
-   Label XML Updater — Replace fields dynamically
----------------------------------------------- */
 export function updateLabelXml(xml: string, product: Product) {
   let updated = xml;
 
-  // --- SKU ---
+  // --- SKU in barcode ---
   updated = updated.replace(
-    /<DataString>.*?<\/DataString>/g,
-    `<DataString>${product.sku}</DataString>`,
-  );
-
-  // --- Price ---
-  updated = updated.replace(
-    /<Price>.*?<\/Price>/g,
-    `<Price>${product.price.toFixed(2)}</Price>`,
-  );
-
-  // --- Weight ---
-  updated = updated.replace(
-    /<Weight>.*?<\/Weight>/g,
-    `<Weight>${product.weight}</Weight>`,
+    /(<BarcodeObject>\s*<Name>BarcodeObject0<\/Name>[\s\S]*?<DataString>)(.*?)(<\/DataString>)/,
+    `$1${product.sku}$3`,
   );
 
   // --- Karat ---
   updated = updated.replace(
-    /<Karat>.*?<\/Karat>/g,
-    `<Karat>${product.karatType}</Karat>`,
+    /(<TextObject>\s*<Name>TextObject1<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
+    `$1${product.karatType}$3`,
   );
 
-  // --- Optional: validate XML before returning ---
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(updated, "application/xml");
-    if (doc.getElementsByTagName("parsererror").length > 0) {
-      console.warn("Malformed XML after update!");
-    }
-  } catch (err) {
-    console.error("Error parsing XML after update:", err);
-  }
+  // --- Weight ---
+  updated = updated.replace(
+    /(<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
+    `$1${product.weight}$3`,
+  );
+
+  // --- Size ---
+  updated = updated.replace(
+    /(<TextObject>\s*<Name>TextObject2<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
+    `$1${product.price}$3`,
+  );
 
   return updated;
 }

@@ -8,14 +8,14 @@ import { FaArrowLeft, FaPlus, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createRepair } from "../../../apis/repairs.api/repairs.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { PaymentStatus } from "../../../types/enums";
+import { PaymentStatus, ProductType } from "../../../types/enums";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
 
 
 export interface RepairItem {
   id: number;
   itemType: string;
-  metal: string;
+  metal: ProductType;
   weight: string;
   stone: string;
   repairType: string;
@@ -32,7 +32,7 @@ const itemsInitialValue: RepairItem[] = [
   {
     id: 1,
     itemType: "",
-    metal: "",
+    metal: ProductType.Gold,
     weight: "",
     stone: "",
     repairType: "",
@@ -70,7 +70,7 @@ const Repair = () => {
       {
         id: prev.length + 1,
         itemType: "",
-        metal: "",
+        metal: ProductType.Gold,
         weight: "",
         stone: "",
         repairType: "",

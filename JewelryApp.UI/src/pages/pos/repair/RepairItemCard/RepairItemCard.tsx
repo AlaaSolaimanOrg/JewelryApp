@@ -200,17 +200,6 @@ const RepairItemCard = ({
                 </div>
 
                 <div className="form-col">
-                  <label>Urgent Fee ($)</label>
-                  <input
-                    type="number"
-                    value={item.urgent}
-                    onChange={(e) =>
-                      updateItem(item.id, "urgent", e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="form-col">
                   <label>Discount ($)</label>
                   <input
                     type="number"
