@@ -334,10 +334,18 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   <div className="qr-label">Scan to leave a review</div>
                   <QRCode
                     value="https://share.google/gxvrM3GV4YzjE232x"
-                    size={80}
+                    size={showThermalPrint ? 64 : 80}
                     bgColor="#ffffff"
                     fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
-                    style={{ border: "1px solid #eee", padding: "4px" }}
+                    style={
+                      showThermalPrint
+                        ? { display: "block" }
+                        : {
+                            border: "1px solid #eee",
+                            padding: "4px",
+                            display: "block",
+                          }
+                    }
                   />
                 </div>
               </div>
