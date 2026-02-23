@@ -17,6 +17,7 @@ import QRCode from "react-qr-code";
 import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import { Button } from "react-bootstrap";
 import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
+import { renderLongDescription } from "../../../utils.tsx";
 
 interface Sale {
   id: string;
@@ -47,7 +48,7 @@ const Receipt = () => {
   const { saleId } = useParams();
   const [epsonBusy, setEpsonBusy] = useState(false);
 
-  const [showThermalPrint, setShowThermalPrint] = useState(true);
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -175,25 +176,29 @@ const Receipt = () => {
           <table className="receipt-table">
             <thead>
               <tr>
-                <th>Product</th>
-                <th>Sku</th>
-                <th>Karat</th>
-                <th>Quantity</th>
-                <th>Weight(g)</th>
-                <th>Price(g)</th>
-                <th>Subtotal</th>
+                <th style={{ width: "20%" }}>Product</th>
+                <th style={{ width: "16%" }}>Sku</th>
+                <th style={{ width: "10%" }}>Karat</th>
+                <th style={{ width: "10%" }}>Qty</th>
+                <th style={{ width: "14%" }}>Weight(g)</th>
+                <th style={{ width: "14%" }}>Price(g)</th>
+                <th style={{ width: "16%" }}>Subtotal</th>
               </tr>
             </thead>
             <tbody>
               {saleDetails.saleItems?.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.productName}</td>
-                  <td>{item.sku}</td>
-                  <td>{item.karat}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.weight}g</td>
-                  <td>${item.pricePerGram}</td>
-                  <td>${item.subtotalBeforeDiscount}</td>
+                  <td style={{ width: "20%" }}>
+                    {renderLongDescription(item.productName)}
+                  </td>
+                  <td style={{ width: "16%" }}>{item.sku}</td>
+                  <td style={{ width: "10%" }}>{item.karat}</td>
+                  <td style={{ width: "10%" }}>{item.quantity}</td>
+                  <td style={{ width: "14%" }}>{item.weight}g</td>
+                  <td style={{ width: "14%" }}>${item.pricePerGram}</td>
+                  <td style={{ width: "16%" }}>
+                    ${item.subtotalBeforeDiscount}
+                  </td>
                 </tr>
               ))}
             </tbody>
