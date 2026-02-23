@@ -48,7 +48,7 @@ const Receipt = () => {
   const { saleId } = useParams();
   const [epsonBusy, setEpsonBusy] = useState(false);
 
-  const [showThermalPrint, setShowThermalPrint] = useState(true);
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
