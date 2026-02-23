@@ -55,7 +55,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
-  const [showThermalPrint, setShowThermalPrint] = useState(true);
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -206,7 +206,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                       <th style={{ width: "16%" }}>SKU</th>
                       <th style={{ width: "10%" }}>Karat</th>
                       <th style={{ width: "10%" }}>Qty</th>
-                      <th style={{ width: "16%" }}>Returned</th>
+                      {!showThermalPrint && (
+                        <th style={{ width: "16%" }}>Returned</th>
+                      )}
                       <th style={{ width: "13%" }}>Weight</th>
                       <th style={{ width: "13%" }}>Price(g)</th>
                       <th style={{ width: "14%" }}>Subtotal</th>
@@ -225,21 +227,26 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
 
                         <td style={{ width: "10%" }}>{item.quantity}</td>
 
-                        <td style={{ width: "18%" }} className="returned-cell">
-                          {item.quantityReturned > 0 ||
-                          item.amountReturned > 0 ? (
-                            <>
-                              <div className="returned-qty">
-                                {item.quantityReturned || 0} pcs
-                              </div>
-                              <div className="returned-amount">
-                                ${item.amountReturned?.toFixed(2) || "0.00"}
-                              </div>
-                            </>
-                          ) : (
-                            <span className="no-return">-</span>
-                          )}
-                        </td>
+                        {!showThermalPrint && (
+                          <td
+                            style={{ width: "18%" }}
+                            className="returned-cell"
+                          >
+                            {item.quantityReturned > 0 ||
+                            item.amountReturned > 0 ? (
+                              <>
+                                <div className="returned-qty">
+                                  {item.quantityReturned || 0} pcs
+                                </div>
+                                <div className="returned-amount">
+                                  ${item.amountReturned?.toFixed(2) || "0.00"}
+                                </div>
+                              </>
+                            ) : (
+                              <span className="no-return">-</span>
+                            )}
+                          </td>
+                        )}
 
                         <td style={{ width: "12%" }}>{item.weight}g</td>
 
