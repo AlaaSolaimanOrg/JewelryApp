@@ -55,7 +55,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
-  const [showThermalPrint, setShowThermalPrint] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(true);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -157,11 +157,11 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <div className="receipt-details">
                 <div>
                   <div>
-                    <strong>Transaction ID:</strong>{" "}
+                    <strong>Trans ID:</strong>
                     {saleDetails.serialNumber || saleDetails.id}
                   </div>
                   <div>
-                    <strong>Date:</strong>{" "}
+                    <strong>Date:</strong>
                     {dateObj.toLocaleDateString(undefined, {
                       year: "numeric",
                       month: "long",
