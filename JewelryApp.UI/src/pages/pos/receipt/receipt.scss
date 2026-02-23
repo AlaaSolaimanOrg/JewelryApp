@@ -202,10 +202,28 @@
   border: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
+  .social-links {
+    .social-item {
+      color: black;
+      .instagram-icon {
+        color: black;
+      }
+    }
+  }
 
+  .qr-label {
+    color: black !important;
+  }
   .receipt-details {
     font-weight: bold;
+    font-size: 17px;
   }
+
+  .receipt-subtitle {
+    color: black;
+    font-weight: bold;
+  }
+
   .receipt-header,
   .receipt-discount,
   .receipt-footer,
