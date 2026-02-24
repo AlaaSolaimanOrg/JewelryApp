@@ -79,7 +79,7 @@ export function updateLabelXml(xml: string, product: Product) {
     product.weight !== undefined && product.weight !== null
       ? `${product.weight}g`
       : "";
-  const price = product.price ?? "";
+  const specification = product.specification ?? "";
 
   // --- SKU in barcode ---
   updated = updated.replace(
@@ -102,7 +102,7 @@ export function updateLabelXml(xml: string, product: Product) {
   // --- Size/Price ---
   updated = updated.replace(
     /(<TextObject>\s*<Name>TextObject2<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
-    `$1${price}$3`,
+    `$1${specification}$3`,
   );
 
   return updated;
