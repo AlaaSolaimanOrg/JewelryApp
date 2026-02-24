@@ -20,7 +20,7 @@ const MainPosPage: React.FC = () => {
   const [searchInput, setSearchInput] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [discountAmount, setDiscountAmount] = useState("0");
-  const [discountType, setDiscountType] = useState(DiscountType.Percentage);
+  const [discountType, setDiscountType] = useState(DiscountType.FixedAmount);
   const [notes, setNotes] = useState("");
   const [cashAmount, setCashAmount] = useState(0);
   const [cardAmount, setCardAmount] = useState(0);

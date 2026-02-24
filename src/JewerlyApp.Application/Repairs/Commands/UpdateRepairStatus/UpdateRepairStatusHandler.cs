@@ -35,14 +35,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                 };
             }
 
-            if(request.Status == RepairStatus.Completed && repair.Items.Any(i => i.PaymentStatus != PaymentStatus.Paid))
-            {
-                return new GenericResponse<Unit>
-                {
-                    StatusCode = ResponseStatusCode.NotFound,
-                    Message = Messages.Error_RepairCantBeCompleted
-                };
-            }
 
             repair.Status = request.Status;
             

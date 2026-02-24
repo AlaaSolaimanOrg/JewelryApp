@@ -358,7 +358,6 @@ const RepairManagement: React.FC = () => {
                                   <th>Stone</th>
                                   <th>Repair Type</th>
                                   <th>Payment</th>
-                                  <th>Deposit Paid</th>
                                   <th>Notes</th>
                                   <th>Cost</th>
                                   <th>Action</th>
@@ -410,13 +409,6 @@ const RepairManagement: React.FC = () => {
                                       </span>
                                     </td>
 
-                                    {/* DEPOSIT PAID */}
-                                    <td>
-                                      {item.depositPaid > 0
-                                        ? formatCurrency(item.depositPaid)
-                                        : "-"}
-                                    </td>
-
                                     {/* NOTES */}
                                     <td className="item-notes">
                                       {item.notes ? (
@@ -442,7 +434,7 @@ const RepairManagement: React.FC = () => {
 
                               <tfoot>
                                 <tr>
-                                  <td colSpan={10} className="total-label">
+                                  <td colSpan={9} className="total-label">
                                     Total Cost:
                                   </td>
                                   <td className="total-cost">
