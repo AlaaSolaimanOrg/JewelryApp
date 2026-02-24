@@ -1,7 +1,10 @@
 .repair-management-page {
   margin: 0 auto;
   color: var(--dark);
-  font-family: "Inter", -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
 
   .page-header {
     display: flex;
@@ -477,8 +480,6 @@
     }
 
     .cost,
-    .urgent,
-    .discount,
     .subtotal {
       font-family: "Roboto Mono", monospace;
       font-weight: 500;
@@ -486,14 +487,6 @@
 
     .cost {
       color: #333;
-    }
-
-    .urgent {
-      color: #f44336;
-    }
-
-    .discount {
-      color: #4caf50;
     }
 
     .subtotal {
@@ -516,11 +509,6 @@
     &.Unpaid {
       background: #ffebee;
       color: #c62828;
-    }
-
-    &.Partial {
-      background: #fff3e0;
-      color: #ef6c00;
     }
   }
 
@@ -728,12 +716,6 @@
     background: #edf9f0;
     color: #3d8a4d;
     border-color: #cbeed6;
-  }
-
-  .badge-payment.Partial {
-    background: #fff7e6;
-    color: #c28f22;
-    border-color: #f5e4b5;
   }
 
   .badge-payment.Unpaid {

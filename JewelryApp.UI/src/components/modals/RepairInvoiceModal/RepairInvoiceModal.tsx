@@ -104,9 +104,6 @@ const RepairInvoiceModal = ({
                     <th>Item</th>
                     <th>Repair</th>
                     <th>Cost</th>
-                    <th>Urgent</th>
-                    <th>Discount</th>
-                    <th>Subtotal</th>
                   </tr>
                 </thead>
 
@@ -118,9 +115,6 @@ const RepairInvoiceModal = ({
                       </td>
                       <td>{splitCamelCaseWords(RepairType[i.repairType])}</td>
                       <td>${i.cost?.toFixed(2)}</td>
-                      <td>${i.urgentFee?.toFixed(2)}</td>
-                      <td>${i.discount?.toFixed(2)}</td>
-                      <td>${i.subTotal?.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

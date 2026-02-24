@@ -46,7 +46,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                 OrderDate = repair.OrderDate,
                 Status = repair.Status,
                 TotalCost = repair.TotalCost,
-                Notes = repair.Notes,
                 Items = repair.Items.Select(i => new RepairItemDto
                 {
                     Id = i.Id,
@@ -57,11 +56,8 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                     RepairType = i.RepairType,
                     Notes = i.Notes,
                     Cost = i.Cost,
-                    UrgentFee = i.UrgentFee,
-                    Discount = i.Discount,
                     PaymentStatus = i.PaymentStatus,
                     DueDate = i.DueDate,
-                    SubTotal = i.SubTotal
                 }).ToList()
             };
 

@@ -13,7 +13,6 @@ namespace JewerlyApp.Domain.Entities
         public DateOnly OrderDate { get; set; }
         public RepairStatus Status { get; set; }
         public decimal TotalCost { get; set; }
-        public string Notes { get; set; } = string.Empty;
         public ICollection<RepairItem> Items { get; set; } = new List<RepairItem>();
     }
 }

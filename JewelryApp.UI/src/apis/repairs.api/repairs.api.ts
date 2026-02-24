@@ -19,8 +19,6 @@ export const createRepair = async (payload: {
     repairType: RepairType;
     notes: string;
     cost: number;
-    urgentFee: number;
-    discount: number;
     dueDate?: string | null;
     paymentStatus: PaymentStatus;
     depositPaid: number;
@@ -46,8 +44,6 @@ export const updateRepairStatus = async (payload: {
 export const updateRepairItem = async (payload: {
   repairItemId: string;
   cost: number;
-  urgentFee: number;
-  discount: number;
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairItem, payload);
 };

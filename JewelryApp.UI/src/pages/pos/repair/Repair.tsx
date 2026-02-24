@@ -1,16 +1,14 @@
 import { useState } from "react";
+import { FaArrowLeft, FaPlus, FaTimes } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { createRepair } from "../../../apis/repairs.api/repairs.api";
+import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
+import { PaymentStatus, ProductType } from "../../../types/enums";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import CustomerSection from "../posSale/PosSale.sections/CustomerSection/CustomerSection";
 import type { Customer } from "../posSale/types";
 import "./repair.scss";
 import RepairItemCard from "./RepairItemCard/RepairItemCard";
-
-import { FaArrowLeft, FaPlus, FaTimes } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { createRepair } from "../../../apis/repairs.api/repairs.api";
-import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { PaymentStatus, ProductType } from "../../../types/enums";
-import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-
 
 export interface RepairItem {
   id: number;
@@ -21,8 +19,6 @@ export interface RepairItem {
   repairType: string;
   notes: string;
   cost: string;
-  urgent: string;
-  discount: string;
   paymentStatus: PaymentStatus | "";
   depositPaid: string;
   dueDate: string;
@@ -38,8 +34,6 @@ const itemsInitialValue: RepairItem[] = [
     repairType: "",
     notes: "",
     cost: "",
-    urgent: "",
-    discount: "",
     paymentStatus: PaymentStatus.Unpaid,
     depositPaid: "",
     dueDate: "",
@@ -60,6 +54,8 @@ const Repair = () => {
 
   const [items, setItems] = useState<RepairItem[]>(itemsInitialValue);
 
+  console.log("items", items);
+
   // 🔥 NEW STATES FOR INVOICE MODAL
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
@@ -76,8 +72,6 @@ const Repair = () => {
         repairType: "",
         notes: "",
         cost: "",
-        urgent: "",
-        discount: "",
         paymentStatus: PaymentStatus.Unpaid,
         depositPaid: "",
         dueDate: "",
@@ -91,21 +85,13 @@ const Repair = () => {
 
   const updateItem = (id: number, field: keyof RepairItem, value: string) => {
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item))
-    );
-  };
-
-  const calculateItemTotal = (item: RepairItem) => {
-    return (
-      (Number(item.cost) || 0) +
-      (Number(item.urgent) || 0) -
-      (Number(item.discount) || 0)
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     );
   };
 
   const grandTotal = items.reduce(
-    (sum, item) => sum + calculateItemTotal(item),
-    0
+    (sum, item) => sum + Number(item.cost) || 0,
+    0,
   );
 
   const validateItems = () => {
@@ -139,7 +125,6 @@ const Repair = () => {
 
     const payload = {
       customerId: customer.id,
-      notes: "",
       items: items.map((i) => {
         const paymentStatusNum = Number(i.paymentStatus);
         const cost = Number(i.cost) || 0;
@@ -147,8 +132,6 @@ const Repair = () => {
         let depositPaid = 0;
         if (paymentStatusNum === PaymentStatus.Unpaid) depositPaid = 0;
         else if (paymentStatusNum === PaymentStatus.Paid) depositPaid = cost;
-        else if (paymentStatusNum === PaymentStatus.Partial)
-          depositPaid = Number(i.depositPaid) || 0;
 
         return {
           itemType: Number(i.itemType),
@@ -158,8 +141,6 @@ const Repair = () => {
           stoneType: i.stone,
           notes: i.notes,
           cost: cost,
-          urgentFee: Number(i.urgent) || 0,
-          discount: Number(i.discount) || 0,
           paymentStatus: paymentStatusNum,
           depositPaid: depositPaid,
           dueDate: i.dueDate || null,
@@ -223,7 +204,6 @@ const Repair = () => {
             item={item}
             updateItem={updateItem}
             removeItem={removeItem}
-            calculateItemTotal={calculateItemTotal}
             itemsCount={items.length}
             cardNumber={index + 1}
             errors={errors[item.id] || {}}

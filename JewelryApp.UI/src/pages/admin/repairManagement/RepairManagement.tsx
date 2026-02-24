@@ -27,6 +27,7 @@ import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
+import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
 
 export interface RepairItem {
   id: string;
@@ -37,12 +38,9 @@ export interface RepairItem {
   repairType: RepairType;
   notes: string;
   cost: number;
-  urgentFee: number;
-  discount: number;
   paymentStatus: PaymentStatus;
   depositPaid: number;
   dueDate: string | null;
-  subTotal: number;
 }
 
 export interface Repair {
@@ -363,9 +361,6 @@ const RepairManagement: React.FC = () => {
                                   <th>Deposit Paid</th>
                                   <th>Notes</th>
                                   <th>Cost</th>
-                                  <th>Urgent</th>
-                                  <th>Discount</th>
-                                  <th>Subtotal</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
@@ -424,34 +419,15 @@ const RepairManagement: React.FC = () => {
 
                                     {/* NOTES */}
                                     <td className="item-notes">
-                                      {item.notes || "-"}
+                                      {item.notes ? (
+                                        <CommentTooltip comment={item.notes} />
+                                      ) : (
+                                        "-"
+                                      )}
                                     </td>
 
                                     {/* COST */}
                                     <td>{formatCurrency(item.cost)}</td>
-
-                                    {/* URGENT */}
-                                    <td>
-                                      {item.urgentFee > 0
-                                        ? formatCurrency(item.urgentFee)
-                                        : "-"}
-                                    </td>
-
-                                    {/* DISCOUNT */}
-                                    <td>
-                                      {item.discount > 0
-                                        ? formatCurrency(item.discount)
-                                        : "-"}
-                                    </td>
-
-                                    {/* SUBTOTAL */}
-                                    <td>
-                                      {formatCurrency(
-                                        item.cost +
-                                          item.urgentFee -
-                                          item.discount,
-                                      )}
-                                    </td>
 
                                     {/* EDIT BUTTON */}
                                     <td className="edit-cell">
@@ -466,7 +442,7 @@ const RepairManagement: React.FC = () => {
 
                               <tfoot>
                                 <tr>
-                                  <td colSpan={13} className="total-label">
+                                  <td colSpan={10} className="total-label">
                                     Total Cost:
                                   </td>
                                   <td className="total-cost">

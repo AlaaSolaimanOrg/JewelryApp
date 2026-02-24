@@ -81,12 +81,12 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.2280654</X>
-              <Y>0.061446134</Y>
+              <X>1.1349998</X>
+              <Y>0.07967652</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.6272018</Width>
-              <Height>0.3365595</Height>
+              <Width>0.7922055</Width>
+              <Height>0.3903235</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -288,12 +288,12 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.3569344</X>
-              <Y>0.6850001</Y>
+              <X>1.3383329</X>
+              <Y>0.7183613</Y>
             </DYMOPoint>
             <Size>
               <Width>0.40666676</Width>
-              <Height>0.25515002</Height>
+              <Height>0.17114508</Height>
             </Size>
           </ObjectLayout>
         </TextObject>

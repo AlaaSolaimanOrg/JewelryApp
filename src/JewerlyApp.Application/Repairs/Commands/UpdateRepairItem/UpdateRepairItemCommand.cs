@@ -12,11 +12,5 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairItem
 
         [Required]
         public decimal Cost { get; set; }
-
-        [Required]
-        public decimal UrgentFee { get; set; }
-
-        [Required]
-        public decimal Discount { get; set; }
     }
 }

@@ -1,20 +1,19 @@
 import Accordion from "react-bootstrap/Accordion";
-import "./repairItemCard.scss";
-import type { RepairItem } from "../Repair";
-import { FaTools, FaGem, FaDollarSign, FaTrash } from "react-icons/fa";
+import { FaDollarSign, FaGem, FaTools, FaTrash } from "react-icons/fa";
 import {
+  PaymentStatus,
   ProductCategory,
   ProductType,
   RepairType,
-  PaymentStatus,
 } from "../../../../types/enums";
 import { splitCamelCaseWords } from "../../../../utils";
+import type { RepairItem } from "../Repair";
+import "./repairItemCard.scss";
 
 const RepairItemCard = ({
   item,
   updateItem,
   removeItem,
-  calculateItemTotal,
   itemsCount,
   cardNumber,
   errors,
@@ -22,13 +21,10 @@ const RepairItemCard = ({
   item: RepairItem;
   updateItem: (id: number, field: keyof RepairItem, value: string) => void;
   removeItem: (id: number) => void;
-  calculateItemTotal: (item: RepairItem) => number;
   itemsCount: number;
   cardNumber: number;
   errors: Record<string, string>;
 }) => {
-  const total = calculateItemTotal(item);
-
   return (
     <div className="repair-card-wrapper">
       <Accordion defaultActiveKey="0">
@@ -42,7 +38,9 @@ const RepairItemCard = ({
                 {splitCamelCaseWords(RepairType[item.repairType]) || "Repair"}
               </span>
 
-              <span className="item-total">${total.toFixed(2)}</span>
+              <span className="item-total">
+                ${(Number(item.cost) || 0).toFixed(2)}
+              </span>
             </div>
           </Accordion.Header>
 
@@ -198,17 +196,6 @@ const RepairItemCard = ({
                     }
                   />
                 </div>
-
-                <div className="form-col">
-                  <label>Discount ($)</label>
-                  <input
-                    type="number"
-                    value={item.discount}
-                    onChange={(e) =>
-                      updateItem(item.id, "discount", e.target.value)
-                    }
-                  />
-                </div>
               </div>
 
               {/* PAYMENT + DUE DATE */}
@@ -224,34 +211,8 @@ const RepairItemCard = ({
                     <option value="">Select</option>
                     <option value={PaymentStatus.Unpaid}>Unpaid</option>
                     <option value={PaymentStatus.Paid}>Paid</option>
-                    <option value={PaymentStatus.Partial}>
-                      Partial (Deposit Paid)
-                    </option>
                   </select>
                 </div>
-
-                {Number(item.paymentStatus) === PaymentStatus.Partial && (
-                  <div className="form-col">
-                    <label>Deposit Amount ($)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      max={Number(item.cost) || 0}
-                      step="0.01"
-                      value={item.depositPaid}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value) || 0;
-                        const maxCost = Number(item.cost) || 0;
-                        if (value <= maxCost) {
-                          updateItem(item.id, "depositPaid", e.target.value);
-                        }
-                      }}
-                      placeholder={`Enter deposit amount (max: $${(
-                        Number(item.cost) || 0
-                      ).toFixed(2)})`}
-                    />
-                  </div>
-                )}
 
                 <div className="form-col">
                   <label>Due Date *</label>
@@ -259,6 +220,7 @@ const RepairItemCard = ({
                     type="date"
                     className={errors.dueDate ? "input-error" : ""}
                     value={item.dueDate}
+                    min={new Date().toISOString().split("T")[0]}
                     onChange={(e) =>
                       updateItem(item.id, "dueDate", e.target.value)
                     }
@@ -267,12 +229,6 @@ const RepairItemCard = ({
                     <p className="error-text">{errors.dueDate}</p>
                   )}
                 </div>
-              </div>
-
-              {/* SUMMARY */}
-              <div className="pricing-summary">
-                <strong>Subtotal:</strong>
-                <span>${total.toFixed(2)}</span>
               </div>
             </div>
           </Accordion.Body>

@@ -56,7 +56,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 OrderDate = r.OrderDate,
                 Status = r.Status,
                 TotalCost = r.TotalCost,
-                Notes = r.Notes,
 
                 Items = r.Items.Select(i => new RepairItemDto
                 {
@@ -68,12 +67,9 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                     RepairType = i.RepairType,
                     Notes = i.Notes,
                     Cost = i.Cost,
-                    UrgentFee = i.UrgentFee,
-                    Discount = i.Discount,
                     DepositPaid = i.DepositPaid,
                     PaymentStatus = i.PaymentStatus,
                     DueDate = i.DueDate,
-                    SubTotal = i.SubTotal
                 }).ToList()
 
             }).ToList();
@@ -125,8 +121,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
 
                 query = query.Where(r =>
                     r.Customer.Name.ToLower().Contains(s) ||
-                    r.Customer.PhoneNumber.Contains(s) ||
-                    r.Notes.ToLower().Contains(s));
+                    r.Customer.PhoneNumber.Contains(s));
             }
 
             return query;

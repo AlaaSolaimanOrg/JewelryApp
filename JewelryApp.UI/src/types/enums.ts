@@ -99,7 +99,6 @@ export enum RepairStatus {
 export enum PaymentStatus {
   Unpaid = 0,
   Paid = 1,
-  Partial = 2,
 }
 
 export enum ReportType {

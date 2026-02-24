@@ -9,14 +9,10 @@ interface EditRepairItemModalProps {
   item: {
     id: string;
     cost: number;
-    urgentFee: number;
-    discount: number;
   };
   onSave?: (updatedItem: {
     id: string;
     cost: number;
-    urgentFee: number;
-    discount: number;
   }) => void;
   onRefresh?: () => void;
   children?: React.ReactNode;
@@ -32,24 +28,18 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     cost: item.cost,
-    urgentFee: item.urgentFee,
-    discount: item.discount,
   });
 
   useEffect(() => {
     if (showModal) {
       setFormData({
         cost: item.cost,
-        urgentFee: item.urgentFee,
-        discount: item.discount,
       });
     }
   }, [showModal]);
 
   const hasChanges =
-    formData.cost !== item.cost ||
-    formData.urgentFee !== item.urgentFee ||
-    formData.discount !== item.discount;
+    formData.cost !== item.cost 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,8 +55,6 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
       const response = await updateRepairItem({
         repairItemId: item.id,
         cost: formData.cost,
-        urgentFee: formData.urgentFee,
-        discount: formData.discount,
       });
 
       if (response.statusCode === 200 || response.success) {
@@ -75,8 +63,6 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
           onSave({
             id: item.id,
             cost: formData.cost,
-            urgentFee: formData.urgentFee,
-            discount: formData.discount,
           });
         }
         if (onRefresh) {
@@ -97,8 +83,6 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
   const handleCancel = () => {
     setFormData({
       cost: item.cost,
-      urgentFee: item.urgentFee,
-      discount: item.discount,
     });
     setShowModal(false);
   };
@@ -133,32 +117,6 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
                 step="0.01"
                 min="0"
                 placeholder="Enter cost"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Urgent Fee</Form.Label>
-              <Form.Control
-                type="number"
-                name="urgentFee"
-                value={formData.urgentFee}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                placeholder="Enter urgent fee"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Discount</Form.Label>
-              <Form.Control
-                type="number"
-                name="discount"
-                value={formData.discount}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                placeholder="Enter discount"
               />
             </Form.Group>
           </Form>

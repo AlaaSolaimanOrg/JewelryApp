@@ -124,9 +124,6 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(e => e.Weight).HasPrecision(18, 2);
                 entity.Property(e => e.Cost).HasPrecision(18, 2);
                 entity.Property(e => e.DepositPaid).HasPrecision(18, 2);
-                entity.Property(e => e.UrgentFee).HasPrecision(18, 2);
-                entity.Property(e => e.Discount).HasPrecision(18, 2);
-                entity.Property(e => e.SubTotal).HasPrecision(18, 2);
             });
         }
     }

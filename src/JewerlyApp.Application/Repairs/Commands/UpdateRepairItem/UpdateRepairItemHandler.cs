@@ -36,18 +36,15 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairItem
 
             // Update the repair item fields
             repairItem.Cost = request.Cost;
-            repairItem.UrgentFee = request.UrgentFee;
-            repairItem.Discount = request.Discount;
 
-            // Recalculate the item's SubTotal
-            repairItem.SubTotal = request.Cost + request.UrgentFee - request.Discount;
+
 
             // Recalculate the parent repair's TotalCost
             var repair = repairItem.Repair;
             repair.TotalCost = 0;
             foreach (var item in repair.Items)
             {
-                repair.TotalCost += item.SubTotal;
+                repair.TotalCost += item.Cost;
             }
 
             await _context.SaveChangesAsync(cancellationToken);

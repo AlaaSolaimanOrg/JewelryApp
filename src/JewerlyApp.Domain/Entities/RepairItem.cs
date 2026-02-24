@@ -16,11 +16,7 @@ namespace JewerlyApp.Domain.Entities
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
         public decimal DepositPaid { get; set; }
-        
-        public decimal UrgentFee { get; set; }
-        public decimal Discount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DateOnly? DueDate { get; set; }
-        public decimal SubTotal { get; set; }
     }
 }

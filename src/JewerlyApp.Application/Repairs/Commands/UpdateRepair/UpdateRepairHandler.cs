@@ -29,8 +29,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
 
             var repair = validationResult.Repair!;
 
-            // Update Repair Details
-            repair.Notes = request.Notes;
 
             // Update Items
             // 1. Identify items to delete (in DB but not in request)
@@ -71,7 +69,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
                 repair.Items.Remove(item);
             }
             
-            repair.TotalCost = repair.Items.Sum(i => i.SubTotal);
+            repair.TotalCost = repair.Items.Sum(i => i.Cost);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -92,11 +90,8 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
             item.RepairType = dto.RepairType;
             item.Notes = dto.Notes;
             item.Cost = dto.Cost;
-            item.UrgentFee = dto.UrgentFee;
-            item.Discount = dto.Discount;
             item.DueDate = dto.DueDate;
             item.PaymentStatus = dto.PaymentStatus;
-            item.SubTotal = dto.Cost + dto.UrgentFee - dto.Discount;
         }
 
         private async Task<(GenericResponse<Unit>? Response, Repair? Repair)> ValidateAndGetRepair(UpdateRepairCommand request, CancellationToken cancellationToken)

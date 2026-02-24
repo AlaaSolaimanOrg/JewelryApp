@@ -24,8 +24,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
         public RepairType RepairType { get; set; }
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
-        public decimal UrgentFee { get; set; }
-        public decimal Discount { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DateOnly? DueDate { get; set; }
     }

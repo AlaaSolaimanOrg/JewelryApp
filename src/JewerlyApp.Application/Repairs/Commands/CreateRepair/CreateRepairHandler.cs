@@ -32,16 +32,14 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
 
             var repairItems = request.Items.Select(itemDto =>
             {
-                // calculate total item cost
-                var total = itemDto.Cost + itemDto.UrgentFee - itemDto.Discount;
+               
 
                 // calculate deposit based on status
                 var deposit = itemDto.PaymentStatus switch
                 {
                     PaymentStatus.Unpaid => 0,
-                    PaymentStatus.Paid => total,
-                    PaymentStatus.Partial => itemDto.DepositPaid, 
-                    _ => 0
+                    PaymentStatus.Paid => itemDto.Cost
+              
                 };
 
                 return new RepairItem
@@ -53,16 +51,11 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                     RepairType = itemDto.RepairType,
                     Notes = itemDto.Notes,
                     Cost = itemDto.Cost,
-                    UrgentFee = itemDto.UrgentFee,
-                    Discount = itemDto.Discount,
                     DueDate = itemDto.DueDate,
                     PaymentStatus = itemDto.PaymentStatus,
 
                     // ?? calculated deposit
                     DepositPaid = deposit,
-
-                    // subtotal should remain unchanged (amount the item is worth)
-                    SubTotal = total
                 };
             }).ToList();
 
@@ -73,9 +66,8 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 CustomerId = request.CustomerId,
                 OrderDate = BusinessTimeZoneHelper.GetEdmontonDate(),
                 Status = RepairStatus.InProgress,
-                Notes = request.Notes,
                 Items = repairItems,
-                TotalCost = repairItems.Sum(i => i.SubTotal)
+                TotalCost = repairItems.Sum(i => i.Cost)
 
             };
 
