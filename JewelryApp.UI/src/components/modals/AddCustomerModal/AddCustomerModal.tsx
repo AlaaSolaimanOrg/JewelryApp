@@ -149,9 +149,9 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     const payload = {
       id: customerData.id,
       name: name,
-      email: email,
-      phoneNumber: phoneNumber,
-      birthday: birthday,
+      email: email || null,
+      phoneNumber: phoneNumber || null,
+      birthday: birthday || null,
     };
 
     updateCustomer(payload)
