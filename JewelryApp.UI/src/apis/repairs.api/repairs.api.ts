@@ -10,7 +10,6 @@ import { apiRoutes } from "../apiRoutes";
 
 export const createRepair = async (payload: {
   customerId: string;
-  notes: string;
   items: {
     itemType: ProductCategory;
     metal: ProductType;

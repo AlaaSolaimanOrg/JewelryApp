@@ -85,8 +85,8 @@
               <Y>0.07967652</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.7922055</Width>
-              <Height>0.3903235</Height>
+              <Width>0.7922056</Width>
+              <Height>0.35560116</Height>
             </Size>
           </ObjectLayout>
         </BarcodeObject>
@@ -121,13 +121,13 @@
           <Margin>
             <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
           </Margin>
-          <HorizontalAlignment>Left</HorizontalAlignment>
+          <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Top</VerticalAlignment>
           <FitMode>None</FitMode>
           <IsVertical>False</IsVertical>
           <FormattedText>
             <FitMode>None</FitMode>
-            <HorizontalAlignment>Left</HorizontalAlignment>
+            <HorizontalAlignment>Center</HorizontalAlignment>
             <VerticalAlignment>Top</VerticalAlignment>
             <IsVertical>False</IsVertical>
             <LineTextSpan>

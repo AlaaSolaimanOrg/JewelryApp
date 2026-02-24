@@ -68,32 +68,44 @@ export const DYMO = {
   },
 };
 
+// ...existing code...
+
 export function updateLabelXml(xml: string, product: Product) {
   let updated = xml;
+
+  const sku = product.sku ?? "";
+  const karatWithK = product.karatType ? `${product.karatType}K` : "";
+  const weightWithG =
+    product.weight !== undefined && product.weight !== null
+      ? `${product.weight}g`
+      : "";
+  const price = product.price ?? "";
 
   // --- SKU in barcode ---
   updated = updated.replace(
     /(<BarcodeObject>\s*<Name>BarcodeObject0<\/Name>[\s\S]*?<DataString>)(.*?)(<\/DataString>)/,
-    `$1${product.sku}$3`,
+    `$1${sku}$3`,
   );
 
-  // --- Karat ---
+  // --- Karat (add K) ---
   updated = updated.replace(
     /(<TextObject>\s*<Name>TextObject1<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
-    `$1${product.karatType}$3`,
+    `$1${karatWithK}$3`,
   );
 
-  // --- Weight ---
+  // --- Weight (add g) ---
   updated = updated.replace(
     /(<TextObject>\s*<Name>TextObject12<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
-    `$1${product.weight}$3`,
+    `$1${weightWithG}$3`,
   );
 
-  // --- Size ---
+  // --- Size/Price ---
   updated = updated.replace(
     /(<TextObject>\s*<Name>TextObject2<\/Name>[\s\S]*?<Text>)(.*?)(<\/Text>)/,
-    `$1${product.price}$3`,
+    `$1${price}$3`,
   );
 
   return updated;
 }
+
+// ...existing code...
