@@ -200,3 +200,62 @@
     padding: 20px !important;
   }
 }
+
+/* Thermal print mode */
+.receipt-container.thermal-print {
+  width: 576px;
+  max-width: 576px;
+  background: #fff !important;
+  font-size: 14px;
+  font-weight: 600;
+  color: black !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+
+  .social-links {
+    .social-item {
+      color: black;
+      .instagram-icon {
+        color: black;
+      }
+    }
+  }
+
+  .qr-label {
+    color: black !important;
+  }
+
+  .receipt-details {
+    font-weight: bold;
+    font-size: 17px;
+  }
+
+  .receipt-subtitle {
+    color: black;
+    font-weight: bold;
+    opacity: 1 !important;
+  }
+
+  .receipt-header,
+  .receipt-discount,
+  .receipt-footer,
+  .payment-breakdown .summary-item {
+    border-color: black;
+  }
+
+  .table-wrapper {
+    border: none !important;
+    .receipt-table {
+      th {
+        background-color: white;
+      }
+      th,
+      td {
+        font-size: 15px;
+        font-weight: bold !important;
+        border-bottom: 1px solid black !important;
+      }
+    }
+  }
+}

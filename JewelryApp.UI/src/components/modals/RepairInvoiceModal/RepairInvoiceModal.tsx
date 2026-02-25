@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import {
   FaGlobe,
@@ -9,12 +9,13 @@ import {
 } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
+import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { ProductCategory, RepairType } from "../../../types/enums";
 import { splitCamelCaseWords } from "../../../utils";
+import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import "./repairInvoiceModal.scss";
 
 interface RepairInvoiceModalProps {
@@ -29,6 +30,8 @@ const RepairInvoiceModal = ({
   onClose,
 }: RepairInvoiceModalProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const [epsonBusy, setEpsonBusy] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(false);
 
   const { data: repairDetails } = useLocalApi({
     apiToCall: (data) => getRepairById(data.payload),
@@ -37,10 +40,31 @@ const RepairInvoiceModal = ({
     effectDependency: [repairId, show],
   }) as { data: any };
 
-  const handlePrint = useReactToPrint({
-    contentRef,
-    documentTitle: `Repair-${repairDetails?.repairCode || repairId}`,
-  });
+  const handleEpsonPrintHTML = async () => {
+    if (!contentRef.current) return;
+
+    setShowThermalPrint(true);
+    setEpsonBusy(true);
+    try {
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => resolve(null)),
+      );
+      await printDomToEpson(contentRef.current, {
+        ip: "192.168.0.19",
+        port: 8008,
+        crypto: false,
+        buffer: false,
+        paperWidthPx: 576,
+        scale: 4,
+      });
+    } catch (e) {
+      console.error(e);
+      alert(String(e));
+    } finally {
+      setShowThermalPrint(false);
+      setEpsonBusy(false);
+    }
+  };
 
   if (!show) return null;
 
@@ -66,12 +90,22 @@ const RepairInvoiceModal = ({
         {!repairDetails ? (
           <div className="text-center py-4">Loading repair details...</div>
         ) : (
-          <div ref={contentRef} className="receipt-container">
+          <div
+            ref={contentRef}
+            className={`receipt-container ${showThermalPrint ? "thermal-print" : ""}`}
+          >
             {/* HEADER */}
             <div className="receipt-header">
               <div className="receipt-title">
                 <div className="receipt-logo">
-                  <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
+                  <img
+                    src={
+                      showThermalPrint
+                        ? ADI_Jewelry_Logo_Horizontal_Black
+                        : ADI_Jewelry_Logo_Horizontal
+                    }
+                    alt="Logo"
+                  />
                 </div>
               </div>
 
@@ -177,10 +211,18 @@ const RepairInvoiceModal = ({
                 <div className="qr-label">Scan to leave a review</div>
                 <QRCode
                   value="https://share.google/gxvrM3GV4YzjE232x"
-                  size={80}
+                  size={showThermalPrint ? 64 : 80}
                   bgColor="#ffffff"
-                  fgColor="var(--gold)"
-                  style={{ border: "1px solid #eee", padding: "4px" }}
+                  fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
+                  style={
+                    showThermalPrint
+                      ? { display: "block" }
+                      : {
+                          border: "1px solid #eee",
+                          padding: "4px",
+                          display: "block",
+                        }
+                  }
                 />
               </div>
             </div>
@@ -189,8 +231,12 @@ const RepairInvoiceModal = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button onClick={handlePrint} disabled={!repairDetails}>
-          <FaPrint /> Print Invoice
+        <Button
+          variant="primary"
+          onClick={handleEpsonPrintHTML}
+          disabled={!repairDetails || epsonBusy}
+        >
+          <FaPrint /> {epsonBusy ? "Printing..." : "Print Invoice"}
         </Button>
 
         <Button variant="secondary" onClick={onClose}>
