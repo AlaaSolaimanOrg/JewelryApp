@@ -36,6 +36,9 @@ export const getRepairAnalytics = async () => {
 export const updateRepairStatus = async (payload: {
   id: string;
   status: RepairStatus;
+  sendSms?: boolean;
+  updateItemsPaymentStatus?: boolean;
+  newPaymentStatus?: PaymentStatus;
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairStatus, payload);
 };

@@ -37,8 +37,20 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
 
             repair.Status = request.Status;
-            
-            if (!string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
+
+            if (repair.Status == RepairStatus.PickedUp)
+            {
+                foreach (var item in repair.Items)
+                {
+                    if (item.PaymentStatus != PaymentStatus.Paid)
+                    {
+                        item.PaymentStatus = PaymentStatus.Paid;
+                    }
+                }
+            }
+
+
+            if (request.SendSMS && !string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
             {
                 var message =
                  "Adi Jewelry\n" +

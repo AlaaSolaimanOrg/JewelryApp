@@ -29,6 +29,7 @@ import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
 import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
+import SmsConfirmPopup from "./SmsConfirmPopup/SmsConfirmPopup";
 
 export interface RepairItem {
   id: string;
@@ -62,6 +63,11 @@ const RepairManagement: React.FC = () => {
   const [expandedRepairId, setExpandedRepairId] = useState<string | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [repairIdToView, setRepairIdToView] = useState<string>("");
+  const [smsPopup, setSmsPopup] = useState<{
+    repairId: string;
+    direction: "next" | "prev";
+    currentStatus: RepairStatus;
+  } | null>(null);
 
   const {
     data: repairs,
@@ -153,6 +159,7 @@ const RepairManagement: React.FC = () => {
     repairId: string,
     currentStatus: RepairStatus,
     direction: "next" | "prev",
+    sendSms?: boolean,
   ) => {
     const newStatus =
       direction === "next"
@@ -164,6 +171,7 @@ const RepairManagement: React.FC = () => {
       const updatePayload: any = {
         id: repairId,
         status: newStatus,
+        sendSms: sendSms,
       };
 
       if (newStatus === RepairStatus.PickedUp) {
@@ -182,6 +190,23 @@ const RepairManagement: React.FC = () => {
     } catch (err) {
       console.error(err);
       showError("Error updating status");
+    }
+  };
+
+  const handleStatusButtonClick = (
+    repairId: string,
+    currentStatus: RepairStatus,
+    direction: "next" | "prev",
+  ) => {
+    const nextStatus =
+      direction === "next"
+        ? getNextStatus(currentStatus)
+        : getPreviousStatus(currentStatus);
+
+    if (nextStatus === RepairStatus.Completed) {
+      setSmsPopup({ repairId, direction, currentStatus });
+    } else {
+      handleStatusUpdate(repairId, currentStatus, direction);
     }
   };
 
@@ -465,7 +490,7 @@ const RepairManagement: React.FC = () => {
                               NEXT_STATUS_BUTTON_CLASS[repair.status]
                             }`}
                             onClick={() =>
-                              handleStatusUpdate(
+                              handleStatusButtonClick(
                                 repair.id,
                                 repair.status,
                                 "next",
@@ -473,7 +498,7 @@ const RepairManagement: React.FC = () => {
                             }
                             onContextMenu={(e) => {
                               e.preventDefault();
-                              handleStatusUpdate(
+                              handleStatusButtonClick(
                                 repair.id,
                                 repair.status,
                                 "prev",
@@ -503,6 +528,21 @@ const RepairManagement: React.FC = () => {
             repairId={repairIdToView}
             show={showInvoice}
             onClose={() => setShowInvoice(false)}
+          />
+        )}
+
+        {smsPopup && (
+          <SmsConfirmPopup
+            onCancel={() => setSmsPopup(null)}
+            onConfirm={(sendSms) => {
+              handleStatusUpdate(
+                smsPopup.repairId,
+                smsPopup.currentStatus,
+                smsPopup.direction,
+                sendSms,
+              );
+              setSmsPopup(null);
+            }}
           />
         )}
 

@@ -9,5 +9,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
     {
         public Guid Id { get; set; }
         public RepairStatus Status { get; set; }
+
+        public bool SendSMS { get; set; }
     }
 }
