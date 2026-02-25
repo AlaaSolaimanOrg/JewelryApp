@@ -50,11 +50,13 @@ interface Sale {
   staffName: string;
   customerName: string;
   customerPhone: string;
+  totalBeforeDiscount: number;
   total: number;
   cashAmount: number;
   cardAmount: number;
   tax: number;
   discount: number;
+  totalReturnAmount: number;
   saleItems: SaleItem[];
 }
 
@@ -71,13 +73,14 @@ interface SearchSale {
 interface SaleItem {
   id: string;
   productName: string;
+  productImage: string;
   sku: string;
   karat: KaratType;
   weight: number;
   pricePerGram: number;
-  subtotal: number;
+  subtotalAfterDiscount: number;
+  subtotalBeforeDiscount: number;
   quantity: number;
-  productImage: string;
   quantityReturned: number;
   amountReturned: number;
 }
@@ -131,7 +134,7 @@ const ReturnPage: React.FC = () => {
         icon: item.productName.toLowerCase().includes("ring") ? "ring" : "gem",
         karat: item.karat,
         weight: item.weight + "g",
-        unitPrice: item.quantity > 0 ? item.subtotal / item.quantity : 0,
+        unitPrice: item.quantity > 0 ? item.subtotalAfterDiscount / item.quantity : 0,
         qtyPurchased: item.quantity,
         qtyToReturn: 0,
         apiAmountReturned: item.amountReturned,
@@ -144,7 +147,7 @@ const ReturnPage: React.FC = () => {
         otherReason: "",
         condition: null,
         returnOption: null,
-      })
+      }),
     );
 
     setItems(mappedItems);
@@ -168,28 +171,28 @@ const ReturnPage: React.FC = () => {
                 ? item.qtyPurchased * item.unitPrice
                 : 0,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const handleReturnOptionChange = (
     id: string,
-    option: ReturnOption | null
+    option: ReturnOption | null,
   ) => {
     setItems(
       items.map((item) =>
-        item.id === id ? { ...item, returnOption: option } : item
-      )
+        item.id === id ? { ...item, returnOption: option } : item,
+      ),
     );
   };
 
   const handleConditionChange = (
     id: string,
-    condition: ItemCondition | null
+    condition: ItemCondition | null,
   ) => {
     setItems(
-      items.map((item) => (item.id === id ? { ...item, condition } : item))
+      items.map((item) => (item.id === id ? { ...item, condition } : item)),
     );
   };
 
@@ -202,16 +205,16 @@ const ReturnPage: React.FC = () => {
               returnReason: value,
               otherReason: value === ReturnReason.Other ? item.otherReason : "",
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const handleOtherReasonChange = (id: string, value: string) => {
     setItems(
       items.map((item) =>
-        item.id === id ? { ...item, otherReason: value } : item
-      )
+        item.id === id ? { ...item, otherReason: value } : item,
+      ),
     );
   };
 
@@ -230,7 +233,7 @@ const ReturnPage: React.FC = () => {
           // update the editable return amount when quantity changes
           returnAmount: validQty * item.unitPrice,
         };
-      })
+      }),
     );
   };
 
@@ -248,7 +251,7 @@ const ReturnPage: React.FC = () => {
           ...item,
           returnAmount: validAmount,
         };
-      })
+      }),
     );
   };
 
@@ -351,7 +354,7 @@ const ReturnPage: React.FC = () => {
         otherReason: "",
         condition: null,
         returnOption: null,
-      }))
+      })),
     );
   };
 

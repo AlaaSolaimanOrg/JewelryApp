@@ -15,6 +15,7 @@ import {
   ProductType,
   RepairStatus,
   RepairType,
+  SortDirection,
 } from "../../../types/enums";
 
 import {
@@ -74,6 +75,8 @@ const RepairManagement: React.FC = () => {
     extraPayload: { repairType: typeFilter, status: statusFilter },
     extraEffectDependency: [typeFilter, statusFilter],
     initialPageSize: 5,
+    initialSortBy: "createdDate",
+    initialSortDirection: SortDirection.Descending,
   });
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;

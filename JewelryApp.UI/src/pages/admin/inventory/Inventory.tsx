@@ -214,13 +214,13 @@ const Inventory = () => {
         >
           <FaEdit />
         </button>
-        <button
+        {/* <button
           className="action-btn danger"
           title="Delete"
           onClick={() => handleDeleteProduct(product.id)}
         >
           <FaTrash />
-        </button>
+        </button> */}
       </div>
     ),
   }));

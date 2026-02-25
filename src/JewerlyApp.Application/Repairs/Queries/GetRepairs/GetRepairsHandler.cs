@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -39,6 +40,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                         PAGINATION
             ============================== */
             var paginatedRepairs = await query
+                .ApplySorting(request.SortBy, request.SortDirection)
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);

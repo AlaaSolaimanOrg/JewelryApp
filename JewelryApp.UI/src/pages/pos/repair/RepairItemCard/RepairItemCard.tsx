@@ -39,7 +39,7 @@ const RepairItemCard = ({
               </span>
 
               <span className="item-total">
-                ${(Number(item.cost) || 0).toFixed(2)}
+                ${Math.trunc(Number(item.cost) || 0)}
               </span>
             </div>
           </Accordion.Header>
@@ -190,10 +190,24 @@ const RepairItemCard = ({
                   <label>Cost ($)</label>
                   <input
                     type="number"
+                    step="1"
+                    min="0"
                     value={item.cost}
                     onChange={(e) =>
-                      updateItem(item.id, "cost", e.target.value)
+                      updateItem(
+                        item.id,
+                        "cost",
+                        Math.trunc(Number(e.target.value)).toString(),
+                      )
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "." || e.key === ",") e.preventDefault();
+                      if (
+                        !/[^0-9]/.test(e.key) &&
+                        e.currentTarget.value.replace("-", "").length >= 8
+                      )
+                        e.preventDefault();
+                    }}
                   />
                 </div>
               </div>
