@@ -480,12 +480,13 @@ const RepairManagement: React.FC = () => {
                               );
                             }}
                           >
-                            Mark As
-                            {repair.status === RepairStatus.InProgress
-                              ? "Completed"
-                              : repair.status === RepairStatus.Completed
-                                ? "Picked Up"
-                                : "In Progress"}
+                            {`Mark As ${
+                              repair.status === RepairStatus.InProgress
+                                ? "Completed"
+                                : repair.status === RepairStatus.Completed
+                                  ? "Picked Up"
+                                  : "In Progress"
+                            }`}
                           </button>
                         </div>
                       </div>
