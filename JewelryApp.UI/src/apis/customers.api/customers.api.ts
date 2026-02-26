@@ -22,9 +22,6 @@ export const getCustomers = async (payload: {
   return requestApi("GET", apiRoutes.customers.getCustomers, payload);
 };
 
-export const deleteCustomer = async (payload: { id: string }) => {
-  return requestApi("DELETE", apiRoutes.customers.deleteCustomer, payload);
-};
 export const updateCustomer = async (payload: { id: string }) => {
   return requestApi("PUT", apiRoutes.customers.updateCustomer, payload);
 };
@@ -34,6 +31,6 @@ export const getCustomerPurhcaseHistory = async (payload: {
   return requestApi(
     "GET",
     apiRoutes.customers.getCustomerPurhcaseHistory,
-    payload
+    payload,
   );
 };

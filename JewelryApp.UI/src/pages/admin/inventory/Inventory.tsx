@@ -7,11 +7,9 @@ import {
   FaPlus,
   FaPrint,
   FaSearch,
-  FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
-  deleteProduct,
   exportProductsToExcel,
   getProducts,
 } from "../../../apis/products.api/products.api";
@@ -32,13 +30,7 @@ import {
   ProductCategory,
   type ProductType,
 } from "../../../types/enums";
-import {
-  checkRequestSucceeded,
-  handleSort,
-  renderLongDescription,
-  showError,
-  showSuccess,
-} from "../../../utils";
+import { handleSort, renderLongDescription } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 
@@ -227,27 +219,6 @@ const Inventory = () => {
 
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
-  };
-
-  const handleDeleteProduct = (productId: string) => {
-    setIsDeletingProduct(true);
-
-    const payload = { id: productId };
-    deleteProduct(payload)
-      .then((response) => {
-        if (checkRequestSucceeded(response.statusCode)) {
-          showSuccess(response?.message);
-          recallGetProducts();
-        } else {
-          showError(response?.message);
-        }
-      })
-      .catch((e) => {
-        throw e;
-      })
-      .finally(() => {
-        setIsDeletingProduct(false);
-      });
   };
 
   const handleExport = async () => {

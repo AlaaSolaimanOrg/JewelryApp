@@ -1,7 +1,6 @@
-import React from "react";
-import "./repairStatsCards.scss";
-import useLocalApi from "../../../../hooks/useLocalApi";
 import { getRepairAnalytics } from "../../../../apis/repairs.api/repairs.api";
+import useLocalApi from "../../../../hooks/useLocalApi";
+import "./repairStatsCards.scss";
 
 interface RepairAnalytics {
   totalRepairs: number;

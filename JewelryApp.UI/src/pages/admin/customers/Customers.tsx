@@ -1,33 +1,17 @@
 import { useState } from "react";
-import {
-  FaEdit,
-  FaEye,
-  FaPlus,
-  FaSearch,
-  FaTrash,
-  FaUsers,
-} from "react-icons/fa";
+import { FaEdit, FaEye, FaPlus, FaSearch, FaUsers } from "react-icons/fa";
 import { LuHistory } from "react-icons/lu";
-import {
-  deleteCustomer,
-  getCustomers,
-} from "../../../apis/customers.api/customers.api";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import { getCustomers } from "../../../apis/customers.api/customers.api";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import {
-  checkRequestSucceeded,
-  handleSort,
-  showError,
-  showSuccess,
-} from "../../../utils";
-import "./customers.scss";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/tables/Table/CustomTable";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { handleSort } from "../../../utils";
+import "./customers.scss";
 
 interface Customer {
   id: string;
@@ -43,7 +27,6 @@ interface Customer {
 }
 const Customers = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
-  const [isDeletingCustomer, setIsDeletingCustomer] = useState(false);
   const [addCustomerModalView, setAddCustomerModalView] = useState<
     "add" | "edit" | "view"
   >("add");
@@ -100,27 +83,6 @@ const Customers = () => {
     { key: "actions", label: "Actions", width: "150px" },
   ];
 
-  const handleDeleteCustomer = (customerId: string) => {
-    setIsDeletingCustomer(true);
-
-    const payload = { id: customerId };
-    deleteCustomer(payload)
-      .then((response) => {
-        if (checkRequestSucceeded(response.statusCode)) {
-          showSuccess(response?.message);
-          recallGetCustomers();
-        } else {
-          showError(response?.message || "Failed to delete customer");
-        }
-      })
-      .catch((error) => {
-        showError(error?.message);
-      })
-      .finally(() => {
-        setIsDeletingCustomer(false);
-      });
-  };
-
   const data = customers?.map((customer) => {
     return {
       name: customer.name,
@@ -162,15 +124,6 @@ const Customers = () => {
           >
             <FaEdit />
           </button>
-          {/* <button
-            className="action-btn danger"
-            title="Delete"
-            onClick={() => {
-              handleDeleteCustomer(customer.id);
-            }}
-          >
-            <FaTrash />
-          </button> */}
         </div>
       ),
     };
@@ -228,8 +181,6 @@ const Customers = () => {
         mode={addCustomerModalView}
         customerData={customerData}
       />
-
-      <LoadingScreen isLoading={isDeletingCustomer} />
     </div>
   );
 };
