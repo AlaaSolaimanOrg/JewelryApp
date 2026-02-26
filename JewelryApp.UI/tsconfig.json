@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "noEmitOnError": false,
+    "noEmitOnError": true,
     "types": ["node"],
     "module": "ESNext",
     "moduleResolution": "Node",
