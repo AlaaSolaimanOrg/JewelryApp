@@ -181,11 +181,20 @@
 
   .receipt-discount {
     display: flex;
-    justify-content: space-between;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed #ddd;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    padding-bottom: 0;
     font-size: 1rem;
     font-weight: 400;
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px dashed #ddd;
+    }
   }
 
   .payment-breakdown {

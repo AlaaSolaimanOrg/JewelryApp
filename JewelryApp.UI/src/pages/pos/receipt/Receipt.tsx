@@ -73,6 +73,11 @@ const Receipt = () => {
 
   const dateObj = new Date(saleDetails.createdDate);
 
+  const totalBeforeDiscount = saleDetails.saleItems?.reduce(
+    (sum, it) => sum + (it.subtotalBeforeDiscount ?? 0),
+    0,
+  );
+
   const contentRef = useRef<HTMLDivElement>(null);
 
   const handleEpsonPrintHTML = async () => {
@@ -133,11 +138,11 @@ const Receipt = () => {
         <div className="receipt-details">
           <div>
             <div>
-              <strong>Trans ID:</strong>
+              <strong>Trans ID: </strong>
               {saleDetails.serialNumber || saleDetails.id}
             </div>
             <div>
-              <strong>Date:</strong>
+              <strong>Date: </strong>
               {dateObj.toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "long",
@@ -145,7 +150,7 @@ const Receipt = () => {
               })}
             </div>
             <div>
-              <strong>Time:</strong>
+              <strong>Time: </strong>
               {dateObj.toLocaleTimeString(undefined, {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -155,13 +160,13 @@ const Receipt = () => {
           </div>
           <div>
             <div>
-              <strong>Staff:</strong> {saleDetails.staffName || "N/A"}
+              <strong>Staff: </strong> {saleDetails.staffName || "N/A"}
             </div>
             <div>
-              <strong>Customer:</strong> {saleDetails.customerName || "Walk-in"}
+              <strong>Customer: </strong> {saleDetails.customerName || "Walk-in"}
             </div>
             <div>
-              <strong>Payment:</strong>
+              <strong>Payment: </strong>
               {saleDetails.cashAmount && saleDetails.cardAmount
                 ? "Cash & Card"
                 : saleDetails.cashAmount
@@ -205,12 +210,19 @@ const Receipt = () => {
           </table>
         </div>
 
-        {!!saleDetails.discount && (
-          <div className="receipt-discount">
-            <span>Discount:</span>
-            <span>${saleDetails.discount}</span>
+        <div className="receipt-discount">
+          <div className="summary-item">
+            <span>Total Before Discount:</span>
+            <span>${(totalBeforeDiscount ?? 0).toFixed(2)}</span>
           </div>
-        )}
+
+          {!!saleDetails.discount && (
+            <div className="summary-item">
+              <span>Discount:</span>
+              <span>${saleDetails.discount}</span>
+            </div>
+          )}
+        </div>
 
         <div className="payment-breakdown">
           <h4>Payment Breakdown</h4>

@@ -76,6 +76,13 @@ const RepairInvoiceModal = ({
     ? new Date(repairDetails?.orderDate)
     : new Date();
 
+  const totalBeforeDiscount = repairDetails
+    ? repairDetails?.items?.reduce(
+        (s: number, x: any) => s + (x.subtotal ?? x.cost ?? 0),
+        0,
+      ) ?? 0
+    : 0;
+
   return (
     <Modal
       show={show}
@@ -178,6 +185,11 @@ const RepairInvoiceModal = ({
             {/* PAYMENT BREAKDOWN */}
             <div className="payment-breakdown">
               <h4>Payment Breakdown</h4>
+
+              <div className="summary-item">
+                <span>Total Before Discount:</span>
+                <span>${totalBeforeDiscount?.toFixed(2)}</span>
+              </div>
 
               {repairDetails?.items?.some((x: any) => x.depositPaid > 0) && (
                 <div className="summary-item">

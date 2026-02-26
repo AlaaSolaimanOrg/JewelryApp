@@ -79,6 +79,10 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   };
 
   const dateObj = saleDetails ? new Date(saleDetails.createdDate) : new Date();
+  const totalBeforeDiscount = saleDetails?.saleItems?.reduce(
+    (s, it) => s + (it.subtotalBeforeDiscount ?? 0),
+    0,
+  );
 
   const handleEpsonPrintHTML = async () => {
     if (!contentRef.current) return;
@@ -260,12 +264,19 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </tbody>
                 </table>
               </div>
-              {!!saleDetails.discount && (
-                <div className="receipt-discount">
-                  <span>Discount:</span>
-                  <span>${saleDetails.discount}</span>
+              <div className="receipt-discount">
+                <div className="summary-item">
+                  <span>Total Before Discount:</span>
+                  <span>${(totalBeforeDiscount ?? 0).toFixed(2)}</span>
                 </div>
-              )}
+
+                {!!saleDetails.discount && (
+                  <div className="summary-item">
+                    <span>Discount:</span>
+                    <span>${saleDetails.discount}</span>
+                  </div>
+                )}
+              </div>
               {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
