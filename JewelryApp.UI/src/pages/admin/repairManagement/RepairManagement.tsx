@@ -233,7 +233,7 @@ const RepairManagement: React.FC = () => {
             <FaList className="section-title__icon" />
             Repair Orders
           </h2>
-          <span className="repair-count">{repairs.length} repairs</span>
+          <span className="repair-count">{repairs?.length} repairs</span>
         </div>
 
         {/* FILTERS */}
@@ -302,14 +302,14 @@ const RepairManagement: React.FC = () => {
             <div className="repairs-loader">
               <CustomLoader />
             </div>
-          ) : repairs.length === 0 ? (
+          ) : repairs?.length === 0 ? (
             <div className="empty-state">
               <div className="empty-state-icon">📋</div>
               <h3>No Repairs Found</h3>
               <p>Try adjusting your filters or add a new repair</p>
             </div>
           ) : (
-            repairs.map((repair) => {
+            repairs?.map((repair) => {
               const statusInfo = getRepairStatusInfo(repair.status);
               const isExpanded = expandedRepairId === repair.id;
 
