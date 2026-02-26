@@ -2,12 +2,10 @@ import React from "react";
 import {
   FaFire,
   FaFrown,
-  FaGem,
   FaMeh,
-  FaRing,
   FaShoppingCart,
   FaSmile,
-  FaWarehouse,
+  FaWarehouse
 } from "react-icons/fa";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
 import {

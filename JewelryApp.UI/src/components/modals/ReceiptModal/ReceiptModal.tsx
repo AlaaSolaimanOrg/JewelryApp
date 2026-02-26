@@ -67,13 +67,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     fetchData: () => void;
   };
 
-  const handlePrint = useReactToPrint({
-    contentRef,
-    documentTitle: `Receipt-${
-      saleDetails?.serialNumber || saleDetails?.id || ""
-    }`,
-  });
-
   const onClose = () => {
     setShowModal(false);
   };
@@ -365,14 +358,6 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         </Modal.Body>
 
         <Modal.Footer>
-          {/* <Button
-            variant="primary"
-            onClick={handlePrint}
-            disabled={!saleDetails}
-          >
-            <FaPrint /> Print Receipt
-          </Button> */}
-
           <Button
             variant="primary"
             onClick={handleEpsonPrintHTML}

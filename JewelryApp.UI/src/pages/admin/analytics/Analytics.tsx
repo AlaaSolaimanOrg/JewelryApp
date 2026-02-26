@@ -296,13 +296,6 @@ const Analytics = () => {
     24: "#EB5757", // Red
   };
 
-  const karatPointStyles = {
-    18: "circle",
-    21: "triangle",
-    22: "rect",
-    24: "star",
-  };
-
   const priceOverTimeData = {
     labels: priceOverTimeAnalytics.map((d) => d.dateLabel),
     datasets: karatTypes.map((karat) => ({
