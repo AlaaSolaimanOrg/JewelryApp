@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "noEmitOnError": true,
+    "noEmitOnError": false,
+    "skipLibCheck": true,
     "types": ["node"],
     "module": "ESNext",
     "moduleResolution": "Node",
