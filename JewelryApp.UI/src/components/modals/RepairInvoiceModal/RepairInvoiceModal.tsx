@@ -13,7 +13,7 @@ import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { ProductCategory, RepairType } from "../../../types/enums";
+import { ProductCategory, RepairType, PaymentStatus } from "../../../types/enums";
 import { splitCamelCaseWords } from "../../../utils";
 import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import "./repairInvoiceModal.scss";
@@ -137,6 +137,8 @@ const RepairInvoiceModal = ({
                   <tr>
                     <th>Item</th>
                     <th>Repair</th>
+                    <th>Weight</th>
+                    <th>Payment</th>
                     <th>Cost</th>
                   </tr>
                 </thead>
@@ -148,7 +150,19 @@ const RepairInvoiceModal = ({
                         {splitCamelCaseWords(ProductCategory[i.itemType])}
                       </td>
                       <td>{splitCamelCaseWords(RepairType[i.repairType])}</td>
-                      <td>${i.cost?.toFixed(2)}</td>
+                        <td>{i.weight}g</td>
+                        <td>
+                          <span
+                            className={
+                              i.paymentStatus === PaymentStatus.Paid
+                                ? "payment-badge payment-paid"
+                                : "payment-badge payment-unpaid"
+                            }
+                          >
+                            {i.paymentStatus === PaymentStatus.Paid ? "Paid" : "Unpaid"}
+                          </span>
+                        </td>
+                        <td>${i.cost?.toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

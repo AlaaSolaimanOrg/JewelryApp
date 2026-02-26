@@ -111,6 +111,40 @@
         }
       }
     }
+
+    /* Payment badge styles */
+    .payment-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 999px;
+      text-align: center;
+      min-width: 64px;
+    }
+
+    .payment-paid {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid transparent;
+    }
+
+    .payment-unpaid {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid transparent;
+    }
+
+    /* Align cost column to the right, payment center */
+    .receipt-table thead th:nth-child(4),
+    .receipt-table td:nth-child(4) {
+      text-align: center;
+    }
+
+    .receipt-table thead th:nth-child(5),
+    .receipt-table td:nth-child(5) {
+      text-align: right;
+    }
   }
 
   .payment-breakdown {
