@@ -239,7 +239,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
         private async Task<string> GenerateSaleSerialNumber()
         {
-            string today = DateTime.UtcNow.ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
             string prefix = "SALE";
 
             int countToday = await _context.Sales

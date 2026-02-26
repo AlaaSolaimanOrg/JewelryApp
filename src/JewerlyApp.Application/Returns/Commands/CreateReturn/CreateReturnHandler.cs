@@ -1,5 +1,6 @@
 ﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
@@ -241,7 +242,7 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
         // =====================================================================
         private async Task<string> GenerateReturnSerialNumber()
         {
-            string today = DateTime.UtcNow.ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
             string prefix = "RTN";
 
             int countToday = await _context.Returns
