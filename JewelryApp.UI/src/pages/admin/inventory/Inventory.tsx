@@ -56,7 +56,6 @@ const Inventory = () => {
   const navigate = useNavigate();
 
   const [scannedSkus, setScannedSkus] = useState([]);
-  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [showScanModal, setShowScanModal] = useState(false);
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [selectedProductForPrinting, setSelectedProductForPrinting] =
@@ -79,7 +78,6 @@ const Inventory = () => {
   const {
     data: products,
     isLoading: isLoadingProducts,
-    fetchData: recallGetProducts,
     sortCriteria,
     onSortChange,
     onSearchChange,
@@ -367,7 +365,6 @@ const Inventory = () => {
         }}
         product={selectedProductForPrinting}
       />
-      <LoadingScreen isLoading={isLoadingProducts || isDeletingProduct} />
     </div>
   );
 };
