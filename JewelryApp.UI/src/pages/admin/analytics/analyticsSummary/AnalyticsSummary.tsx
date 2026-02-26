@@ -44,18 +44,20 @@ const AnalyticsSummary = ({ appliedFilters, refreshKey }) => {
 
       <div className="kpi-grid-analytics">
         {/* Avg Daily Sales */}
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Avg. Daily Sales</div>
-            <div className="kpi-icon">
-              <FaDollarSign />
+        {appliedFilters.reportType != ReportType.AllTime && (
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <div className="kpi-title">Avg. Daily Sales</div>
+              <div className="kpi-icon">
+                <FaDollarSign />
+              </div>
+            </div>
+
+            <div className="kpi-value">
+              ${smartRound(analyticsSummary.avgDailySales)}
             </div>
           </div>
-
-          <div className="kpi-value">
-            ${smartRound(analyticsSummary.avgDailySales)}
-          </div>
-        </div>
+        )}
 
         {/* Best Selling Category */}
         <div className="kpi-card">

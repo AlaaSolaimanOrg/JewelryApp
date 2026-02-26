@@ -10,8 +10,10 @@ namespace JewerlyApp.Domain.Entities
     public class Customer : Entity<Guid>
     {
         public string Name { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
         public string PhoneNumber { get; set; } = string.Empty;
         public DateOnly? Birthday { get; set; }
+        public bool IsActive { get; set; } = true;
+
     }
 }

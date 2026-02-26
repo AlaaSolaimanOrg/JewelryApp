@@ -33,7 +33,8 @@ namespace JewerlyApp.Application.Customers.Commands.DeleteCustomer
                 };
             }
 
-            _context.Customers.Remove(customer);
+            customer.IsActive = false;
+            customer.LastUpdatedDate = DateTime.UtcNow; 
 
             await _context.SaveChangesAsync(cancellationToken);
 

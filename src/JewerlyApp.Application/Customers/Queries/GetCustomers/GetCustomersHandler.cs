@@ -44,6 +44,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                 from c in _context.Customers.AsNoTracking()
                 join s in _context.Sales
                     on c.Id equals s.CustomerId into sales
+                where c.IsActive == true
                 select new GetCustomersVM
                 {
                     Id = c.Id,

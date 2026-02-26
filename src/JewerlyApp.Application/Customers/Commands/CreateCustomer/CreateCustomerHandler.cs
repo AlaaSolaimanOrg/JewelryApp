@@ -43,6 +43,7 @@ namespace JewerlyApp.Application.Customers.Commands.CreateCustomer
                 Email = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 Birthday = request.Birthday,
+                IsActive = true
             };
 
             _context.Customers.Add(customer);

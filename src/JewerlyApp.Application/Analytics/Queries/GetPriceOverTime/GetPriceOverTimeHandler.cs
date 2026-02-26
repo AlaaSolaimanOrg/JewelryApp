@@ -100,10 +100,18 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                         ReportType.Yearly => g.Key.ToString("MMM yyyy", CultureInfo.InvariantCulture),
                         _ => g.Key.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)
                     },
-                    Karat18 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat18)?.Log.NewPrice ?? 0,
-                    Karat21 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat21)?.Log.NewPrice ?? 0,
-                    Karat22 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat22)?.Log.NewPrice ?? 0,
-                    Karat24 = g.FirstOrDefault(x => x.Log.KaratType == KaratType.Karat24)?.Log.NewPrice ?? 0
+                    Karat18 = g.Where(x => x.Log.KaratType == KaratType.Karat18)
+                                .OrderByDescending(x => x.LocalCreatedDate)
+                                .FirstOrDefault()?.Log.NewPrice ?? 0,
+                    Karat21 = g.Where(x => x.Log.KaratType == KaratType.Karat21)
+                                .OrderByDescending(x => x.LocalCreatedDate)
+                                .FirstOrDefault()?.Log.NewPrice ?? 0,
+                    Karat22 = g.Where(x => x.Log.KaratType == KaratType.Karat22)
+                                .OrderByDescending(x => x.LocalCreatedDate)
+                                .FirstOrDefault()?.Log.NewPrice ?? 0,
+                    Karat24 = g.Where(x => x.Log.KaratType == KaratType.Karat24)
+                                .OrderByDescending(x => x.LocalCreatedDate)
+                                .FirstOrDefault()?.Log.NewPrice ?? 0,
                 })
                 .OrderBy(x => x.DateLabel)
                 .ToList();

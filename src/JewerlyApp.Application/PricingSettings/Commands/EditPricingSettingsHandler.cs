@@ -59,7 +59,7 @@ namespace JewerlyApp.Application.Products.Commands.EditPricingSettings
                     
                     });
                 }
-                else if (existing.Price != vm.PricePerGram)
+                else
                 {
                     // Log update ONLY if price changed
                     _context.PricingSettingLogs.Add(new PricingSettingLog
