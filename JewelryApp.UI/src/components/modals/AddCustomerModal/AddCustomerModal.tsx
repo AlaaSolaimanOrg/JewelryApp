@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PhoneNumberDigits from "../../PhoneNumberDigits/PhoneNumberDigits";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   createCustomer,
@@ -43,6 +44,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [birthday, setBirthday] = useState("");
+  
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -55,7 +57,9 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       if (mode === "edit" || mode === "view") {
         setName(customerData?.name || "");
         setEmail(customerData?.email || "");
-        setPhoneNumber(customerData?.phoneNumber || "");
+        const raw = (customerData?.phoneNumber || "").replace(/\D/g, "");
+        setPhoneNumber(raw);
+        // phoneNumber is normalized digits-only string
         setBirthday(customerData?.birthday || "");
       } else {
         resetForm();
@@ -71,6 +75,8 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     setBirthday("");
     setErrors({});
   };
+
+  // Phone digit handling moved to PhoneNumberDigits component
 
   const validate = () => {
     const newErrors: {
@@ -90,11 +96,10 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         newErrors.email = "Please enter a valid email address.";
     }
 
-    if (phoneNumber) {
-      const phoneRegex = /^[0-9()+\-\s]{6,20}$/;
-      if (!phoneRegex.test(phoneNumber))
-        newErrors.phoneNumber = "Please enter a valid phone number.";
-    }
+    const digits = (phoneNumber || "").replace(/\D/g, "");
+    if (!digits || digits.length === 0) newErrors.phoneNumber = "Phone number is required.";
+    else if (digits.length !== 10)
+      newErrors.phoneNumber = "Please enter a 10-digit Canadian phone number.";
 
     if (birthday) {
       const now = new Date();
@@ -134,10 +139,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         throw e;
       })
       .finally(() => {
-        setTimeout(() => {
-          setIsLoading(false);
-          onClose();
-        }, 3000);
+        setIsLoading(false);
       });
   };
 
@@ -168,10 +170,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         throw e;
       })
       .finally(() => {
-        setTimeout(() => {
-          setIsLoading(false);
-          onClose();
-        }, 3000);
+        setIsLoading(false);
       });
   };
 
@@ -230,7 +229,9 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="customerName">
-            <Form.Label>Customer Name</Form.Label>
+            <Form.Label>
+              Customer Name <span className="required">*</span>
+            </Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter customer name"
@@ -252,14 +253,26 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             {errors.email && <div className="error-text">{errors.email}</div>}
           </Form.Group>
           <Form.Group className="mb-3" controlId="customerPhone">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="tel"
-              placeholder="Enter phone number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              readOnly={isViewMode}
-            />
+            <Form.Label>
+              Phone Number <span className="required">*</span>
+            </Form.Label>
+            {isViewMode ? (
+              <Form.Control
+                type="text"
+                value={
+                  phoneNumber
+                    ? `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6, 10)}`
+                    : ""
+                }
+                readOnly
+              />
+            ) : (
+              <PhoneNumberDigits
+                value={phoneNumber}
+                onChange={(v) => setPhoneNumber(v)}
+                error={errors.phoneNumber}
+              />
+            )}
             {errors.phoneNumber && (
               <div className="error-text">{errors.phoneNumber}</div>
             )}
