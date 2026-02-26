@@ -162,7 +162,7 @@ const Customers = () => {
           >
             <FaEdit />
           </button>
-          <button
+          {/* <button
             className="action-btn danger"
             title="Delete"
             onClick={() => {
@@ -170,7 +170,7 @@ const Customers = () => {
             }}
           >
             <FaTrash />
-          </button>
+          </button> */}
         </div>
       ),
     };
