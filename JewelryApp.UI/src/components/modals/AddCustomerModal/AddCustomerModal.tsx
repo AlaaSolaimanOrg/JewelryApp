@@ -44,7 +44,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [birthday, setBirthday] = useState("");
-  
+
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -97,7 +97,8 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     }
 
     const digits = (phoneNumber || "").replace(/\D/g, "");
-    if (!digits || digits.length === 0) newErrors.phoneNumber = "Phone number is required.";
+    if (!digits || digits.length === 0)
+      newErrors.phoneNumber = "Phone number is required.";
     else if (digits.length !== 10)
       newErrors.phoneNumber = "Please enter a 10-digit Canadian phone number.";
 

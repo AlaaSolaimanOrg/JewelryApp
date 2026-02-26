@@ -8,7 +8,12 @@ interface Props {
   error?: string | null;
 }
 
-const PhoneNumberDigits: React.FC<Props> = ({ value, onChange, disabled = false, error }) => {
+const PhoneNumberDigits: React.FC<Props> = ({
+  value,
+  onChange,
+  disabled = false,
+  error,
+}) => {
   const [digits, setDigits] = useState<string[]>(() => new Array(10).fill(""));
   const refs = useRef<Array<HTMLInputElement | null>>([]);
 
@@ -42,7 +47,10 @@ const PhoneNumberDigits: React.FC<Props> = ({ value, onChange, disabled = false,
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (disabled) return;
     const key = e.key;
     if (key === "Backspace") {
