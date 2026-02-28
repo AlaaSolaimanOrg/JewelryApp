@@ -26,7 +26,18 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
 
         public async Task<GenericResponse<string>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            
+
+            var skuExists = await _context.Products
+      .AnyAsync(p => p.Sku == request.Sku, cancellationToken);
+
+            if (skuExists)
+            {
+                return new GenericResponse<string>
+                {
+                    StatusCode = ResponseStatusCode.InternalServerError,
+                    Message = $"Product with SKU '{request.Sku}' already exists."
+                };
+            }
 
             var productId = Guid.NewGuid();
 
@@ -65,12 +76,13 @@ namespace JewerlyApp.Application.Products.Commands.CreateProduct
             }
 
 
-            await _context.SaveChangesAsync(cancellationToken);
 
             if (request.Images != null && request.Images.Count > 0)
             {
                 await _fileService.UploadProductImagesAsync(product.Id, request.KaratType, request.Images);
             }
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new GenericResponse<string>
             {

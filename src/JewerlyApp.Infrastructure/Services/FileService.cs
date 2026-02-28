@@ -60,7 +60,6 @@ namespace JewerlyApp.Infrastructure.Services
             }
 
             _context.ProductImages.AddRange(productImages);
-            await _context.SaveChangesAsync();
 
             return productImages;
         }
