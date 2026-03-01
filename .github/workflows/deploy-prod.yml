@@ -1,0 +1,48 @@
+name: Deploy PROD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy To Production Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "== Pull latest code from main =="
+            cd /var/www/myapi
+            git reset --hard origin/main
+            git pull origin main
+
+            echo "== Apply PROD database migrations =="
+            cd src/JewerlyApp.API
+            dotnet ef database update \
+              --project ../JewerlyApp.Infrastructure/ \
+              --startup-project . \
+              --connection "${{ secrets.DB_CONNECTION_STRING_PROD }}"
+
+            echo "== Publish backend =="
+            dotnet publish -c Release -o /var/www/myapi/src/JewerlyApp.API/publish/ --self-contained false
+
+            echo "== Restart production service =="
+            sudo systemctl restart jewerlyapp.service
+
+            echo "== Build frontend (PROD) =="
+            cd /var/www/myapi/JewelryApp.UI
+            rm -rf node_modules dist package-lock.json
+            npm ci
+            npx tsc --noEmit --pretty
+            npm run build:prod
+
+            echo "== PROD DEPLOYMENT DONE ✔ =="
