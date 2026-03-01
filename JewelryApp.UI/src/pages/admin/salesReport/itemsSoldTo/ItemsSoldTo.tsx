@@ -161,6 +161,7 @@ const ItemsSoldTo = () => {
           <option value="">All Products</option>
           <option value={ProductCategory.Necklaces}>Necklaces</option>
           <option value={ProductCategory.Bracelets}>Bracelets</option>
+          <option value={ProductCategory.Bangles}>Bangles</option>
           <option value={ProductCategory.Rings}>Rings</option>
           <option value={ProductCategory.Earrings}>Earrings</option>
           <option value={ProductCategory.Pendants}>Pendants</option>

@@ -12,6 +12,7 @@ export enum ProductCategory {
   Earrings = 4,
   Pendants = 5,
   Bullion = 6,
+  Bangles = 7,
 }
 
 export enum ProductType {

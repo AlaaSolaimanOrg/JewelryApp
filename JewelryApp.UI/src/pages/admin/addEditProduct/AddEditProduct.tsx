@@ -228,6 +228,7 @@ const AddEditProduct = ({ isEdit }) => {
     ProductCategory.Necklaces,
     ProductCategory.Bracelets,
     ProductCategory.Rings,
+    ProductCategory.Bangles,
   ];
   return (
     <div id="add-product-page" className="page">
@@ -381,6 +382,7 @@ const AddEditProduct = ({ isEdit }) => {
                   <option value="">Select Category</option>
                   <option value={ProductCategory.Necklaces}>Necklaces</option>
                   <option value={ProductCategory.Bracelets}>Bracelets</option>
+                  <option value={ProductCategory.Bangles}>Bangles</option>
                   <option value={ProductCategory.Rings}>Rings</option>
                   <option value={ProductCategory.Earrings}>Earrings</option>
                   <option value={ProductCategory.Pendants}>Pendants</option>

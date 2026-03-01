@@ -13,6 +13,7 @@ namespace JewerlyApp.Domain.Enums
         Rings,
         Earrings,
         Pendants,
-        Bullion
+        Bullion,
+        Bangles = 7
     }
 }

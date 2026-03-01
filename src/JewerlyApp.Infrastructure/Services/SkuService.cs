@@ -23,7 +23,6 @@ namespace JewerlyApp.Infrastructure.Services
             var sequence = await _context.SkuSequences
                 .FirstOrDefaultAsync(x => x.Category == category && x.Year == fullYear);
 
-            
 
             if (sequence == null)
             {
@@ -47,6 +46,7 @@ namespace JewerlyApp.Infrastructure.Services
                 ProductCategory.Earrings => "ER",
                 ProductCategory.Pendants => "PD",
                 ProductCategory.Bullion => "BL",
+                ProductCategory.Bangles => "BG",
                 _ => "GN"
             };
 

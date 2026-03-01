@@ -76,6 +76,7 @@ const RepairItemCard = ({
                     <option value="">Select</option>
                     <option value={ProductCategory.Necklaces}>Necklace</option>
                     <option value={ProductCategory.Bracelets}>Bracelet</option>
+                    <option value={ProductCategory.Bangles}>Bangle</option>
                     <option value={ProductCategory.Rings}>Ring</option>
                     <option value={ProductCategory.Earrings}>Earrings</option>
                     <option value={ProductCategory.Pendants}>Pendant</option>
