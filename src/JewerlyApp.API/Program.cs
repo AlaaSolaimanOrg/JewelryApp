@@ -1,4 +1,7 @@
+using JewerlyApp.API.Middleware;
+using JewerlyApp.API.Serialization;
 using JewerlyApp.Application;
+using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Infrastructure;
 using JewerlyApp.Infrastructure.Context;
@@ -8,15 +11,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JewerlyApp.API.Middleware;
-using JewerlyApp.Application.Interfaces;
-using JewerlyApp.API.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -166,6 +167,9 @@ app.UseSwaggerUI(c =>
 
 app.UseStaticFiles(new StaticFileOptions
 {
+    FileProvider = new PhysicalFileProvider(
+        builder.Configuration["FileStorage:ProductImagesPath"]!),
+    RequestPath = "/products",
     OnPrepareResponse = ctx =>
     {
         ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", reactAppOrigin);
