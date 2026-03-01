@@ -32,7 +32,7 @@ namespace JewerlyApp.Infrastructure.Services
             if (files == null || files.Count == 0)
                 throw new ArgumentException("No files uploaded.");
 
-            var karatFolder = karatType == KaratType.Karat18 ? "18K" : "21K";
+            var karatFolder = $"{(int)karatType}K";
             var imagesFolder = Path.Combine(_productImagesPath, karatFolder);
             Directory.CreateDirectory(imagesFolder);
 
