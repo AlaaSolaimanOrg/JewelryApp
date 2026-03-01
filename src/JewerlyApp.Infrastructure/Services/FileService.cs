@@ -1,25 +1,30 @@
-﻿using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using JewerlyApp.Infrastructure.Context;
+using JewerlyApp.Infrastructure.Settings;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 
-using System;
-using JewerlyApp.Application.Common.Responses;
 namespace JewerlyApp.Infrastructure.Services
 {
     public class FileService : IFileService
     {
-        private readonly IHostingEnvironment _environment;
         private readonly ApplicationDbContext _context;
+        private readonly string _productImagesPath;
         private readonly List<string> _allowedExtensions = new() { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
         private const long MaxFileSizeBytes = 5 * 1024 * 1024; // 5MB
 
-        public FileService(IHostingEnvironment environment, ApplicationDbContext context)
+        public FileService(ApplicationDbContext context, IOptions<FileStorageSettings> fileStorageOptions)
         {
-            _environment = environment;
             _context = context;
+            _productImagesPath = fileStorageOptions.Value.ProductImagesPath;
+
+            if (string.IsNullOrWhiteSpace(_productImagesPath))
+            {
+                throw new InvalidOperationException("FileStorage:ProductImagesPath is not configured.");
+            }
         }
 
         public async Task<List<ProductImage>> UploadProductImagesAsync(Guid productId, KaratType karatType, List<IFormFile> files)
@@ -28,17 +33,17 @@ namespace JewerlyApp.Infrastructure.Services
                 throw new ArgumentException("No files uploaded.");
 
             var karatFolder = karatType == KaratType.Karat18 ? "18K" : "21K";
-            var imagesFolder = Path.Combine(_environment.WebRootPath, "images", "products", karatFolder);
+            var imagesFolder = Path.Combine(_productImagesPath, karatFolder);
             Directory.CreateDirectory(imagesFolder);
 
             var productImages = new List<ProductImage>();
             var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
+            var sku = _context.Products.Where(p => p.Id == productId).Select(p => p.Sku).FirstOrDefault();
 
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
                 var extension = Path.GetExtension(file.FileName);
-                var sku = _context.Products.Where(p => p.Id == productId).Select(p => p.Sku).FirstOrDefault();
 
                 var fileName = $"product-{sku}-{timestamp}-{i + 1}{extension}";
                 var filePath = Path.Combine(imagesFolder, fileName);
@@ -51,7 +56,7 @@ namespace JewerlyApp.Infrastructure.Services
                 var productImage = new ProductImage
                 {
                     ProductId = productId,
-                    ImageUrl = $"/images/products/{karatFolder}/{fileName}",
+                    ImageUrl = $"/products/{karatFolder}/{fileName}",
                     IsMain = i == 0,  // First image as main by default
                     CreatedDate = DateTime.UtcNow
                 };

@@ -1,15 +1,10 @@
-﻿using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Infrastructure.Context;
 using JewerlyApp.Infrastructure.Services;
 using JewerlyApp.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JewerlyApp.Infrastructure
 {
@@ -20,6 +15,8 @@ namespace JewerlyApp.Infrastructure
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(config.GetConnectionString("DbConnection")));
 
+            services.Configure<FileStorageSettings>(config.GetSection("FileStorage"));
+            services.Configure<TwilioSettings>(config.GetSection("Twilio"));
 
             services.AddScoped<IApplicationDbContext>(provider =>
                 provider.GetRequiredService<ApplicationDbContext>());
@@ -29,9 +26,6 @@ namespace JewerlyApp.Infrastructure
             services.AddScoped<ITokenService, JwtTokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
-
-            // Twilio
-            services.Configure<TwilioSettings>(config.GetSection("Twilio"));
             services.AddScoped<ISmsService, TwilioSmsService>();
 
             return services;
