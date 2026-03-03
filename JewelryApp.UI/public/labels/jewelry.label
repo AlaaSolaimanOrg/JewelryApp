@@ -219,11 +219,11 @@
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.5416664</X>
-              <Y>0.46441928</Y>
+              <X>1.5694444</X>
+              <Y>0.4644193</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.4066666</Width>
+              <Width>0.37541708</Width>
               <Height>0.19190525</Height>
             </Size>
           </ObjectLayout>
