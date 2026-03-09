@@ -55,7 +55,7 @@ const RepairInvoiceModal = ({
       );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
-        port: 8008,
+        port: 8043,
         crypto: true,
         buffer: false,
         paperWidthPx: 576,
