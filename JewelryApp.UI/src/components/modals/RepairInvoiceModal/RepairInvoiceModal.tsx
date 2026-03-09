@@ -56,7 +56,7 @@ const RepairInvoiceModal = ({
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
         port: 8008,
-        crypto: false,
+        crypto: true,
         buffer: false,
         paperWidthPx: 576,
         scale: 4,
@@ -77,10 +77,10 @@ const RepairInvoiceModal = ({
     : new Date();
 
   const totalBeforeDiscount = repairDetails
-    ? repairDetails?.items?.reduce(
+    ? (repairDetails?.items?.reduce(
         (s: number, x: any) => s + (x.subtotal ?? x.cost ?? 0),
         0,
-      ) ?? 0
+      ) ?? 0)
     : 0;
 
   return (

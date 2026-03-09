@@ -92,7 +92,7 @@ const Receipt = () => {
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
         port: 8008,
-        crypto: false,
+        crypto: true,
         buffer: false,
         paperWidthPx: 576, // 80mm; use 384 for 58mm
         scale: 4,
@@ -163,7 +163,8 @@ const Receipt = () => {
               <strong>Staff: </strong> {saleDetails.staffName || "N/A"}
             </div>
             <div>
-              <strong>Customer: </strong> {saleDetails.customerName || "Walk-in"}
+              <strong>Customer: </strong>{" "}
+              {saleDetails.customerName || "Walk-in"}
             </div>
             <div>
               <strong>Payment: </strong>
