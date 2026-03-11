@@ -42,7 +42,7 @@
   .sidebar-column {
     order: 1 !important; // Always first
     margin-bottom: 25px; // Add spacing between filters and table
-    
+
     @media (min-width: 992px) {
       margin-bottom: 30px; // More spacing on desktop
     }
@@ -55,7 +55,7 @@
 
   .inventory-content {
     width: 100%; // Full width
-    
+
     // Remove the left padding since filters are above, not beside
     padding-left: 0;
   }
@@ -68,7 +68,7 @@
     margin-bottom: 25px;
     border: 1px solid rgba(0, 0, 0, 0.04);
     transition: var(--transition);
-    
+
     &:hover {
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
@@ -218,7 +218,7 @@
     align-items: center;
     transition: all 0.3s;
     height: 40px;
-    
+
     i {
       margin-right: 8px;
     }
@@ -260,7 +260,7 @@
 
   .search-bar {
     position: relative;
-    
+
     input {
       padding: 10px 15px 10px 40px;
       border: 1px solid var(--border);
@@ -270,7 +270,7 @@
       transition: var(--transition);
       background: var(--light);
       color: var(--dark);
-      
+
       @media (max-width: 768px) {
         width: 100%;
       }
