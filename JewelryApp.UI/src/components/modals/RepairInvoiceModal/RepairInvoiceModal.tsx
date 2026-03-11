@@ -61,7 +61,9 @@ const RepairInvoiceModal = ({
         paperWidthPx: 576,
         scale: 4,
       });
+     console.log("✅ Print job sent successfully");
     } catch (e) {
+      console.error("❌ Print error:", e);
       console.error(e);
       alert(String(e));
     } finally {
