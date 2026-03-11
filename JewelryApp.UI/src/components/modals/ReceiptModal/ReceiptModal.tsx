@@ -94,7 +94,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         paperWidthPx: 576, // 80mm; use 384 for 58mm
         scale: 4,
       });
+      console.log("✅ Print job sent successfully");
     } catch (e) {
+      console.error("❌ Print error:", e);
       console.error(e);
       alert(String(e));
     } finally {
