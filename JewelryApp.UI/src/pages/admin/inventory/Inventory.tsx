@@ -7,6 +7,8 @@ import {
   FaPlus,
   FaPrint,
   FaSearch,
+  FaSortAmountDown,
+  FaSortAmountUp,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
@@ -28,6 +30,7 @@ import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSor
 import {
   KaratType,
   ProductCategory,
+  SortDirection,
   type ProductType,
 } from "../../../types/enums";
 import { handleSort, renderLongDescription } from "../../../utils";
@@ -95,6 +98,8 @@ const Inventory = () => {
       productCategoryFilter: appliedFilters?.category,
     },
     extraEffectDependency: [appliedFilters, scannedSkus],
+    initialSortBy: "createdDate",
+    initialSortDirection: SortDirection.Descending,
   });
 
   const headers: TableHeader[] = [
@@ -327,6 +332,23 @@ const Inventory = () => {
                           Scan Product
                         </button>
                       )}
+
+                      <button
+                        className="scan-btn flex-shrink-0"
+                        title="Sort by Date Added"
+                        onClick={() =>
+                          handleSort("createdDate", sortCriteria, onSortChange)
+                        }
+                      >
+                        {sortCriteria?.sortBy === "createdDate" &&
+                        sortCriteria?.sortDirection ===
+                          SortDirection.Ascending ? (
+                          <FaSortAmountUp className="me-1" />
+                        ) : (
+                          <FaSortAmountDown className="me-1" />
+                        )}
+                        Date
+                      </button>
                     </Stack>
                   </div>
                 </div>
