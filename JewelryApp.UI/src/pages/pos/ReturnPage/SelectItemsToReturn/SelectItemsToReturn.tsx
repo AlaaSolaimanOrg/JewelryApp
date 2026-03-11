@@ -5,7 +5,7 @@ import {
   FaMeh,
   FaShoppingCart,
   FaSmile,
-  FaWarehouse
+  FaWarehouse,
 } from "react-icons/fa";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
 import {
@@ -104,6 +104,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
         <div>
           <input
             type="number"
+            onWheel={(e) => e.currentTarget.blur()}
             className={`return-qty-input ${
               hasError("Quantity must be greater than 0.") ? "input-error" : ""
             }`}
@@ -300,6 +301,7 @@ const SelectItemsToReturn: React.FC<SelectItemsToReturnProps> = ({
         <div>
           <input
             type="number"
+            onWheel={(e) => e.currentTarget.blur()}
             className="return-amount-input"
             placeholder={`$${(item.qtyToReturn * item.unitPrice).toFixed(2)}`}
             value={item.returnAmount}

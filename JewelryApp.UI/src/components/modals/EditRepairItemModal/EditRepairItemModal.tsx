@@ -10,10 +10,7 @@ interface EditRepairItemModalProps {
     id: string;
     cost: number;
   };
-  onSave?: (updatedItem: {
-    id: string;
-    cost: number;
-  }) => void;
+  onSave?: (updatedItem: { id: string; cost: number }) => void;
   onRefresh?: () => void;
   children?: React.ReactNode;
 }
@@ -38,8 +35,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
     }
   }, [showModal]);
 
-  const hasChanges =
-    formData.cost !== item.cost 
+  const hasChanges = formData.cost !== item.cost;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -111,6 +107,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
               <Form.Label>Cost</Form.Label>
               <Form.Control
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 name="cost"
                 value={formData.cost}
                 onChange={handleChange}

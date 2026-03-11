@@ -31,6 +31,7 @@ const Settings = () => {
             <label className="form-label">Default 18K Price/Gram</label>
             <input
               type="number"
+              onWheel={(e) => e.currentTarget.blur()}
               step="0.01"
               className="form-control"
               value="45.75"
@@ -40,6 +41,7 @@ const Settings = () => {
             <label className="form-label">Default 21K Price/Gram</label>
             <input
               type="number"
+              onWheel={(e) => e.currentTarget.blur()}
               step="0.01"
               className="form-control"
               value="52.40"
@@ -49,6 +51,7 @@ const Settings = () => {
             <label className="form-label">Tax Rate (%)</label>
             <input
               type="number"
+              onWheel={(e) => e.currentTarget.blur()}
               step="0.1"
               className="form-control"
               value="8.5"
@@ -106,6 +109,7 @@ const Settings = () => {
             <label className="form-label">Transaction Fee (%)</label>
             <input
               type="number"
+              onWheel={(e) => e.currentTarget.blur()}
               step="0.1"
               className="form-control"
               value="2.9"

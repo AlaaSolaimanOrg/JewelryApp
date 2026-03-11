@@ -306,6 +306,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <label className="form-label required">Quantity</label>
                 <input
                   type="number"
+                  onWheel={(e) => e.currentTarget.blur()}
                   min={1} // ensures positive
                   step={1} // disables decimals
                   className="form-control"
@@ -350,6 +351,7 @@ const AddEditProduct = ({ isEdit }) => {
                 <label className="form-label required">Weight (grams)</label>
                 <input
                   type="number"
+                  onWheel={(e) => e.currentTarget.blur()}
                   step="0.1"
                   className="form-control"
                   placeholder="0.0"

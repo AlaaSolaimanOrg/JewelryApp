@@ -117,7 +117,7 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               onChange={(e) =>
                 handleFilterChange(
                   "category",
-                  e.target.value === "" ? null : Number(e.target.value)
+                  e.target.value === "" ? null : Number(e.target.value),
                 )
               }
             >
@@ -138,6 +138,7 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
             <div className="range-inputs">
               <input
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 min={0}
                 max={filters.weightTo}
                 value={filters.weightFrom || ""}
@@ -153,6 +154,7 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               <span className="range-separator">to</span>
               <input
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 min={filters.weightFrom}
                 max={9999}
                 value={filters.weightTo || ""}
@@ -174,6 +176,7 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
             <div className="range-inputs">
               <input
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 min={0}
                 max={filters.priceTo}
                 value={filters.priceFrom}
@@ -188,6 +191,7 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               <span className="range-separator">to</span>
               <input
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 min={filters.priceFrom}
                 max={999999}
                 value={filters.priceTo}

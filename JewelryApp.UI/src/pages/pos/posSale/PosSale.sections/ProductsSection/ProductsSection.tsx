@@ -85,7 +85,7 @@ const ProductsSection: React.FC<Props> = ({
                       handleManualProductChange(
                         idx,
                         "karatType",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     style={{
@@ -107,6 +107,7 @@ const ProductsSection: React.FC<Props> = ({
               <td>
                 <input
                   type="number"
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="weight-input"
                   placeholder="Qty"
                   value={product.quantityForSale || 0}
@@ -152,7 +153,7 @@ const ProductsSection: React.FC<Props> = ({
                     handleManualProductChange(
                       idx,
                       "pricePerGram",
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   maxLength={10}

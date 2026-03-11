@@ -46,6 +46,7 @@ const PricingCard = ({
               </label>
               <input
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 step="0.01"
                 className={`form-control ${
                   isGlobal ? "disabled-gold-input" : ""
@@ -58,7 +59,7 @@ const PricingCard = ({
                   handlePriceChange(
                     productType,
                     price.karatType,
-                    value ? Number(value) : null
+                    value ? Number(value) : null,
                   );
                 }}
                 disabled={isGlobal}

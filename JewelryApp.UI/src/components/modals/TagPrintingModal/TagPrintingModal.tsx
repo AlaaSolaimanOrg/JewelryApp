@@ -114,7 +114,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     try {
       // Load the .label file
       const response = await fetch(
-        `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`
+        `${import.meta.env.VITE_ROUTE_PREFIX}labels/jewelry.label`,
       );
       const xml = await response.text();
 
@@ -203,6 +203,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             <label className="control-label">Number of Tags</label>
             <Form.Control
               type="number"
+              onWheel={(e) => e.currentTarget.blur()}
               min={1}
               max={300}
               value={tagCount}

@@ -111,6 +111,7 @@ const RepairItemCard = ({
                   <label>Weight Before Repair (g)</label>
                   <input
                     type="number"
+                    onWheel={(e) => e.currentTarget.blur()}
                     value={item.weight}
                     onChange={(e) =>
                       updateItem(item.id, "weight", e.target.value)
@@ -190,7 +191,7 @@ const RepairItemCard = ({
                 <div className="form-col">
                   <label>Cost ($)</label>
                   <input
-                    type="number"
+                    onWheel={(e) => e.currentTarget.blur()}
                     step="1"
                     min="0"
                     value={item.cost}
