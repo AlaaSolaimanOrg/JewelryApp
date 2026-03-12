@@ -28,68 +28,6 @@
     <DynamicLayoutManager>
       <RotationBehavior>ClearObjects</RotationBehavior>
       <LabelObjects>
-        <BarcodeObject>
-          <Name>BarcodeObject0</Name>
-          <Brushes>
-            <BackgroundBrush>
-              <SolidColorBrush>
-                <Color A="1" R="1" G="1" B="1"></Color>
-              </SolidColorBrush>
-            </BackgroundBrush>
-            <BorderBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </BorderBrush>
-            <StrokeBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </StrokeBrush>
-            <FillBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </FillBrush>
-          </Brushes>
-          <Rotation>Rotation0</Rotation>
-          <OutlineThickness>1</OutlineThickness>
-          <IsOutlined>False</IsOutlined>
-          <BorderStyle>SolidLine</BorderStyle>
-          <Margin>
-            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
-          </Margin>
-          <BarcodeFormat>Code128A</BarcodeFormat>
-          <Data>
-            <DataString>SKU</DataString>
-          </Data>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <Size>AutoFit</Size>
-          <TextPosition>Bottom</TextPosition>
-          <FontInfo>
-            <FontName>Arial</FontName>
-            <FontSize>6</FontSize>
-            <IsBold>False</IsBold>
-            <IsItalic>False</IsItalic>
-            <IsUnderline>False</IsUnderline>
-            <FontBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </FontBrush>
-          </FontInfo>
-          <ObjectLayout>
-            <DYMOPoint>
-              <X>1.1447656</X>
-              <Y>0.062321395</Y>
-            </DYMOPoint>
-            <Size>
-              <Width>0.80309904</Width>
-              <Height>0.3426493</Height>
-            </Size>
-          </ObjectLayout>
-        </BarcodeObject>
         <TextObject>
           <Name>TextObject1</Name>
           <Brushes>
@@ -297,6 +235,68 @@
             </Size>
           </ObjectLayout>
         </TextObject>
+        <BarcodeObject>
+          <Name>BarcodeObject0</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="1" R="1" G="1" B="1"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation180</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <BarcodeFormat>Code128A</BarcodeFormat>
+          <Data>
+            <DataString>SKU</DataString>
+          </Data>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
+          <Size>AutoFit</Size>
+          <TextPosition>Bottom</TextPosition>
+          <FontInfo>
+            <FontName>Arial</FontName>
+            <FontSize>6</FontSize>
+            <IsBold>False</IsBold>
+            <IsItalic>False</IsItalic>
+            <IsUnderline>False</IsUnderline>
+            <FontBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FontBrush>
+          </FontInfo>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>1.1352911</X>
+              <Y>0.05666608</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>0.79528683</Width>
+              <Height>0.3426494</Height>
+            </Size>
+          </ObjectLayout>
+        </BarcodeObject>
       </LabelObjects>
     </DynamicLayoutManager>
   </DYMOLabel>
