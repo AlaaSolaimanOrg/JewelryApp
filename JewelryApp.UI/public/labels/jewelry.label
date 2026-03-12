@@ -268,7 +268,7 @@
           </Margin>
           <BarcodeFormat>Code128A</BarcodeFormat>
           <Data>
-            <DataString>SKU</DataString>
+            <DataString>PD260071</DataString>
           </Data>
           <HorizontalAlignment>Center</HorizontalAlignment>
           <VerticalAlignment>Middle</VerticalAlignment>
@@ -288,11 +288,11 @@
           </FontInfo>
           <ObjectLayout>
             <DYMOPoint>
-              <X>1.1352911</X>
-              <Y>0.05666608</Y>
+              <X>1.1599956</X>
+              <Y>0.056666058</Y>
             </DYMOPoint>
             <Size>
-              <Width>0.79528683</Width>
+              <Width>0.7883375</Width>
               <Height>0.3426494</Height>
             </Size>
           </ObjectLayout>
