@@ -47,6 +47,14 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                 productQuery = productQuery.Where(p => p.Weight >= request.weightFromFilter && p.Weight <= request.weightToFilter);
             }
 
+            if (request.InStock.HasValue)
+            {
+                if (request.InStock.Value)
+                    productQuery = productQuery.Where(p => p.Quantity > 0);
+                else
+                    productQuery = productQuery.Where(p => p.Quantity == 0);
+            }
+
             if (!string.IsNullOrEmpty(request.SearchBy))
             {
                 var keyword = request.SearchBy;

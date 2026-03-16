@@ -10,6 +10,7 @@ export interface InventoryFilters {
   priceFrom: number;
   priceTo: number;
   category: ProductCategory | null;
+  inStock: boolean | null;
 }
 
 const filtersInitialState: InventoryFilters = {
@@ -24,6 +25,7 @@ const filtersInitialState: InventoryFilters = {
   priceFrom: 0,
   priceTo: 999999,
   category: null,
+  inStock: null,
 };
 
 interface InventoryFilterProps {
@@ -129,6 +131,32 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
                     {key}
                   </option>
                 ))}
+            </select>
+          </div>
+
+          <div className="filter-group stock-group">
+            <span className="filter-group-title">Stock Status</span>
+            <select
+              className="form-control"
+              value={
+                filters.inStock === null
+                  ? "all"
+                  : filters.inStock
+                    ? "inStock"
+                    : "outOfStock"
+              }
+              onChange={(e) =>
+                handleFilterChange(
+                  "inStock",
+                  e.target.value === "all"
+                    ? null
+                    : e.target.value === "inStock",
+                )
+              }
+            >
+              <option value="all">Show All</option>
+              <option value="inStock">In Stock</option>
+              <option value="outOfStock">Out of Stock</option>
             </select>
           </div>
 

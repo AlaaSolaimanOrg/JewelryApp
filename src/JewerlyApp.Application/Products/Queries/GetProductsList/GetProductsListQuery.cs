@@ -16,5 +16,6 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
         public decimal? PriceToFilter { get; set; }
         public ProductCategory? ProductCategoryFilter { get; set; }
 
+        public bool? InStock { get; set; }
     }
 }

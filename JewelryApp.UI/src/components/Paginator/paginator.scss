@@ -1,9 +1,35 @@
 .paginator {
+  .paginator-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 25px;
+  }
+
+  .page-size-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    position: absolute;
+    right: 0;
+
+    select {
+      min-width: 70px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 0 10px;
+      cursor: pointer;
+    }
+  }
+
   .pagination {
     display: flex;
     justify-content: center;
     gap: 8px;
-    margin-top: 25px;
+    margin-top: 0;
   }
 
   .page-item {
@@ -25,5 +51,16 @@
     background: var(--gold);
     color: white;
     border-color: var(--gold);
+  }
+
+  @media (max-width: 768px) {
+    .paginator-controls {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .page-size-control {
+      position: static;
+    }
   }
 }

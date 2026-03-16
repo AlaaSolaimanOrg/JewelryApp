@@ -84,14 +84,17 @@
 
     // Desktop - Compact layout with Karat + Category side by side
     @media (min-width: 1200px) {
-      grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
-      grid-template-areas: "karat category weight price actions";
+      grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr auto;
+      grid-template-areas: "karat category stock weight price actions";
 
       .karat-group {
         grid-area: karat;
       }
       .category-group {
         grid-area: category;
+      }
+      .stock-group {
+        grid-area: stock;
       }
       .weight-group {
         grid-area: weight;
@@ -106,7 +109,7 @@
 
     // Large Desktop (1440px+) - More balanced layout
     @media (min-width: 1440px) {
-      grid-template-columns: 1.5fr 1fr 1fr 1fr auto;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto;
     }
 
     // Large Tablet/Laptop - 3 rows, Karat spans full width
@@ -114,8 +117,9 @@
       grid-template-columns: 1fr 1fr;
       grid-template-areas:
         "karat karat"
-        "category weight"
-        "price actions";
+        "category stock"
+        "weight price"
+        "actions actions";
       gap: 20px;
 
       .karat-group {
@@ -123,6 +127,9 @@
       }
       .category-group {
         grid-area: category;
+      }
+      .stock-group {
+        grid-area: stock;
       }
       .weight-group {
         grid-area: weight;
@@ -140,8 +147,9 @@
       grid-template-columns: 1fr 1fr;
       grid-template-areas:
         "karat karat"
-        "category weight"
-        "price actions";
+        "category stock"
+        "weight price"
+        "actions actions";
       gap: 20px;
 
       .karat-group {
@@ -149,6 +157,9 @@
       }
       .category-group {
         grid-area: category;
+      }
+      .stock-group {
+        grid-area: stock;
       }
       .weight-group {
         grid-area: weight;
@@ -167,10 +178,15 @@
       grid-template-areas:
         "karat"
         "category"
+        "stock"
         "weight"
         "price"
         "actions";
       gap: 20px;
+
+      .stock-group {
+        grid-area: stock;
+      }
     }
   }
 

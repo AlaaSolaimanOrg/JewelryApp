@@ -16,7 +16,6 @@ import {
   getProducts,
 } from "../../../apis/products.api/products.api";
 
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import Paginator from "../../../components/Paginator/Paginator";
@@ -76,6 +75,7 @@ const Inventory = () => {
     priceFrom: 0,
     priceTo: 999999,
     category: null,
+    inStock: null,
   });
 
   const {
@@ -85,10 +85,12 @@ const Inventory = () => {
     onSortChange,
     onSearchChange,
     onPaginationChange,
+    onPageSizeChange,
     pagination,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
+      inStock: appliedFilters?.inStock ?? undefined,
       skus: scannedSkus,
       karatTypeFilter: appliedFilters?.karatTypes,
       weightFromFilter: appliedFilters?.weightFrom,
@@ -226,6 +228,7 @@ const Inventory = () => {
 
   const handleExport = async () => {
     const payload = {
+      inStock: appliedFilters?.inStock ?? undefined,
       skus: scannedSkus,
       karatTypeFilter: appliedFilters?.karatTypes,
       weightFromFilter: appliedFilters?.weightFrom,
@@ -364,6 +367,7 @@ const Inventory = () => {
                   pageNumber={pagination.pageNumber}
                   pageSize={pagination.pageSize}
                   onPaginationChange={onPaginationChange}
+                  onPageSizeChange={onPageSizeChange}
                 />
               </div>
             </div>
