@@ -19,7 +19,7 @@ const Paginator = ({
   pageNumber,
   onPaginationChange,
   onPageSizeChange,
-  pageSizeOptions = [10, 25, 50, 100],
+  pageSizeOptions = [10, 25, 50, 100, 500, 1000, 10000],
   maxPages = 5,
   marginTop = "62px",
 }: PaginatorProps) => {
