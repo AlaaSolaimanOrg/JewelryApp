@@ -113,7 +113,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <param name="userId">User ID</param>
         /// <returns>List of user roles</returns>
         [HttpGet]
-        [Authorize(Roles = "Admin,PosRole")]
+        [Authorize(Roles = "Admin,PosRole,TerminalRole")]
         public async Task<IActionResult> GetUserInfo()
         {
             var response = await _userManagementService.GetUserInfoAsync();

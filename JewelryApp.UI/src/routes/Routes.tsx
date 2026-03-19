@@ -11,11 +11,11 @@ import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 // Lazy load all components
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
 const AddEditProduct = lazy(
-  () => import("../pages/admin/addEditProduct/AddEditProduct")
+  () => import("../pages/admin/addEditProduct/AddEditProduct"),
 );
 const AddEditStaff = lazy(() => import("../pages/admin/addStaff/AddEditStaff"));
 const AdminHeader = lazy(
-  () => import("../pages/admin/adminHeader/AdminHeader")
+  () => import("../pages/admin/adminHeader/AdminHeader"),
 );
 const Customers = lazy(() => import("../pages/admin/customers/Customers"));
 const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
@@ -25,7 +25,7 @@ const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
 const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
 const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
 const SalesReports = lazy(
-  () => import("../pages/admin/salesReport/SalesReports")
+  () => import("../pages/admin/salesReport/SalesReports"),
 );
 const Settings = lazy(() => import("../pages/admin/settings/Settings"));
 const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
@@ -35,13 +35,13 @@ const Home = lazy(() => import("../pages/pos/home/Home"));
 const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
 const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const TransactionHistory = lazy(
-  () => import("../pages/pos/transactionHistory/TransactionHistory")
+  () => import("../pages/pos/transactionHistory/TransactionHistory"),
 );
 
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 const ReturnManagement = lazy(
-  () => import("../pages/admin/returnManagement/ReturnManagement")
+  () => import("../pages/admin/returnManagement/ReturnManagement"),
 );
 
 // Loading component for Suspense fallback
@@ -101,22 +101,12 @@ const AppRoutes = () => {
 
           <Route
             element={
-              <ProtectedRoute allowedRoles={["Admin", "Admin2"]}>
+              <ProtectedRoute allowedRoles={["Admin", "TerminalRole"]}>
                 <AdminLayout />
               </ProtectedRoute>
             }
           >
-            <Route path="admin/dashboard" element={<Dashboard />} />
-            <Route path="admin/analytics" element={<Analytics />} />
             <Route path="/admin/inventory/products" element={<Inventory />} />
-            <Route
-              path="/admin/inventory/reports"
-              element={<InventoryReports />}
-            />
-            <Route path="admin/pricing" element={<Pricing />} />
-            <Route path="admin/sales-reports" element={<SalesReports />} />
-            <Route path="admin/customers" element={<Customers />} />
-            <Route path="admin/staff" element={<Staff />} />
             <Route
               path="admin/repairManagement"
               element={<RepairManagement />}
@@ -125,9 +115,6 @@ const AppRoutes = () => {
               path="admin/returnManagement"
               element={<ReturnManagement />}
             />
-            <Route path="admin/settings" element={<Settings />} />
-            <Route path="admin/print-tags" element={<TagPrinting />} />
-            <Route path="admin/export-data" element={<ExportData />} />
             <Route
               path="admin/addProduct"
               element={<AddEditProduct isEdit={false} />}
@@ -136,6 +123,28 @@ const AppRoutes = () => {
               path="admin/editProduct/:productId"
               element={<AddEditProduct isEdit={true} />}
             />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="admin/dashboard" element={<Dashboard />} />
+            <Route path="admin/analytics" element={<Analytics />} />
+            <Route
+              path="/admin/inventory/reports"
+              element={<InventoryReports />}
+            />
+            <Route path="admin/pricing" element={<Pricing />} />
+            <Route path="admin/sales-reports" element={<SalesReports />} />
+            <Route path="admin/customers" element={<Customers />} />
+            <Route path="admin/staff" element={<Staff />} />
+            <Route path="admin/settings" element={<Settings />} />
+            <Route path="admin/print-tags" element={<TagPrinting />} />
+            <Route path="admin/export-data" element={<ExportData />} />
             <Route
               path="admin/addStaff"
               element={<AddEditStaff isEdit={false} />}
@@ -144,9 +153,9 @@ const AppRoutes = () => {
               path="admin/editStaff/:userId"
               element={<AddEditStaff isEdit={true} />}
             />
+            <Route path="admin/logs" element={<Logs />} />
           </Route>
 
-          <Route path="admin/logs" element={<Logs />} />
           <Route path="admin/" element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="unauthorized" element={<Unauthorized />} />

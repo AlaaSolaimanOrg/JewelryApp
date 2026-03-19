@@ -140,7 +140,33 @@ const SideNav = () => {
     navigate(path);
   };
 
+  const hasAdminRole = userInfo?.roles?.includes("Admin");
+  const hasTerminalRole = userInfo?.roles?.includes("TerminalRole");
   const hasPosRole = userInfo?.roles?.includes("PosRole");
+  const isTerminalOnlyUser = hasTerminalRole && !hasAdminRole;
+
+  const filteredNavItems = isTerminalOnlyUser
+    ? navItems
+        .filter((item) =>
+          ["Inventory", "Repair Management", "Return Management"].includes(
+            item.label,
+          ),
+        )
+        .map((item) =>
+          item.label === "Inventory"
+            ? {
+                ...item,
+                subItems: item.subItems?.filter(
+                  (subItem) => subItem.path === "/admin/inventory/products",
+                ),
+              }
+            : item,
+        )
+    : navItems;
+
+  const filteredOperationItems = isTerminalOnlyUser
+    ? operationItems.filter((item) => item.label === "Add Product")
+    : operationItems;
 
   const handlePosRedirect = () => {
     navigate("/");
@@ -183,7 +209,7 @@ const SideNav = () => {
 
         <div className="nav-links">
           <div className="nav-section">Inventory</div>
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const hasSubItems = !!item.subItems?.length;
             const expanded = openSections[item.label];
             const active =
@@ -244,24 +270,31 @@ const SideNav = () => {
             <div>
               <div className="nav-section">System</div>
 
-              <button className="nav-item no-subItems" onClick={handlePosRedirect}>
+              <button
+                className="nav-item no-subItems"
+                onClick={handlePosRedirect}
+              >
                 <MdOutlinePointOfSale className="icon" />
                 <span>POS</span>
               </button>
             </div>
           )}
 
-          <div className="nav-section">Operations</div>
-          {operationItems.map((item) => (
-            <button
-              key={item.label}
-              className={`nav-item no-subItems ${isActive(item.path) ? "active" : ""}`}
-              onClick={() => handleNavClick(item.path)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
-          ))}
+          {filteredOperationItems.length > 0 && (
+            <>
+              <div className="nav-section">Operations</div>
+              {filteredOperationItems.map((item) => (
+                <button
+                  key={item.label}
+                  className={`nav-item no-subItems ${isActive(item.path) ? "active" : ""}`}
+                  onClick={() => handleNavClick(item.path)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </>
+          )}
 
           <button
             className="nav-item no-subItems"

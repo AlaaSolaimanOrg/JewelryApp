@@ -20,11 +20,10 @@ const Login = () => {
   const redirectAfterLogin = () => {
     if (userInfo?.roles?.includes("PosRole")) {
       navigate("/");
-    } else if (
-      userInfo?.roles?.includes("Admin") ||
-      userInfo?.roles?.includes("Admin2")
-    ) {
+    } else if (userInfo?.roles?.includes("Admin")) {
       navigate("/admin/dashboard");
+    } else if (userInfo?.roles?.includes("TerminalRole")) {
+      navigate("/admin/inventory/products");
     } else {
       // Default redirect if no roles match
       navigate("/unauthorized");

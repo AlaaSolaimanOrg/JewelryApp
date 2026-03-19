@@ -17,7 +17,7 @@ namespace JewerlyApp.Infrastructure.Identity
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             string adminRoleName = "Admin";
-            string role2 = "Admin2";
+            string terminalRoleName = "TerminalRole";
 
             string adminEmail = "admin@gmail.com";
             string adminPassword = "Admin@123"; // ⚠ Change in production
@@ -28,7 +28,7 @@ namespace JewerlyApp.Infrastructure.Identity
 
             // create admin
             await CreateUserWithRolesAsync(userManager, roleManager,
-                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, role2, posRole });
+                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, terminalRoleName, posRole });
 
             await CreateUserWithRolesAsync(userManager, roleManager,
                 posEmail, posPassword, "Pos user", new[] { posRole });
