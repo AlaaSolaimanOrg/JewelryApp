@@ -13,6 +13,8 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isAdminUser = userInfo?.roles?.includes("Admin");
+  const hasTerminalRole = userInfo?.roles?.includes("TerminalRole");
+  const canAccessAdminPanel = isAdminUser || hasTerminalRole;
 
   const location = useLocation();
 
@@ -47,7 +49,14 @@ const Header = () => {
 
   // Admin panel handler
   const handleAdminPanel = () => {
-    navigate("/admin/dashboard"); // Adjust the route as needed
+    if (isAdminUser) {
+      navigate("/admin/dashboard");
+      return;
+    }
+
+    if (hasTerminalRole) {
+      navigate("/admin/inventory/products");
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -76,7 +85,7 @@ const Header = () => {
           className={`nav-controls ${isMobileMenuOpen ? "mobile-open" : ""}`}
         >
           <div className="nav-controls-top">
-            {isAdminUser && (
+            {canAccessAdminPanel && (
               <button
                 className="admin-btn"
                 title="Admin Panel"
