@@ -24,12 +24,11 @@ const Header = () => {
       { path: "/transactionHistory", title: "Transaction History" },
       { path: "/receipt", title: "Receipt Preview" },
       { path: "/sale", title: "Sale" },
-      
     ];
 
     const matchedRoute = routeTitles.find(
       (route) =>
-        pathname === route.path || pathname.startsWith(route.path + "/")
+        pathname === route.path || pathname.startsWith(route.path + "/"),
     );
 
     return matchedRoute?.title || "POS Dashboard";
