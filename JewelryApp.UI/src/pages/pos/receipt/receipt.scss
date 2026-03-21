@@ -248,16 +248,29 @@
   .table-wrapper {
     border: none !important;
     .receipt-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+
       thead {
         th {
           background-color: white !important;
+          white-space: nowrap !important;
+          word-break: normal;
+          overflow-wrap: normal;
         }
-        th,
-        td {
-          font-size: 15px !important;
-          font-weight: bold !important;
-          border-bottom: 1px solid black !important;
-        }
+      }
+
+      th,
+      td {
+        font-size: 15px !important;
+        font-weight: bold !important;
+        border-bottom: 1px solid black !important;
+      }
+
+      td {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
       }
     }
   }

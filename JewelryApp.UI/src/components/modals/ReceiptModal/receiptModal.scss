@@ -343,14 +343,44 @@
   .table-wrapper {
     border: none !important;
     .receipt-table {
+      width: 100% !important;
+      table-layout: fixed !important;
+
+      thead {
+        display: table-header-group !important;
+
+        tr {
+          display: table-row !important;
+        }
+      }
+
+      .table-body-scrollable {
+        display: table-row-group !important;
+        max-height: none !important;
+        overflow: visible !important;
+
+        tr {
+          display: table-row !important;
+        }
+      }
+
       th {
         background-color: white;
+        white-space: nowrap !important;
+        word-break: normal;
+        overflow-wrap: normal;
       }
       th,
       td {
         font-size: 15px;
         font-weight: bold !important;
         border-bottom: 1px solid black !important;
+      }
+
+      td {
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
       }
     }
   }
