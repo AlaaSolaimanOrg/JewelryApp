@@ -55,13 +55,13 @@ const RepairInvoiceModal = ({
       );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
-        port: 8043,
-        crypto: true,
+        port: 8008,
+        crypto: false,
         buffer: false,
         paperWidthPx: 576,
         scale: 4,
       });
-     console.log("✅ Print job sent successfully");
+      console.log("✅ Print job sent successfully");
     } catch (e) {
       console.error("❌ Print error:", e);
       console.error(e);

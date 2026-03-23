@@ -88,8 +88,8 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
       );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
-        port: 8043,
-        crypto: true,
+        port: 8008,
+        crypto: false,
         buffer: false,
         paperWidthPx: 576, // 80mm; use 384 for 58mm
         scale: 4,
