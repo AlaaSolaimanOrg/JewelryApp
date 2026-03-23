@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import {
   FaGlobe,
@@ -7,17 +7,16 @@ import {
   FaReceipt,
   FaTiktok,
 } from "react-icons/fa";
-import { useReactToPrint } from "react-to-print";
-import "./receiptModal.scss";
-import type { KaratType } from "../../../types/enums";
+import QRCode from "react-qr-code";
+import { Link } from "react-router-dom";
+import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
-import useLocalApi from "../../../hooks/useLocalApi";
-import { renderLongDescription } from "../../../utils";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
-import { Link } from "react-router-dom";
-import QRCode from "react-qr-code";
-import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
+import useLocalApi from "../../../hooks/useLocalApi";
+import type { KaratType } from "../../../types/enums";
+import { renderLongDescription } from "../../../utils";
+import "./receiptModal.scss";
 
 interface Sale {
   id: string;
@@ -88,8 +87,8 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
       );
       await printDomToEpson(contentRef.current, {
         ip: "192.168.0.19",
-        port: 8008,
-        crypto: false,
+        port: 8043,
+        crypto: true,
         buffer: false,
         paperWidthPx: 576, // 80mm; use 384 for 58mm
         scale: 4,
