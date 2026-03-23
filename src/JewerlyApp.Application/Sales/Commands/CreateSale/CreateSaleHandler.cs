@@ -185,7 +185,8 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         private SaleItem CreateSaleItem(Guid saleId, Product product, SaleItemDto item)
         {
             decimal pricePerGram = item.OverriddenPricePerGram ?? item.OriginalPricePerGram;
-            decimal itemPrice = product.Weight * pricePerGram;
+            // Use the sold weight from the request (item.Weight) to calculate the price per line
+            decimal itemPrice = item.Weight * pricePerGram;
             decimal lineTotal = itemPrice * item.Quantity;
 
             return new SaleItem
@@ -205,14 +206,18 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
         private void UpdateProductStock(Product product, SaleItemDto item)
         {
+            int qty = item.Quantity > 0 ? item.Quantity : 1;
+
             if (product.Quantity.HasValue && product.Quantity > 0)
             {
-                int qty = item.Quantity > 0 ? item.Quantity : 1;
                 product.Quantity -= qty;
             }
 
-            // Reduce weight if needed (optional)
-            // product.Weight = Math.Max(0, product.Weight - item.Weight);
+            // Replace product weight with the incoming sold weight (do not subtract)
+            if (item.Weight > 0)
+            {
+                product.Weight = item.Weight;
+            }
 
             product.LastUpdatedDate = DateTime.UtcNow;
         }
