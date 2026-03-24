@@ -27,6 +27,8 @@ namespace JewerlyApp.Infrastructure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<ISmsService, TwilioSmsService>();
+            services.AddScoped<IPrintJobRepository, EfPrintJobRepository>();
+            services.AddScoped<IPrinterRepository, EfPrinterRepository>();
 
             return services;
         }
