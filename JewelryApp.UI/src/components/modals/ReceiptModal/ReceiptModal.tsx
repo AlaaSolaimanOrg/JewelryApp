@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
-import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
+import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
@@ -50,6 +50,32 @@ interface ReceiptModalProps {
   children: React.ReactNode;
 }
 
+function serializeReceiptHtml(element: HTMLElement): string {
+  const styles: string[] = [];
+  for (const sheet of Array.from(document.styleSheets)) {
+    try {
+      const rules = Array.from(sheet.cssRules || []);
+      for (const rule of rules) {
+        styles.push(rule.cssText);
+      }
+    } catch {
+      // Skip cross-origin stylesheets
+    }
+  }
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #fff; }
+    ${styles.join("\n")}
+  </style>
+</head>
+<body>${element.outerHTML}</body>
+</html>`;
+}
+
 const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -77,23 +103,22 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   );
 
   const handleEpsonPrintHTML = async () => {
-    if (!contentRef.current) return;
-
     setShowThermalPrint(true);
     setEpsonBusy(true);
     try {
-      await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve(null)),
-      );
-      await printDomToEpson(contentRef.current, {
-        ip: "192.168.0.19",
-        port: 8043,
-        crypto: true,
-        buffer: false,
-        paperWidthPx: 576, // 80mm; use 384 for 58mm
-        scale: 4,
+      if (!saleDetails || !contentRef.current) {
+        return;
+      }
+
+      const html = serializeReceiptHtml(contentRef.current);
+
+      await createReceiptPrintJob({
+        storeId: "store-1",
+        printerId: "front-desk",
+        receiptPayload: { html },
       });
-      console.log("✅ Print job sent successfully");
+
+      console.log("✅ Print job queued successfully");
     } catch (e) {
       console.error("❌ Print error:", e);
       console.error(e);

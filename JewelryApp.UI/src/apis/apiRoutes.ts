@@ -76,4 +76,11 @@ export const apiRoutes = {
     getLogs: "Logs/GetLogs",
     deleteLogs: "Logs/DeleteLogs",
   },
+  printJobs: {
+    createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",
+    claimNextPrintJob: "PrintJobs/ClaimNextPrintJob",
+    markPrintJobStarted: "PrintJobs/MarkPrintJobStarted",
+    markPrintJobSucceeded: "PrintJobs/MarkPrintJobSucceeded",
+    markPrintJobFailed: "PrintJobs/MarkPrintJobFailed",
+  },
 };
