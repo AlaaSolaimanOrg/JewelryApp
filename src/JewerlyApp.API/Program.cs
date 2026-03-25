@@ -152,9 +152,10 @@ app.UseSwagger(c =>
     c.RouteTemplate = "swagger/{documentName}/swagger.json";
     c.PreSerializeFilters.Add((swagger, httpReq) =>
     {
+        // Force HTTPS for Swagger server URL
         swagger.Servers = new List<OpenApiServer>
         {
-            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" }
+            new OpenApiServer { Url = $"https://{httpReq.Host.Value}{basePath}" }
         };
     });
 });
