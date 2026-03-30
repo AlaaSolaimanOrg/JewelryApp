@@ -68,9 +68,12 @@ async function inlineImageSources(element: HTMLElement): Promise<void> {
 export async function serializeReceiptHtml(
   element: HTMLElement,
 ): Promise<string> {
+  const printWidth = Math.ceil(element.getBoundingClientRect().width);
   const clonedElement = element.cloneNode(true) as HTMLElement;
   applyComputedStyles(element, clonedElement);
   await inlineImageSources(clonedElement);
+
+  clonedElement.style.margin = "0";
 
   return `<!DOCTYPE html>
 <html>
@@ -79,7 +82,15 @@ export async function serializeReceiptHtml(
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background: #fff; }
+    @page { margin: 0; size: ${printWidth}px auto; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: ${printWidth}px;
+      max-width: ${printWidth}px;
+      background: #fff;
+      overflow: hidden;
+    }
     a { color: inherit; text-decoration: none; }
   </style>
 </head>
