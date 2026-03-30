@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Button, Modal } from "react-bootstrap";
 import {
   FaGlobe,
@@ -50,29 +51,253 @@ interface ReceiptModalProps {
   children: React.ReactNode;
 }
 
-function serializeReceiptHtml(element: HTMLElement): string {
-  const styles: string[] = [];
-  for (const sheet of Array.from(document.styleSheets)) {
-    try {
-      const rules = Array.from(sheet.cssRules || []);
-      for (const rule of rules) {
-        styles.push(rule.cssText);
-      }
-    } catch {
-      // Skip cross-origin stylesheets
-    }
+const RECEIPT_PRINT_CSS = `
+  * { box-sizing: border-box; }
+  @page { size: 80mm auto; margin: 0; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #000;
+    font-family: "Segoe UI", Arial, sans-serif;
+    line-height: 1.4;
+    min-width: auto;
+    min-height: auto;
   }
+  body {
+    display: block;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .receipt-container {
+    width: 576px;
+    max-width: 576px;
+    margin: 0 auto;
+    padding: 24px 12px;
+    background: #fff;
+    color: #000;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+  }
+  .receipt-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #000;
+  }
+  .receipt-logo {
+    width: 80%;
+    max-width: 320px;
+    margin: 0 auto 10px;
+  }
+  .receipt-logo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .receipt-subtitle {
+    margin-bottom: 4px;
+    color: #000;
+    font-weight: 700;
+  }
+  .receipt-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: #000;
+  }
+  .receipt-details > div > div {
+    margin-bottom: 4px;
+  }
+  .table-wrapper {
+    margin-bottom: 20px;
+  }
+  .receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .receipt-table thead {
+    display: table-header-group;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .receipt-table tbody,
+  .receipt-table .table-body-scrollable {
+    display: table-row-group !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100%;
+  }
+  .receipt-table tr {
+    display: table-row;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .receipt-table th,
+  .receipt-table td {
+    padding: 8px 6px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid #000;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .receipt-table th {
+    background: #fff;
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+  .receipt-table td {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+  .receipt-table th:nth-child(2),
+  .receipt-table td:nth-child(2) {
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+  .receipt-discount,
+  .payment-breakdown {
+    margin-top: 12px;
+  }
+  .receipt-discount .summary-item,
+  .payment-breakdown .summary-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #000;
+  }
+  .receipt-totals {
+    margin-top: 20px;
+  }
+  .receipt-total {
+    padding: 12px 0 0;
+    text-align: center;
+  }
+  .total-label {
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #000;
+  }
+  .total-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #000;
+  }
+  .receipt-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #000;
+  }
+  .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+  .social-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #000;
+    font-size: 14px;
+  }
+  .social-item svg,
+  .social-item img {
+    flex: 0 0 auto;
+  }
+  .qr-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .qr-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    text-align: center;
+  }
+`;
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function convertImageSrcToDataUrl(src: string): Promise<string> {
+  if (src.startsWith("data:")) {
+    return src;
+  }
+
+  const absoluteUrl = new URL(src, window.location.href).href;
+  const response = await fetch(absoluteUrl);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image asset: ${response.status}`);
+  }
+
+  return blobToDataUrl(await response.blob());
+}
+
+async function serializeReceiptHtml(element: HTMLElement): Promise<string> {
+  const clonedElement = element.cloneNode(true) as HTMLElement;
+  const images = Array.from(clonedElement.querySelectorAll("img"));
+
+  await Promise.all(
+    images.map(async (image) => {
+      const src = image.getAttribute("src");
+
+      if (!src) {
+        return;
+      }
+
+      try {
+        image.setAttribute("src", await convertImageSrcToDataUrl(src));
+      } catch {
+        image.setAttribute("src", new URL(src, window.location.href).href);
+      }
+    }),
+  );
+
   return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background: #fff; }
-    ${styles.join("\n")}
+    ${RECEIPT_PRINT_CSS}
   </style>
 </head>
-<body>${element.outerHTML}</body>
+<body>${clonedElement.outerHTML}</body>
 </html>`;
 }
 
@@ -103,14 +328,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   );
 
   const handleEpsonPrintHTML = async () => {
-    setShowThermalPrint(true);
+    flushSync(() => setShowThermalPrint(true));
     setEpsonBusy(true);
     try {
       if (!saleDetails || !contentRef.current) {
         return;
       }
 
-      const html = serializeReceiptHtml(contentRef.current);
+      const html = await serializeReceiptHtml(contentRef.current);
 
       await createReceiptPrintJob({
         storeId: "store-1",
@@ -124,7 +349,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
       console.error(e);
       alert(String(e));
     } finally {
-      setShowThermalPrint(false);
+      flushSync(() => setShowThermalPrint(false));
       setEpsonBusy(false);
     }
   };
