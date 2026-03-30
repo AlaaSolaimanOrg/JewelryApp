@@ -498,10 +498,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <div className="receipt-header">
                 <div className="receipt-title">
                   <div className="receipt-logo">
-                    <img
-                      src={ADI_Jewelry_Logo_Horizontal}
-                      alt="Logo"
-                    />
+                    <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
                   </div>
                 </div>
                 <div className="receipt-subtitle">
