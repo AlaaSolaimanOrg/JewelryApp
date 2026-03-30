@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { Button, Modal } from "react-bootstrap";
 import {
   FaGlobe,
@@ -13,6 +12,7 @@ import { Link } from "react-router-dom";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
+import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
 import { renderLongDescription } from "../../../utils";
@@ -50,366 +50,29 @@ interface ReceiptModalProps {
   children: React.ReactNode;
 }
 
-const RECEIPT_PRINT_CSS = `
-  * { box-sizing: border-box; }
-  @page { size: 80mm auto; margin: 0; }
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: #fff;
-    color: #000;
-    font-family: "Segoe UI", Arial, sans-serif;
-    line-height: 1.4;
-    min-width: auto;
-    min-height: auto;
-  }
-  body {
-    display: block;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .receipt-container {
-    width: 100%;
-    max-width: 576px;
-    margin: 0 auto;
-    padding: 30px 15px;
-    background: #fff;
-    color: #333333;
-    font-size: 14px;
-    font-weight: 400;
-    border: 2px solid #dee2e6;
-    border-radius: 12px;
-    box-shadow: none;
-    text-shadow: none;
-  }
-  .receipt-header {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #d4af37;
-  }
-  .receipt-logo {
-    width: 80%;
-    max-width: 500px;
-    margin: 0 auto 10px;
-  }
-  .receipt-logo img {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-  }
-  .receipt-subtitle {
-    margin-bottom: 5px;
-    color: #666;
-    font-weight: 400;
-  }
-  .receipt-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 30px;
-    font-size: 16px;
-    color: #333333;
-  }
-  .receipt-details > div > div {
-    margin-bottom: 6px;
-  }
-  .returned-cell {
-    text-align: left;
-    line-height: 1.5;
-  }
-  .returned-qty {
-    font-size: 12px;
-    font-weight: 600;
-    color: #b91c1c;
-  }
-  .returned-amount {
-    font-size: 11px;
-    color: #991b1b;
-  }
-  .no-return {
-    color: #999;
-    font-size: 12px;
-  }
-  .table-wrapper {
-    margin-bottom: 20px;
-    border: 1px solid #eee;
-    border-radius: 12px;
-  }
-  .receipt-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
-  }
-  .receipt-table thead {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-  }
-  .receipt-table thead tr {
-    background: #f1f5f9;
-  }
-  .receipt-table tbody,
-  .receipt-table .table-body-scrollable {
-    display: table-row-group !important;
-    max-height: none !important;
-    overflow: visible !important;
-    width: 100%;
-  }
-  .receipt-table tr {
-    display: table-row;
-    width: 100%;
-    table-layout: fixed;
-  }
-  .receipt-table th {
-    padding: 12px 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #212529;
-    border-bottom: 2px solid #e0e0e0;
-  }
-  .receipt-table td {
-    padding: 12px 15px;
-    vertical-align: top;
-    border-bottom: 1px solid #eee;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-  .receipt-discount {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-    padding-bottom: 0;
-    font-size: 16px;
-    font-weight: 400;
-  }
-  .receipt-discount .summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed #ddd;
-  }
-  .payment-breakdown {
-    margin-top: 20px;
-  }
-  .payment-breakdown h4 {
-    margin-bottom: 15px;
-    color: #212529;
-  }
-  .payment-breakdown .summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed #ddd;
-  }
-  .receipt-totals {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin-top: 30px;
-  }
-  .receipt-total {
-    background: #f2f2f2;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-  }
-  .total-label {
-    margin-bottom: 10px;
-    font-size: 19px;
-    color: #555;
-  }
-  .total-value {
-    font-size: 29px;
-    font-weight: 700;
-    color: #212529;
-  }
-  .receipt-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-  .social-links {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-  }
-  .social-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #666;
-    font-size: 14px;
-  }
-  .globe-icon,
-  .tiktok-icon {
-    color: #000;
-  }
-  .instagram-icon {
-    color: #e4405f;
-  }
-  .social-item svg {
-    font-size: 19px;
-  }
-  .qr-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  .qr-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #666;
-    text-align: center;
-  }
-  .receipt-container.thermal-print {
-    width: 576px;
-    max-width: 576px;
-    background: #fff !important;
-    font-size: 14px;
-    font-weight: 600;
-    color: #000 !important;
-    border: none !important;
-    border-radius: 0;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-  .receipt-container.thermal-print .social-item,
-  .receipt-container.thermal-print .instagram-icon,
-  .receipt-container.thermal-print .qr-label {
-    color: #000 !important;
-  }
-  .receipt-container.thermal-print .receipt-details {
-    font-weight: 700;
-    font-size: 17px;
-    color: #000;
-  }
-  .receipt-container.thermal-print .receipt-subtitle {
-    color: #000;
-    font-weight: 700;
-    opacity: 1 !important;
-  }
-  .receipt-container.thermal-print .receipt-header,
-  .receipt-container.thermal-print .receipt-discount,
-  .receipt-container.thermal-print .receipt-footer,
-  .receipt-container.thermal-print .payment-breakdown .summary-item {
-    border-color: #000;
-  }
-  .receipt-container.thermal-print .table-wrapper {
-    border: none !important;
-  }
-  .receipt-container.thermal-print .receipt-table {
-    width: 100% !important;
-    table-layout: fixed !important;
-  }
-  .receipt-container.thermal-print .receipt-table thead {
-    display: table-header-group !important;
-  }
-  .receipt-container.thermal-print .receipt-table thead tr,
-  .receipt-container.thermal-print .receipt-table .table-body-scrollable,
-  .receipt-container.thermal-print .receipt-table .table-body-scrollable tr {
-    display: table-row-group !important;
-  }
-  .receipt-container.thermal-print .receipt-table thead tr {
-    display: table-row !important;
-  }
-  .receipt-container.thermal-print .receipt-table th {
-    background-color: #fff;
-    white-space: nowrap !important;
-    word-break: normal;
-    overflow-wrap: normal;
-  }
-  .receipt-container.thermal-print .receipt-table th,
-  .receipt-container.thermal-print .receipt-table td {
-    font-size: 15px;
-    font-weight: 700 !important;
-    border-bottom: 1px solid #000 !important;
-  }
-  .receipt-container.thermal-print .receipt-table td {
-    white-space: normal !important;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-  .receipt-container.thermal-print .receipt-table th:nth-child(2),
-  .receipt-container.thermal-print .receipt-table td:nth-child(2) {
-    white-space: nowrap !important;
-    word-break: normal;
-    overflow-wrap: normal;
-  }
-`;
-
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
-}
-
-async function convertImageSrcToDataUrl(src: string): Promise<string> {
-  if (src.startsWith("data:")) {
-    return src;
-  }
-
-  const absoluteUrl = new URL(src, window.location.href).href;
-  const response = await fetch(absoluteUrl);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch image asset: ${response.status}`);
-  }
-
-  return blobToDataUrl(await response.blob());
-}
-
-async function serializeReceiptHtml(element: HTMLElement): Promise<string> {
-  const clonedElement = element.cloneNode(true) as HTMLElement;
-  const images = Array.from(clonedElement.querySelectorAll("img"));
-
-  await Promise.all(
-    images.map(async (image) => {
-      const src = image.getAttribute("src");
-
-      if (!src) {
-        return;
+function serializeReceiptHtml(element: HTMLElement): string {
+  const styles: string[] = [];
+  for (const sheet of Array.from(document.styleSheets)) {
+    try {
+      const rules = Array.from(sheet.cssRules || []);
+      for (const rule of rules) {
+        styles.push(rule.cssText);
       }
-
-      try {
-        image.setAttribute("src", await convertImageSrcToDataUrl(src));
-      } catch {
-        image.setAttribute("src", new URL(src, window.location.href).href);
-      }
-    }),
-  );
-
+    } catch {
+      // Skip cross-origin stylesheets
+    }
+  }
   return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    ${RECEIPT_PRINT_CSS}
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #fff; }
+    ${styles.join("\n")}
   </style>
 </head>
-<body>${clonedElement.outerHTML}</body>
+<body>${element.outerHTML}</body>
 </html>`;
 }
 
@@ -440,14 +103,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   );
 
   const handleEpsonPrintHTML = async () => {
-    flushSync(() => setShowThermalPrint(true));
+    setShowThermalPrint(true);
     setEpsonBusy(true);
     try {
       if (!saleDetails || !contentRef.current) {
         return;
       }
 
-      const html = await serializeReceiptHtml(contentRef.current);
+      const html = serializeReceiptHtml(contentRef.current);
 
       await createReceiptPrintJob({
         storeId: "store-1",
@@ -461,7 +124,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
       console.error(e);
       alert(String(e));
     } finally {
-      flushSync(() => setShowThermalPrint(false));
+      setShowThermalPrint(false);
       setEpsonBusy(false);
     }
   };
@@ -498,7 +161,14 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <div className="receipt-header">
                 <div className="receipt-title">
                   <div className="receipt-logo">
-                    <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
+                    <img
+                      src={
+                        showThermalPrint
+                          ? ADI_Jewelry_Logo_Horizontal_Black
+                          : ADI_Jewelry_Logo_Horizontal
+                      }
+                      alt="Logo"
+                    />
                   </div>
                 </div>
                 <div className="receipt-subtitle">
