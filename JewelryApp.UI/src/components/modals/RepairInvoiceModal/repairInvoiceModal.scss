@@ -247,6 +247,10 @@
   box-shadow: none !important;
   text-shadow: none !important;
 
+  .receipt-logo img {
+    filter: grayscale(1) contrast(1.08);
+  }
+
   .social-links {
     .social-item {
       color: black;

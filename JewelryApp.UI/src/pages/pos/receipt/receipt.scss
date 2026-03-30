@@ -212,6 +212,11 @@
   border: none !important;
   box-shadow: none !important;
   text-shadow: none !important;
+
+  .receipt-logo {
+    filter: grayscale(1) contrast(1.08);
+  }
+
   .social-links {
     .social-item {
       color: black !important;

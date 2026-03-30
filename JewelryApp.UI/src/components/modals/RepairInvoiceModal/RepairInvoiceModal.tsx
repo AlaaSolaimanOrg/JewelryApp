@@ -11,7 +11,6 @@ import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
 import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
-import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import useLocalApi from "../../../hooks/useLocalApi";
 import {
   ProductCategory,
@@ -111,14 +110,7 @@ const RepairInvoiceModal = ({
             <div className="receipt-header">
               <div className="receipt-title">
                 <div className="receipt-logo">
-                  <img
-                    src={
-                      showThermalPrint
-                        ? ADI_Jewelry_Logo_Horizontal_Black
-                        : ADI_Jewelry_Logo_Horizontal
-                    }
-                    alt="Logo"
-                  />
+                  <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
                 </div>
               </div>
 

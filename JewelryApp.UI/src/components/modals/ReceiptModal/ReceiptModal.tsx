@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
-import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type { KaratType } from "../../../types/enums";
 import { renderLongDescription } from "../../../utils";
@@ -66,7 +65,6 @@ function applyComputedStyles(
     );
   }
 
-  
   const sourceChildren = Array.from(sourceElement.children);
   const targetChildren = Array.from(targetElement.children);
 
@@ -224,14 +222,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
               <div className="receipt-header">
                 <div className="receipt-title">
                   <div className="receipt-logo">
-                    <img
-                      src={
-                        showThermalPrint
-                          ? ADI_Jewelry_Logo_Horizontal_Black
-                          : ADI_Jewelry_Logo_Horizontal
-                      }
-                      alt="Logo"
-                    />
+                    <img src={ADI_Jewelry_Logo_Horizontal} alt="Logo" />
                   </div>
                 </div>
                 <div className="receipt-subtitle">

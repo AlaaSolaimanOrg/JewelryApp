@@ -15,7 +15,6 @@ import "./receipt.scss";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import QRCode from "react-qr-code";
 import { Button } from "react-bootstrap";
-import ADI_Jewelry_Logo_Horizontal_Black from "../../../assets/images/Adi_Jewelry_Logo_Black.png";
 import { renderLongDescription } from "../../../utils.tsx";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 
@@ -147,11 +146,7 @@ const Receipt = () => {
           <div className="receipt-title">
             <img
               className="receipt-logo"
-              src={
-                showThermalPrint
-                  ? ADI_Jewelry_Logo_Horizontal_Black
-                  : ADI_Jewelry_Logo_Horizontal
-              }
+              src={ADI_Jewelry_Logo_Horizontal}
               alt="Logo"
             />
           </div>
