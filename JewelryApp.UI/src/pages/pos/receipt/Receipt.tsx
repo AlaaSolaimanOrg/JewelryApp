@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   FaCheck,
   FaGlobe,
@@ -15,6 +16,7 @@ import "./receipt.scss";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import QRCode from "react-qr-code";
 import { Button } from "react-bootstrap";
+import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
 import { renderLongDescription } from "../../../utils.tsx";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 
@@ -43,34 +45,9 @@ interface SaleItem {
   quantity: number;
 }
 
-function serializeReceiptHtml(element: HTMLElement): string {
-  const styles: string[] = [];
-  for (const sheet of Array.from(document.styleSheets)) {
-    try {
-      const rules = Array.from(sheet.cssRules || []);
-      for (const rule of rules) {
-        styles.push(rule.cssText);
-      }
-    } catch {
-      // Skip cross-origin stylesheets
-    }
-  }
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background: #fff; }
-    ${styles.join("\n")}
-  </style>
-</head>
-<body>${element.outerHTML}</body>
-</html>`;
-}
-
 const Receipt = () => {
   const { saleId } = useParams();
+  const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
 
   const [showThermalPrint, setShowThermalPrint] = useState(false);
@@ -103,17 +80,15 @@ const Receipt = () => {
     0,
   );
 
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const handleEpsonPrintHTML = async () => {
-    setShowThermalPrint(true);
+    flushSync(() => setShowThermalPrint(true));
     setEpsonBusy(true);
     try {
       if (!contentRef.current) {
         return;
       }
 
-      const html = serializeReceiptHtml(contentRef.current);
+      const html = await serializeReceiptHtml(contentRef.current);
 
       await createReceiptPrintJob({
         storeId: "store-1",
@@ -126,7 +101,7 @@ const Receipt = () => {
       console.error(e);
       alert(String(e));
     } finally {
-      setShowThermalPrint(false);
+      flushSync(() => setShowThermalPrint(false));
       setEpsonBusy(false);
     }
   };

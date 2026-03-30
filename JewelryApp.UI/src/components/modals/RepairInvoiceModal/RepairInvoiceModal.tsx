@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Button, Modal } from "react-bootstrap";
 import {
   FaGlobe,
@@ -9,16 +10,17 @@ import {
 } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
+import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import useLocalApi from "../../../hooks/useLocalApi";
+import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
 import {
   ProductCategory,
   RepairType,
   PaymentStatus,
 } from "../../../types/enums";
 import { splitCamelCaseWords } from "../../../utils";
-import { printDomToEpson } from "../../../EpsonDomPrintOptions.ts";
 import "./repairInvoiceModal.scss";
 
 interface RepairInvoiceModalProps {
@@ -44,29 +46,28 @@ const RepairInvoiceModal = ({
   }) as { data: any };
 
   const handleEpsonPrintHTML = async () => {
-    if (!contentRef.current) return;
-
-    setShowThermalPrint(true);
+    flushSync(() => setShowThermalPrint(true));
     setEpsonBusy(true);
     try {
-      await new Promise((resolve) =>
-        requestAnimationFrame(() => resolve(null)),
-      );
-      await printDomToEpson(contentRef.current, {
-        ip: "192.168.0.19",
-        port: 8043,
-        crypto: true,
-        buffer: false,
-        paperWidthPx: 576,
-        scale: 4,
+      if (!contentRef.current) {
+        return;
+      }
+
+      const html = await serializeReceiptHtml(contentRef.current);
+
+      await createReceiptPrintJob({
+        storeId: "store-1",
+        printerId: "front-desk",
+        receiptPayload: { html },
       });
-      console.log("✅ Print job sent successfully");
+
+      console.log("✅ Print job queued successfully");
     } catch (e) {
       console.error("❌ Print error:", e);
       console.error(e);
       alert(String(e));
     } finally {
-      setShowThermalPrint(false);
+      flushSync(() => setShowThermalPrint(false));
       setEpsonBusy(false);
     }
   };
