@@ -66,6 +66,7 @@ function applyComputedStyles(
     );
   }
 
+  
   const sourceChildren = Array.from(sourceElement.children);
   const targetChildren = Array.from(targetElement.children);
 
