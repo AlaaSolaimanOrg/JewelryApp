@@ -21,7 +21,9 @@ const Customers = lazy(() => import("../pages/admin/customers/Customers"));
 const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
 const ExportData = lazy(() => import("../pages/admin/exportData/ExportData"));
 const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
-const MeltedProducts = lazy(() => import("../pages/admin/meltedProducts/MeltedProducts"));
+const MeltedProducts = lazy(
+  () => import("../pages/admin/meltedProducts/MeltedProducts"),
+);
 
 const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
 const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
@@ -108,7 +110,10 @@ const AppRoutes = () => {
             }
           >
             <Route path="/admin/inventory/products" element={<Inventory />} />
-            <Route path="/admin/inventory/melted" element={<MeltedProducts />} />
+            <Route
+              path="/admin/inventory/melted"
+              element={<MeltedProducts />}
+            />
             <Route
               path="admin/repairManagement"
               element={<RepairManagement />}
