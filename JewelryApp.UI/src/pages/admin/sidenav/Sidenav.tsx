@@ -61,6 +61,10 @@ const SideNav = () => {
           label: "Inventory Reports",
           path: "/admin/inventory/reports",
         },
+          {
+            label: "Melted Products",
+            path: "/admin/inventory/melted",
+          },
       ],
     },
     {

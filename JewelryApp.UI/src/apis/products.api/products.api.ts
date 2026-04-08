@@ -54,3 +54,22 @@ export const meltProduct = async (payload: {
 }) => {
   return requestApi("POST", apiRoutes.product.meltProduct, payload);
 };
+
+export const getMeltedProducts = async (payload: any) => {
+  const response = await requestApi("GET", apiRoutes.product.getMeltedProducts, payload);
+
+  // Backend returns a VM with { TotalRecords, Items } inside data.
+  // Normalize to the shape other list endpoints return: { data: [...], totalRecords }
+  const items = response?.data?.items ?? response?.data?.Items ?? [];
+  const total = response?.data?.totalRecords ?? response?.data?.TotalRecords ?? 0;
+
+  return {
+    ...response,
+    data: items,
+    totalRecords: total,
+  };
+};
+
+export const getMeltedReports = async (payload: any) => {
+  return requestApi("GET", apiRoutes.product.getMeltedReports, payload);
+};
