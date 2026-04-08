@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
 {
-    public class GetMeltedProductsHandler : IRequestHandler<GetMeltedProductsQuery, GenericResponse<MeltedProductsVM>>
+    public class GetMeltedProductsHandler : IRequestHandler<GetMeltedProductsQuery, PaginatedResponse<MeltedProductVM>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -18,7 +18,7 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
             _context = context;
         }
 
-        public async Task<GenericResponse<MeltedProductsVM>> Handle(GetMeltedProductsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<MeltedProductVM>> Handle(GetMeltedProductsQuery request, CancellationToken cancellationToken)
         {
             var query = _context.MeltRecords.AsNoTracking().OrderByDescending(m => m.MeltedAt);
 
@@ -37,16 +37,15 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
                     KaratType = m.KaratType,
                     MeltedAt = m.MeltedAt
                 })
-                .ToArrayAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return new GenericResponse<MeltedProductsVM>
+            return new PaginatedResponse<MeltedProductVM>
             {
                 StatusCode = ResponseStatusCode.Success,
-                Data = new MeltedProductsVM
-                {
-                    TotalRecords = total,
-                    Items = items
-                }
+                TotalRecords = total,
+                Data = items,
+                PageSize = request.PageSize,
+                PageNumber = request.PageNumber
             };
         }
     }

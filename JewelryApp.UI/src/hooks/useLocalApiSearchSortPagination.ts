@@ -92,7 +92,10 @@ const useLocalApiSearchSortPagination = <T = any>({
     };
 
     try {
+      console.log("requestData", requestData);
       const response = await apiToCall(requestData);
+      console.log("response", response);
+
       const { data: responseData, message, totalRecords } = response;
 
       processErrorResponse(response, message);
@@ -111,6 +114,8 @@ const useLocalApiSearchSortPagination = <T = any>({
         setDataExtractedFromResponse(finalData);
       }
     } catch (error: any) {
+      console.log("error", error);
+
       showError(error?.message);
     } finally {
       setIsLoading(false);

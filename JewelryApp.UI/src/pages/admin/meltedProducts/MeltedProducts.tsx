@@ -1,10 +1,9 @@
-import React from "react";
-import { Col, Row } from "react-bootstrap";
 import { FaFire } from "react-icons/fa";
-import CustomTable from "../../../components/tables/Table/CustomTable";
-import Paginator from "../../../components/Paginator/Paginator";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { getMeltedProducts } from "../../../apis/products.api/products.api";
+import Paginator from "../../../components/Paginator/Paginator";
+import CustomTable from "../../../components/tables/Table/CustomTable";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { SortDirection } from "../../../types/enums";
 import { renderLongDescription } from "../../../utils";
 import "./meltedProducts.scss";
 
@@ -30,8 +29,10 @@ const MeltedProducts = () => {
   } = useLocalApiSearchSortPagination<MeltedProduct>({
     apiToCall: (data) => getMeltedProducts(data.payload),
     initialSortBy: "MeltedAt",
-    initialSortDirection: "DESC",
+    initialSortDirection: SortDirection.Descending,
   });
+
+  console.log("products", products);
 
   const headers = [
     { key: "meltedAt", label: "Melted At", width: "200px" },
