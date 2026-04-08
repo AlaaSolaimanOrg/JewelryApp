@@ -67,7 +67,7 @@ namespace JewerlyApp.Application.Products.Commands.MeltProduct
             {
                 StatusCode = ResponseStatusCode.Success,
                 Data = true,
-                Message = Messages.SuccessItemUpdated
+                Message = Messages.SuccessItemsMelted
             };
         }
     }

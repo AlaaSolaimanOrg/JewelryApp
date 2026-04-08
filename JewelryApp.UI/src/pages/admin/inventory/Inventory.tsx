@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import {
   exportProductsToExcel,
   getProducts,
+  meltProduct,
 } from "../../../apis/products.api/products.api";
 
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
@@ -34,7 +35,7 @@ import {
   SortDirection,
   type ProductType,
 } from "../../../types/enums";
-import { handleSort, renderLongDescription, showSuccess } from "../../../utils";
+import { handleSort, renderLongDescription, showSuccess, showError, checkRequestSucceeded } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 
@@ -92,6 +93,7 @@ const Inventory = () => {
     onPaginationChange,
     onPageSizeChange,
     pagination,
+  fetchData,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
@@ -243,11 +245,25 @@ const Inventory = () => {
     navigate(`/admin/editProduct/${productId}`);
   };
 
-  const handleMeltConfirm = (productId: string, quantity: number) => {
-    // TODO: call melt API when available. For now, show success and close modal.
-    showSuccess(`Scheduled ${quantity} item(s) of ${productId} for melting.`);
-    setShowMeltModal(false);
-    setSelectedProductForMelt(null);
+  const handleMeltConfirm = async (productId: string, quantity: number) => {
+    try {
+      const payload = { productId, quantity };
+      const response = await meltProduct(payload);
+
+      if (response && checkRequestSucceeded(response.statusCode)) {
+        showSuccess(
+          response.message ?? `${quantity} ${quantity === 1 ? "product" : "products"} melted successfully.`
+        );
+        setShowMeltModal(false);
+        setSelectedProductForMelt(null);
+        // Refresh list
+        if (fetchData) fetchData();
+      } else {
+        showError(response?.message ?? "Failed to melt product.");
+      }
+    } catch (err: any) {
+      showError(err?.message ?? "Failed to melt product.");
+    }
   };
 
   const handleExport = async () => {

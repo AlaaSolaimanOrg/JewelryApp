@@ -41,6 +41,9 @@
         public const string Success_Return_Created = "Return created successfully.";
         public const string SuccessReturnProcessed = "Return processed successfully.";
 
+        // MELT SUCCESS
+        public const string SuccessItemsMelted = "Item(s) melted successfully.";
+
         // NEW FOR LOGS
         public const string LogsRetrievedSuccessfully = "Logs retrieved successfully.";
         public const string NoLogsFound = "No logs found.";
