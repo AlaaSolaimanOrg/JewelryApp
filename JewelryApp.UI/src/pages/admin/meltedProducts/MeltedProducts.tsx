@@ -1,5 +1,6 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
+import { FaFire } from "react-icons/fa";
 import CustomTable from "../../../components/tables/Table/CustomTable";
 import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
@@ -53,7 +54,9 @@ const MeltedProducts = () => {
   return (
     <div id="melted-products" className="page">
       <div className="page-header">
-        <h1 className="page-title">Melted Products</h1>
+        <h1 className="page-title">
+          <FaFire className="icon me-2" /> Melted Products
+        </h1>
       </div>
 
       <div className="card">

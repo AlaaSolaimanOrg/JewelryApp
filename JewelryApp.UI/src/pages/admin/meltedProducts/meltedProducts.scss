@@ -3,3 +3,18 @@
     padding: 16px;
   }
 }
+
+/* match inventory page title icon sizing (smaller icon inside gold box) */
+.page-title {
+  .icon {
+    color: var(--gold);
+    background: var(--primary-light);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+}
