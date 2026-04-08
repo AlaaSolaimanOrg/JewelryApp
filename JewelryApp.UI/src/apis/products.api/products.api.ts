@@ -31,7 +31,6 @@ export const editProduct = async (payload: FormData) => {
   });
 };
 
-
 export const getProductsBySkus = async (payload: { skus: string[] }) => {
   return requestApi("GET", apiRoutes.product.getProductsBySkus, payload);
 };
@@ -49,6 +48,9 @@ export const getInventoryReports = async (payload: {
   return requestApi("GET", apiRoutes.product.getInventoryReports, payload);
 };
 
-export const meltProduct = async (payload: { productId: string; quantity: number }) => {
+export const meltProduct = async (payload: {
+  productId: string;
+  quantity: number;
+}) => {
   return requestApi("POST", apiRoutes.product.meltProduct, payload);
 };

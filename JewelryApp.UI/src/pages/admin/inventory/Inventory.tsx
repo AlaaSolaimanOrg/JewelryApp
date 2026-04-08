@@ -35,7 +35,13 @@ import {
   SortDirection,
   type ProductType,
 } from "../../../types/enums";
-import { handleSort, renderLongDescription, showSuccess, showError, checkRequestSucceeded } from "../../../utils";
+import {
+  handleSort,
+  renderLongDescription,
+  showSuccess,
+  showError,
+  checkRequestSucceeded,
+} from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 
@@ -93,7 +99,7 @@ const Inventory = () => {
     onPaginationChange,
     onPageSizeChange,
     pagination,
-  fetchData,
+    fetchData,
   } = useLocalApiSearchSortPagination<Product>({
     apiToCall: (data) => getProducts(data.payload),
     extraPayload: {
@@ -252,7 +258,8 @@ const Inventory = () => {
 
       if (response && checkRequestSucceeded(response.statusCode)) {
         showSuccess(
-          response.message ?? `${quantity} ${quantity === 1 ? "product" : "products"} melted successfully.`
+          response.message ??
+            `${quantity} ${quantity === 1 ? "product" : "products"} melted successfully.`,
         );
         setShowMeltModal(false);
         setSelectedProductForMelt(null);
