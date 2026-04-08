@@ -2,9 +2,12 @@
 using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.EditProduct;
+using JewerlyApp.Application.Products.Commands.MeltProduct;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
+using JewerlyApp.Application.Products.Queries.GetMeltedProducts;
+using JewerlyApp.Application.Products.Queries.GetMeltedReports;
 using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Application.Products.Queries.GetProductsBySku;
 using JewerlyApp.Application.Products.Queries.GetQueryById;
@@ -135,6 +138,30 @@ namespace JewerlyApp.API.Controllers.Products
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetInventoryReports([FromQuery] GetInventoryReportsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Melt specified quantity of a product (decrease quantity and record melt)
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> MeltProduct([FromBody] MeltProductCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMeltedProducts([FromQuery] GetMeltedProductsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMeltedReports([FromQuery]GetMeltedReportsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

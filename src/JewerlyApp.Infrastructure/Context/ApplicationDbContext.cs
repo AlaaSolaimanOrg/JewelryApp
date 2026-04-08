@@ -36,6 +36,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<ReturnItem> ReturnItems { get; set; }
         public virtual DbSet<Repair> Repairs { get; set; }
         public virtual DbSet<RepairItem> RepairItems { get; set; }
+        public virtual DbSet<JewerlyApp.Domain.Entities.MeltRecord> MeltRecords { get; set; }
         public virtual DbSet<PricingSettingLog> PricingSettingLogs { get; set; }
         public virtual DbSet<PrintJob> PrintJobs { get; set; }
         public virtual DbSet<Printer> Printers { get; set; }
@@ -160,6 +161,16 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(e => e.Weight).HasPrecision(18, 2);
                 entity.Property(e => e.Cost).HasPrecision(18, 2);
                 entity.Property(e => e.DepositPaid).HasPrecision(18, 2);
+            });
+
+            builder.Entity<JewerlyApp.Domain.Entities.MeltRecord>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.ProductId).IsRequired();
+                entity.Property(x => x.Sku).HasMaxLength(64);
+                entity.Property(x => x.ProductName).HasMaxLength(256);
+                entity.Property(x => x.MeltedAt).IsRequired();
+                entity.HasIndex(x => x.MeltedAt);
             });
         }
     }

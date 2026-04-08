@@ -35,12 +35,12 @@ const MeltModal: React.FC<MeltModalProps> = ({
   if (!product) return null;
 
   const handleConfirm = () => {
-    if (quantity < 0 || quantity > product.quantity) {
+    if (Number(quantity) < 0 || Number(quantity) > product.quantity) {
       showError("Please enter a valid quantity within allowed range.");
       return;
     }
 
-    onConfirm(product.id, quantity);
+    onConfirm(product.id, Number(quantity));
   };
 
   return (

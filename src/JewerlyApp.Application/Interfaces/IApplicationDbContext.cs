@@ -27,6 +27,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<ReturnItem> ReturnItems { get; set; }
         DbSet<Repair> Repairs { get; set; }
         DbSet<RepairItem> RepairItems { get; set; }
+        DbSet<JewerlyApp.Domain.Entities.MeltRecord> MeltRecords { get; set; }
         DbSet<PricingSettingLog> PricingSettingLogs { get; set; }
         DbSet<PrintJob> PrintJobs { get; set; }
         DbSet<Printer> Printers { get; set; }
