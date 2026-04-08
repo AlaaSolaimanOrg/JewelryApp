@@ -10,6 +10,7 @@ import {
   FaSortAmountDown,
   FaSortAmountUp,
 } from "react-icons/fa";
+import { FaFire } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   exportProductsToExcel,
@@ -18,6 +19,7 @@ import {
 
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
+import MeltModal from "../../../components/modals/MeltModal/MeltModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
@@ -32,7 +34,7 @@ import {
   SortDirection,
   type ProductType,
 } from "../../../types/enums";
-import { handleSort, renderLongDescription } from "../../../utils";
+import { handleSort, renderLongDescription, showSuccess } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";
 
@@ -61,6 +63,9 @@ const Inventory = () => {
   const [showScanModal, setShowScanModal] = useState(false);
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [selectedProductForPrinting, setSelectedProductForPrinting] =
+    useState<Product | null>(null);
+  const [showMeltModal, setShowMeltModal] = useState(false);
+  const [selectedProductForMelt, setSelectedProductForMelt] =
     useState<Product | null>(null);
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
@@ -192,6 +197,18 @@ const Inventory = () => {
     tags: <TagsPopover tags={product.tags} />,
     actions: (
       <div className="d-flex justify-content-end">
+        {product.quantity > 0 && (
+          <button
+            className="action-btn"
+            title="Melt"
+            onClick={() => {
+              setSelectedProductForMelt(product);
+              setShowMeltModal(true);
+            }}
+          >
+            <FaFire />
+          </button>
+        )}
         {!product.isManualEntry && (
           <button
             className="action-btn"
@@ -224,6 +241,13 @@ const Inventory = () => {
 
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
+  };
+
+  const handleMeltConfirm = (productId: string, quantity: number) => {
+    // TODO: call melt API when available. For now, show success and close modal.
+    showSuccess(`Scheduled ${quantity} item(s) of ${productId} for melting.`);
+    setShowMeltModal(false);
+    setSelectedProductForMelt(null);
   };
 
   const handleExport = async () => {
@@ -390,6 +414,15 @@ const Inventory = () => {
           setSelectedProductForPrinting(null);
         }}
         product={selectedProductForPrinting}
+      />
+      <MeltModal
+        show={showMeltModal}
+        onClose={() => {
+          setShowMeltModal(false);
+          setSelectedProductForMelt(null);
+        }}
+        product={selectedProductForMelt}
+        onConfirm={handleMeltConfirm}
       />
     </div>
   );
