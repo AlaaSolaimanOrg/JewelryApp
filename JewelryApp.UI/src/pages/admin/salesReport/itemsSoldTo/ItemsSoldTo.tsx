@@ -1,12 +1,21 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaSearch, FaShoppingCart, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import {
+  FaSearch,
+  FaShoppingCart,
+  FaSortAmountDown,
+  FaSortAmountUp,
+} from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
 
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
-import { KaratType, ProductCategory, SortDirection } from "../../../../types/enums";
+import {
+  KaratType,
+  ProductCategory,
+  SortDirection,
+} from "../../../../types/enums";
 import "./itemsSoldTo.scss";
 import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
@@ -109,25 +118,29 @@ const ItemsSoldTo = () => {
       key: "sku",
       label: "SKU",
       width: "12%",
-      onHeaderClick: () => handleSort("Product.Sku", sortCriteria, onSortChange),
+      onHeaderClick: () =>
+        handleSort("Product.Sku", sortCriteria, onSortChange),
     },
     {
       key: "productName",
       label: "Product Name",
       width: "18%",
-      onHeaderClick: () => handleSort("Product.Name", sortCriteria, onSortChange),
+      onHeaderClick: () =>
+        handleSort("Product.Name", sortCriteria, onSortChange),
     },
     {
       key: "customerName",
       label: "Customer",
       width: "15%",
-      onHeaderClick: () => handleSort("Sale.Customer.Name", sortCriteria, onSortChange),
+      onHeaderClick: () =>
+        handleSort("Sale.Customer.Name", sortCriteria, onSortChange),
     },
     {
       key: "saleSerialNumber",
       label: "Sale ID",
       width: "12%",
-      onHeaderClick: () => handleSort("Sale.SerialNumber", sortCriteria, onSortChange),
+      onHeaderClick: () =>
+        handleSort("Sale.SerialNumber", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
@@ -191,7 +204,9 @@ const ItemsSoldTo = () => {
           <button
             className="btn-sort"
             title={`Sort by Date ${sortCriteria.sortDirection === "Ascending" ? "Descending" : "Ascending"}`}
-            onClick={() => handleSort("CreatedDate", sortCriteria, onSortChange)}
+            onClick={() =>
+              handleSort("CreatedDate", sortCriteria, onSortChange)
+            }
           >
             {sortCriteria.sortDirection === "Ascending" ? (
               <FaSortAmountUp />
