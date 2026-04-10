@@ -79,8 +79,10 @@ const Inventory = () => {
     useState<Product | null>(null);
 
   const [showSpecialPricingModal, setShowSpecialPricingModal] = useState(false);
-  const [selectedProductForSpecialPricing, setSelectedProductForSpecialPricing] =
-    useState<Product | null>(null);
+  const [
+    selectedProductForSpecialPricing,
+    setSelectedProductForSpecialPricing,
+  ] = useState<Product | null>(null);
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
     karatTypes: [
@@ -290,9 +292,15 @@ const Inventory = () => {
     }
   };
 
-  const handleSpecialPricingConfirm = async (productId: string, pricePerGram: number) => {
+  const handleSpecialPricingConfirm = async (
+    productId: string,
+    pricePerGram: number,
+  ) => {
     try {
-      const response = await upsertProductSpecialPricing({ productId, specialPricePerGram: pricePerGram });
+      const response = await upsertProductSpecialPricing({
+        productId,
+        specialPricePerGram: pricePerGram,
+      });
       if (response && checkRequestSucceeded(response.statusCode)) {
         showSuccess("Special price updated successfully.");
         setShowSpecialPricingModal(false);

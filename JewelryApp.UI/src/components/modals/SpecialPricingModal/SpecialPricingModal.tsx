@@ -51,7 +51,12 @@ const SpecialPricingModal: React.FC<SpecialPricingModalProps> = ({
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered className="special-pricing-modal">
+    <Modal
+      show={show}
+      onHide={onClose}
+      centered
+      className="special-pricing-modal"
+    >
       <Modal.Header closeButton>
         <Modal.Title>
           <FaDollarSign className="me-2" /> Special Price — {product.sku}
