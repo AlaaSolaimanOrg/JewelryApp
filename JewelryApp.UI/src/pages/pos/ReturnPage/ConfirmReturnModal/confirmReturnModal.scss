@@ -120,6 +120,46 @@
       font-weight: 600;
     }
   }
+
+  .refund-method-row {
+    align-items: center;
+
+    .refund-options {
+      display: flex;
+      gap: 10px;
+
+      .refund-option {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border: 1.5px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #555;
+        transition: all 0.2s;
+        user-select: none;
+
+        input[type="radio"] {
+          accent-color: var(--gold, #d4af37);
+          cursor: pointer;
+        }
+
+        &.active {
+          border-color: var(--gold, #d4af37);
+          background: rgba(212, 175, 55, 0.08);
+          color: #212529;
+        }
+
+        &:hover:not(.active) {
+          border-color: #bbb;
+          background: #f8f9fa;
+        }
+      }
+    }
+  }
 }
 
 .custom-modal-footer {

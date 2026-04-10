@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import "./confirmReturnModal.scss";
+
+type RefundMethod = "Cash" | "Card";
 
 interface ConfirmReturnModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (refundMethod: RefundMethod) => void;
   selectedItemsCount: number;
   totalReturnAmount: number;
 }
@@ -17,6 +19,7 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
   selectedItemsCount,
   totalReturnAmount,
 }) => {
+  const [refundMethod, setRefundMethod] = useState<RefundMethod>("Cash");
   // Close modal on Escape key press
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -37,7 +40,7 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
   }, [isVisible, onClose]);
 
   const handleConfirmClick = () => {
-    onConfirm();
+    onConfirm(refundMethod);
   };
 
   return (
@@ -73,9 +76,30 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
             <span>Return Amount:</span>
             <span>${totalReturnAmount.toFixed(2)}</span>
           </div>
-          <div className="summary-row">
+          <div className="summary-row refund-method-row">
             <span>Refund Method:</span>
-            <span>Original Payment</span>
+            <div className="refund-options">
+              <label className={`refund-option ${refundMethod === "Cash" ? "active" : ""}`}>
+                <input
+                  type="radio"
+                  name="refundMethod"
+                  value="Cash"
+                  checked={refundMethod === "Cash"}
+                  onChange={() => setRefundMethod("Cash")}
+                />
+                Cash
+              </label>
+              <label className={`refund-option ${refundMethod === "Card" ? "active" : ""}`}>
+                <input
+                  type="radio"
+                  name="refundMethod"
+                  value="Card"
+                  checked={refundMethod === "Card"}
+                  onChange={() => setRefundMethod("Card")}
+                />
+                Card
+              </label>
+            </div>
           </div>
         </div>
       </Modal.Body>

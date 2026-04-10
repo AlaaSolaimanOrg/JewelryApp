@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Domain.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
     {
         public Guid SaleId { get; set; }
         public List<ReturnItemDto> Items { get; set; } = new();
+        public RefundMethod RefundMethod { get; set; } = RefundMethod.Cash;
     }
 }

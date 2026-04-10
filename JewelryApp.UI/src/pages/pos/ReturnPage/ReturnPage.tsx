@@ -312,10 +312,11 @@ const ReturnPage: React.FC = () => {
     setModalVisible(true);
   };
 
-  const handleConfirmReturn = async () => {
+  const handleConfirmReturn = async (refundMethod: "Cash" | "Card") => {
     if (!saleDetails) return;
     const payload = {
       saleId: saleDetails.id,
+      refundMethod: refundMethod === "Cash" ? 1 : 2,
       items: items
         .filter((i) => i.selected && i.qtyToReturn > 0)
         .map((item) => ({
@@ -458,7 +459,7 @@ const ReturnPage: React.FC = () => {
       <ConfirmReturnModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onConfirm={handleConfirmReturn}
+        onConfirm={(refundMethod) => handleConfirmReturn(refundMethod)}
         selectedItemsCount={selectedItemsCount}
         totalReturnAmount={totalReturnAmount}
       />
