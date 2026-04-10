@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { Button, Modal } from "react-bootstrap";
+import { flushSync } from "react-dom";
 import {
   FaGlobe,
   FaInstagram,

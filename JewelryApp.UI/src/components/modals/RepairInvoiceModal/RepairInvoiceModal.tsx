@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import { Button, Modal } from "react-bootstrap";
+import { flushSync } from "react-dom";
 import {
   FaGlobe,
   FaInstagram,
@@ -16,9 +16,9 @@ import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo
 import useLocalApi from "../../../hooks/useLocalApi";
 import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
 import {
+  PaymentStatus,
   ProductCategory,
   RepairType,
-  PaymentStatus,
 } from "../../../types/enums";
 import { splitCamelCaseWords } from "../../../utils";
 import "./repairInvoiceModal.scss";
