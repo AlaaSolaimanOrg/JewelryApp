@@ -40,6 +40,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<PricingSettingLog> PricingSettingLogs { get; set; }
         public virtual DbSet<PrintJob> PrintJobs { get; set; }
         public virtual DbSet<Printer> Printers { get; set; }
+        public virtual DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
 
 
 
@@ -171,6 +172,17 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(x => x.ProductName).HasMaxLength(256);
                 entity.Property(x => x.MeltedAt).IsRequired();
                 entity.HasIndex(x => x.MeltedAt);
+            });
+
+            builder.Entity<ProductSpecialPricing>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+                entity.HasIndex(x => x.ProductId).IsUnique();
+                entity.Property(x => x.SpecialPricePerGram).HasPrecision(18, 4);
+                entity.HasOne(x => x.Product)
+                    .WithMany()
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

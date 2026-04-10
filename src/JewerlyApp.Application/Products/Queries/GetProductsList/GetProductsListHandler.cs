@@ -108,11 +108,17 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     cancellationToken
                 );
 
+            var productIds = products.Select(p => p.Id).ToList();
+            var specialPricings = await _context.ProductSpecialPricings.AsNoTracking()
+                .Where(x => productIds.Contains(x.ProductId))
+                .ToDictionaryAsync(x => x.ProductId, x => x.SpecialPricePerGram, cancellationToken);
+
             // Map to view models with price calculation
             var data = products.Select(product =>
             {
-                var pricePerGram = pricingSettings.GetValueOrDefault(
-                    new { KaratType = product.KaratType, ProductType = product.Type }, 0);
+                var pricePerGram = specialPricings.TryGetValue(product.Id, out var sp)
+                    ? sp
+                    : pricingSettings.GetValueOrDefault(new { KaratType = product.KaratType, ProductType = product.Type }, 0);
 
                 return new GetProductsVM
                 {

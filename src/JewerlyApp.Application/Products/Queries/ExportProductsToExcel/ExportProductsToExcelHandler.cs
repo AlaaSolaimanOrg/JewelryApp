@@ -63,6 +63,11 @@ namespace JewerlyApp.Application.Products.Queries.ExportProductsToExcel
                     cancellationToken
                 );
 
+            var productIds = products.Select(p => p.Id).ToList();
+            var specialPricings = await _context.ProductSpecialPricings.AsNoTracking()
+                .Where(x => productIds.Contains(x.ProductId))
+                .ToDictionaryAsync(x => x.ProductId, x => x.SpecialPricePerGram, cancellationToken);
+
             /* ============================================================
                📊 EXCEL SETUP
             ============================================================ */
@@ -115,8 +120,9 @@ namespace JewerlyApp.Application.Products.Queries.ExportProductsToExcel
 
             foreach (var product in products)
             {
-                var pricePerGram = pricing.GetValueOrDefault(
-                    (product.KaratType, product.Type), 0m);
+                var pricePerGram = specialPricings.TryGetValue(product.Id, out var sp)
+                    ? sp
+                    : pricing.GetValueOrDefault((product.KaratType, product.Type), 0m);
 
                 var unitPrice = product.Weight * pricePerGram;
                 var totalPrice = unitPrice * product.Quantity;

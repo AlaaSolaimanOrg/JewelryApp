@@ -55,8 +55,14 @@ namespace JewerlyApp.Application.Products.Queries.GetQueryById
                 }).ToList()
             };
 
-            var pricePerGram = await _context.PricingSettings.AsNoTracking()
-                .Where(priceSetting => priceSetting.KaratType == product.KaratType && priceSetting.ProductType == product.Type).Select(x => x.Price)
+            var specialPricePerGram = await _context.ProductSpecialPricings.AsNoTracking()
+                .Where(x => x.ProductId == product.Id)
+                .Select(x => (decimal?)x.SpecialPricePerGram)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var pricePerGram = specialPricePerGram ?? await _context.PricingSettings.AsNoTracking()
+                .Where(priceSetting => priceSetting.KaratType == product.KaratType && priceSetting.ProductType == product.Type)
+                .Select(x => x.Price)
                 .FirstOrDefaultAsync(cancellationToken);
 
             productVM.PricePerGram = pricePerGram;

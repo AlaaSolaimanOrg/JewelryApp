@@ -62,3 +62,16 @@ export const getMeltedProducts = async (payload: any) => {
 export const getMeltedReports = async (payload: any) => {
   return requestApi("GET", apiRoutes.product.getMeltedReports, payload);
 };
+
+export const upsertProductSpecialPricing = async (payload: {
+  productId: string;
+  specialPricePerGram: number;
+}) => {
+  return requestApi("POST", apiRoutes.product.upsertSpecialPricing, payload);
+};
+
+export const getProductSpecialPricing = async (payload: {
+  productId: string;
+}) => {
+  return requestApi("GET", apiRoutes.product.getSpecialPricing, payload);
+};

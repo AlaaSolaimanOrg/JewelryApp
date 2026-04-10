@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Col, Row, Stack } from "react-bootstrap";
 import {
   FaBox,
+  FaDollarSign,
   FaEdit,
   FaFileExcel,
   FaPlus,
@@ -16,11 +17,13 @@ import {
   exportProductsToExcel,
   getProducts,
   meltProduct,
+  upsertProductSpecialPricing,
 } from "../../../apis/products.api/products.api";
 
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import MeltModal from "../../../components/modals/MeltModal/MeltModal";
+import SpecialPricingModal from "../../../components/modals/SpecialPricingModal/SpecialPricingModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
@@ -73,6 +76,10 @@ const Inventory = () => {
     useState<Product | null>(null);
   const [showMeltModal, setShowMeltModal] = useState(false);
   const [selectedProductForMelt, setSelectedProductForMelt] =
+    useState<Product | null>(null);
+
+  const [showSpecialPricingModal, setShowSpecialPricingModal] = useState(false);
+  const [selectedProductForSpecialPricing, setSelectedProductForSpecialPricing] =
     useState<Product | null>(null);
 
   const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
@@ -217,6 +224,16 @@ const Inventory = () => {
             <FaFire />
           </button>
         )}
+        <button
+          className="action-btn"
+          title="Special Price"
+          onClick={() => {
+            setSelectedProductForSpecialPricing(product);
+            setShowSpecialPricingModal(true);
+          }}
+        >
+          <FaDollarSign />
+        </button>
         {!product.isManualEntry && (
           <button
             className="action-btn"
@@ -270,6 +287,22 @@ const Inventory = () => {
       }
     } catch (err: any) {
       showError(err?.message ?? "Failed to melt product.");
+    }
+  };
+
+  const handleSpecialPricingConfirm = async (productId: string, pricePerGram: number) => {
+    try {
+      const response = await upsertProductSpecialPricing({ productId, specialPricePerGram: pricePerGram });
+      if (response && checkRequestSucceeded(response.statusCode)) {
+        showSuccess("Special price updated successfully.");
+        setShowSpecialPricingModal(false);
+        setSelectedProductForSpecialPricing(null);
+        if (fetchData) fetchData();
+      } else {
+        showError(response?.message ?? "Failed to update special price.");
+      }
+    } catch (err: any) {
+      showError(err?.message ?? "Failed to update special price.");
     }
   };
 
@@ -446,6 +479,15 @@ const Inventory = () => {
         }}
         product={selectedProductForMelt}
         onConfirm={handleMeltConfirm}
+      />
+      <SpecialPricingModal
+        show={showSpecialPricingModal}
+        onClose={() => {
+          setShowSpecialPricingModal(false);
+          setSelectedProductForSpecialPricing(null);
+        }}
+        product={selectedProductForSpecialPricing}
+        onConfirm={handleSpecialPricingConfirm}
       />
     </div>
   );

@@ -3,11 +3,13 @@ using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.MeltProduct;
+using JewerlyApp.Application.Products.Commands.UpsertProductSpecialPricing;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
 using JewerlyApp.Application.Products.Queries.GetMeltedProducts;
 using JewerlyApp.Application.Products.Queries.GetMeltedReports;
+using JewerlyApp.Application.Products.Queries.GetProductSpecialPricing;
 using JewerlyApp.Application.Products.Queries.GetProducts;
 using JewerlyApp.Application.Products.Queries.GetProductsBySku;
 using JewerlyApp.Application.Products.Queries.GetQueryById;
@@ -162,6 +164,26 @@ namespace JewerlyApp.API.Controllers.Products
 
         [HttpGet]
         public async Task<IActionResult> GetMeltedReports([FromQuery]GetMeltedReportsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Upsert special price per gram for a specific product
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpsertSpecialPricing([FromBody] UpsertProductSpecialPricingCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get special price per gram for a specific product (null if none set)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetSpecialPricing([FromQuery] GetProductSpecialPricingQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
