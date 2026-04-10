@@ -9,16 +9,4 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedReports
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
     }
-
-    public class KaratInventoryReportVM
-    {
-        public int KaratType { get; set; }
-        public int ItemCount { get; set; }
-        public decimal TotalWeight { get; set; }
-    }
-
-    public class MeltedReportsVM
-    {
-        public KaratInventoryReportVM[] Melted { get; set; } = Array.Empty<KaratInventoryReportVM>();
-    }
 }

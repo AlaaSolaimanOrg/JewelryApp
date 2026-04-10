@@ -1,20 +1,199 @@
-.melted-products {
-  .card {
-    padding: 16px;
+#melted-products {
+  .page-title {
+    .icon {
+      color: var(--gold);
+      background: var(--primary-light);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
   }
-}
 
-/* match inventory page title icon sizing (smaller icon inside gold box) */
-.page-title {
-  .icon {
-    color: var(--gold);
-    background: var(--primary-light);
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0;
+    margin-top: 4px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 10px;
+    gap: 10px;
+
+    .icon {
+      color: var(--gold);
+    }
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .table-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-bar {
+    position: relative;
+
+    input {
+      padding: 10px 15px 10px 40px;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      width: 250px;
+      font-size: 14px;
+      transition: var(--transition);
+      background: var(--light);
+      color: var(--dark);
+
+      &:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+      }
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+
+    .icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary);
+    }
+  }
+
+  .page-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .date-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    input {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--light);
+      font-size: 14px;
+      width: 150px;
+    }
+  }
+
+  /* ===== table card ===== */
+  .card {
+    padding: 25px;
+    background: white;
+    border-radius: var(--card-radius);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  th,
+  td {
+    padding: 16px;
+  }
+
+  /* ===== reports card ===== */
+  .inventory-reports-wrapper {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-bottom);
+  }
+
+  .inventory-report-group {
+    margin-bottom: 30px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .icon {
+      color: var(--gold);
+    }
+  }
+
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+
+  .summary-card {
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 25px 20px;
+    text-align: center;
+    border-left: 4px solid var(--dark);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .amount {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .sub-info {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+
+  .summary-card.gold {
+    border-left-color: var(--gold);
+
+    .amount {
+      color: var(--gold);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .date-filters {
+      width: 100%;
+
+      input,
+      button {
+        width: 100%;
+      }
+    }
   }
 }

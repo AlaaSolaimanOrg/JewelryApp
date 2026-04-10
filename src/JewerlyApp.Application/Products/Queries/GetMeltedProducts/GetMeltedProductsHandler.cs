@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
@@ -20,12 +21,26 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
 
         public async Task<PaginatedResponse<MeltedProductVM>> Handle(GetMeltedProductsQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.MeltRecords.AsNoTracking().OrderByDescending(m => m.MeltedAt);
+            var query = _context.MeltRecords.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(request.SearchBy))
+            {
+                var keyword = request.SearchBy.Trim();
+                query = query.Where(m =>
+                    (m.Sku != null && m.Sku.Contains(keyword)) ||
+                    (m.ProductName != null && m.ProductName.Contains(keyword)));
+            }
 
             var total = await query.CountAsync(cancellationToken);
 
-            var items = await query.Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var sortBy = string.IsNullOrWhiteSpace(request.SortBy) ? "MeltedAt" : request.SortBy;
+            var sortDirection = request.SortDirection == SortDirection.Ascending
+                ? SortDirection.Ascending
+                : SortDirection.Descending;
+
+            var items = await query
+                .ApplySorting(sortBy, sortDirection)
+                .ApplyPagination(request.PageNumber, request.PageSize)
                 .Select(m => new MeltedProductVM
                 {
                     Id = m.Id,
