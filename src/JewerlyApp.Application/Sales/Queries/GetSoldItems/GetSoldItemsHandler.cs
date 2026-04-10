@@ -2,14 +2,10 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.Sales.Commands.CreateSale;
-using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
@@ -25,59 +21,55 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
 
         public async Task<PaginatedResponse<GetSoldItemsVM>> Handle(GetSoldItemsQuery request, CancellationToken cancellationToken)
         {
-            var query = _context.SaleItems.AsQueryable();
+            var query = _context.SaleItems
+                .AsNoTracking()
+                .Include(si => si.Product)
+                .Include(si => si.Sale)
+                    .ThenInclude(s => s!.Customer)
+                .AsQueryable();
 
             if (request.CategoryFilter != null)
-            {
-                query = query.Where(s => s.Product!.Category == request.CategoryFilter);
-            }
+                query = query.Where(si => si.Product!.Category == request.CategoryFilter);
 
             if (request.KaratFilter != null)
-            {
-                query = query.Where(s => s.KaratType == request.KaratFilter);
-            }
+                query = query.Where(si => si.KaratType == request.KaratFilter);
 
-            // Apply date range filter
             if (request.DateFrom.HasValue)
-            {
-                query = query.Where(s => s.CreatedDate >= request.DateFrom.Value);
-            }
+                query = query.Where(si => si.CreatedDate >= request.DateFrom.Value);
 
             if (request.DateTo.HasValue)
+                query = query.Where(si => si.CreatedDate <= request.DateTo.Value);
+
+            if (!string.IsNullOrWhiteSpace(request.SearchBy))
             {
-                query = query.Where(s => s.CreatedDate <= request.DateTo.Value);
+                var keyword = request.SearchBy.Trim();
+                query = query.Where(si =>
+                    (si.Product != null && si.Product.Sku != null && si.Product.Sku.Contains(keyword)) ||
+                    (si.Product != null && si.Product.Name != null && si.Product.Name.Contains(keyword)) ||
+                    (si.Sale != null && si.Sale.Customer != null && si.Sale.Customer.Name.Contains(keyword)) ||
+                    (si.Sale != null && si.Sale.SerialNumber.Contains(keyword)));
             }
 
-            var query2 = query
-                .Include(si => si.Product)
-                .GroupBy(si => new
-                {
-                    si.ProductId,
-                    ProductName = si.Product!.Name,
-                    si.KaratType,
-                    si.Weight,
-                    PricePerGram = si.OverriddenPricePerGram ?? si.OriginalPricePerGram ?? 0
-                })
-                .Select(g => new GetSoldItemsVM
-                {
-                    ProductName = g.Key.ProductName!,
-                    Quantity = g.Sum(si => si.Quantity), 
-                    UnitWeight = g.Key.Weight,
-                    WeightSummed = g.Sum(si => si.Weight * si.Quantity), 
-                    PricePerGram = g.Key.PricePerGram,
-                    Subtotal = g.Sum(si => si.SubTotal), 
-                    LatestSaleDate = (DateTime)g.Max(si => si.CreatedDate)!
-                });
+            var totalRecords = await query.CountAsync(cancellationToken);
 
-            if (string.IsNullOrEmpty(request.SortBy))
-            {
-                query2 = query2.OrderByDescending(s => s.LatestSaleDate);
-            }
+            var sortBy = string.IsNullOrWhiteSpace(request.SortBy) ? "CreatedDate" : request.SortBy;
 
-            var totalRecords = await query2.CountAsync(cancellationToken);
-
-            var result = await query2.ApplySorting(request.SortBy!, request.SortDirection)
+            var result = await query
+                .ApplySorting(sortBy, request.SortDirection)
                 .ApplyPagination(request.PageNumber, request.PageSize)
+                .Select(si => new GetSoldItemsVM
+                {
+                    Sku = si.Product!.Sku,
+                    ProductName = si.Product!.Name!,
+                    CustomerName = si.Sale!.Customer!.Name,
+                    SaleSerialNumber = si.Sale!.SerialNumber,
+                    Quantity = si.Quantity,
+                    UnitWeight = si.Weight,
+                    WeightSummed = si.Weight * si.Quantity,
+                    PricePerGram = si.OverriddenPricePerGram ?? si.OriginalPricePerGram ?? 0,
+                    Subtotal = si.SubTotal,
+                    LatestSaleDate = si.CreatedDate ?? System.DateTime.UtcNow
+                })
                 .ToListAsync(cancellationToken);
 
             return new PaginatedResponse<GetSoldItemsVM>

@@ -1,19 +1,23 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaSearch, FaShoppingCart, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
 
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
-import { KaratType, ProductCategory } from "../../../../types/enums";
+import { KaratType, ProductCategory, SortDirection } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
 import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
 import CustomTable from "../../../../components/tables/Table/CustomTable";
 import dateFormat from "dateformat";
+import { handleSort } from "../../../../utils";
 
 interface SoldItem {
+  sku?: string;
   productName: string;
+  customerName: string;
+  saleSerialNumber: string;
   quantity: number;
   unitWeight: number;
   weightSummed: number;
@@ -73,11 +77,17 @@ const ItemsSoldTo = () => {
   const {
     data: soldItems,
     onPaginationChange,
+    onPageSizeChange,
+    onSortChange,
+    onSearchChange,
+    sortCriteria,
     pagination,
-    isLoading, // Assuming your hook returns isLoading
+    isLoading,
   } = useLocalApiSearchSortPagination<SoldItem>({
     apiToCall: (data) => getSoldItems(data.payload),
     initialPageSize: 5,
+    initialSortBy: "CreatedDate",
+    initialSortDirection: SortDirection.Descending,
     extraPayload: {
       karatFilter: karatTypeFilter,
       categoryFilter: productCategoryFilter,
@@ -96,46 +106,65 @@ const ItemsSoldTo = () => {
   // Define table headers
   const tableHeaders: TableHeader[] = [
     {
+      key: "sku",
+      label: "SKU",
+      width: "12%",
+      onHeaderClick: () => handleSort("Product.Sku", sortCriteria, onSortChange),
+    },
+    {
       key: "productName",
       label: "Product Name",
-      width: "25%",
-      sortable: true,
+      width: "18%",
+      onHeaderClick: () => handleSort("Product.Name", sortCriteria, onSortChange),
+    },
+    {
+      key: "customerName",
+      label: "Customer",
+      width: "15%",
+      onHeaderClick: () => handleSort("Sale.Customer.Name", sortCriteria, onSortChange),
+    },
+    {
+      key: "saleSerialNumber",
+      label: "Sale ID",
+      width: "12%",
+      onHeaderClick: () => handleSort("Sale.SerialNumber", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
       label: "Quantity",
-      width: "15%",
-      sortable: true,
+      width: "8%",
+      onHeaderClick: () => handleSort("Quantity", sortCriteria, onSortChange),
     },
     {
       key: "weight",
       label: "Weight",
-      width: "15%",
-      sortable: true,
+      width: "10%",
+      onHeaderClick: () => handleSort("Weight", sortCriteria, onSortChange),
     },
     {
       key: "totalWeight",
       label: "Total Weight",
-      width: "15%",
-      sortable: true,
+      width: "10%",
     },
     {
       key: "pricePerGram",
-      label: "Price per Gram",
-      width: "20%",
-      sortable: true,
+      label: "Price/g",
+      width: "10%",
     },
     {
       key: "subtotal",
       label: "Subtotal",
-      width: "25%",
-      sortable: true,
+      width: "10%",
+      onHeaderClick: () => handleSort("SubTotal", sortCriteria, onSortChange),
     },
   ];
 
   // Transform soldItems data for CustomTable
   const tableData = soldItems.map((item) => ({
+    sku: item.sku ?? "",
     productName: item.productName,
+    customerName: item.customerName,
+    saleSerialNumber: item.saleSerialNumber,
     quantity: item.quantity,
     weight: `${item.unitWeight}g`,
     totalWeight: `${item.weightSummed}g`,
@@ -145,10 +174,33 @@ const ItemsSoldTo = () => {
 
   return (
     <section id="itemsSoldTo">
-      <h2 className="section-title">
-        <FaShoppingCart className="icon" style={{ marginRight: "8px" }} />
-        Items Sold
-      </h2>
+      <div className="section-header">
+        <h2 className="section-title">
+          <FaShoppingCart className="icon" style={{ marginRight: "8px" }} />
+          Items Sold
+        </h2>
+        <div className="table-actions">
+          <div className="search-bar">
+            <FaSearch className="icon" />
+            <input
+              type="text"
+              placeholder="Search by SKU, product, customer, sale ID..."
+              onChange={onSearchChange}
+            />
+          </div>
+          <button
+            className="btn-sort"
+            title={`Sort by Date ${sortCriteria.sortDirection === "Ascending" ? "Descending" : "Ascending"}`}
+            onClick={() => handleSort("CreatedDate", sortCriteria, onSortChange)}
+          >
+            {sortCriteria.sortDirection === "Ascending" ? (
+              <FaSortAmountUp />
+            ) : (
+              <FaSortAmountDown />
+            )}
+          </button>
+        </div>
+      </div>
 
       <div className="filter-section">
         <select
@@ -240,6 +292,7 @@ const ItemsSoldTo = () => {
         pageNumber={pagination.pageNumber}
         pageSize={pagination.pageSize}
         onPaginationChange={onPaginationChange}
+        onPageSizeChange={onPageSizeChange}
       />
     </section>
   );

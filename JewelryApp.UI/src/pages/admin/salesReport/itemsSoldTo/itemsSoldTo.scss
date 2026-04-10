@@ -4,6 +4,72 @@
   padding: 20px;
   margin-bottom: 25px;
   box-shadow: var(--shadow-bottom);
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .table-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-bar {
+    position: relative;
+
+    input {
+      padding: 8px 14px 8px 36px;
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      width: 300px;
+      font-size: 14px;
+      transition: var(--transition);
+      background: var(--light);
+      color: var(--dark);
+
+      &:focus {
+        outline: none;
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+      }
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+
+    .icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary);
+      font-size: 13px;
+    }
+  }
+
+  .btn-sort {
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
   .filter-section {
     display: flex;
     gap: 15px;

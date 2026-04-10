@@ -8,7 +8,10 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
 {
     public class GetSoldItemsVM
     {
+        public string? Sku { get; set; }
         public string ProductName { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public string SaleSerialNumber { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public decimal UnitWeight { get; set; }
         public decimal WeightSummed { get; set; }

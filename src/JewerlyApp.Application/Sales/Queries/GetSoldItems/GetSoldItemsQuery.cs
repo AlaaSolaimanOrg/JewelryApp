@@ -17,6 +17,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
         public KaratType? KaratFilter { get; set; }
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
+        public string? SearchBy { get; set; }
     }
 }
 
