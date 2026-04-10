@@ -79,7 +79,9 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
           <div className="summary-row refund-method-row">
             <span>Refund Method:</span>
             <div className="refund-options">
-              <label className={`refund-option ${refundMethod === "Cash" ? "active" : ""}`}>
+              <label
+                className={`refund-option ${refundMethod === "Cash" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="refundMethod"
@@ -89,7 +91,9 @@ const ConfirmReturnModal: React.FC<ConfirmReturnModalProps> = ({
                 />
                 Cash
               </label>
-              <label className={`refund-option ${refundMethod === "Card" ? "active" : ""}`}>
+              <label
+                className={`refund-option ${refundMethod === "Card" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="refundMethod"

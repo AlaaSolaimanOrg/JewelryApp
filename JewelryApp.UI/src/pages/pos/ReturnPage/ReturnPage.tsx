@@ -134,7 +134,8 @@ const ReturnPage: React.FC = () => {
         icon: item.productName.toLowerCase().includes("ring") ? "ring" : "gem",
         karat: item.karat,
         weight: item.weight + "g",
-        unitPrice: item.quantity > 0 ? item.subtotalAfterDiscount / item.quantity : 0,
+        unitPrice:
+          item.quantity > 0 ? item.subtotalAfterDiscount / item.quantity : 0,
         qtyPurchased: item.quantity,
         qtyToReturn: 0,
         apiAmountReturned: item.amountReturned,
