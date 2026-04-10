@@ -6,6 +6,7 @@ using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 
 namespace JewerlyApp.Application.Returns.Commands.CreateReturn
@@ -229,7 +230,20 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
             }
             else if (itemDto.Option == ReturnOption.MeltAfterReturn)
             {
-                // optional: add weight to raw gold table
+                // Create a MeltRecord for returned items that should be melted
+                var melt = new MeltRecord
+                {
+                    Id = Guid.NewGuid(),
+                    ProductId = product.Id,
+                    Sku = product.Sku,
+                    ProductName = product.Name,
+                    Quantity = itemDto.QuantityToReturn,
+                    Weight = product.Weight,
+                    KaratType = (int)product.KaratType,
+                    MeltedAt = DateTime.UtcNow
+                };
+
+                _context.MeltRecords.Add(melt);
             }
 
             product.LastUpdatedDate = DateTime.UtcNow;
