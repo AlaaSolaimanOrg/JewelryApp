@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Card, Form } from "react-bootstrap";
-import { FaChartBar, FaFire, FaList, FaSearch, FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import {
+  FaChartBar,
+  FaFire,
+  FaList,
+  FaSearch,
+  FaSortAmountDown,
+  FaSortAmountUp,
+} from "react-icons/fa";
 import {
   getMeltedProducts,
   getMeltedReports,
@@ -115,7 +122,8 @@ const MeltedProducts = () => {
       key: "productName",
       label: "Product Name",
       width: "200px",
-      onHeaderClick: () => handleSort("ProductName", sortCriteria, onSortChange),
+      onHeaderClick: () =>
+        handleSort("ProductName", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
@@ -228,11 +236,11 @@ const MeltedProducts = () => {
             <button
               className="btn-md btn-gold"
               title={`Sort by Date ${
-                sortCriteria.sortDirection === "Ascending" ? "Descending" : "Ascending"
+                sortCriteria.sortDirection === "Ascending"
+                  ? "Descending"
+                  : "Ascending"
               }`}
-              onClick={() =>
-                handleSort("MeltedAt", sortCriteria, onSortChange)
-              }
+              onClick={() => handleSort("MeltedAt", sortCriteria, onSortChange)}
             >
               {sortCriteria.sortDirection === "Ascending" ? (
                 <FaSortAmountUp />
