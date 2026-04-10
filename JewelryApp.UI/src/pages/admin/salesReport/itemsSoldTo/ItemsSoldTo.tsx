@@ -1,12 +1,7 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  FaSearch,
-  FaShoppingCart,
-  FaSortAmountDown,
-  FaSortAmountUp,
-} from "react-icons/fa";
+import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
 
@@ -187,105 +182,89 @@ const ItemsSoldTo = () => {
 
   return (
     <section id="itemsSoldTo">
-      <div className="section-header">
-        <h2 className="section-title">
-          <FaShoppingCart className="icon" style={{ marginRight: "8px" }} />
-          Items Sold
-        </h2>
-        <div className="table-actions">
-          <div className="search-bar">
-            <FaSearch className="icon" />
-            <input
-              type="text"
-              placeholder="Search by SKU, product, customer, sale ID..."
-              onChange={onSearchChange}
-            />
-          </div>
-          <button
-            className="btn-sort"
-            title={`Sort by Date ${sortCriteria.sortDirection === "Ascending" ? "Descending" : "Ascending"}`}
-            onClick={() =>
-              handleSort("CreatedDate", sortCriteria, onSortChange)
+      <h2 className="section-title">
+        <FaShoppingCart className="icon" style={{ marginRight: "8px" }} />
+        Items Sold
+      </h2>
+
+      <div className="toolbar">
+        <div className="search-bar">
+          <FaSearch className="icon" />
+          <input type="text" placeholder="Search" onChange={onSearchChange} />
+        </div>
+
+        <div className="filters">
+          <select
+            className="filter-select"
+            value={productCategoryFilter}
+            onChange={(e) =>
+              setProductCategoryFilter(e.target.value as ProductCategory | "")
             }
           >
-            {sortCriteria.sortDirection === "Ascending" ? (
-              <FaSortAmountUp />
-            ) : (
-              <FaSortAmountDown />
-            )}
+            <option value="">All Products</option>
+            <option value={ProductCategory.Necklaces}>Necklaces</option>
+            <option value={ProductCategory.Bracelets}>Bracelets</option>
+            <option value={ProductCategory.Bangles}>Bangles</option>
+            <option value={ProductCategory.Rings}>Rings</option>
+            <option value={ProductCategory.Earrings}>Earrings</option>
+            <option value={ProductCategory.Pendants}>Pendants</option>
+            <option value={ProductCategory.Bullion}>Bullion</option>
+          </select>
+
+          <select
+            className="filter-select"
+            value={timeRangeFilter}
+            onChange={(e) => handleTimeRangeChange(e.target.value)}
+          >
+            <option value="allTime">All Time</option>
+            <option value="last7days">Last 7 Days</option>
+            <option value="last30days">Last 30 Days</option>
+            <option value="last3months">Last 3 Months</option>
+            <option value="custom">Custom Range</option>
+          </select>
+
+          {timeRangeFilter === "custom" && (
+            <div className="date-range-picker">
+              <DatePicker
+                selected={dateFrom}
+                onChange={setDateFrom}
+                selectsStart
+                startDate={dateFrom}
+                endDate={dateTo}
+                placeholderText="Date From"
+                className="filter-select"
+              />
+              <DatePicker
+                selected={dateTo}
+                onChange={setDateTo}
+                selectsEnd
+                startDate={dateFrom}
+                endDate={dateTo}
+                minDate={dateFrom}
+                placeholderText="Date To"
+                className="filter-select"
+              />
+            </div>
+          )}
+
+          <select
+            className="filter-select"
+            value={karatTypeFilter}
+            onChange={(e) =>
+              setKaratTypeFilter(e.target.value as KaratType | "")
+            }
+          >
+            <option value="">All Karats</option>
+            <option value={KaratType.Karat24}>24K</option>
+            <option value={KaratType.Karat22}>22K</option>
+            <option value={KaratType.Karat21}>21K</option>
+            <option value={KaratType.Karat18}>18K</option>
+          </select>
+
+          <button className="clear-filters-btn" onClick={clearFilters}>
+            Clear Filters
           </button>
         </div>
-      </div>
-
-      <div className="filter-section">
-        <select
-          className="filter-select"
-          value={productCategoryFilter}
-          onChange={(e) =>
-            setProductCategoryFilter(e.target.value as ProductCategory | "")
-          }
-        >
-          <option value="">All Products</option>
-          <option value={ProductCategory.Necklaces}>Necklaces</option>
-          <option value={ProductCategory.Bracelets}>Bracelets</option>
-          <option value={ProductCategory.Bangles}>Bangles</option>
-          <option value={ProductCategory.Rings}>Rings</option>
-          <option value={ProductCategory.Earrings}>Earrings</option>
-          <option value={ProductCategory.Pendants}>Pendants</option>
-          <option value={ProductCategory.Bullion}>Bullion</option>
-        </select>
-
-        <select
-          className="filter-select"
-          value={timeRangeFilter}
-          onChange={(e) => handleTimeRangeChange(e.target.value)}
-        >
-          <option value="allTime">All Time</option>
-          <option value="last7days">Last 7 Days</option>
-          <option value="last30days">Last 30 Days</option>
-          <option value="last3months">Last 3 Months</option>
-          <option value="custom">Custom Range</option>
-        </select>
-
-        {timeRangeFilter === "custom" && (
-          <div className="date-range-picker">
-            <DatePicker
-              selected={dateFrom}
-              onChange={setDateFrom}
-              selectsStart
-              startDate={dateFrom}
-              endDate={dateTo}
-              placeholderText="Date From"
-              className="filter-select"
-            />
-            <DatePicker
-              selected={dateTo}
-              onChange={setDateTo}
-              selectsEnd
-              startDate={dateFrom}
-              endDate={dateTo}
-              minDate={dateFrom}
-              placeholderText="Date To"
-              className="filter-select"
-            />
-          </div>
-        )}
-
-        <select
-          className="filter-select"
-          value={karatTypeFilter}
-          onChange={(e) => setKaratTypeFilter(e.target.value as KaratType | "")}
-        >
-          <option value="">All Karats</option>
-          <option value={KaratType.Karat24}>24K</option>
-          <option value={KaratType.Karat22}>22K</option>
-          <option value={KaratType.Karat21}>21K</option>
-          <option value={KaratType.Karat18}>18K</option>
-        </select>
-
-        <button className="clear-filters-btn" onClick={clearFilters}>
-          Clear Filters
-        </button>
       </div>
 
       <div className="results-info">
