@@ -1,58 +1,17 @@
-import { useRef, useState } from "react";
-import { flushSync } from "react-dom";
-import {
-  FaCheck,
-  FaGlobe,
-  FaInstagram,
-  FaGift,
-  FaPrint,
-  FaReceipt,
-  FaTiktok,
-} from "react-icons/fa";
+import { useRef } from "react";
+import { FaCheck, FaPrint, FaReceipt } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
-import type { KaratType } from "../../../types/enums";
+import { useReceiptPrint } from "../../../hooks/useReceiptPrint";
 import "./receipt.scss";
-import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
-import QRCode from "react-qr-code";
 import { Button, Form } from "react-bootstrap";
-import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
-import { renderLongDescription } from "../../../utils.tsx";
-import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
-
-interface Sale {
-  id: string;
-  serialNumber: string;
-  createdDate: string;
-  staffName: string;
-  customerName: string;
-  total: number;
-  cashAmount: number;
-  cardAmount: number;
-  tax: number;
-  discount: number;
-  saleItems: SaleItem[];
-}
-
-interface SaleItem {
-  productName: string;
-  sku: string;
-  karat: KaratType;
-  weight: number;
-  pricePerGram: number;
-  subtotalAfterDiscount: number;
-  subtotalBeforeDiscount: number;
-  quantity: number;
-}
+import ReceiptContent from "../../../components/ReceiptContent/ReceiptContent";
+import type { Sale } from "../../../components/ReceiptContent/ReceiptContent";
 
 const Receipt = () => {
   const { saleId } = useParams();
   const contentRef = useRef<HTMLDivElement>(null);
-  const [epsonBusy, setEpsonBusy] = useState(false);
-
-  const [showThermalPrint, setShowThermalPrint] = useState(false);
-  const [isGiftReceipt, setIsGiftReceipt] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -63,6 +22,9 @@ const Receipt = () => {
     data: Sale;
     fetchData: () => void;
   };
+
+  const { epsonBusy, showThermalPrint, isGiftReceipt, setIsGiftReceipt, handleEpsonPrintHTML } =
+    useReceiptPrint(contentRef, saleDetails, false);
 
   if (!saleDetails) {
     return (
@@ -75,38 +37,6 @@ const Receipt = () => {
     );
   }
 
-  const dateObj = new Date(saleDetails.createdDate);
-
-  const totalBeforeDiscount = saleDetails.saleItems?.reduce(
-    (sum, it) => sum + (it.subtotalBeforeDiscount ?? 0),
-    0,
-  );
-
-  const handleEpsonPrintHTML = async () => {
-    flushSync(() => setShowThermalPrint(true));
-    setEpsonBusy(true);
-    try {
-      if (!contentRef.current) {
-        return;
-      }
-
-      const html = await serializeReceiptHtml(contentRef.current);
-
-      await createReceiptPrintJob({
-        storeId: "store-1",
-        printerId: "front-desk",
-        receiptPayload: { html },
-      });
-      console.log("✅ Print job queued successfully");
-    } catch (e) {
-      console.error("❌ Print error:", e);
-      console.error(e);
-      alert(String(e));
-    } finally {
-      flushSync(() => setShowThermalPrint(false));
-      setEpsonBusy(false);
-    }
-  };
   return (
     <div id="receipt-page" className="page-content">
       <h2 className="title">
@@ -114,204 +44,12 @@ const Receipt = () => {
       </h2>
       <p className="subtitle">Review receipt before finalizing</p>
 
-      <div
-        ref={contentRef}
-        id="receipt-container"
-        className={showThermalPrint ? "thermal-print" : ""}
-      >
-        <div className="receipt-header">
-          <div className="receipt-title">
-            <img
-              className="receipt-logo"
-              src={ADI_Jewelry_Logo_Horizontal}
-              alt="Logo"
-            />
-          </div>
-          <div className="receipt-subtitle">
-            6885 Ad Astra Blvd NW Edmonton, Alberta
-          </div>
-          <div className="receipt-subtitle">Phone: (780) 934-1455</div>
-          {isGiftReceipt && (
-            <div className="gift-badge">
-              <FaGift className="gift-icon" />
-              <span className="gift-text">Gift Receipt</span>
-            </div>
-          )}
-        </div>
-
-        <div className="receipt-details">
-          <div>
-            <div>
-              <strong>Trans ID: </strong>
-              {saleDetails.serialNumber || saleDetails.id}
-            </div>
-            <div>
-              <strong>Date: </strong>
-              {dateObj.toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </div>
-            <div>
-              <strong>Time: </strong>
-              {dateObj.toLocaleTimeString(undefined, {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              })}
-            </div>
-          </div>
-          <div>
-            <div>
-              <strong>Staff: </strong> {saleDetails.staffName || "N/A"}
-            </div>
-            <div>
-              <strong>Customer: </strong>{" "}
-              {saleDetails.customerName || "Walk-in"}
-            </div>
-            <div>
-              <strong>Payment: </strong>
-              {saleDetails.cashAmount && saleDetails.cardAmount
-                ? "Cash & Card"
-                : saleDetails.cashAmount
-                  ? "Cash"
-                  : saleDetails.cardAmount
-                    ? "Card"
-                    : "N/A"}
-            </div>
-          </div>
-        </div>
-        <div className="table-wrapper">
-          <table className="receipt-table">
-            <thead>
-              <tr>
-                <th style={{ width: "16%" }}>Product</th>
-                <th style={{ width: "16%" }}>Sku</th>
-                <th style={{ width: "10%" }}>Karat</th>
-                <th style={{ width: "10%" }}>Qty</th>
-                <th style={{ width: "13%" }}>Weight</th>
-                {!isGiftReceipt && (
-                  <>
-                    <th style={{ width: "13%" }}>Price(g)</th>
-                    <th style={{ width: "14%" }}>Subtotal</th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {saleDetails.saleItems?.map((item, index) => (
-                <tr key={index}>
-                  <td style={{ width: "20%" }}>
-                    {renderLongDescription(item.productName)}
-                  </td>
-                  <td style={{ width: "16%" }}>{item.sku}</td>
-                  <td style={{ width: "10%" }}>{item.karat}</td>
-                  <td style={{ width: "10%" }}>{item.quantity}</td>
-                  <td style={{ width: "14%" }}>{item.weight}g</td>
-                  {!isGiftReceipt && (
-                    <>
-                      <td style={{ width: "14%" }}>${item.pricePerGram}</td>
-                      <td style={{ width: "16%" }}>
-                        ${item.subtotalBeforeDiscount}
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {(saleDetails.discount ?? 0) > 0 && (
-          <div className="receipt-discount">
-            <div className="summary-item">
-              <span>Total Before Discount:</span>
-              <span>${(totalBeforeDiscount ?? 0).toFixed(2)}</span>
-            </div>
-
-            <div className="summary-item">
-              <span>Discount:</span>
-              <span>${saleDetails.discount}</span>
-            </div>
-          </div>
-        )}
-
-        {!isGiftReceipt && (
-          <div className="payment-breakdown">
-            <h4>Payment Breakdown</h4>
-
-            {saleDetails.cashAmount > 0 && (
-              <div className="summary-item">
-                <span>Cash Payment:</span>
-                <span>${saleDetails.cashAmount}</span>
-              </div>
-            )}
-
-            {saleDetails.cardAmount > 0 && (
-              <div className="summary-item">
-                <span>Card Payment:</span>
-                <span>${saleDetails.cardAmount}</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {!isGiftReceipt && (
-          <div className="receipt-totals">
-            <div className="receipt-total">
-              <div className="total-label">Total (incl. 5% GST)</div>
-              <div className="total-value">${saleDetails.total}</div>
-            </div>
-          </div>
-        )}
-
-        <div className="receipt-footer">
-          <div className="social-links">
-            <Link to="https://adijewelry.ca/" target="_blank">
-              <div className="social-item">
-                <FaGlobe className="globe-icon" />
-                <span>adijewelry.ca</span>
-              </div>
-            </Link>
-
-            <Link
-              to="https://www.instagram.com/adijewelry.ca?igsh=MTlzaTQ3Z2l0a3Axcw=="
-              target="_blank"
-            >
-              <div className="social-item">
-                <FaInstagram className="instagram-icon" />
-                <span>@adijewelry.ca</span>
-              </div>
-            </Link>
-            <Link to="https://www.tiktok.com/@adi_jewellery" target="_blank">
-              <div className="social-item">
-                <FaTiktok className="tiktok-icon" />
-                <span>@adi_jewellery</span>
-              </div>
-            </Link>
-          </div>
-
-          <div className="qr-section">
-            <div className="qr-label">Scan to leave a review</div>
-            <QRCode
-              value="https://share.google/gxvrM3GV4YzjE232x"
-              size={showThermalPrint ? 64 : 80}
-              bgColor="#ffffff"
-              fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
-              style={
-                showThermalPrint
-                  ? { display: "block" }
-                  : {
-                      border: "1px solid #eee",
-                      padding: "4px",
-                      display: "block",
-                    }
-              }
-            />
-          </div>
-        </div>
-      </div>
+      <ReceiptContent
+        saleDetails={saleDetails}
+        contentRef={contentRef}
+        showThermalPrint={showThermalPrint}
+        isGiftReceipt={isGiftReceipt}
+      />
 
       <div className="receipt-actions">
         <div style={{ marginRight: 12 }}>
