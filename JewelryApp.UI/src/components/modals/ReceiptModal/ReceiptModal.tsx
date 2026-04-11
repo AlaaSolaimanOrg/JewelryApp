@@ -27,8 +27,13 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     fetchData: () => void;
   };
 
-  const { epsonBusy, showThermalPrint, isGiftReceipt, setIsGiftReceipt, handleEpsonPrintHTML } =
-    useReceiptPrint(contentRef, saleDetails, false);
+  const {
+    epsonBusy,
+    showThermalPrint,
+    isGiftReceipt,
+    setIsGiftReceipt,
+    handleEpsonPrintHTML,
+  } = useReceiptPrint(contentRef, saleDetails, false);
 
   const onClose = () => {
     setShowModal(false);

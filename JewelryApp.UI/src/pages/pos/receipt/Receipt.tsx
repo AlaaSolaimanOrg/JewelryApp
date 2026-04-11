@@ -23,8 +23,13 @@ const Receipt = () => {
     fetchData: () => void;
   };
 
-  const { epsonBusy, showThermalPrint, isGiftReceipt, setIsGiftReceipt, handleEpsonPrintHTML } =
-    useReceiptPrint(contentRef, saleDetails, false);
+  const {
+    epsonBusy,
+    showThermalPrint,
+    isGiftReceipt,
+    setIsGiftReceipt,
+    handleEpsonPrintHTML,
+  } = useReceiptPrint(contentRef, saleDetails, false);
 
   if (!saleDetails) {
     return (

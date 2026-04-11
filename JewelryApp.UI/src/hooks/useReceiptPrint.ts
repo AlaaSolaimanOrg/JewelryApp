@@ -39,5 +39,11 @@ export function useReceiptPrint(
     }
   };
 
-  return { epsonBusy, showThermalPrint, isGiftReceipt, setIsGiftReceipt, handleEpsonPrintHTML };
+  return {
+    epsonBusy,
+    showThermalPrint,
+    isGiftReceipt,
+    setIsGiftReceipt,
+    handleEpsonPrintHTML,
+  };
 }

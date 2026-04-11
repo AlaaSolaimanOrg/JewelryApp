@@ -56,7 +56,10 @@ const ReceiptContent = ({
     0,
   );
 
-  const containerClass = ["receipt-container", showThermalPrint && "thermal-print"]
+  const containerClass = [
+    "receipt-container",
+    showThermalPrint && "thermal-print",
+  ]
     .filter(Boolean)
     .join(" ");
 

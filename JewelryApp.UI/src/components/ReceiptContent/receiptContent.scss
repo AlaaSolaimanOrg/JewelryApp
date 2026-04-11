@@ -217,11 +217,19 @@
         color: #666;
         font-size: 0.9rem;
 
-        .globe-icon { color: #000000; }
-        .instagram-icon { color: #e4405f; }
-        .tiktok-icon { color: #000000; }
+        .globe-icon {
+          color: #000000;
+        }
+        .instagram-icon {
+          color: #e4405f;
+        }
+        .tiktok-icon {
+          color: #000000;
+        }
 
-        svg { font-size: 1.2rem; }
+        svg {
+          font-size: 1.2rem;
+        }
       }
     }
 
@@ -244,7 +252,9 @@
       width: 95%;
       max-width: 220px;
 
-      img { width: 100%; }
+      img {
+        width: 100%;
+      }
     }
   }
 }
@@ -285,11 +295,15 @@
   .social-links {
     .social-item {
       color: black !important;
-      .instagram-icon { color: black !important; }
+      .instagram-icon {
+        color: black !important;
+      }
     }
   }
 
-  .qr-label { color: black !important; }
+  .qr-label {
+    color: black !important;
+  }
 
   .receipt-details {
     font-weight: bold;
@@ -336,7 +350,9 @@
         max-height: none !important;
         overflow: visible !important;
 
-        tr { display: table-row !important; }
+        tr {
+          display: table-row !important;
+        }
       }
 
       th,
