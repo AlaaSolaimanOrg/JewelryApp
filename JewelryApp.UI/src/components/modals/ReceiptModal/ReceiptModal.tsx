@@ -4,12 +4,14 @@ import { flushSync } from "react-dom";
 import {
   FaGlobe,
   FaInstagram,
+  FaGift,
   FaPrint,
   FaReceipt,
   FaTiktok,
 } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
+import { Form } from "react-bootstrap";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
 import { getSaleById } from "../../../apis/sales.api/sales.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
@@ -55,7 +57,8 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
   const [showModal, setShowModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [epsonBusy, setEpsonBusy] = useState(false);
-  const [showThermalPrint, setShowThermalPrint] = useState(false);
+  const [showThermalPrint, setShowThermalPrint] = useState(true);
+  const [isGiftReceipt, setIsGiftReceipt] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -143,6 +146,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   6885 Ad Astra Blvd NW Edmonton, Alberta
                 </div>
                 <div className="receipt-subtitle">Phone: (780) 934-1455</div>
+                {isGiftReceipt && (
+                  <div className="gift-badge">
+                    <FaGift className="gift-icon" />
+                    <span className="gift-text">Gift Receipt</span>
+                  </div>
+                )}
               </div>
               {/* Details */}
               <div className="receipt-details">
@@ -201,8 +210,12 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                         <th style={{ width: "16%" }}>Returned</th>
                       )}
                       <th style={{ width: "13%" }}>Weight</th>
-                      <th style={{ width: "13%" }}>Price(g)</th>
-                      <th style={{ width: "14%" }}>Subtotal</th>
+                      {!isGiftReceipt && (
+                        <>
+                          <th style={{ width: "13%" }}>Price(g)</th>
+                          <th style={{ width: "14%" }}>Subtotal</th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody className="table-body-scrollable">
@@ -240,12 +253,15 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                         )}
 
                         <td style={{ width: "12%" }}>{item.weight}g</td>
+                        {!isGiftReceipt && (
+                          <>
+                            <td style={{ width: "12%" }}>${item.pricePerGram}</td>
 
-                        <td style={{ width: "12%" }}>${item.pricePerGram}</td>
-
-                        <td style={{ width: "14%" }}>
-                          ${item.subtotalBeforeDiscount}
-                        </td>
+                            <td style={{ width: "14%" }}>
+                              ${item.subtotalBeforeDiscount}
+                            </td>
+                          </>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -265,40 +281,44 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                 </div>
               )}
               {/* Payment Breakdown */}
-              <div className="payment-breakdown">
-                <h4>Payment Breakdown</h4>
+              {!isGiftReceipt && (
+                <div className="payment-breakdown">
+                  <h4>Payment Breakdown</h4>
 
-                {saleDetails.cashAmount > 0 && (
-                  <div className="summary-item">
-                    <span>Cash Payment:</span>
-                    <span>${saleDetails.cashAmount}</span>
-                  </div>
-                )}
-
-                {saleDetails.cardAmount > 0 && (
-                  <div className="summary-item">
-                    <span>Card Payment:</span>
-                    <span>${saleDetails.cardAmount}</span>
-                  </div>
-                )}
-
-                {saleDetails.totalReturnAmount &&
-                  Number(saleDetails.totalReturnAmount) > 0 && (
-                    <div className="summary-item returned-item">
-                      <span>Total Returned Amount:</span>
-                      <span className="text-danger fw-600">
-                        ${saleDetails.totalReturnAmount}
-                      </span>
+                  {saleDetails.cashAmount > 0 && (
+                    <div className="summary-item">
+                      <span>Cash Payment:</span>
+                      <span>${saleDetails.cashAmount}</span>
                     </div>
                   )}
-              </div>
-              {/* Totals */}
-              <div className="receipt-totals">
-                <div className="receipt-total">
-                  <div className="total-label">Total (incl. 5% GST)</div>
-                  <div className="total-value">${saleDetails.total}</div>
+
+                  {saleDetails.cardAmount > 0 && (
+                    <div className="summary-item">
+                      <span>Card Payment:</span>
+                      <span>${saleDetails.cardAmount}</span>
+                    </div>
+                  )}
+
+                  {saleDetails.totalReturnAmount &&
+                    Number(saleDetails.totalReturnAmount) > 0 && (
+                      <div className="summary-item returned-item">
+                        <span>Total Returned Amount:</span>
+                        <span className="text-danger fw-600">
+                          ${saleDetails.totalReturnAmount}
+                        </span>
+                      </div>
+                    )}
                 </div>
-              </div>
+              )}
+              {/* Totals */}
+              {!isGiftReceipt && (
+                <div className="receipt-totals">
+                  <div className="receipt-total">
+                    <div className="total-label">Total (incl. 5% GST)</div>
+                    <div className="total-value">${saleDetails.total}</div>
+                  </div>
+                </div>
+              )}
               <div className="receipt-footer">
                 <div className="social-links">
                   <Link to="https://adijewelry.ca/" target="_blank">
@@ -352,6 +372,15 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         </Modal.Body>
 
         <Modal.Footer>
+          <div style={{ marginRight: 12 }}>
+            <Form.Check
+              type="switch"
+              id={`gift-receipt-switch-${saleId}`}
+              label="Gift receipt"
+              checked={isGiftReceipt}
+              onChange={(e) => setIsGiftReceipt(e.target.checked)}
+            />
+          </div>
           <Button
             variant="primary"
             onClick={handleEpsonPrintHTML}

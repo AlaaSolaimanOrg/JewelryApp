@@ -4,6 +4,7 @@ import {
   FaCheck,
   FaGlobe,
   FaInstagram,
+  FaGift,
   FaPrint,
   FaReceipt,
   FaTiktok,
@@ -15,7 +16,7 @@ import type { KaratType } from "../../../types/enums";
 import "./receipt.scss";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import QRCode from "react-qr-code";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
 import { renderLongDescription } from "../../../utils.tsx";
 import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
@@ -51,6 +52,7 @@ const Receipt = () => {
   const [epsonBusy, setEpsonBusy] = useState(false);
 
   const [showThermalPrint, setShowThermalPrint] = useState(false);
+  const [isGiftReceipt, setIsGiftReceipt] = useState(false);
 
   const { data: saleDetails } = useLocalApi({
     apiToCall: (data) => getSaleById(data.payload),
@@ -129,6 +131,12 @@ const Receipt = () => {
             6885 Ad Astra Blvd NW Edmonton, Alberta
           </div>
           <div className="receipt-subtitle">Phone: (780) 934-1455</div>
+          {isGiftReceipt && (
+            <div className="gift-badge">
+              <FaGift className="gift-icon" />
+              <span className="gift-text">Gift Receipt</span>
+            </div>
+          )}
         </div>
 
         <div className="receipt-details">
@@ -182,9 +190,13 @@ const Receipt = () => {
                 <th style={{ width: "16%" }}>Sku</th>
                 <th style={{ width: "10%" }}>Karat</th>
                 <th style={{ width: "10%" }}>Qty</th>
-                <th style={{ width: "13%" }}>Weight</th>
-                <th style={{ width: "13%" }}>Price(g)</th>
-                <th style={{ width: "14%" }}>Subtotal</th>
+                  <th style={{ width: "13%" }}>Weight</th>
+                  {!isGiftReceipt && (
+                    <>
+                      <th style={{ width: "13%" }}>Price(g)</th>
+                      <th style={{ width: "14%" }}>Subtotal</th>
+                    </>
+                  )}
               </tr>
             </thead>
             <tbody>
@@ -197,10 +209,14 @@ const Receipt = () => {
                   <td style={{ width: "10%" }}>{item.karat}</td>
                   <td style={{ width: "10%" }}>{item.quantity}</td>
                   <td style={{ width: "14%" }}>{item.weight}g</td>
-                  <td style={{ width: "14%" }}>${item.pricePerGram}</td>
-                  <td style={{ width: "16%" }}>
-                    ${item.subtotalBeforeDiscount}
-                  </td>
+                  {!isGiftReceipt && (
+                    <>
+                      <td style={{ width: "14%" }}>${item.pricePerGram}</td>
+                      <td style={{ width: "16%" }}>
+                        ${item.subtotalBeforeDiscount}
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -221,30 +237,34 @@ const Receipt = () => {
           </div>
         )}
 
-        <div className="payment-breakdown">
-          <h4>Payment Breakdown</h4>
+        {!isGiftReceipt && (
+          <div className="payment-breakdown">
+            <h4>Payment Breakdown</h4>
 
-          {saleDetails.cashAmount > 0 && (
-            <div className="summary-item">
-              <span>Cash Payment:</span>
-              <span>${saleDetails.cashAmount}</span>
-            </div>
-          )}
+            {saleDetails.cashAmount > 0 && (
+              <div className="summary-item">
+                <span>Cash Payment:</span>
+                <span>${saleDetails.cashAmount}</span>
+              </div>
+            )}
 
-          {saleDetails.cardAmount > 0 && (
-            <div className="summary-item">
-              <span>Card Payment:</span>
-              <span>${saleDetails.cardAmount}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="receipt-totals">
-          <div className="receipt-total">
-            <div className="total-label">Total (incl. 5% GST)</div>
-            <div className="total-value">${saleDetails.total}</div>
+            {saleDetails.cardAmount > 0 && (
+              <div className="summary-item">
+                <span>Card Payment:</span>
+                <span>${saleDetails.cardAmount}</span>
+              </div>
+            )}
           </div>
-        </div>
+        )}
+
+        {!isGiftReceipt && (
+          <div className="receipt-totals">
+            <div className="receipt-total">
+              <div className="total-label">Total (incl. 5% GST)</div>
+              <div className="total-value">${saleDetails.total}</div>
+            </div>
+          </div>
+        )}
 
         <div className="receipt-footer">
           <div className="social-links">
@@ -292,7 +312,17 @@ const Receipt = () => {
           </div>
         </div>
       </div>
+
       <div className="receipt-actions">
+        <div style={{ marginRight: 12 }}>
+          <Form.Check
+            type="switch"
+            id={`gift-receipt-switch-${saleDetails.id}`}
+            label="Gift receipt"
+            checked={isGiftReceipt}
+            onChange={(e) => setIsGiftReceipt(e.target.checked)}
+          />
+        </div>
         {/* <button className="btn btn-primary" onClick={handlePrint}>
             <FaPrint /> Print Receipt
           </button> */}

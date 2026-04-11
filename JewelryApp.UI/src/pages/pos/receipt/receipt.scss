@@ -37,6 +37,26 @@
         color: #666;
         margin-bottom: 5px;
       }
+      .gift-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 50px;
+        background: rgba(212, 175, 55, 0.15);
+        margin-top: 8px;
+
+        .gift-icon {
+          color: var(--gold);
+          font-size: 1.05rem;
+        }
+
+        .gift-text {
+          font-weight: 600;
+          font-size: 1rem;
+          color: var(--gold);
+        }
+      }
     }
 
     .receipt-details {
