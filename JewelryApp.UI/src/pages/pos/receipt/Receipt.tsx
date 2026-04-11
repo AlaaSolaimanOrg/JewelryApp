@@ -190,13 +190,13 @@ const Receipt = () => {
                 <th style={{ width: "16%" }}>Sku</th>
                 <th style={{ width: "10%" }}>Karat</th>
                 <th style={{ width: "10%" }}>Qty</th>
-                  <th style={{ width: "13%" }}>Weight</th>
-                  {!isGiftReceipt && (
-                    <>
-                      <th style={{ width: "13%" }}>Price(g)</th>
-                      <th style={{ width: "14%" }}>Subtotal</th>
-                    </>
-                  )}
+                <th style={{ width: "13%" }}>Weight</th>
+                {!isGiftReceipt && (
+                  <>
+                    <th style={{ width: "13%" }}>Price(g)</th>
+                    <th style={{ width: "14%" }}>Subtotal</th>
+                  </>
+                )}
               </tr>
             </thead>
             <tbody>

@@ -255,7 +255,9 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                         <td style={{ width: "12%" }}>{item.weight}g</td>
                         {!isGiftReceipt && (
                           <>
-                            <td style={{ width: "12%" }}>${item.pricePerGram}</td>
+                            <td style={{ width: "12%" }}>
+                              ${item.pricePerGram}
+                            </td>
 
                             <td style={{ width: "14%" }}>
                               ${item.subtotalBeforeDiscount}
