@@ -251,19 +251,19 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
                   </tbody>
                 </table>
               </div>
-              <div className="receipt-discount">
-                <div className="summary-item">
-                  <span>Total Before Discount:</span>
-                  <span>${(totalBeforeDiscount ?? 0).toFixed(2)}</span>
-                </div>
+              {(saleDetails.discount ?? 0) > 0 && (
+                <div className="receipt-discount">
+                  <div className="summary-item">
+                    <span>Total Before Discount:</span>
+                    <span>${(totalBeforeDiscount ?? 0).toFixed(2)}</span>
+                  </div>
 
-                {!!saleDetails.discount && (
                   <div className="summary-item">
                     <span>Discount:</span>
                     <span>${saleDetails.discount}</span>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               {/* Payment Breakdown */}
               <div className="payment-breakdown">
                 <h4>Payment Breakdown</h4>
