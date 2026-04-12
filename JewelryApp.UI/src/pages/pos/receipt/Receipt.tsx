@@ -57,7 +57,7 @@ const Receipt = () => {
       />
 
       <div className="receipt-actions">
-        <div style={{ marginRight: 12 }}>
+        <div className="receipt-gift-toggle">
           <Form.Check
             type="switch"
             id={`gift-receipt-switch-${saleDetails.id}`}

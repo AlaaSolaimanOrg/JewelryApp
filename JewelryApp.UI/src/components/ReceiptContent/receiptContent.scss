@@ -199,15 +199,18 @@
 
   .receipt-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 16px;
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #eee;
 
     .social-links {
       display: flex;
-      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      width: 100%;
       align-items: center;
 
       .social-item {
@@ -215,7 +218,7 @@
         align-items: center;
         gap: 6px;
         color: #666;
-        font-size: 0.9rem;
+        font-size: 1.1rem;
 
         .globe-icon {
           color: #000000;
@@ -228,7 +231,7 @@
         }
 
         svg {
-          font-size: 1.2rem;
+          font-size: 1.5rem;
         }
       }
     }
@@ -256,6 +259,21 @@
         width: 100%;
       }
     }
+  }
+}
+
+.receipt-gift-toggle {
+  .form-check-input {
+    cursor: pointer;
+  }
+  .form-check-input:checked {
+    background-color: var(--gold) !important;
+    border-color: var(--gold) !important;
+  }
+
+  .form-check-input:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
   }
 }
 

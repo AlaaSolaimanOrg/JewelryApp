@@ -56,6 +56,10 @@ const ReceiptContent = ({
     0,
   );
 
+  const hasAnyReturns = saleDetails.saleItems?.some(
+    (it) => (it.quantityReturned ?? 0) > 0 || (it.amountReturned ?? 0) > 0,
+  );
+
   const containerClass = [
     "receipt-container",
     showThermalPrint && "thermal-print",
@@ -138,7 +142,7 @@ const ReceiptContent = ({
               <th style={{ width: "16%" }}>SKU</th>
               <th style={{ width: "10%" }}>Karat</th>
               <th style={{ width: "10%" }}>Qty</th>
-              {showReturnedColumn && !showThermalPrint && (
+              {showReturnedColumn && hasAnyReturns && !showThermalPrint && (
                 <th style={{ width: "16%" }}>Returned</th>
               )}
               <th style={{ width: "13%" }}>Weight</th>
@@ -159,7 +163,7 @@ const ReceiptContent = ({
                 <td style={{ width: "16%" }}>{item.sku}</td>
                 <td style={{ width: "10%" }}>{item.karat}</td>
                 <td style={{ width: "10%" }}>{item.quantity}</td>
-                {showReturnedColumn && !showThermalPrint && (
+                {showReturnedColumn && hasAnyReturns && !showThermalPrint && (
                   <td style={{ width: "18%" }} className="returned-cell">
                     {(item.quantityReturned ?? 0) > 0 ||
                     (item.amountReturned ?? 0) > 0 ? (
@@ -271,7 +275,7 @@ const ReceiptContent = ({
           <div className="qr-label">Scan to leave a review</div>
           <QRCode
             value="https://share.google/gxvrM3GV4YzjE232x"
-            size={showThermalPrint ? 64 : 80}
+            size={140}
             bgColor="#ffffff"
             fgColor={showThermalPrint ? "#000000" : "var(--gold)"}
             style={

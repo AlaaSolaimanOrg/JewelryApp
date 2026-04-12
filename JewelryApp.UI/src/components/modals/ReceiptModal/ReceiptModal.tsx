@@ -74,7 +74,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <div style={{ marginRight: 12 }}>
+          <div className="receipt-gift-toggle me-auto">
             <Form.Check
               type="switch"
               id={`gift-receipt-switch-${saleId}`}
