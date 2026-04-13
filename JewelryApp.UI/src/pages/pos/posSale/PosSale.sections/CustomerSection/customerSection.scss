@@ -121,6 +121,20 @@
         font-size: 15px;
         color: var(--dark);
         font-weight: 500;
+
+        .stat-pill {
+          background: #f0f0f0;
+          border-radius: 20px;
+          padding: 3px 12px;
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--dark);
+
+          &.highlight {
+            background: var(--dark);
+            color: var(--gold);
+          }
+        }
       }
     }
   }

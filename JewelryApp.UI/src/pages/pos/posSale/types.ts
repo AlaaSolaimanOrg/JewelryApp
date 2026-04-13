@@ -20,9 +20,11 @@ export interface Product {
 }
 
 export interface Customer {
-  id:string;
+  id: string;
   name: string;
   email: string;
   phoneNumber: string;
   birthday: string;
+  totalProductsPurchased: number;
+  totalPurchasesValue: number;
 }

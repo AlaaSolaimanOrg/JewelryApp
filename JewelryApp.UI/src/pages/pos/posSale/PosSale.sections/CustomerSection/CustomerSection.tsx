@@ -51,32 +51,38 @@ const CustomerSection: React.FC<Props> = ({
   const resolversRef = useRef<Map<string, (value: any[]) => void>>(new Map());
 
   // Actual API call
-  const performSearch = useCallback(async (inputValue: string): Promise<any[]> => {
-    if (!inputValue) return [];
+  const performSearch = useCallback(
+    async (inputValue: string): Promise<any[]> => {
+      if (!inputValue) return [];
 
-    try {
-      const response = await getCustomers({
-        searchBy: inputValue,
-        pageSize: 5,
-        pageNumber: 1,
-      });
+      try {
+        const response = await getCustomers({
+          searchBy: inputValue,
+          pageSize: 5,
+          pageNumber: 1,
+        });
 
-      return response.data?.map((customer: Customer) => ({
-        label: customer.name,
-        value: customer.id,
-        data: customer,
-      })) || [];
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  }, []);
+        return (
+          response.data?.map((customer: Customer) => ({
+            label: customer.name,
+            value: customer.id,
+            data: customer,
+          })) || []
+        );
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    },
+    [],
+  );
 
   // Debounced loadOptions
   const loadOptions = useCallback(
     (inputValue: string): Promise<any[]> => {
       return new Promise((resolve) => {
-        if (debouncedTimeoutRef.current) clearTimeout(debouncedTimeoutRef.current);
+        if (debouncedTimeoutRef.current)
+          clearTimeout(debouncedTimeoutRef.current);
 
         resolversRef.current.set(inputValue, resolve);
 
@@ -90,7 +96,7 @@ const CustomerSection: React.FC<Props> = ({
         }, 500); // 500ms debounce
       });
     },
-    [performSearch]
+    [performSearch],
   );
 
   return (
@@ -124,7 +130,11 @@ const CustomerSection: React.FC<Props> = ({
                 setSearchInput("");
               }
             }}
-            value={customer ? { label: customer.name, value: customer.id, data: customer } : null}
+            value={
+              customer
+                ? { label: customer.name, value: customer.id, data: customer }
+                : null
+            }
             isClearable
             styles={{
               control: (base) => ({
@@ -142,9 +152,14 @@ const CustomerSection: React.FC<Props> = ({
               menu: (base) => ({ ...base, marginTop: "20px" }),
               option: (base, state) => ({
                 ...base,
-                backgroundColor: state.isFocused ? "var(--dark, #212529)" : "white",
+                backgroundColor: state.isFocused
+                  ? "var(--dark, #212529)"
+                  : "white",
                 color: state.isFocused ? "white" : "var(--dark, #212529)",
-                "&:hover": { backgroundColor: "var(--dark, #212529)", color: "white" },
+                "&:hover": {
+                  backgroundColor: "var(--dark, #212529)",
+                  color: "white",
+                },
               }),
             }}
           />
@@ -163,7 +178,7 @@ const CustomerSection: React.FC<Props> = ({
         )}
       </header>
 
-          {!!customer && (
+      {!!customer && (
         <div
           className={`customer-info${customerInfoActive ? " active" : ""}`}
           id="customerInfo"
@@ -200,6 +215,20 @@ const CustomerSection: React.FC<Props> = ({
                 <span id="customerBirthday">{customer.birthday ?? "-"}</span>
               </div>
             )}
+            <div className="customer-detail">
+              <span className="stat-pill">
+                {customer.totalProductsPurchased ?? 0} items purchased
+              </span>
+            </div>
+            <div className="customer-detail">
+              <span className="stat-pill highlight">
+                $
+                {(customer.totalPurchasesValue ?? 0).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}{" "}
+                Lifetime Spent
+              </span>
+            </div>
           </div>
         </div>
       )}
