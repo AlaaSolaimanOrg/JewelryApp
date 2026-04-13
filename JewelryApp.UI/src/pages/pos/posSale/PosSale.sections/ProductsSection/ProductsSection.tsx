@@ -1,4 +1,5 @@
-import { FaClone, FaPlusCircle, FaTimes } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import { FaClone, FaEllipsisV, FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../../types";
 import { KaratType } from "../../../../../types/enums";
 import "./productsSection.scss";
@@ -19,6 +20,19 @@ const ProductsSection: React.FC<Props> = ({
   handleManualProductChange,
   onApplyPriceToKarat,
 }) => {
+  const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuIdx(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   const handleQuantityChange = (idx: number, value: string) => {
     // Prevent negative numbers and ensure it's a valid number
     const numValue = Math.max(0, parseInt(value) || 0);
@@ -45,7 +59,7 @@ const ProductsSection: React.FC<Props> = ({
             <th>Weight</th>
             <th>Price/Gram</th>
             <th>Subtotal</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody id="productsTableBody">
@@ -178,35 +192,74 @@ const ProductsSection: React.FC<Props> = ({
                 </span>
               </td>
               <td>
-                <div className="action-cell">
-                  {Number(product.pricePerGram) !==
-                    Number(product.originalPricePerGram) &&
+                {(() => {
+                  const hasApplyAction =
+                    Number(product.pricePerGram) !==
+                      Number(product.originalPricePerGram) &&
                     products.some(
                       (p, i) =>
                         i !== idx &&
                         Number(p.karatType) === Number(product.karatType) &&
                         Number(p.pricePerGram) !== Number(product.pricePerGram),
-                    ) && (
+                    );
+
+                  if (!hasApplyAction) {
+                    return (
+                      <div className="action-cell">
+                        <button
+                          className="remove-btn"
+                          onClick={() => handleRemoveProduct(idx)}
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div
+                      className="action-cell"
+                      ref={openMenuIdx === idx ? menuRef : null}
+                    >
                       <button
-                        className="apply-price-icon-btn"
-                        title={`Apply $${product.pricePerGram}/g to all ${product.karatType}K products`}
+                        className="action-menu-btn"
                         onClick={() =>
-                          onApplyPriceToKarat(
-                            product.karatType,
-                            product.pricePerGram,
-                          )
+                          setOpenMenuIdx(openMenuIdx === idx ? null : idx)
                         }
                       >
-                        <FaClone />
+                        <FaEllipsisV />
                       </button>
-                    )}
-                  <button
-                    className="remove-btn"
-                    onClick={() => handleRemoveProduct(idx)}
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
+
+                      {openMenuIdx === idx && (
+                        <div className="action-dropdown">
+                          <button
+                            className="dropdown-item"
+                            onClick={() => {
+                              onApplyPriceToKarat(
+                                product.karatType,
+                                product.pricePerGram,
+                              );
+                              setOpenMenuIdx(null);
+                            }}
+                          >
+                            <FaClone />
+                            Apply to all {product.karatType}K
+                          </button>
+                          <button
+                            className="dropdown-item danger"
+                            onClick={() => {
+                              handleRemoveProduct(idx);
+                              setOpenMenuIdx(null);
+                            }}
+                          >
+                            <FaTimes />
+                            Remove
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </td>
             </tr>
           ))}
