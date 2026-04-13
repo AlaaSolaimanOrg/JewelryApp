@@ -30,6 +30,8 @@ interface Props {
   setCustomerInfoActive: (v: boolean) => void;
   actions?: any;
   showScanProduct?: boolean;
+  showNotes?: boolean;
+  onToggleNotes?: () => void;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -45,6 +47,8 @@ const CustomerSection: React.FC<Props> = ({
   setCustomerInfoActive,
   actions = null,
   showScanProduct = false,
+  showNotes = false,
+  onToggleNotes = () => {},
 }) => {
   // Refs for debounce
   const debouncedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -172,9 +176,19 @@ const CustomerSection: React.FC<Props> = ({
         {actions}
 
         {showScanProduct && (
-          <button className="scan-btn" onClick={onOpenScanModal}>
-            Scan Product
-          </button>
+          <div className="d-flex justify-content-end">
+            <button
+              className="notes-btn"
+              onClick={onToggleNotes}
+              title={showNotes ? "Hide Notes" : "Notes / Remarks"}
+            >
+              {showNotes ? "Hide Notes" : "Notes"}
+            </button>
+
+            <button className="scan-btn" onClick={onOpenScanModal}>
+              Scan Product
+            </button>
+          </div>
         )}
       </header>
 

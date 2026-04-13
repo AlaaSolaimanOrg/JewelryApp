@@ -85,6 +85,21 @@
         background-color: #e6c035;
       }
     }
+
+    .notes-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-right: 8px;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+    }
   }
 
   /* ====== CUSTOMER INFO ====== */

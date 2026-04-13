@@ -22,6 +22,7 @@ const MainPosPage: React.FC = () => {
   const [discountAmount, setDiscountAmount] = useState("0");
   const [discountType, setDiscountType] = useState(DiscountType.FixedAmount);
   const [notes, setNotes] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
   const [cashAmount, setCashAmount] = useState(0);
   const [cardAmount, setCardAmount] = useState(0);
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
@@ -33,7 +34,7 @@ const MainPosPage: React.FC = () => {
       parseFloat(
         (Number(product.pricePerGram) *
           Number(product.weight) *
-          quantity) as any
+          quantity) as any,
       ) || 0;
     return sum + s;
   }, 0);
@@ -79,7 +80,7 @@ const MainPosPage: React.FC = () => {
     } else if (total > 0 && (cashAmount > 0 || cardAmount > 0)) {
       // When total changes, adjust payments to maintain ratio or reset to cash
       const currentPaymentTotal = parseFloat(
-        (cashAmount + cardAmount).toFixed(4)
+        (cashAmount + cardAmount).toFixed(4),
       );
 
       if (
@@ -189,7 +190,7 @@ const MainPosPage: React.FC = () => {
   const handleManualProductChange = (
     idx: number,
     field: string,
-    value: any
+    value: any,
   ) => {
     setProducts((prev) => {
       const updated = [...prev];
@@ -319,6 +320,8 @@ const MainPosPage: React.FC = () => {
         onOpenScanModal={() => setShowScanModal(true)}
         setCustomerInfoActive={setCustomerInfoActive}
         showScanProduct
+        showNotes={showNotes}
+        onToggleNotes={() => setShowNotes((s) => !s)}
       />
 
       <ProductsSection
@@ -350,15 +353,17 @@ const MainPosPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="notes-section">
-        <h2 className="section-title">Notes / Remarks</h2>
-        <textarea
-          className="notes-textarea"
-          placeholder="Add any notes or remarks here..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-      </section>
+      {showNotes && (
+        <section className="notes-section">
+          <h2 className="section-title">Notes / Remarks</h2>
+          <textarea
+            className="notes-textarea"
+            placeholder="Add any notes or remarks here..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </section>
+      )}
 
       <section className="payment-section">
         <h2 className="section-title">Payment</h2>
