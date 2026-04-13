@@ -45,6 +45,7 @@ const AddEditProduct = ({ isEdit }) => {
   const [files, setFiles] = useState([]);
   const [tagInput, setTagInput] = useState(""); // For new tag input
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
+  const [keepFieldsAfterSave, setKeepFieldsAfterSave] = useState(false);
 
   const { productId } = useParams();
 
@@ -84,7 +85,7 @@ const AddEditProduct = ({ isEdit }) => {
     }
   };
 
-  const { data: generatedSKU, setData: setGeneratedSKU } = useLocalApi({
+  const { data: generatedSKU, fetchData: recallGenerateSKU, setData: setGeneratedSKU } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
       category: productFields.category,
@@ -94,6 +95,7 @@ const AddEditProduct = ({ isEdit }) => {
   }) as {
     data: any;
     setData: any;
+    fetchData: () => void;
   };
 
   const { data: product } = useLocalApi({
@@ -193,6 +195,9 @@ const AddEditProduct = ({ isEdit }) => {
           showSuccess(response?.message);
           if (isEdit) {
             navigate("/admin/inventory/products");
+          } else if (keepFieldsAfterSave) {
+            handleProductField("weight", "");
+            recallGenerateSKU();
           } else {
             handleClearClick();
           }
@@ -252,6 +257,16 @@ const AddEditProduct = ({ isEdit }) => {
             Back To Inventory
           </button>
 
+          {!isEdit && (
+            <label className="keep-fields-checkbox">
+              <input
+                type="checkbox"
+                checked={keepFieldsAfterSave}
+                onChange={(e) => setKeepFieldsAfterSave(e.target.checked)}
+              />
+              Preserve
+            </label>
+          )}
           <button
             className="btn-md btn-gold"
             disabled={checkAnyProductFieldHasNoValue || !files.length}

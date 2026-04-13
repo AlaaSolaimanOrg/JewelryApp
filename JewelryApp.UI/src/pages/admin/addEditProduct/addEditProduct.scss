@@ -29,7 +29,38 @@
 
   .page-actions {
     display: flex;
+    align-items: center;
     gap: 12px;
+  }
+
+  .keep-fields-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark);
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.2s;
+
+    &:has(input:checked) {
+      border-color: var(--gold);
+      background: #fffbf0;
+    }
+
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      accent-color: var(--gold);
+      margin: 0;
+    }
   }
 
   .btn {
