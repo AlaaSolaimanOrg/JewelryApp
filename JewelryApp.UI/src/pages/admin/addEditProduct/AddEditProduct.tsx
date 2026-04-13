@@ -85,7 +85,11 @@ const AddEditProduct = ({ isEdit }) => {
     }
   };
 
-  const { data: generatedSKU, fetchData: recallGenerateSKU, setData: setGeneratedSKU } = useLocalApi({
+  const {
+    data: generatedSKU,
+    fetchData: recallGenerateSKU,
+    setData: setGeneratedSKU,
+  } = useLocalApi({
     apiToCall: (data) => generateSKU(data.payload),
     payload: {
       category: productFields.category,
