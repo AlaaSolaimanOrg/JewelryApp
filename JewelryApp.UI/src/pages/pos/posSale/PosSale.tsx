@@ -186,6 +186,17 @@ const MainPosPage: React.FC = () => {
     setProducts(products.filter((_, i) => i !== idx));
   };
 
+  // Apply a product's overridden price/gram to all products with the same karat type
+  const handleApplyPriceToKarat = (karatType: any, pricePerGram: string | number) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        Number(p.karatType) === Number(karatType)
+          ? { ...p, pricePerGram }
+          : p,
+      ),
+    );
+  };
+
   // Update manual product
   const handleManualProductChange = (
     idx: number,
@@ -329,6 +340,7 @@ const MainPosPage: React.FC = () => {
         handleManualEntry={handleManualEntry}
         handleRemoveProduct={handleRemoveProduct}
         handleManualProductChange={handleManualProductChange}
+        onApplyPriceToKarat={handleApplyPriceToKarat}
       />
 
       <section className="discount-section">

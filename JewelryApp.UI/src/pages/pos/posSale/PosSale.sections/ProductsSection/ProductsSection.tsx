@@ -1,4 +1,4 @@
-import { FaPlusCircle, FaTimes } from "react-icons/fa";
+import { FaClone, FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../../types";
 import { KaratType } from "../../../../../types/enums";
 import "./productsSection.scss";
@@ -9,6 +9,7 @@ interface Props {
   handleManualEntry: () => void;
   handleRemoveProduct: (idx: number) => void;
   handleManualProductChange: (idx: number, field: string, value: any) => void;
+  onApplyPriceToKarat: (karatType: any, pricePerGram: string | number) => void;
 }
 
 const ProductsSection: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const ProductsSection: React.FC<Props> = ({
   handleManualEntry,
   handleRemoveProduct,
   handleManualProductChange,
+  onApplyPriceToKarat,
 }) => {
   const handleQuantityChange = (idx: number, value: string) => {
     // Prevent negative numbers and ensure it's a valid number
@@ -176,12 +178,31 @@ const ProductsSection: React.FC<Props> = ({
                 </span>
               </td>
               <td>
-                <button
-                  className="remove-btn"
-                  onClick={() => handleRemoveProduct(idx)}
-                >
-                  <FaTimes />
-                </button>
+                <div className="action-cell">
+                  {Number(product.pricePerGram) !== Number(product.originalPricePerGram) &&
+                    products.some(
+                      (p, i) =>
+                        i !== idx &&
+                        Number(p.karatType) === Number(product.karatType) &&
+                        Number(p.pricePerGram) !== Number(product.pricePerGram),
+                    ) && (
+                      <button
+                        className="apply-price-icon-btn"
+                        title={`Apply $${product.pricePerGram}/g to all ${product.karatType}K products`}
+                        onClick={() =>
+                          onApplyPriceToKarat(product.karatType, product.pricePerGram)
+                        }
+                      >
+                        <FaClone />
+                      </button>
+                    )}
+                  <button
+                    className="remove-btn"
+                    onClick={() => handleRemoveProduct(idx)}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
