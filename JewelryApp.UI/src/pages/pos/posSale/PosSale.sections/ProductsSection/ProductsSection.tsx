@@ -179,7 +179,8 @@ const ProductsSection: React.FC<Props> = ({
               </td>
               <td>
                 <div className="action-cell">
-                  {Number(product.pricePerGram) !== Number(product.originalPricePerGram) &&
+                  {Number(product.pricePerGram) !==
+                    Number(product.originalPricePerGram) &&
                     products.some(
                       (p, i) =>
                         i !== idx &&
@@ -190,7 +191,10 @@ const ProductsSection: React.FC<Props> = ({
                         className="apply-price-icon-btn"
                         title={`Apply $${product.pricePerGram}/g to all ${product.karatType}K products`}
                         onClick={() =>
-                          onApplyPriceToKarat(product.karatType, product.pricePerGram)
+                          onApplyPriceToKarat(
+                            product.karatType,
+                            product.pricePerGram,
+                          )
                         }
                       >
                         <FaClone />

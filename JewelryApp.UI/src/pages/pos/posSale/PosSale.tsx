@@ -187,12 +187,13 @@ const MainPosPage: React.FC = () => {
   };
 
   // Apply a product's overridden price/gram to all products with the same karat type
-  const handleApplyPriceToKarat = (karatType: any, pricePerGram: string | number) => {
+  const handleApplyPriceToKarat = (
+    karatType: any,
+    pricePerGram: string | number,
+  ) => {
     setProducts((prev) =>
       prev.map((p) =>
-        Number(p.karatType) === Number(karatType)
-          ? { ...p, pricePerGram }
-          : p,
+        Number(p.karatType) === Number(karatType) ? { ...p, pricePerGram } : p,
       ),
     );
   };
