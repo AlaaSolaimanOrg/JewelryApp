@@ -1,44 +1,28 @@
 import { useState } from "react";
-import { FaArrowLeft, FaPlus, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { createRepair } from "../../../apis/repairs.api/repairs.api";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-import { PaymentStatus, ProductType } from "../../../types/enums";
+import { PaymentStatus } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import CustomerSection from "../posSale/PosSale.sections/CustomerSection/CustomerSection";
 import type { Customer } from "../posSale/types";
 import "./repair.scss";
 import RepairItemCard from "./RepairItemCard/RepairItemCard";
 
-export interface RepairItem {
-  id: number;
-  itemType: string;
-  metal: ProductType;
-  weight: string;
-  stone: string;
-  repairType: string;
+export interface RepairForm {
   notes: string;
   cost: string;
   paymentStatus: PaymentStatus | "";
-  depositPaid: string;
   dueDate: string;
 }
 
-const itemsInitialValue: RepairItem[] = [
-  {
-    id: 1,
-    itemType: "",
-    metal: ProductType.Gold,
-    weight: "",
-    stone: "",
-    repairType: "",
-    notes: "",
-    cost: "",
-    paymentStatus: PaymentStatus.Unpaid,
-    depositPaid: "",
-    dueDate: "",
-  },
-];
+const formInitialValue: RepairForm = {
+  notes: "",
+  cost: "",
+  paymentStatus: PaymentStatus.Unpaid,
+  dueDate: "",
+};
 
 const Repair = () => {
   const navigate = useNavigate();
@@ -48,68 +32,22 @@ const Repair = () => {
   const [searchInput, setSearchInput] = useState("");
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
 
-  const [errors, setErrors] = useState<
-    Record<number, Partial<Record<keyof RepairItem, string>>>
-  >({});
+  const [form, setForm] = useState<RepairForm>(formInitialValue);
+  const [errors, setErrors] = useState<Partial<Record<keyof RepairForm, string>>>({});
 
-  const [items, setItems] = useState<RepairItem[]>(itemsInitialValue);
-
-  console.log("items", items);
-
-  // 🔥 NEW STATES FOR INVOICE MODAL
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
 
-  const addItem = () => {
-    setItems((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        itemType: "",
-        metal: ProductType.Gold,
-        weight: "",
-        stone: "",
-        repairType: "",
-        notes: "",
-        cost: "",
-        paymentStatus: PaymentStatus.Unpaid,
-        depositPaid: "",
-        dueDate: "",
-      },
-    ]);
+  const updateField = (field: keyof RepairForm, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const removeItem = (id: number) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  };
-
-  const updateItem = (id: number, field: keyof RepairItem, value: string) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
-    );
-  };
-
-  const grandTotal = items.reduce(
-    (sum, item) => sum + Number(item.cost) || 0,
-    0,
-  );
-
-  const validateItems = () => {
-    const newErrors: Record<number, any> = {};
-
-    items.forEach((item) => {
-      const err: any = {};
-      if (!item.itemType) err.itemType = "Item type is required";
-      if (!item.metal) err.metal = "Metal is required";
-      if (!item.repairType) err.repairType = "Repair type is required";
-      if (!item.dueDate) err.dueDate = "Due date is required";
-
-      if (Object.keys(err).length > 0) newErrors[item.id] = err;
-    });
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
+  const validate = () => {
+    const err: Partial<Record<keyof RepairForm, string>> = {};
+    if (!form.notes) err.notes = "Notes are required";
+    if (!form.dueDate) err.dueDate = "Due date is required";
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
   const handleSaveRepair = async () => {
@@ -117,35 +55,17 @@ const Repair = () => {
       showError("Select a customer first");
       return;
     }
-
-    if (!validateItems()) {
+    if (!validate()) {
       showError("Please fill required fields");
       return;
     }
 
     const payload = {
       customerId: customer.id,
-      items: items.map((i) => {
-        const paymentStatusNum = Number(i.paymentStatus);
-        const cost = Number(i.cost) || 0;
-
-        let depositPaid = 0;
-        if (paymentStatusNum === PaymentStatus.Unpaid) depositPaid = 0;
-        else if (paymentStatusNum === PaymentStatus.Paid) depositPaid = cost;
-
-        return {
-          itemType: Number(i.itemType),
-          metal: Number(i.metal),
-          weight: Number(i.weight) || 0,
-          repairType: Number(i.repairType),
-          stoneType: i.stone,
-          notes: i.notes,
-          cost: cost,
-          paymentStatus: paymentStatusNum,
-          depositPaid: depositPaid,
-          dueDate: i.dueDate || null,
-        };
-      }),
+      notes: form.notes,
+      cost: Number(form.cost) || 0,
+      paymentStatus: Number(form.paymentStatus),
+      dueDate: form.dueDate || null,
     };
 
     try {
@@ -153,13 +73,9 @@ const Repair = () => {
 
       if (checkRequestSucceeded(response.statusCode)) {
         showSuccess(response.message);
-
-        // 🔥 OPEN INVOICE MODAL WITH REPAIR ID
         setCreatedRepairId(response.data);
         setShowInvoice(true);
-
-        // Reset
-        setItems(itemsInitialValue);
+        setForm(formInitialValue);
         setCustomer(null);
         setCustomerInfoActive(false);
       } else {
@@ -192,43 +108,25 @@ const Repair = () => {
 
       <div className="section">
         <div className="section-title">
-          <span>Repair Items</span>
-          <button className="add-item-btn" onClick={addItem}>
-            <FaPlus /> Add Item
-          </button>
+          <span>Repair</span>
         </div>
 
-        {items.map((item, index) => (
-          <RepairItemCard
-            key={item.id}
-            item={item}
-            updateItem={updateItem}
-            removeItem={removeItem}
-            itemsCount={items.length}
-            cardNumber={index + 1}
-            errors={errors[item.id] || {}}
-          />
-        ))}
-
-        <div className="summary-box">
-          <div className="summary-line">
-            <span>Total:</span>
-            <span>${grandTotal.toFixed(2)}</span>
-          </div>
-        </div>
+        <RepairItemCard
+          form={form}
+          updateField={updateField}
+          errors={errors}
+        />
       </div>
 
       <div className="footer-buttons">
         <button className="save-btn" onClick={handleSaveRepair}>
           Save Repair
         </button>
-
         <button className="cancel-btn" onClick={() => history.back()}>
           <FaTimes /> Cancel
         </button>
       </div>
 
-      {/* 🔥 INVOICE MODAL */}
       {createdRepairId && (
         <RepairInvoiceModal
           repairId={createdRepairId}

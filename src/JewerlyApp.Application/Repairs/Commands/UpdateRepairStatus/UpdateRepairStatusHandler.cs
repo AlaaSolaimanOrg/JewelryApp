@@ -22,8 +22,8 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
         public async Task<GenericResponse<Unit>> Handle(UpdateRepairStatusCommand request, CancellationToken cancellationToken)
         {
-            var repair = await _context.Repairs.Include(x => x.Items)
-                .Include(x=>x.Customer)
+            var repair = await _context.Repairs
+                .Include(x => x.Customer)
                 .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
 
             if (repair == null)
@@ -38,15 +38,10 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
             repair.Status = request.Status;
 
-            if (repair.Status == RepairStatus.PickedUp)
+            if (repair.Status == RepairStatus.PickedUp && repair.PaymentStatus != PaymentStatus.Paid)
             {
-                foreach (var item in repair.Items)
-                {
-                    if (item.PaymentStatus != PaymentStatus.Paid)
-                    {
-                        item.PaymentStatus = PaymentStatus.Paid;
-                    }
-                }
+                repair.PaymentStatus = PaymentStatus.Paid;
+                repair.DepositPaid = repair.Cost;
             }
 
 

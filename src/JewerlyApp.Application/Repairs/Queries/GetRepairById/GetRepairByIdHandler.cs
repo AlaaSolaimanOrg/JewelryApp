@@ -24,7 +24,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
         {
             var repair = await _context.Repairs
                 .Include(r => r.Customer)
-                .Include(r => r.Items)
                 .FirstOrDefaultAsync(r => r.Id == request.Id, cancellationToken);
 
             if (repair == null)
@@ -45,20 +44,11 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                 CustomerPhone = repair.Customer.PhoneNumber,
                 OrderDate = repair.OrderDate,
                 Status = repair.Status,
-                TotalCost = repair.TotalCost,
-                Items = repair.Items.Select(i => new RepairItemDto
-                {
-                    Id = i.Id,
-                    ItemType = i.ItemType,
-                    Metal = i.Metal,
-                    Weight = i.Weight,
-                    StoneType = i.StoneType,
-                    RepairType = i.RepairType,
-                    Notes = i.Notes,
-                    Cost = i.Cost,
-                    PaymentStatus = i.PaymentStatus,
-                    DueDate = i.DueDate,
-                }).ToList()
+                Notes = repair.Notes,
+                Cost = repair.Cost,
+                DepositPaid = repair.DepositPaid,
+                PaymentStatus = repair.PaymentStatus,
+                DueDate = repair.DueDate,
             };
 
             return new GenericResponse<RepairDto>

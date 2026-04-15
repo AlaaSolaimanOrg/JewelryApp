@@ -139,385 +139,132 @@
   }
 
   /* ============================
-        REPAIR CARDS
+        REPAIRS TABLE
   ============================= */
   .repairs-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
     margin-bottom: 32px;
+    overflow-x: auto;
   }
 
-  .repair-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid transparent;
-    transition: all 0.3s ease;
-    overflow: hidden;
-
-    .repair-card__header {
-      .repair-date {
-        font-size: 13px;
-        color: #666;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-
-        .meta-icon {
-          color: var(--gold);
-          font-size: 12px;
-        }
-      }
-    }
-
-    &.inprogress {
-      border-left-color: #ffa726;
-
-      .repair-card__header {
-        border-left-color: #ffa726;
-      }
-    }
-
-    &.completed {
-      border-left-color: #66bb6a;
-
-      .repair-card__header {
-        border-left-color: #66bb6a;
-      }
-    }
-
-    &.pickedup {
-      border-left-color: #42a5f5;
-
-      .repair-card__header {
-        border-left-color: #42a5f5;
-      }
-    }
-
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    &.expanded {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    /* CARD HEADER */
-    &__header {
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      background: white;
-      transition: background 0.3s;
-
-      &:hover {
-        background: #fafafa;
-      }
-    }
-
-    &__customer {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-
-      .customer-avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--gold) 0%, #ffb300 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-
-      .customer-info {
-        .customer-name {
-          font-size: 18px;
-          font-weight: 600;
-          color: var(--dark);
-          margin: 0 0 8px 0;
-        }
-
-        .customer-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 16px;
-
-          .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            color: #666;
-
-            .meta-icon {
-              color: var(--gold);
-              font-size: 12px;
-            }
-          }
-        }
-      }
-    }
-
-    &__actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-
-      .repair-id {
-        font-size: 13px;
-        color: #888;
-        background: #f5f5f5;
-        padding: 4px 8px;
-        border-radius: 4px;
-      }
-
-      .expand-toggle {
-        background: none;
-        border: none;
-        font-size: 18px;
-        color: #666;
-        cursor: pointer;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 6px;
-        transition: all 0.3s;
-
-        &:hover {
-          background: #f0f0f0;
-          color: var(--gold);
-        }
-      }
-    }
-
-    /* EXPANDED CONTENT */
-    &__content {
-      border-top: 1px solid #eee;
-      background: #fafafa;
-      animation: slideDown 0.3s ease-out;
-    }
-  }
-
-  @keyframes slideDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* ============================
-        REPAIR DETAILS
-  ============================= */
-  .repair-details {
-    padding: 24px;
-
-    .detail-section {
-      margin-bottom: 24px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .section-subtitle {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--dark);
-        margin: 0 0 16px 0;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #eee;
-      }
-
-      .section-header-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .items-total {
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--gold);
-          background: #fff8e1;
-          padding: 6px 12px;
-          border-radius: 6px;
-        }
-      }
-    }
-
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-
-      .detail-item {
-        background: white;
-        padding: 12px 16px;
-        border-radius: 8px;
-        border: 1px solid #eee;
-
-        .detail-label {
-          display: block;
-          font-size: 12px;
-          color: #888;
-          margin-bottom: 4px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .detail-value {
-          font-size: 14px;
-          color: var(--dark);
-          font-weight: 500;
-        }
-      }
-    }
-  }
-
-  /* ============================
-        ITEMS TABLE
-  ============================= */
-  .items-table-container {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-
-  .items-table {
+  .repairs-table {
     width: 100%;
     border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    thead tr {
+      background: #f8f9fa;
+      border-bottom: 2px solid #eee;
+    }
 
     th {
-      background: #f8f9fa;
-      padding: 16px;
-      font-size: 13px;
+      padding: 14px 16px;
+      font-size: 12px;
       font-weight: 600;
       color: #555;
       text-align: left;
-      border-bottom: 2px solid #eee;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     td {
-      padding: 16px;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 14px 16px;
       font-size: 14px;
       color: #444;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
     }
 
     tbody tr {
       transition: background 0.2s;
 
-      &:hover {
-        background: #f9f9f9;
-      }
-
       &:last-child td {
         border-bottom: none;
       }
-    }
 
-    tfoot {
-      background: #f8f9fa;
+      &:hover {
+        background: #fafafa;
+      }
 
-      td {
-        padding: 16px;
-        font-weight: 600;
-
-        &.total-label {
-          text-align: right;
-          color: #666;
-        }
-
-        &.total-cost {
-          color: var(--gold);
-          font-size: 16px;
-        }
+      &.repair-row {
+        cursor: default;
       }
     }
 
-    .item-type,
-    .metal-badge,
-    .stone-type,
-    .repair-type {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .metal-badge {
-      background: #e3f2fd;
-      color: #1565c0;
-    }
-
-    .stone-type {
-      background: #f3e5f5;
-      color: #7b1fa2;
-    }
-
-    .repair-type {
-      background: #e8f5e8;
-      color: #2e7d32;
-    }
-
-    .cost,
-    .subtotal {
+    .repair-code {
       font-family: "Roboto Mono", monospace;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--dark);
     }
 
-    .cost {
-      color: #333;
-    }
-
-    .subtotal {
-      color: var(--gold);
-    }
-  }
-
-  .payment-status-badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: capitalize;
-
-    &.Paid {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    &.Unpaid {
-      background: #ffebee;
-      color: #c62828;
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
   }
 
-  .item-notes {
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #555;
+  /* Status buttons used in table actions-cell */
+  .inprogress-btn {
+    background: #ff9800 !important;
+    border-color: #ff9800 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #fb8c00 !important;
+    }
+  }
+
+  .completed-btn {
+    background: #4caf50 !important;
+    border-color: #4caf50 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #43a047 !important;
+    }
+  }
+
+  .pickedup-btn {
+    background: #2196f3 !important;
+    border-color: #2196f3 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #1e88e5 !important;
+    }
+  }
+
+  .status-btn {
+    position: relative;
+
+    &::after {
+      content: "Right-click to go back";
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      transition: opacity 0.2s ease-in-out;
+      z-index: 10;
+    }
+
+    &:hover::after {
+      opacity: 0.7;
+    }
   }
 
   /* ============================
@@ -551,103 +298,6 @@
   }
 
   /* ============================
-        ACTION BUTTONS
-  ============================= */
-  .action-buttons {
-    display: flex;
-    gap: 12px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-
-    .btn {
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 2px solid transparent;
-
-      &-outline {
-        background: white;
-        border-color: #ddd;
-        color: #555;
-
-        &:hover {
-          border-color: var(--gold);
-          color: var(--gold);
-        }
-      }
-
-      &-primary {
-        background: var(--gold);
-        border-color: var(--gold);
-        color: white;
-
-        &:hover {
-          background: #ffb300;
-          border-color: #ffb300;
-        }
-      }
-    }
-
-    .status-btn {
-      position: relative;
-
-      &::after {
-        content: "Right-click to go back";
-        position: absolute;
-        bottom: -22px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--dark);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 10px;
-        opacity: 0;
-        pointer-events: none;
-        white-space: nowrap;
-        transition: opacity 0.2s ease-in-out;
-      }
-
-      &:hover::after {
-        opacity: 0.7;
-      }
-    }
-
-    .inprogress-btn {
-      background: #ff9800 !important;
-      border-color: #ff9800 !important;
-      color: #ffffff !important;
-
-      &:hover {
-        background: #fb8c00 !important;
-      }
-    }
-
-    .completed-btn {
-      background: #4caf50 !important;
-      border-color: #4caf50 !important;
-      color: #ffffff !important;
-
-      &:hover {
-        background: #43a047 !important;
-      }
-    }
-
-    .pickedup-btn {
-      background: #2196f3 !important;
-      border-color: #2196f3 !important;
-      color: #ffffff !important;
-
-      &:hover {
-        background: #1e88e5 !important;
-      }
-    }
-  }
-
-  /* ============================
         EMPTY STATE
   ============================= */
   .empty-state {
@@ -676,10 +326,7 @@
     }
   }
 
-  /* UNIVERSAL STYLE */
-  .badge-itemtype,
-  .badge-metal,
-  .badge-repairtype,
+  /* PAYMENT BADGES */
   .badge-payment {
     display: inline-block;
     padding: 5px 10px;
@@ -690,28 +337,6 @@
     border: 1px solid transparent;
   }
 
-  /* THEMED GOLD (but softer than status orange/gold) */
-  .badge-itemtype {
-    background: #fff7e6; // softer gold
-    color: #c28f22; // muted gold
-    border-color: #f5e4b5;
-  }
-
-  /* THEMED BLUE (softer than status blue) */
-  .badge-metal {
-    background: #e8f1ff; // soft blue
-    color: #357ab8; // themed blue
-    border-color: #d3e4ff;
-  }
-
-  /* THEMED GREEN (softer than status green) */
-  .badge-repairtype {
-    background: #e9f8ef; // soft green
-    color: #3d8a4d; // themed green
-    border-color: #cbeed6;
-  }
-
-  /* PAYMENT (THEMED) */
   .badge-payment.Paid {
     background: #edf9f0;
     color: #3d8a4d;
@@ -742,55 +367,12 @@
       grid-template-columns: 1fr !important;
     }
 
-    .repair-card__header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .repair-card__customer {
-      width: 100%;
-    }
-
-    .repair-card__actions {
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    .customer-meta {
-      flex-direction: column;
-      gap: 8px !important;
-    }
-
-    .details-grid {
-      grid-template-columns: 1fr !important;
-    }
-
-    .action-buttons {
-      flex-direction: column;
-
-      .btn {
-        width: 100%;
-      }
-    }
-
-    .items-table-container {
+    .repairs-container {
       overflow-x: auto;
-
-      .items-table {
-        min-width: 800px;
-      }
-    }
-  }
-
-  @media (max-width: 480px) {
-    .repair-card__customer {
-      flex-direction: column;
-      align-items: flex-start;
     }
 
-    .customer-avatar {
-      margin-bottom: 12px;
+    .repairs-table {
+      min-width: 800px;
     }
   }
 }

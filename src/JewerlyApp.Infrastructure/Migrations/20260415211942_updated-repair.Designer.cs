@@ -4,6 +4,7 @@ using JewerlyApp.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewerlyApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260415211942_updated-repair")]
+    partial class updatedrepair
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -575,6 +578,48 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("RepairCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Repairs");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.RepairItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Cost")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -584,9 +629,6 @@ namespace JewerlyApp.Infrastructure.Migrations
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DepositPaid")
                         .HasPrecision(18, 2)
@@ -605,24 +647,17 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
-
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("RepairCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RepairId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("RepairId");
 
-                    b.ToTable("Repairs");
+                    b.ToTable("RepairItems");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Return", b =>
@@ -1018,6 +1053,17 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.RepairItem", b =>
+                {
+                    b.HasOne("JewerlyApp.Domain.Entities.Repair", "Repair")
+                        .WithMany("Items")
+                        .HasForeignKey("RepairId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Repair");
+                });
+
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Return", b =>
                 {
                     b.HasOne("JewerlyApp.Domain.Entities.Sale", "Sale")
@@ -1140,6 +1186,11 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.Repair", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Return", b =>

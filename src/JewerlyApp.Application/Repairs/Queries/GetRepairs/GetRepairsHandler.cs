@@ -23,7 +23,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
         {
             IQueryable<Repair> query = _context.Repairs
                 .Include(r => r.Customer)
-                .Include(r => r.Items)
                 .AsNoTracking();
 
             /* =============================
@@ -57,23 +56,11 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 CustomerPhone = r.Customer.PhoneNumber,
                 OrderDate = r.OrderDate,
                 Status = r.Status,
-                TotalCost = r.TotalCost,
-
-                Items = r.Items.Select(i => new RepairItemDto
-                {
-                    Id = i.Id,
-                    ItemType = i.ItemType,
-                    Metal = i.Metal,
-                    Weight = i.Weight,
-                    StoneType = i.StoneType,
-                    RepairType = i.RepairType,
-                    Notes = i.Notes,
-                    Cost = i.Cost,
-                    DepositPaid = i.DepositPaid,
-                    PaymentStatus = i.PaymentStatus,
-                    DueDate = i.DueDate,
-                }).ToList()
-
+                Notes = r.Notes,
+                Cost = r.Cost,
+                DepositPaid = r.DepositPaid,
+                PaymentStatus = r.PaymentStatus,
+                DueDate = r.DueDate,
             }).ToList();
 
             return new PaginatedResponse<RepairDto>
@@ -99,18 +86,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
             if (request.Status.HasValue)
             {
                 query = query.Where(r => r.Status == request.Status.Value);
-            }
-
-            /* =============================
-                 FILTER BY REPAIR TYPE
-                 (INSIDE ITEMS)
-            ============================== */
-            if (request.RepairType.HasValue)
-            {
-                var repairType = request.RepairType.Value;
-
-                query = query.Where(r =>
-                    r.Items.Any(i => i.RepairType == repairType));
             }
 
             /* =============================

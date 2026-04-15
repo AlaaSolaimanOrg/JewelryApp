@@ -1,20 +1,11 @@
-import React, { useState } from "react";
-import {
-  FaCalendarAlt,
-  FaDollarSign,
-  FaList,
-  FaPhone,
-  FaTools,
-} from "react-icons/fa";
+﻿import React, { useState } from "react";
+import { FaList, FaTools } from "react-icons/fa";
 import "./repairManagement.scss";
-
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+
 import {
   PaymentStatus,
-  ProductCategory,
-  ProductType,
   RepairStatus,
-  RepairType,
   SortDirection,
 } from "../../../types/enums";
 
@@ -31,20 +22,6 @@ import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/Re
 import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
 import SmsConfirmPopup from "./SmsConfirmPopup/SmsConfirmPopup";
 
-export interface RepairItem {
-  id: string;
-  itemType: ProductCategory;
-  metal: ProductType;
-  weight: number;
-  stoneType: string;
-  repairType: RepairType;
-  notes: string;
-  cost: number;
-  paymentStatus: PaymentStatus;
-  depositPaid: number;
-  dueDate: string | null;
-}
-
 export interface Repair {
   id: string;
   repairCode: string;
@@ -53,14 +30,15 @@ export interface Repair {
   customerPhone: string;
   orderDate: string;
   status: RepairStatus;
-  totalCost: number;
-  items: RepairItem[];
+  notes: string;
+  cost: number;
+  depositPaid: number;
+  paymentStatus: PaymentStatus;
+  dueDate: string | null;
 }
 
 const RepairManagement: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [expandedRepairId, setExpandedRepairId] = useState<string | null>(null);
   const [showInvoice, setShowInvoice] = useState(false);
   const [repairIdToView, setRepairIdToView] = useState<string>("");
   const [smsPopup, setSmsPopup] = useState<{
@@ -78,9 +56,9 @@ const RepairManagement: React.FC = () => {
     onPaginationChange,
   } = useLocalApiSearchSortPagination<Repair>({
     apiToCall: (data) => getRepairs(data.payload),
-    extraPayload: { repairType: typeFilter, status: statusFilter },
-    extraEffectDependency: [typeFilter, statusFilter],
-    initialPageSize: 5,
+    extraPayload: { status: statusFilter },
+    extraEffectDependency: [statusFilter],
+    initialPageSize: 10,
     initialSortBy: "createdDate",
     initialSortDirection: SortDirection.Descending,
   });
@@ -95,42 +73,31 @@ const RepairManagement: React.FC = () => {
     });
   };
 
-  const toggleRepairExpansion = (repairId: string) => {
-    setExpandedRepairId(expandedRepairId === repairId ? null : repairId);
+  const formatDueDate = (dueDate: string | null) => {
+    if (!dueDate) return "-";
+    return new Date(dueDate).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   const REPAIR_STATUS_UI: Record<
     RepairStatus,
-    { label: string; className: string; color: string }
+    { label: string; className: string }
   > = {
     [RepairStatus.InProgress]: {
       label: "In Progress",
       className: "status-badge in-progress",
-      color: "#ff9800",
     },
     [RepairStatus.Completed]: {
       label: "Completed",
       className: "status-badge completed",
-      color: "#4caf50",
     },
     [RepairStatus.PickedUp]: {
       label: "Picked Up",
       className: "status-badge pickedup",
-      color: "#2196f3",
     },
-  };
-
-  const getRepairStatusInfo = (status: RepairStatus) => {
-    return REPAIR_STATUS_UI[status];
-  };
-
-  const getCustomerInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((word) => word[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   const getNextStatus = (current: RepairStatus) => {
@@ -167,7 +134,6 @@ const RepairManagement: React.FC = () => {
         : getPreviousStatus(currentStatus);
 
     try {
-      // When status changes to PickedUp, auto-update items to Paid
       const updatePayload: any = {
         id: repairId,
         status: newStatus,
@@ -211,9 +177,9 @@ const RepairManagement: React.FC = () => {
   };
 
   const NEXT_STATUS_BUTTON_CLASS: Record<RepairStatus, string> = {
-    [RepairStatus.InProgress]: "completed-btn", // next is Completed (green)
-    [RepairStatus.Completed]: "pickedup-btn", // next is PickedUp (blue)
-    [RepairStatus.PickedUp]: "inprogress-btn", // next is InProgress (orange)
+    [RepairStatus.InProgress]: "completed-btn",
+    [RepairStatus.Completed]: "pickedup-btn",
+    [RepairStatus.PickedUp]: "inprogress-btn",
   };
 
   return (
@@ -267,33 +233,6 @@ const RepairManagement: React.FC = () => {
                 </option>
               </select>
             </div>
-
-            <div className="filter-group">
-              <label className="filter-label">Repair Type</label>
-              <select
-                className="filter-select"
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-              >
-                <option value={""}>All Types</option>
-                <option value={RepairType.AddGold}>Add Gold</option>
-                <option value={RepairType.Resize}>Resize</option>
-                <option value={RepairType.Solder}>Solder</option>
-                <option value={RepairType.StoneReplacement}>
-                  Stone Replacement
-                </option>
-                <option value={RepairType.StoneTightening}>
-                  Stone Tightening
-                </option>
-                <option value={RepairType.Polishing}>Polishing</option>
-                <option value={RepairType.Cleaning}>Cleaning</option>
-                <option value={RepairType.Plating}>Plating</option>
-                <option value={RepairType.Engraving}>Engraving</option>
-                <option value={RepairType.FixOrChangeLock}>
-                  Fix Or Change Lock
-                </option>
-              </select>
-            </div>
           </div>
         </div>
 
@@ -309,217 +248,99 @@ const RepairManagement: React.FC = () => {
               <p>Try adjusting your filters or add a new repair</p>
             </div>
           ) : (
-            repairs?.map((repair) => {
-              const statusInfo = getRepairStatusInfo(repair.status);
-              const isExpanded = expandedRepairId === repair.id;
+            <table className="repairs-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Order Date</th>
+                  <th>Notes</th>
+                  <th>Payment</th>
+                  <th>Due Date</th>
+                  <th>Cost</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {repairs?.map((repair) => {
+                  const statusInfo = REPAIR_STATUS_UI[repair.status];
 
-              return (
-                <div
-                  key={repair.id}
-                  className={`repair-card ${isExpanded ? "expanded" : ""} ${
-                    repair.status
-                  }`}
-                >
-                  {/* CARD HEADER */}
-                  <div
-                    className="repair-card__header"
-                    onClick={() => toggleRepairExpansion(repair.id)}
-                  >
-                    <div className="repair-card__customer">
-                      <div className="customer-avatar">
-                        {getCustomerInitials(repair.customerName)}
-                      </div>
-                      <div className="customer-info">
-                        <h3 className="customer-name">{repair.customerName}</h3>
-                        <div className="customer-meta">
-                          <span className="meta-item">
-                            <FaPhone className="meta-icon" />
-                            {repair.customerPhone}
-                          </span>
-                          <span className="meta-item">
-                            <FaCalendarAlt className="meta-icon" />
-                            {formatDate(repair.orderDate)}
-                          </span>
-                          <span className="meta-item">
-                            <FaDollarSign className="meta-icon" />
-                            {formatCurrency(repair.totalCost)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="repair-card__actions">
-                      <div className="repair-id">{repair.repairCode}</div>
-                      <div className="repair-date">
-                        <FaCalendarAlt className="meta-icon" />
-                        {formatDate(repair.orderDate)}
-                      </div>
-
-                      <span className={statusInfo.className}>
-                        {statusInfo.label}
-                      </span>
-                      <button className="expand-toggle">
-                        {isExpanded ? "▲" : "▼"}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* EXPANDED CONTENT */}
-                  {isExpanded && (
-                    <div className="repair-card__content">
-                      <div className="repair-details">
-                        <div className="detail-section">
-                          <div className="section-header-row">
-                            <h4 className="section-subtitle">
-                              Repair Items ({repair.items.length})
-                            </h4>
-                          </div>
-
-                          <div className="items-table-container">
-                            <table className="items-table">
-                              <thead>
-                                <tr>
-                                  <th>Id</th>
-                                  <th>Item Type</th>
-                                  <th>Metal</th>
-                                  <th>Weight</th>
-                                  <th>Stone</th>
-                                  <th>Repair Type</th>
-                                  <th>Payment</th>
-                                  <th>Notes</th>
-                                  <th>Cost</th>
-                                  <th>Action</th>
-                                </tr>
-                              </thead>
-
-                              <tbody>
-                                {repair.items.map((item, index) => (
-                                  <tr key={item.id}>
-                                    {/* I] */}
-                                    <td>{index + 1}</td>
-                                    {/* ITEM TYPE */}
-                                    <td>
-                                      <span className="badge-itemtype">
-                                        {ProductCategory[item.itemType]}
-                                      </span>
-                                    </td>
-
-                                    {/* METAL */}
-                                    <td>
-                                      <span className="badge-metal">
-                                        {ProductType[item.metal]}
-                                      </span>
-                                    </td>
-
-                                    {/* WEIGHT */}
-                                    <td>{item.weight}g</td>
-
-                                    {/* STONE TYPE (NO BADGE) */}
-                                    <td>{item.stoneType || "None"}</td>
-
-                                    {/* REPAIR TYPE */}
-                                    <td>
-                                      <span className="badge-repairtype">
-                                        {splitCamelCaseWords(
-                                          RepairType[item.repairType],
-                                        )}
-                                      </span>
-                                    </td>
-
-                                    {/* PAYMENT STATUS */}
-                                    <td>
-                                      <span
-                                        className={`badge-payment ${
-                                          PaymentStatus[item.paymentStatus]
-                                        }`}
-                                      >
-                                        {PaymentStatus[item.paymentStatus]}
-                                      </span>
-                                    </td>
-
-                                    {/* NOTES */}
-                                    <td className="item-notes">
-                                      {item.notes ? (
-                                        <CommentTooltip comment={item.notes} />
-                                      ) : (
-                                        "-"
-                                      )}
-                                    </td>
-
-                                    {/* COST */}
-                                    <td>{formatCurrency(item.cost)}</td>
-
-                                    {/* EDIT BUTTON */}
-                                    <td className="edit-cell">
-                                      <EditRepairItemModal
-                                        item={item}
-                                        onRefresh={recallGetRepairs}
-                                      />
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-
-                              <tfoot>
-                                <tr>
-                                  <td colSpan={9} className="total-label">
-                                    Total Cost:
-                                  </td>
-                                  <td className="total-cost">
-                                    {formatCurrency(repair.totalCost)}
-                                  </td>
-                                </tr>
-                              </tfoot>
-                            </table>
-                          </div>
-                        </div>
-
-                        {/* ACTION BUTTONS */}
-                        <div className="action-buttons">
-                          <button
-                            className="btn btn-outline"
-                            onClick={() => {
-                              setRepairIdToView(repair.id);
-                              setShowInvoice(true);
-                            }}
-                          >
-                            View Invoice
-                          </button>
-                          <button
-                            className={`btn status-btn ${
-                              NEXT_STATUS_BUTTON_CLASS[repair.status]
-                            }`}
-                            onClick={() =>
-                              handleStatusButtonClick(
-                                repair.id,
-                                repair.status,
-                                "next",
-                              )
-                            }
-                            onContextMenu={(e) => {
-                              e.preventDefault();
-                              handleStatusButtonClick(
-                                repair.id,
-                                repair.status,
-                                "prev",
-                              );
-                            }}
-                          >
-                            {`Mark As ${
-                              repair.status === RepairStatus.InProgress
-                                ? "Completed"
-                                : repair.status === RepairStatus.Completed
-                                  ? "Picked Up"
-                                  : "In Progress"
-                            }`}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })
+                  return (
+                    <tr
+                      key={repair.id}
+                      className={`repair-row status-${repair.status}`}
+                    >
+                      <td className="repair-code">{repair.repairCode}</td>
+                      <td>{repair.customerName}</td>
+                      <td>{repair.customerPhone}</td>
+                      <td>{formatDate(repair.orderDate)}</td>
+                      <td>
+                        {repair.notes ? (
+                          <CommentTooltip comment={repair.notes} />
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`badge-payment ${PaymentStatus[repair.paymentStatus]}`}
+                        >
+                          {PaymentStatus[repair.paymentStatus]}
+                        </span>
+                      </td>
+                      <td>{formatDueDate(repair.dueDate)}</td>
+                      <td>{formatCurrency(repair.cost)}</td>
+                      <td>
+                        <span className={statusInfo.className}>
+                          {statusInfo.label}
+                        </span>
+                      </td>
+                      <td className="actions-cell">
+                        <EditRepairItemModal
+                          item={{ id: repair.id, cost: repair.cost }}
+                          onRefresh={recallGetRepairs}
+                        />
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => {
+                            setRepairIdToView(repair.id);
+                            setShowInvoice(true);
+                          }}
+                        >
+                          Invoice
+                        </button>
+                        <button
+                          className={`btn status-btn btn-sm ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
+                          onClick={() =>
+                            handleStatusButtonClick(
+                              repair.id,
+                              repair.status,
+                              "next",
+                            )
+                          }
+                          onContextMenu={(e) => {
+                            e.preventDefault();
+                            handleStatusButtonClick(
+                              repair.id,
+                              repair.status,
+                              "prev",
+                            );
+                          }}
+                        >
+                          {repair.status === RepairStatus.InProgress
+                            ? "Complete"
+                            : repair.status === RepairStatus.Completed
+                              ? "Picked Up"
+                              : "In Progress"}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           )}
         </div>
 
@@ -546,7 +367,6 @@ const RepairManagement: React.FC = () => {
           />
         )}
 
-        {/* PAGINATION */}
         <Paginator
           totalRecords={pagination.totalRecords}
           pageNumber={pagination.pageNumber}

@@ -35,7 +35,6 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<Return> Returns { get; set; }
         public virtual DbSet<ReturnItem> ReturnItems { get; set; }
         public virtual DbSet<Repair> Repairs { get; set; }
-        public virtual DbSet<RepairItem> RepairItems { get; set; }
         public virtual DbSet<JewerlyApp.Domain.Entities.MeltRecord> MeltRecords { get; set; }
         public virtual DbSet<PricingSettingLog> PricingSettingLogs { get; set; }
         public virtual DbSet<PrintJob> PrintJobs { get; set; }
@@ -154,12 +153,6 @@ namespace JewerlyApp.Infrastructure.Context
 
             builder.Entity<Repair>(entity =>
             {
-                entity.Property(e => e.TotalCost).HasPrecision(18, 2);
-            });
-
-            builder.Entity<RepairItem>(entity =>
-            {
-                entity.Property(e => e.Weight).HasPrecision(18, 2);
                 entity.Property(e => e.Cost).HasPrecision(18, 2);
                 entity.Property(e => e.DepositPaid).HasPrecision(18, 2);
             });

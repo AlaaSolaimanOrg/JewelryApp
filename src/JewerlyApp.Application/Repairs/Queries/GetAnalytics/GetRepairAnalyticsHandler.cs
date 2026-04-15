@@ -28,7 +28,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetAnalytics
                     TotalRepairs = g.Count(),
                     CompletedRepairs = g.Count(r => r.Status == RepairStatus.Completed || r.Status == RepairStatus.PickedUp),
                     PendingRepairs = g.Count(r => r.Status != RepairStatus.Completed && r.Status != RepairStatus.PickedUp),
-                    TotalRevenue = g.Sum(r => r.TotalCost)
+                    TotalRevenue = g.Sum(r => r.Cost)
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
