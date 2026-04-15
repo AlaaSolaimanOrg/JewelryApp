@@ -35,7 +35,8 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
     }
   }, [showModal, item.cost]);
 
-  const hasChanges = formData.cost !== String(item.cost) && formData.cost.trim() !== "";
+  const hasChanges =
+    formData.cost !== String(item.cost) && formData.cost.trim() !== "";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,8 +111,11 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
                 onChange={handleChange}
                 onKeyDown={(e) => {
                   if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
-                  const digits = formData.cost.replace(".", "").replace("-", "").length;
-                  if (!/[^0-9.]/.test(e.key) && digits >= 12) e.preventDefault();
+                  const digits = formData.cost
+                    .replace(".", "")
+                    .replace("-", "").length;
+                  if (!/[^0-9.]/.test(e.key) && digits >= 12)
+                    e.preventDefault();
                 }}
                 step="0.01"
                 min="0"
