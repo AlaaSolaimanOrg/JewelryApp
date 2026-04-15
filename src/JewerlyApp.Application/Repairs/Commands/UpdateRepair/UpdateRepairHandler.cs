@@ -33,11 +33,8 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
                 };
             }
 
-            repair.Notes = request.Notes;
             repair.Cost = request.Cost;
-            repair.PaymentStatus = request.PaymentStatus;
-            repair.DueDate = request.DueDate;
-            repair.DepositPaid = request.PaymentStatus == PaymentStatus.Paid ? request.Cost : 0;
+
 
             await _context.SaveChangesAsync(cancellationToken);
 

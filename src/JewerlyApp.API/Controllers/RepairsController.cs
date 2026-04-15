@@ -46,8 +46,6 @@ namespace JewerlyApp.API.Controllers
             return CreateResponse(response);
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> GetRepairAnalytics([FromQuery] GetRepairAnalyticsQuery query)
         {

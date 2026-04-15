@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
-import { updateRepairItem } from "../../../apis/repairs.api/repairs.api";
+import { updateRepair } from "../../../apis/repairs.api/repairs.api";
 import { showError, showSuccess } from "../../../utils";
 import "./editRepairItemModal.scss";
 
@@ -24,33 +24,30 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    cost: item.cost,
+    cost: String(item.cost),
   });
 
   useEffect(() => {
     if (showModal) {
       setFormData({
-        cost: item.cost,
+        cost: String(item.cost),
       });
     }
-  }, [showModal]);
+  }, [showModal, item.cost]);
 
-  const hasChanges = formData.cost !== item.cost;
+  const hasChanges = formData.cost !== String(item.cost) && formData.cost.trim() !== "";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: parseFloat(value) || 0,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      const response = await updateRepairItem({
-        repairItemId: item.id,
-        cost: formData.cost,
+      const response = await updateRepair({
+        id: item.id,
+        cost: parseFloat(formData.cost) || 0,
       });
 
       if (response.statusCode === 200 || response.success) {
@@ -58,7 +55,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
         if (onSave) {
           onSave({
             id: item.id,
-            cost: formData.cost,
+            cost: parseFloat(formData.cost) || 0,
           });
         }
         if (onRefresh) {
@@ -78,7 +75,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
 
   const handleCancel = () => {
     setFormData({
-      cost: item.cost,
+      cost: String(item.cost),
     });
     setShowModal(false);
   };
@@ -111,6 +108,11 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
                 name="cost"
                 value={formData.cost}
                 onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) e.preventDefault();
+                  const digits = formData.cost.replace(".", "").replace("-", "").length;
+                  if (!/[^0-9.]/.test(e.key) && digits >= 12) e.preventDefault();
+                }}
                 step="0.01"
                 min="0"
                 placeholder="Enter cost"
