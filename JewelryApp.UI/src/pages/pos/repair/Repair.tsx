@@ -33,7 +33,9 @@ const Repair = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
 
   const [form, setForm] = useState<RepairForm>(formInitialValue);
-  const [errors, setErrors] = useState<Partial<Record<keyof RepairForm, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof RepairForm, string>>
+  >({});
 
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
@@ -111,11 +113,7 @@ const Repair = () => {
           <span>Repair</span>
         </div>
 
-        <RepairItemCard
-          form={form}
-          updateField={updateField}
-          errors={errors}
-        />
+        <RepairItemCard form={form} updateField={updateField} errors={errors} />
       </div>
 
       <div className="footer-buttons">

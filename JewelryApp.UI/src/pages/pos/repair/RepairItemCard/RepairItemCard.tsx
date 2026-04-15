@@ -43,7 +43,10 @@ const RepairItemCard = ({
               min="0"
               value={form.cost}
               onChange={(e) =>
-                updateField("cost", Math.trunc(Number(e.target.value)).toString())
+                updateField(
+                  "cost",
+                  Math.trunc(Number(e.target.value)).toString(),
+                )
               }
               onKeyDown={(e) => {
                 if (e.key === "." || e.key === ",") e.preventDefault();
