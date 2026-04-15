@@ -76,6 +76,7 @@ export const apiRoutes = {
     getStaffPerformance: "Analytics/GetStaffPerformance",
     getAnalyticsSummary: "Analytics/GetAnalyticsSummary",
     getPriceOverTime: "Analytics/GetPriceOverTime",
+    getCustomerRetention: "Analytics/GetCustomerRetention",
   },
   logs: {
     getLogs: "Logs/GetLogs",

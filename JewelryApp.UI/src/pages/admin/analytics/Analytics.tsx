@@ -30,6 +30,7 @@ import AnalyticsSummary from "./analyticsSummary/AnalyticsSummary";
 import { ReportType } from "../../../types/enums";
 import useLocalApi from "../../../hooks/useLocalApi";
 import {
+  getCustomerRetention,
   getPriceOverTime,
   getSalesByCategory,
   getSalesOverTime,
@@ -54,6 +55,12 @@ export interface StaffPerformanceItem {
   staffName: string;
   salesAmount: number;
   commission: number;
+}
+
+export interface CustomerRetentionItem {
+  label: string;
+  count: number;
+  percentage: number;
 }
 
 export interface PriceOverTimeAnalytic {
@@ -146,6 +153,19 @@ const Analytics = () => {
     effectDependency: [appliedFilters, refreshKey],
   }) as { data: PriceOverTimeAnalytic[] };
 
+  const { data: customerRetention } = useLocalApi({
+    apiToCall: (data) => getCustomerRetention(data.payload),
+    payload: {
+      dateFrom: appliedFilters.dateFrom,
+      dateTo: appliedFilters.dateTo,
+      reportType:
+        appliedFilters.reportType == ReportType.AllTime
+          ? null
+          : appliedFilters.reportType,
+    },
+    effectDependency: [appliedFilters, refreshKey],
+  }) as { data: CustomerRetentionItem[] };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -230,7 +250,7 @@ const Analytics = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "right", labels: { boxWidth: 12, padding: 15 } },
+      legend: { position: "right" as const, labels: { boxWidth: 12, padding: 15 } },
     },
     cutout: "60%",
   };
@@ -310,10 +330,28 @@ const Analytics = () => {
     })),
   };
 
+  /* ----------------------------------------------
+      CUSTOMER RETENTION
+  ---------------------------------------------- */
+  const customerRetentionData =
+    customerRetention && customerRetention.length > 0
+      ? {
+          labels: customerRetention.map((c) => `${c.label} (${c.count})`),
+          datasets: [
+            {
+              data: customerRetention.map((c) => c.percentage),
+              backgroundColor: ["#1a3a5f", "#D4AF37"],
+              borderColor: "#FFFFFF",
+              borderWidth: 1,
+            },
+          ],
+        }
+      : { labels: [], datasets: [] };
+
   const priceOverTimeOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { position: "top" } },
+    plugins: { legend: { position: "top" as const } },
     scales: {
       y: { beginAtZero: false, grid: { color: "rgba(0,0,0,0.05)" } },
       x: { grid: { display: false } },
@@ -530,6 +568,37 @@ const Analytics = () => {
           </div>
         </div>
 
+        {/* CUSTOMER RETENTION */}
+        <div className="analytics-card">
+          <div className="analytics-header">
+            <h3 className="analytics-title">
+              <span className="icon-circle">
+                <FaChartPie />
+              </span>
+              Customer Retention
+            </h3>
+
+            {!!customerRetention?.length && (
+              <button
+                className="btn btn-outline btn-small"
+                onClick={() => openFullView("customer_retention")}
+              >
+                <FaExpand />
+              </button>
+            )}
+          </div>
+          <div className="chart-container chart-container-doughnut">
+            {customerRetention && customerRetention.length > 0 ? (
+              <Doughnut data={customerRetentionData} options={doughnutOptions} />
+            ) : (
+              <div className="no-data">
+                <FaChartPie />
+                No data available
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* PRICE OVER TIME - MULTIPLE KARAT TYPES */}
         <div className="analytics-card">
           <div className="analytics-header">
@@ -589,6 +658,13 @@ const Analytics = () => {
 
               {fullViewChart === "staff_performance" && (
                 <Bar data={staffPerformanceData} options={barOptions} />
+              )}
+
+              {fullViewChart === "customer_retention" && (
+                <Doughnut
+                  data={customerRetentionData}
+                  options={doughnutOptions}
+                />
               )}
             </div>
           </div>

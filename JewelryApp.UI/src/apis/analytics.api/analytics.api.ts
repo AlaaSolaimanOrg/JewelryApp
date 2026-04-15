@@ -26,3 +26,7 @@ export const getAnalyticsSummary = async (payload: AnalyticsFilterPayload) => {
 export const getPriceOverTime = async (payload: AnalyticsFilterPayload) => {
   return requestApi("GET", apiRoutes.analytics.getPriceOverTime, payload);
 };
+
+export const getCustomerRetention = async (payload: AnalyticsFilterPayload) => {
+  return requestApi("GET", apiRoutes.analytics.getCustomerRetention, payload);
+};
