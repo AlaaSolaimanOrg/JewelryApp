@@ -250,7 +250,10 @@ const Analytics = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "right" as const, labels: { boxWidth: 12, padding: 15 } },
+      legend: {
+        position: "right" as const,
+        labels: { boxWidth: 12, padding: 15 },
+      },
     },
     cutout: "60%",
   };
@@ -589,7 +592,10 @@ const Analytics = () => {
           </div>
           <div className="chart-container chart-container-doughnut">
             {customerRetention && customerRetention.length > 0 ? (
-              <Doughnut data={customerRetentionData} options={doughnutOptions} />
+              <Doughnut
+                data={customerRetentionData}
+                options={doughnutOptions}
+              />
             ) : (
               <div className="no-data">
                 <FaChartPie />
