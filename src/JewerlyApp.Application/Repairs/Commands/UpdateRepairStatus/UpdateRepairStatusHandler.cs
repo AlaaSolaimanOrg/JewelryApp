@@ -41,7 +41,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
             if (repair.Status == RepairStatus.PickedUp && repair.PaymentStatus != PaymentStatus.Paid)
             {
                 repair.PaymentStatus = PaymentStatus.Paid;
-                repair.DepositPaid = repair.Cost;
             }
 
 

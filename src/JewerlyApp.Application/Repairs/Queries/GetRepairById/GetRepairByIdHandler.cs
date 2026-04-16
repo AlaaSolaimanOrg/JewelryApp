@@ -46,7 +46,6 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                 Status = repair.Status,
                 Notes = repair.Notes,
                 Cost = repair.Cost,
-                DepositPaid = repair.DepositPaid,
                 PaymentStatus = repair.PaymentStatus,
                 DueDate = repair.DueDate,
             };

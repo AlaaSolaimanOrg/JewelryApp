@@ -15,18 +15,27 @@ import { getRepairById } from "../../../apis/repairs.api/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";
-import {
-  PaymentStatus,
-  ProductCategory,
-  RepairType,
-} from "../../../types/enums";
-import { splitCamelCaseWords } from "../../../utils";
 import "./repairInvoiceModal.scss";
 
 interface RepairInvoiceModalProps {
   repairId: string;
   show: boolean;
   onClose: () => void;
+}
+
+interface RepairDetails {
+  id: string;
+  repairCode: string;
+  customerId: string;
+  customerName: string;
+  customerPhone: string;
+  orderDate: string;
+  status: number;
+  notes: string;
+  cost: number;
+  depositPaid: number;
+  paymentStatus: number;
+  dueDate: string;
 }
 
 const RepairInvoiceModal = ({
@@ -43,7 +52,7 @@ const RepairInvoiceModal = ({
     payload: { id: repairId },
     extraEffectCheck: !!repairId && !!show,
     effectDependency: [repairId, show],
-  }) as { data: any };
+  }) as { data: RepairDetails };
 
   const handleEpsonPrintHTML = async () => {
     flushSync(() => setShowThermalPrint(true));
@@ -77,13 +86,6 @@ const RepairInvoiceModal = ({
   const dateObj = repairDetails
     ? new Date(repairDetails?.orderDate)
     : new Date();
-
-  const totalBeforeDiscount = repairDetails
-    ? (repairDetails?.items?.reduce(
-        (s: number, x: any) => s + (x.subtotal ?? x.cost ?? 0),
-        0,
-      ) ?? 0)
-    : 0;
 
   return (
     <Modal
@@ -136,71 +138,13 @@ const RepairInvoiceModal = ({
               </div>
             </div>
 
-            {/* TABLE */}
-            <div className="table-wrapper">
-              <table className="receipt-table">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Repair</th>
-                    <th>Weight</th>
-                    <th>Payment</th>
-                    <th>Cost</th>
-                  </tr>
-                </thead>
-
-                <tbody className="table-body-scrollable">
-                  {repairDetails?.items?.map((i: any) => (
-                    <tr key={i.id}>
-                      <td>
-                        {splitCamelCaseWords(ProductCategory[i.itemType])}
-                      </td>
-                      <td>{splitCamelCaseWords(RepairType[i.repairType])}</td>
-                      <td>{i.weight}g</td>
-                      <td>
-                        <span
-                          className={
-                            i.paymentStatus === PaymentStatus.Paid
-                              ? "payment-badge payment-paid"
-                              : "payment-badge payment-unpaid"
-                          }
-                        >
-                          {i.paymentStatus === PaymentStatus.Paid
-                            ? "Paid"
-                            : "Unpaid"}
-                        </span>
-                      </td>
-                      <td>${i.cost?.toFixed(2)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
             {/* PAYMENT BREAKDOWN */}
             <div className="payment-breakdown">
               <h4>Payment Breakdown</h4>
 
               <div className="summary-item">
-                <span>Total Before Discount:</span>
-                <span>${totalBeforeDiscount?.toFixed(2)}</span>
-              </div>
-
-              {repairDetails?.items?.some((x: any) => x.depositPaid > 0) && (
-                <div className="summary-item">
-                  <span>Total Deposits Paid:</span>
-                  <span>
-                    $
-                    {repairDetails?.items
-                      ?.reduce((s: number, x: any) => s + x.depositPaid, 0)
-                      ?.toFixed(2)}
-                  </span>
-                </div>
-              )}
-
-              <div className="summary-item">
-                <span>Total Cost:</span>
-                <span>${repairDetails?.totalCost?.toFixed(2)}</span>
+                <span>Cost:</span>
+                <span>${repairDetails?.cost?.toFixed(2)}</span>
               </div>
             </div>
 

@@ -154,7 +154,6 @@ namespace JewerlyApp.Infrastructure.Context
             builder.Entity<Repair>(entity =>
             {
                 entity.Property(e => e.Cost).HasPrecision(18, 2);
-                entity.Property(e => e.DepositPaid).HasPrecision(18, 2);
             });
 
             builder.Entity<JewerlyApp.Domain.Entities.MeltRecord>(entity =>

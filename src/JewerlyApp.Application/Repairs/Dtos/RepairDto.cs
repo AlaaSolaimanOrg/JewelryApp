@@ -14,7 +14,6 @@ namespace JewerlyApp.Application.Repairs.Dtos
         public RepairStatus Status { get; set; }
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
-        public decimal DepositPaid { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DateOnly? DueDate { get; set; }
     }

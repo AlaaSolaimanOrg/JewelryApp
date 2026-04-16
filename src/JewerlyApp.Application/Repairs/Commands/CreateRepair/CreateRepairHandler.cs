@@ -54,7 +54,6 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 Status = RepairStatus.InProgress,
                 Notes = request.Notes,
                 Cost = request.Cost,
-                DepositPaid = deposit,
                 PaymentStatus = request.PaymentStatus,
                 DueDate = request.DueDate,
             };

@@ -246,7 +246,19 @@ const AddEditProduct = ({ isEdit }) => {
           <MdOutlineAddShoppingCart className="icon" />
           {isEdit ? <span>Edit Product</span> : <span>Add New Product</span>}
         </h1>
+
         <div className="page-actions">
+          {!isEdit && (
+            <label className="keep-fields-checkbox">
+              <input
+                type="checkbox"
+                checked={keepFieldsAfterSave}
+                onChange={(e) => setKeepFieldsAfterSave(e.target.checked)}
+              />
+              Preserve
+            </label>
+          )}
+
           <button className="btn-md btn-gray" onClick={handleClearClick}>
             <FaTimes className="icon" />
             clear
@@ -261,16 +273,6 @@ const AddEditProduct = ({ isEdit }) => {
             Back To Inventory
           </button>
 
-          {!isEdit && (
-            <label className="keep-fields-checkbox">
-              <input
-                type="checkbox"
-                checked={keepFieldsAfterSave}
-                onChange={(e) => setKeepFieldsAfterSave(e.target.checked)}
-              />
-              Preserve
-            </label>
-          )}
           <button
             className="btn-md btn-gold"
             disabled={checkAnyProductFieldHasNoValue || !files.length}
