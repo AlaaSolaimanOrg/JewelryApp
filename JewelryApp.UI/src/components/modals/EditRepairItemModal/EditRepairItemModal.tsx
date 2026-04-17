@@ -89,7 +89,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
         <button
           className="btn-edit-icon"
           onClick={() => setShowModal(true)}
-          title="Edit item"
+          title="Edit repair"
         >
           <FaEdit />
         </button>
@@ -97,7 +97,7 @@ const EditRepairItemModal: React.FC<EditRepairItemModalProps> = ({
 
       <Modal show={showModal} onHide={handleCancel} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Repair Item</Modal.Title>
+          <Modal.Title>Edit Repair</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

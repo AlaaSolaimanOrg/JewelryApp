@@ -12,6 +12,7 @@ import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
 import "./home.scss";
+import { GiCardPickup } from "react-icons/gi";
 
 export interface Sale {
   id: string;
@@ -65,7 +66,7 @@ const Home = () => {
           </Link>
           <Link to={"/pickup"} className="text-decoration-none">
             <button className="btn btn-success btn-lg">
-              <FaTools /> PickUp Service
+              <GiCardPickup /> PickUp Service
             </button>
           </Link>
         </div>
