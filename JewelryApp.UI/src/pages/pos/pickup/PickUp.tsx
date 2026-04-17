@@ -6,7 +6,6 @@ import {
   FaEllipsisV,
   FaFileInvoice,
   FaList,
-  FaTools,
 } from "react-icons/fa";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./pickUp.scss";
@@ -205,7 +204,7 @@ const PickUp: React.FC = () => {
   };
 
   return (
-    <div className="pickUp-page">
+    <div id="pickUp-page" className="page-content pickUp-page">
       <section className="section repair-list-section">
         <div className="section-header">
           <h2 className="section-title">
@@ -216,7 +215,7 @@ const PickUp: React.FC = () => {
         </div>
 
         {/* FILTERS */}
-        <div className="filter-section">
+        <div className="filter-section mt-4">
           <div className="search-container">
             <input
               type="text"
