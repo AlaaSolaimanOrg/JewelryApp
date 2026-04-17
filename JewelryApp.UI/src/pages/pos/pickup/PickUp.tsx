@@ -58,14 +58,11 @@ const PickUp: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
-    
-      const modalElement = document.querySelector('.modal');
+
+      const modalElement = document.querySelector(".modal");
       if (modalElement && modalElement.contains(target)) return;
 
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setOpenDropdownId(null);
       }
     };
