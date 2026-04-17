@@ -2,13 +2,20 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import Analytics from "../pages/admin/analytics/Analytics";
-import InventoryReports from "../pages/admin/InventoryReports/InventoryReports";
-import RepairManagement from "../pages/admin/repairManagement/RepairManagement";
-import Login from "../pages/general/login/Login";
-import Unauthorized from "../pages/general/unauthorized/Unauthorized";
 
-// Lazy load all components
+const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
+const InventoryReports = lazy(
+  () => import("../pages/admin/InventoryReports/InventoryReports"),
+);
+const PickUp = lazy(() => import("../pages/pos/pickup/PickUp"));
+const Login = lazy(() => import("../pages/general/login/Login"));
+const Unauthorized = lazy(
+  () => import("../pages/general/unauthorized/Unauthorized"),
+);
+const RepairAnalytics = lazy(
+  () => import("../pages/admin/repairAnalytics/RepairAnalytics"),
+);
+
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
 const AddEditProduct = lazy(
   () => import("../pages/admin/addEditProduct/AddEditProduct"),
@@ -100,6 +107,7 @@ const AppRoutes = () => {
             <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/repair" element={<Repair />} />
             <Route path="/return" element={<ReturnPage />} />
+            <Route path="pickUp" element={<PickUp />} />
           </Route>
 
           <Route
@@ -114,10 +122,7 @@ const AppRoutes = () => {
               path="/admin/inventory/melted"
               element={<MeltedProducts />}
             />
-            <Route
-              path="admin/repairManagement"
-              element={<RepairManagement />}
-            />
+            <Route path="admin/repairAnalytics" element={<RepairAnalytics />} />
             <Route
               path="admin/returnManagement"
               element={<ReturnManagement />}

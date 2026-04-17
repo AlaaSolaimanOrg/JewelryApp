@@ -63,6 +63,11 @@ const Home = () => {
               <FaTools /> Repair Service
             </button>
           </Link>
+          <Link to={"/pickup"} className="text-decoration-none">
+            <button className="btn btn-success btn-lg">
+              <FaTools /> PickUp Service
+            </button>
+          </Link>
         </div>
 
         <div className="recent-transactions">

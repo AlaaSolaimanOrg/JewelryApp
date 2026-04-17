@@ -1,7 +1,15 @@
-﻿import React, { useState } from "react";
-import { FaList, FaTools } from "react-icons/fa";
-import "./repairManagement.scss";
+﻿import React, { useEffect, useRef, useState } from "react";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaEdit,
+  FaEllipsisV,
+  FaFileInvoice,
+  FaList,
+  FaTools,
+} from "react-icons/fa";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import "./pickUp.scss";
 
 import {
   PaymentStatus,
@@ -13,13 +21,12 @@ import {
   getRepairs,
   updateRepairStatus,
 } from "../../../apis/repairs.api/repairs.api";
-import Paginator from "../../../components/Paginator/Paginator";
-import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
-import RepairStatsCards from "./RepairStatsCards/RepairStatsCards";
+import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
 import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
+import Paginator from "../../../components/Paginator/Paginator";
+import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
 import SmsConfirmPopup from "./SmsConfirmPopup/SmsConfirmPopup";
 
 export interface Repair {
@@ -37,7 +44,7 @@ export interface Repair {
   dueDate: string | null;
 }
 
-const RepairManagement: React.FC = () => {
+const PickUp: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [showInvoice, setShowInvoice] = useState(false);
   const [repairIdToView, setRepairIdToView] = useState<string>("");
@@ -46,6 +53,21 @@ const RepairManagement: React.FC = () => {
     direction: "next" | "prev";
     currentStatus: RepairStatus;
   } | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenDropdownId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const {
     data: repairs,
@@ -183,16 +205,7 @@ const RepairManagement: React.FC = () => {
   };
 
   return (
-    <div className="repair-management-page">
-      <div className="page-header">
-        <h1 className="page-title">
-          <FaTools className="icon" />
-          <span>Repair Management</span>
-        </h1>
-      </div>
-
-      <RepairStatsCards />
-
+    <div className="pickUp-page">
       <section className="section repair-list-section">
         <div className="section-header">
           <h2 className="section-title">
@@ -298,43 +311,87 @@ const RepairManagement: React.FC = () => {
                         </span>
                       </td>
                       <td className="actions-cell">
-                        <EditRepairItemModal
-                          item={{ id: repair.id, cost: repair.cost }}
-                          onRefresh={recallGetRepairs}
-                        />
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={() => {
-                            setRepairIdToView(repair.id);
-                            setShowInvoice(true);
-                          }}
-                        >
-                          Invoice
-                        </button>
-                        <button
-                          className={`btn status-btn btn-sm ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
-                          onClick={() =>
-                            handleStatusButtonClick(
-                              repair.id,
-                              repair.status,
-                              "next",
-                            )
+                        <div
+                          className="action-cell"
+                          ref={
+                            openDropdownId === repair.id ? dropdownRef : null
                           }
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            handleStatusButtonClick(
-                              repair.id,
-                              repair.status,
-                              "prev",
-                            );
-                          }}
                         >
-                          {repair.status === RepairStatus.InProgress
-                            ? "Complete"
-                            : repair.status === RepairStatus.Completed
-                              ? "Picked Up"
-                              : "In Progress"}
-                        </button>
+                          <button
+                            className="action-menu-btn"
+                            onClick={() =>
+                              setOpenDropdownId(
+                                openDropdownId === repair.id ? null : repair.id,
+                              )
+                            }
+                          >
+                            <FaEllipsisV />
+                          </button>
+
+                          {openDropdownId === repair.id && (
+                            <div className="action-dropdown">
+                              <EditRepairItemModal
+                                item={{ id: repair.id, cost: repair.cost }}
+                                onRefresh={() => {
+                                  recallGetRepairs();
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <button className="dropdown-item">
+                                  <FaEdit />
+                                  Edit
+                                </button>
+                              </EditRepairItemModal>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => {
+                                  setRepairIdToView(repair.id);
+                                  setShowInvoice(true);
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <FaFileInvoice />
+                                Invoice
+                              </button>
+                              <button
+                                className={`dropdown-item status-dropdown-item ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
+                                onClick={() => {
+                                  handleStatusButtonClick(
+                                    repair.id,
+                                    repair.status,
+                                    "next",
+                                  );
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <FaArrowRight />
+                                {repair.status === RepairStatus.InProgress
+                                  ? "Mark Complete"
+                                  : repair.status === RepairStatus.Completed
+                                    ? "Mark Picked Up"
+                                    : "Mark In Progress"}
+                              </button>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => {
+                                  handleStatusButtonClick(
+                                    repair.id,
+                                    repair.status,
+                                    "prev",
+                                  );
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <FaArrowLeft />
+                                {repair.status === RepairStatus.PickedUp
+                                  ? "Back to Completed"
+                                  : repair.status === RepairStatus.Completed
+                                    ? "Back to In Progress"
+                                    : "Back to Picked Up"}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -378,4 +435,4 @@ const RepairManagement: React.FC = () => {
   );
 };
 
-export default RepairManagement;
+export default PickUp;

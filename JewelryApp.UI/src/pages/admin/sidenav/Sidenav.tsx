@@ -84,9 +84,9 @@ const SideNav = () => {
     },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
     {
-      label: "Repair Management",
+      label: "Repair Analytics",
       icon: <FaTools className="icon" />,
-      path: "/admin/repairManagement",
+      path: "/admin/repairAnalytics",
     },
     {
       label: "Return Management",
@@ -152,7 +152,7 @@ const SideNav = () => {
   const filteredNavItems = isTerminalOnlyUser
     ? navItems
         .filter((item) =>
-          ["Inventory", "Repair Management", "Return Management"].includes(
+          ["Inventory", "Repair Analytics", "Return Management"].includes(
             item.label,
           ),
         )
