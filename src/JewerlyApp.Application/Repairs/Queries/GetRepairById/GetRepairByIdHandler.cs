@@ -48,6 +48,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                 Cost = repair.Cost,
                 PaymentStatus = repair.PaymentStatus,
                 DueDate = repair.DueDate,
+                SlotNumber = repair.SlotNumber,
             };
 
             return new GenericResponse<RepairDto>

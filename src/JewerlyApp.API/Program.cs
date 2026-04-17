@@ -37,7 +37,7 @@ builder.Services.AddHealthChecks()
         HealthCheckResult.Healthy($"Environment: {builder.Environment.EnvironmentName}"));
 
 
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()

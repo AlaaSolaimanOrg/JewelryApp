@@ -6,7 +6,10 @@ using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,10 +18,12 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
     public class CreateRepairHandler : IRequestHandler<CreateRepairCommand, GenericResponse<Guid>>
     {
         private readonly IApplicationDbContext _context;
+        private readonly RepairSettings _repairSettings;
 
-        public CreateRepairHandler(IApplicationDbContext context)
+        public CreateRepairHandler(IApplicationDbContext context, IOptions<RepairSettings> repairSettings)
         {
             _context = context;
+            _repairSettings = repairSettings.Value;
         }
 
         public async Task<GenericResponse<Guid>> Handle(CreateRepairCommand request, CancellationToken cancellationToken)
@@ -42,9 +47,17 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 };
             }
 
-            var nextRepairCode = await GenerateRepairCodeAsync(cancellationToken);
+            var slotNumber = await AssignSlotNumberAsync(cancellationToken);
+            if (slotNumber == null)
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_No_Slots_Available
+                };
+            }
 
-            var deposit = request.PaymentStatus == PaymentStatus.Paid ? request.Cost : 0;
+            var nextRepairCode = await GenerateRepairCodeAsync(cancellationToken);
 
             var repair = new Repair
             {
@@ -56,6 +69,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 Cost = request.Cost,
                 PaymentStatus = request.PaymentStatus,
                 DueDate = request.DueDate,
+                SlotNumber = slotNumber.Value,
             };
 
             _context.Repairs.Add(repair);
@@ -67,6 +81,23 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 StatusCode = ResponseStatusCode.Created,
                 Message = Messages.Success_Repair_Created
             };
+        }
+
+        private async Task<int?> AssignSlotNumberAsync(CancellationToken cancellationToken)
+        {
+            var occupiedSlots = (await _context.Repairs
+                .Where(r => r.Status != RepairStatus.PickedUp && r.SlotNumber != null)
+                .Select(r => r.SlotNumber!.Value)
+                .ToListAsync(cancellationToken))
+                .ToHashSet();
+
+            for (int slot = 1; slot <= _repairSettings.MaxSlots; slot++)
+            {
+                if (!occupiedSlots.Contains(slot))
+                    return slot;
+            }
+
+            return null;
         }
 
         private async Task<string> GenerateRepairCodeAsync(CancellationToken cancellationToken)

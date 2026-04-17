@@ -15,5 +15,6 @@ namespace JewerlyApp.Domain.Entities
         public decimal Cost { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public DateOnly? DueDate { get; set; }
+        public int? SlotNumber { get; set; }
     }
 }
