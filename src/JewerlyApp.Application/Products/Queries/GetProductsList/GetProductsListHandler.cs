@@ -139,7 +139,10 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,
-                    }).ToList()
+                    }).ToList(),
+                    DaysInInventory = product.CreatedDate.HasValue
+                        ? (int)(DateTime.UtcNow - product.CreatedDate.Value).TotalDays
+                        : null
                 };
             });
 

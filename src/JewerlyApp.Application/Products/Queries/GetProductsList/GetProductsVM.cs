@@ -25,5 +25,6 @@ using JewerlyApp.Domain.Enums;
             public string? Specification { get; set; }
             public List<ProductImageVM> Images { get; set; } = new();
             public List<string> Tags { get; set; } = new();
+            public int? DaysInInventory { get; set; }
         }
     }

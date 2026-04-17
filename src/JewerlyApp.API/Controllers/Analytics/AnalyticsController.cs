@@ -1,6 +1,7 @@
 using JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary;
 using JewerlyApp.Application.Analytics.Queries.GetCustomerRetention;
 using JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime;
+using JewerlyApp.Application.Analytics.Queries.GetInventoryAging;
 using JewerlyApp.Application.Analytics.Queries.GetSalesByCategory;
 using JewerlyApp.Application.Analytics.Queries.GetSalesOverTime;
 using JewerlyApp.Application.Analytics.Queries.GetStaffPerformance;
@@ -82,6 +83,16 @@ namespace JewerlyApp.API.Controllers.Analytics
         public async Task<IActionResult> GetCustomerRetention([FromQuery] GetCustomerRetentionQuery query)
         {
             var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get inventory aging analytics — how long items sit before selling
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetInventoryAging()
+        {
+            var response = await Mediator.Send(new GetInventoryAgingQuery());
             return CreateResponse(response);
         }
     }
