@@ -290,15 +290,11 @@ const PickUp: React.FC = () => {
                     >
                       <td className="repair-code">{repair.repairCode}</td>
                       <td>
-                        <span
-                          className={`slot-number-tag ${
-                            repair.status === RepairStatus.PickedUp
-                              ? "slot-pickedup"
-                              : ""
-                          }`}
-                        >
-                          {repair.slotNumber}
-                        </span>
+                        {repair.status === RepairStatus.PickedUp ? (
+                          <span className="slot-number-hidden">-</span>
+                        ) : (
+                          <span className="slot-number-tag">{repair.slotNumber}</span>
+                        )}
                       </td>
                       <td>{repair.customerName}</td>
                       <td>{repair.customerPhone}</td>
@@ -385,24 +381,7 @@ const PickUp: React.FC = () => {
                                     ? "Mark Picked Up"
                                     : "Mark In Progress"}
                               </button>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => {
-                                  handleStatusButtonClick(
-                                    repair.id,
-                                    repair.status,
-                                    "prev",
-                                  );
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <FaArrowLeft />
-                                {repair.status === RepairStatus.PickedUp
-                                  ? "Back to Completed"
-                                  : repair.status === RepairStatus.Completed
-                                    ? "Back to In Progress"
-                                    : "Back to Picked Up"}
-                              </button>
+                              {/* Back action removed per UX update */}
                             </div>
                           )}
                         </div>

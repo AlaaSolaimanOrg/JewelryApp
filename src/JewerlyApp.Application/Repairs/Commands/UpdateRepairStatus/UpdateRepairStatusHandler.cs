@@ -38,10 +38,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
             repair.Status = request.Status;
 
-            if (repair.Status == RepairStatus.PickedUp && repair.PaymentStatus != PaymentStatus.Paid)
-            {
-                repair.PaymentStatus = PaymentStatus.Paid;
-            }
 
 
             if (request.SendSMS && !string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
