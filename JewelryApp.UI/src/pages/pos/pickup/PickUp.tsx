@@ -1,11 +1,11 @@
 ﻿import React, { useEffect, useRef, useState } from "react";
 import {
-  FaArrowLeft,
   FaArrowRight,
   FaEdit,
   FaEllipsisV,
   FaFileInvoice,
   FaList,
+  FaDollarSign,
 } from "react-icons/fa";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./pickUp.scss";
@@ -19,6 +19,7 @@ import {
 import {
   getRepairs,
   updateRepairStatus,
+  updateRepairPaymentStatus,
 } from "../../../apis/repairs.api/repairs.api";
 import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
 import CustomLoader from "../../../components/CustomLoader/CustomLoader";
@@ -95,6 +96,33 @@ const PickUp: React.FC = () => {
       day: "numeric",
       year: "numeric",
     });
+  };
+
+  const handleTogglePaymentStatus = async (
+    repairId: string,
+    currentPaymentStatus: PaymentStatus,
+  ) => {
+    const newPaymentStatus =
+      currentPaymentStatus === PaymentStatus.Paid
+        ? PaymentStatus.Unpaid
+        : PaymentStatus.Paid;
+
+    try {
+      const response = await updateRepairPaymentStatus({
+        id: repairId,
+        newPaymentStatus,
+      });
+
+      if (response.statusCode === 200 || response.success) {
+        showSuccess("Payment status updated");
+        recallGetRepairs();
+      } else {
+        showError(response.message || "Failed to update payment status");
+      }
+    } catch (err) {
+      console.error(err);
+      showError("Error updating payment status");
+    }
   };
 
   const formatDueDate = (dueDate: string | null) => {
@@ -363,6 +391,21 @@ const PickUp: React.FC = () => {
                                 <FaFileInvoice />
                                 Invoice
                               </button>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => {
+                                    handleTogglePaymentStatus(
+                                      repair.id,
+                                      repair.paymentStatus,
+                                    );
+                                    setOpenDropdownId(null);
+                                  }}
+                                >
+                                  <FaDollarSign />
+                                  {repair.paymentStatus === PaymentStatus.Paid
+                                    ? "Mark Unpaid"
+                                    : "Mark Paid"}
+                                </button>
                               <button
                                 className={`dropdown-item status-dropdown-item ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
                                 onClick={() => {
