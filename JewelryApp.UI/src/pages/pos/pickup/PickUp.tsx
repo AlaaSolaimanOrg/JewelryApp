@@ -31,6 +31,7 @@ import SmsConfirmPopup from "./SmsConfirmPopup/SmsConfirmPopup";
 export interface Repair {
   id: string;
   repairCode: string;
+  slotNumber: string;
   customerId: string;
   customerName: string;
   customerPhone: string;
@@ -266,6 +267,7 @@ const PickUp: React.FC = () => {
               <thead>
                 <tr>
                   <th>Code</th>
+                  <th>Slot</th>
                   <th>Customer</th>
                   <th>Phone</th>
                   <th>Order Date</th>
@@ -287,6 +289,9 @@ const PickUp: React.FC = () => {
                       className={`repair-row status-${repair.status}`}
                     >
                       <td className="repair-code">{repair.repairCode}</td>
+                      <td>
+                        <span className="slot-number-tag">{repair.slotNumber}</span>
+                      </td>
                       <td>{repair.customerName}</td>
                       <td>{repair.customerPhone}</td>
                       <td>{formatDate(repair.orderDate)}</td>
