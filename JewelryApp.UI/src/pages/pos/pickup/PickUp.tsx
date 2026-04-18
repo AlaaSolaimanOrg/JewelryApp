@@ -290,7 +290,13 @@ const PickUp: React.FC = () => {
                     >
                       <td className="repair-code">{repair.repairCode}</td>
                       <td>
-                        <span className="slot-number-tag">
+                        <span
+                          className={`slot-number-tag ${
+                            repair.status === RepairStatus.PickedUp
+                              ? "slot-pickedup"
+                              : ""
+                          }`}
+                        >
                           {repair.slotNumber}
                         </span>
                       </td>

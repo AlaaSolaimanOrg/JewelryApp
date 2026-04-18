@@ -430,4 +430,12 @@
     font-family: "Roboto Mono", monospace;
     font-size: 13px;
   }
+
+  /* Highlight slot when repair is picked up */
+  .slot-number-tag.slot-pickedup {
+    background: #e3f2fd;
+    border-color: #cfe8fb;
+    color: #1565c0;
+    box-shadow: 0 1px 0 rgba(21, 101, 192, 0.06);
+  }
 }
