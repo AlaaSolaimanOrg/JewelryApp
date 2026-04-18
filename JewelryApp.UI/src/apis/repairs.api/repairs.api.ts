@@ -37,7 +37,11 @@ export const updateRepairPaymentStatus = async (payload: {
   id: string;
   newPaymentStatus: PaymentStatus;
 }) => {
-  return requestApi("PUT", apiRoutes.repairs.updateRepairPaymentStatus, payload);
+  return requestApi(
+    "PUT",
+    apiRoutes.repairs.updateRepairPaymentStatus,
+    payload,
+  );
 };
 
 export const getRepairById = async (payload: { id: string }) => {

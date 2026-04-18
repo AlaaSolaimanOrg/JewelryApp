@@ -36,6 +36,7 @@ interface RepairDetails {
   depositPaid: number;
   paymentStatus: number;
   dueDate: string;
+  slotNumber?: number | null;
 }
 
 const RepairInvoiceModal = ({
@@ -138,13 +139,16 @@ const RepairInvoiceModal = ({
               </div>
             </div>
 
-            {/* PAYMENT BREAKDOWN */}
-            <div className="payment-breakdown">
-              <h4>Payment Breakdown</h4>
+            {/* TOTAL & SLOT */}
+            <div className="receipt-totals two-up">
+              <div className="receipt-total">
+                <div className="total-label">Cost</div>
+                <div className="total-value">${repairDetails?.cost?.toFixed(2)}</div>
+              </div>
 
-              <div className="summary-item">
-                <span>Cost:</span>
-                <span>${repairDetails?.cost?.toFixed(2)}</span>
+              <div className="slot-box">
+                <div className="slot-label">Slot</div>
+                <div className="slot-value">{repairDetails?.slotNumber ?? "-"}</div>
               </div>
             </div>
 
