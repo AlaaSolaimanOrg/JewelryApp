@@ -98,7 +98,8 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
 
                 query = query.Where(r =>
                     r.Customer.Name.ToLower().Contains(s) ||
-                    r.Customer.PhoneNumber.Contains(s));
+                    r.Customer.PhoneNumber.Contains(s) ||
+                    r.RepairCode.Contains(s));
             }
 
             return query;
