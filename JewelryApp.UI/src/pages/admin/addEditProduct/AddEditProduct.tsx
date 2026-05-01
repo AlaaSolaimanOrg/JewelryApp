@@ -275,7 +275,7 @@ const AddEditProduct = ({ isEdit }) => {
 
           <button
             className="btn-md btn-gold"
-            disabled={checkAnyProductFieldHasNoValue || !files.length}
+            disabled={checkAnyProductFieldHasNoValue}
             onClick={callCreateProduct}
           >
             <FaSave className="icon" /> Save Product
