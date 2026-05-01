@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { FaClone, FaEllipsisV, FaPlusCircle, FaTimes } from "react-icons/fa";
 import type { Product } from "../../types";
-import { KaratType } from "../../../../../types/enums";
 import "./productsSection.scss";
 import preventSignOnKeyDown from "../../../../../utils";
+import AddProductModal from "../../../../../components/modals/AddProductModal/AddProductModal";
 
 interface Props {
   products: Product[];
-  handleManualEntry: () => void;
+  onProductAdded: (product: any) => void;
   handleRemoveProduct: (idx: number) => void;
   handleManualProductChange: (idx: number, field: string, value: any) => void;
   onApplyPriceToKarat: (karatType: any, pricePerGram: string | number) => void;
@@ -15,11 +15,12 @@ interface Props {
 
 const ProductsSection: React.FC<Props> = ({
   products,
-  handleManualEntry,
+  onProductAdded,
   handleRemoveProduct,
   handleManualProductChange,
   onApplyPriceToKarat,
 }) => {
+  const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,10 +65,10 @@ const ProductsSection: React.FC<Props> = ({
         </thead>
         <tbody id="productsTableBody">
           {products?.map((product, idx) => (
-            <tr key={idx} className={product.manual ? "manual-row" : ""}>
+            <tr key={idx}>
               <td>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  {!product.manual && product.images?.[0] && (
+                  {product.images?.[0] && (
                     <img
                       className="product-image"
                       src={`${import.meta.env.VITE_API_URL}${
@@ -76,50 +77,10 @@ const ProductsSection: React.FC<Props> = ({
                       alt={product.name}
                     />
                   )}
-                  <div style={{ marginLeft: "10px" }}>
-                    {product.manual ? (
-                      <input
-                        type="text"
-                        className="product-name-input"
-                        placeholder="Product Name"
-                        value={product.name}
-                        onChange={(e) =>
-                          handleManualProductChange(idx, "name", e.target.value)
-                        }
-                      />
-                    ) : (
-                      product.name
-                    )}
-                  </div>
+                  <div style={{ marginLeft: "10px" }}>{product.name}</div>
                 </div>
               </td>
-              <td>
-                {product.manual ? (
-                  <select
-                    value={product.karatType as any}
-                    onChange={(e) =>
-                      handleManualProductChange(
-                        idx,
-                        "karatType",
-                        e.target.value,
-                      )
-                    }
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                    }}
-                  >
-                    <option value={KaratType.Karat18}>18K</option>
-                    <option value={KaratType.Karat21}>21K</option>
-                    <option value={KaratType.Karat22}>22K</option>
-                    <option value={KaratType.Karat24}>24K</option>
-                  </select>
-                ) : (
-                  product.karatType
-                )}
-              </td>
+              <td>{product.karatType}</td>
               <td>
                 <input
                   type="number"
@@ -151,7 +112,7 @@ const ProductsSection: React.FC<Props> = ({
                 <input
                   type="text"
                   className="weight-input"
-                  placeholder={product.manual ? "0.0g" : ""}
+                  placeholder=""
                   value={product.weight as any}
                   onChange={(e) =>
                     handleManualProductChange(idx, "weight", e.target.value)
@@ -163,7 +124,7 @@ const ProductsSection: React.FC<Props> = ({
                 <input
                   type="text"
                   className="price-input"
-                  placeholder={product.manual ? "$0.00" : ""}
+                  placeholder=""
                   value={product.pricePerGram as any}
                   onChange={(e) =>
                     handleManualProductChange(
@@ -270,7 +231,7 @@ const ProductsSection: React.FC<Props> = ({
               <button
                 className="manual-entry-btn"
                 id="manualEntryBtn"
-                onClick={handleManualEntry}
+                onClick={() => setShowAddProductModal(true)}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -281,7 +242,7 @@ const ProductsSection: React.FC<Props> = ({
                   fontSize: "2rem",
                   color: "var(--dark)",
                 }}
-                title="Add manual entry"
+                title="Add product"
               >
                 <FaPlusCircle />
               </button>
@@ -289,6 +250,15 @@ const ProductsSection: React.FC<Props> = ({
           </tr>
         </tfoot>
       </table>
+
+      <AddProductModal
+        show={showAddProductModal}
+        onClose={() => setShowAddProductModal(false)}
+        onProductAdded={(product) => {
+          onProductAdded(product);
+          setShowAddProductModal(false);
+        }}
+      />
     </section>
   );
 };

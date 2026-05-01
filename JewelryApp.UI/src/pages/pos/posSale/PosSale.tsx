@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createSale } from "../../../apis/sales.api/sales.api";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import { DiscountType, KaratType } from "../../../types/enums";
+import { DiscountType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
@@ -156,30 +156,6 @@ const MainPosPage: React.FC = () => {
     // Calculate cash amount as total - card, and fix precision
     const cashValue = Math.max(0, parseFloat((total - cardValue).toFixed(4)));
     setCashAmount(cashValue);
-  };
-  // Manual entry
-  // In handleManualEntry function:
-  const handleManualEntry = () => {
-    setProducts([
-      ...products,
-      {
-        name: "",
-        images: [],
-        karatType: KaratType.Karat18,
-        weight: 0,
-        originalPricePerGram: 0,
-        pricePerGram: 0,
-        manual: true,
-        id: null,
-        sku: null,
-        quantity: 0,
-        quantityForSale: 1, // Add default quantity
-        category: 0 as any,
-        productType: 0 as any,
-        description: "",
-        price: 0,
-      },
-    ]);
   };
   // Remove product
   const handleRemoveProduct = (idx: number) => {
@@ -338,7 +314,9 @@ const MainPosPage: React.FC = () => {
 
       <ProductsSection
         products={products}
-        handleManualEntry={handleManualEntry}
+        onProductAdded={(product) =>
+          setProducts((prev) => [...prev, product])
+        }
         handleRemoveProduct={handleRemoveProduct}
         handleManualProductChange={handleManualProductChange}
         onApplyPriceToKarat={handleApplyPriceToKarat}

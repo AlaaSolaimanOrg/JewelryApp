@@ -1,0 +1,16 @@
+.add-product-modal {
+  .modal-header {
+    background: var(--dark);
+    color: #fff;
+    border-bottom: 1px solid white;
+
+    .modal-title {
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+
+    .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+  }
+}
