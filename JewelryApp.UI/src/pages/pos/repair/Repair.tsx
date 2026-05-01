@@ -15,6 +15,8 @@ export interface RepairForm {
   cost: string;
   paymentStatus: PaymentStatus | "";
   dueDate: string;
+  receiverDifferent: boolean;
+  receiverName: string;
 }
 
 const formInitialValue: RepairForm = {
@@ -22,6 +24,8 @@ const formInitialValue: RepairForm = {
   cost: "",
   paymentStatus: PaymentStatus.Unpaid,
   dueDate: "",
+  receiverDifferent: false,
+  receiverName: "",
 };
 
 const Repair = () => {
@@ -40,7 +44,7 @@ const Repair = () => {
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
 
-  const updateField = (field: keyof RepairForm, value: string) => {
+  const updateField = (field: keyof RepairForm, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -68,6 +72,9 @@ const Repair = () => {
       cost: Number(form.cost) || 0,
       paymentStatus: Number(form.paymentStatus),
       dueDate: form.dueDate || null,
+      receiverName: form.receiverDifferent && form.receiverName.trim()
+        ? form.receiverName.trim()
+        : null,
     };
 
     try {

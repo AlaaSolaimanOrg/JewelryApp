@@ -70,6 +70,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 PaymentStatus = request.PaymentStatus,
                 DueDate = request.DueDate,
                 SlotNumber = slotNumber.Value,
+                ReceiverName = string.IsNullOrWhiteSpace(request.ReceiverName) ? null : request.ReceiverName.Trim(),
             };
 
             _context.Repairs.Add(repair);

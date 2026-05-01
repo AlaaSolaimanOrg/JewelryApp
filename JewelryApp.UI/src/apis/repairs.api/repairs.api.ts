@@ -8,6 +8,7 @@ export const createRepair = async (payload: {
   cost: number;
   paymentStatus: PaymentStatus;
   dueDate?: string | null;
+  receiverName?: string | null;
 }) => {
   return requestApi("POST", apiRoutes.repairs.createRepair, payload);
 };

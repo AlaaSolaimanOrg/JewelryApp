@@ -43,6 +43,7 @@ export interface Repair {
   depositPaid: number;
   paymentStatus: PaymentStatus;
   dueDate: string | null;
+  receiverName: string | null;
 }
 
 const PickUp: React.FC = () => {
@@ -324,7 +325,14 @@ const PickUp: React.FC = () => {
                           <span className="slot-number-tag">{repair.slotNumber}</span>
                         )}
                       </td>
-                      <td>{repair.customerName}</td>
+                      <td>
+                        <div>{repair.customerName}</div>
+                        {repair.receiverName && (
+                          <div style={{ fontSize: "11px", color: "var(--gold)", marginTop: "2px" }}>
+                            Receiver: {repair.receiverName}
+                          </div>
+                        )}
+                      </td>
                       <td>{repair.customerPhone}</td>
                       <td>{formatDate(repair.orderDate)}</td>
                       <td>

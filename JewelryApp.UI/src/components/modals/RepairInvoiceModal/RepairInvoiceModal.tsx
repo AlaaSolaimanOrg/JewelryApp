@@ -37,6 +37,7 @@ interface RepairDetails {
   paymentStatus: number;
   dueDate: string;
   slotNumber?: number | null;
+  receiverName?: string | null;
 }
 
 const RepairInvoiceModal = ({
@@ -136,6 +137,12 @@ const RepairInvoiceModal = ({
                 <strong>Customer:</strong> {repairDetails?.customerName}
                 <br />
                 <strong>Phone:</strong> {repairDetails?.customerPhone}
+                {repairDetails?.receiverName && (
+                  <>
+                    <br />
+                    <strong>Receiver:</strong> {repairDetails.receiverName}
+                  </>
+                )}
               </div>
             </div>
 

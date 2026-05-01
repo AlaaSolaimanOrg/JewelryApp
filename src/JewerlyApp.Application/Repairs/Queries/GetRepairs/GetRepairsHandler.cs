@@ -61,6 +61,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 PaymentStatus = r.PaymentStatus,
                 DueDate = r.DueDate,
                 SlotNumber = r.SlotNumber,
+                ReceiverName = r.ReceiverName,
             }).ToList();
 
             return new PaginatedResponse<RepairDto>

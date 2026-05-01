@@ -9,7 +9,7 @@ const RepairItemCard = ({
   errors,
 }: {
   form: RepairForm;
-  updateField: (field: keyof RepairForm, value: string) => void;
+  updateField: (field: keyof RepairForm, value: string | boolean) => void;
   errors: Partial<Record<keyof RepairForm, string>>;
 }) => {
   return (
@@ -85,6 +85,29 @@ const RepairItemCard = ({
             />
             {errors.dueDate && <p className="error-text">{errors.dueDate}</p>}
           </div>
+        </div>
+
+        {/* RECEIVER */}
+        <div className="receiver-section">
+          <label className="receiver-toggle">
+            <input
+              type="checkbox"
+              checked={form.receiverDifferent}
+              onChange={(e) =>
+                updateField("receiverDifferent", e.target.checked as any)
+              }
+            />
+            <span>Receiver is different from customer</span>
+          </label>
+          {form.receiverDifferent && (
+            <input
+              type="text"
+              className="receiver-name-input"
+              placeholder="Receiver name"
+              value={form.receiverName}
+              onChange={(e) => updateField("receiverName", e.target.value)}
+            />
+          )}
         </div>
       </div>
     </div>
