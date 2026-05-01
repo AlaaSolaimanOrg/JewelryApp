@@ -314,9 +314,7 @@ const MainPosPage: React.FC = () => {
 
       <ProductsSection
         products={products}
-        onProductAdded={(product) =>
-          setProducts((prev) => [...prev, product])
-        }
+        onProductAdded={(product) => setProducts((prev) => [...prev, product])}
         handleRemoveProduct={handleRemoveProduct}
         handleManualProductChange={handleManualProductChange}
         onApplyPriceToKarat={handleApplyPriceToKarat}

@@ -60,7 +60,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       setFields((prev) => ({ ...prev, sku: "" }));
       return;
     }
-    generateSKU({ category: fields.category as any, karatType: fields.karat as any })
+    generateSKU({
+      category: fields.category as any,
+      karatType: fields.karat as any,
+    })
       .then((res) => {
         if (checkRequestSucceeded(res?.statusCode)) {
           setFields((prev) => ({ ...prev, sku: res.data ?? "" }));
@@ -134,7 +137,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   };
 
   return (
-    <Modal show={show} onHide={onClose} size="lg" centered className="add-product-modal">
+    <Modal
+      show={show}
+      onHide={onClose}
+      size="lg"
+      centered
+      className="add-product-modal"
+    >
       <Modal.Header closeButton>
         <Modal.Title>Add Product to Cart</Modal.Title>
       </Modal.Header>
@@ -185,7 +194,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                   onChange={(e) => {
                     const v = e.target.value;
                     if (v.length > 7) return;
-                    if (v === "" || isPositiveInteger(v)) handleField("quantity", v);
+                    if (v === "" || isPositiveInteger(v))
+                      handleField("quantity", v);
                   }}
                 />
               </div>
@@ -283,7 +293,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <button className="btn-md btn-gray" onClick={onClose} disabled={isLoading}>
+        <button
+          className="btn-md btn-gray"
+          onClick={onClose}
+          disabled={isLoading}
+        >
           <FaTimes className="icon" /> Cancel
         </button>
         <button
