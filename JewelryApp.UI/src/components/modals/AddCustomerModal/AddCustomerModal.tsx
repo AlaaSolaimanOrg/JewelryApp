@@ -131,6 +131,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           handleSuccess(response.data);
+          onClose();
         } else {
           showError(response?.message);
         }
