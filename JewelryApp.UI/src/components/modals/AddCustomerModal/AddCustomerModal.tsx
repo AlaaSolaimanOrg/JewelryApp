@@ -3,6 +3,7 @@ import PhoneNumberDigits from "../../PhoneNumberDigits/PhoneNumberDigits";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   createCustomer,
+  getCustomers,
   updateCustomer,
 } from "../../../apis/customers.api/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
@@ -133,7 +134,34 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           handleSuccess(response.data);
           onClose();
         } else {
-          showError(response?.message);
+          const msg = (response?.message || "").toLowerCase();
+          const isDuplicatePhone =
+            response.statusCode === 409 ||
+            msg.includes("exist") ||
+            msg.includes("duplicate") ||
+            msg.includes("phone") ||
+            msg.includes("already");
+
+          if (isDuplicatePhone && !isCustomersView) {
+            getCustomers({ searchBy: phoneNumber, pageSize: 1, pageNumber: 1 })
+              .then((searchResponse) => {
+                const existing = searchResponse?.data?.[0];
+                if (existing) {
+                  showSuccess(
+                    `Customer "${existing.name}" already exists and has been selected.`,
+                  );
+                  setCustomer?.(existing);
+                  setCustomerInfoActive?.(true);
+                  setSearchInput?.(existing.name);
+                  onClose();
+                } else {
+                  showError(response?.message);
+                }
+              })
+              .catch(() => showError(response?.message));
+          } else {
+            showError(response?.message);
+          }
         }
       })
       .catch((e) => {
