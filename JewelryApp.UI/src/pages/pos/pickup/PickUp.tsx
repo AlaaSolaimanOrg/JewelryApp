@@ -44,6 +44,7 @@ export interface Repair {
   paymentStatus: PaymentStatus;
   dueDate: string | null;
   receiverName: string | null;
+  pickedUpDate: string | null;
 }
 
 const PickUp: React.FC = () => {
@@ -303,6 +304,7 @@ const PickUp: React.FC = () => {
                   <th>Notes</th>
                   <th>Payment</th>
                   <th>Due Date</th>
+                  <th>Pickup Date</th>
                   <th>Cost</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -358,6 +360,7 @@ const PickUp: React.FC = () => {
                         </span>
                       </td>
                       <td>{formatDueDate(repair.dueDate)}</td>
+                      <td>{formatDueDate(repair.pickedUpDate)}</td>
                       <td>{formatCurrency(repair.cost)}</td>
                       <td>
                         <span className={statusInfo.className}>

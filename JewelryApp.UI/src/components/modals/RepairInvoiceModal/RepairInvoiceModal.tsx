@@ -85,8 +85,8 @@ const RepairInvoiceModal = ({
 
   if (!show) return null;
 
-  const dateObj = repairDetails
-    ? new Date(repairDetails?.orderDate)
+  const dateObj = repairDetails?.dueDate
+    ? new Date(repairDetails.dueDate)
     : new Date();
 
   return (
@@ -130,7 +130,7 @@ const RepairInvoiceModal = ({
               <div>
                 <strong>Repair Code:</strong> {repairDetails?.repairCode}
                 <br />
-                <strong>Date:</strong> {dateObj.toLocaleDateString()}
+                <strong>Due Date:</strong> {dateObj.toLocaleDateString()}
               </div>
 
               <div>

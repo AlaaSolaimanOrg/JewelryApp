@@ -62,6 +62,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 DueDate = r.DueDate,
                 SlotNumber = r.SlotNumber,
                 ReceiverName = r.ReceiverName,
+                PickedUpDate = r.PickedUpDate,
             }).ToList();
 
             return new PaginatedResponse<RepairDto>
@@ -100,7 +101,8 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 query = query.Where(r =>
                     r.Customer.Name.ToLower().Contains(s) ||
                     r.Customer.PhoneNumber.Contains(s) ||
-                    r.RepairCode.Contains(s));
+                    r.RepairCode.Contains(s) ||
+                    (r.ReceiverName != null && r.ReceiverName.ToLower().Contains(s)));
             }
 
             return query;

@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -37,6 +38,15 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
 
 
             repair.Status = request.Status;
+
+            if (request.Status == RepairStatus.PickedUp)
+            {
+                repair.PickedUpDate = BusinessTimeZoneHelper.GetEdmontonDate();
+            }
+            else
+            {
+                repair.PickedUpDate = null;
+            }
 
 
 
