@@ -72,9 +72,10 @@ const Repair = () => {
       cost: Number(form.cost) || 0,
       paymentStatus: Number(form.paymentStatus),
       dueDate: form.dueDate || null,
-      receiverName: form.receiverDifferent && form.receiverName.trim()
-        ? form.receiverName.trim()
-        : null,
+      receiverName:
+        form.receiverDifferent && form.receiverName.trim()
+          ? form.receiverName.trim()
+          : null,
     };
 
     try {

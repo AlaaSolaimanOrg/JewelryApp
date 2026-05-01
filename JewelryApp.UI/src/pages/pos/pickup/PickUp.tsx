@@ -322,13 +322,21 @@ const PickUp: React.FC = () => {
                         {repair.status === RepairStatus.PickedUp ? (
                           <span className="slot-number-hidden">-</span>
                         ) : (
-                          <span className="slot-number-tag">{repair.slotNumber}</span>
+                          <span className="slot-number-tag">
+                            {repair.slotNumber}
+                          </span>
                         )}
                       </td>
                       <td>
                         <div>{repair.customerName}</div>
                         {repair.receiverName && (
-                          <div style={{ fontSize: "11px", color: "var(--gold)", marginTop: "2px" }}>
+                          <div
+                            style={{
+                              fontSize: "11px",
+                              color: "var(--gold)",
+                              marginTop: "2px",
+                            }}
+                          >
                             Receiver: {repair.receiverName}
                           </div>
                         )}
@@ -399,21 +407,21 @@ const PickUp: React.FC = () => {
                                 <FaFileInvoice />
                                 Invoice
                               </button>
-                                <button
-                                  className="dropdown-item"
-                                  onClick={() => {
-                                    handleTogglePaymentStatus(
-                                      repair.id,
-                                      repair.paymentStatus,
-                                    );
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  <FaDollarSign />
-                                  {repair.paymentStatus === PaymentStatus.Paid
-                                    ? "Mark Unpaid"
-                                    : "Mark Paid"}
-                                </button>
+                              <button
+                                className="dropdown-item"
+                                onClick={() => {
+                                  handleTogglePaymentStatus(
+                                    repair.id,
+                                    repair.paymentStatus,
+                                  );
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <FaDollarSign />
+                                {repair.paymentStatus === PaymentStatus.Paid
+                                  ? "Mark Unpaid"
+                                  : "Mark Paid"}
+                              </button>
                               <button
                                 className={`dropdown-item status-dropdown-item ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
                                 onClick={() => {
