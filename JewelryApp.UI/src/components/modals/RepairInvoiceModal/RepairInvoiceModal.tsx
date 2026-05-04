@@ -158,16 +158,12 @@ const RepairInvoiceModal = ({
       <div className="receipt-totals two-up">
         <div className="receipt-total">
           <div className="total-label">Cost</div>
-          <div className="total-value">
-            ${repairDetails?.cost?.toFixed(2)}
-          </div>
+          <div className="total-value">${repairDetails?.cost?.toFixed(2)}</div>
         </div>
 
         <div className="slot-box">
           <div className="slot-label">Slot</div>
-          <div className="slot-value">
-            {repairDetails?.slotNumber ?? "-"}
-          </div>
+          <div className="slot-value">{repairDetails?.slotNumber ?? "-"}</div>
         </div>
       </div>
 

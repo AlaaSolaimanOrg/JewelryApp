@@ -234,15 +234,19 @@
   box-shadow: none !important;
   text-shadow: none !important;
 
+  * {
+    color: black !important;
+  }
+
   .receipt-logo img {
     filter: grayscale(1) contrast(1.08);
   }
 
   .social-links {
     .social-item {
-      color: black;
+      color: black !important;
       .instagram-icon {
-        color: black;
+        color: black !important;
       }
     }
   }
@@ -254,15 +258,18 @@
   .receipt-details {
     font-weight: bold;
     font-size: 17px;
+    color: black !important;
   }
 
   .receipt-notes {
     color: black !important;
     font-weight: bold;
+    background: #fff !important;
+    border-color: black !important;
   }
 
   .receipt-subtitle {
-    color: black;
+    color: black !important;
     font-weight: bold;
     opacity: 1 !important;
   }
@@ -272,5 +279,21 @@
   .receipt-footer,
   .payment-breakdown .summary-item {
     border-color: black;
+  }
+
+  .total-label,
+  .total-value,
+  .slot-label,
+  .slot-value {
+    color: black !important;
+  }
+
+  .receipt-total {
+    background: #fff !important;
+  }
+
+  .slot-box {
+    background: #fff !important;
+    border-color: black !important;
   }
 }
