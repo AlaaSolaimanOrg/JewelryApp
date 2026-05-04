@@ -157,11 +157,15 @@
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #eee;
-
+    flex-direction: column;
+    gap: 20px;
     .social-links {
       display: flex;
       gap: 20px;
       align-items: center;
+      width: 100%;
+      justify-content: center;
+      justify-content: space-around;
 
       .social-item {
         display: flex;
@@ -242,7 +246,6 @@
     filter: grayscale(1) contrast(1.08);
   }
 
-  
   .social-links {
     .social-item {
       color: black !important;
