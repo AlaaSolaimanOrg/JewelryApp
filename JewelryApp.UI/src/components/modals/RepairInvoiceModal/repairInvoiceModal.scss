@@ -84,6 +84,17 @@
     }
   }
 
+  .receipt-notes {
+    margin: 20px 0;
+    padding: 10px 14px;
+    border: 1px solid var(--border, #ddd);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    color: #444;
+    background: #fafafa;
+    line-height: 1.5;
+  }
+
   .receipt-totals {
     display: grid;
     grid-template-columns: 1fr;
@@ -243,6 +254,11 @@
   .receipt-details {
     font-weight: bold;
     font-size: 17px;
+  }
+
+  .receipt-notes {
+    color: black !important;
+    font-weight: bold;
   }
 
   .receipt-subtitle {
