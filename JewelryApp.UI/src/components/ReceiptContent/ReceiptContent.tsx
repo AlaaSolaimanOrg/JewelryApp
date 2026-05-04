@@ -195,7 +195,7 @@ const ReceiptContent = ({
         </table>
       </div>
 
-      {(saleDetails.discount ?? 0) > 0 && (
+      {(saleDetails.discount ?? 0) > 0 && !isGiftReceipt && (
         <div className="receipt-discount">
           <div className="summary-item">
             <span>Total Before Discount:</span>
