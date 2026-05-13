@@ -152,16 +152,18 @@ const SideNav = () => {
   const filteredNavItems = isTerminalOnlyUser
     ? navItems
         .filter((item) =>
-          ["Inventory", "Pricing", "Customers", "Repair Analytics", "Return Management"].includes(
-            item.label,
-          ),
+          [
+            "Inventory",
+            "Pricing",
+            "Customers",
+            "Repair Analytics",
+            "Return Management",
+          ].includes(item.label),
         )
         .map((item) => item)
     : navItems;
 
-  const filteredOperationItems = isTerminalOnlyUser
-    ? []
-    : operationItems;
+  const filteredOperationItems = isTerminalOnlyUser ? [] : operationItems;
 
   const handlePosRedirect = () => {
     navigate("/");

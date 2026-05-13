@@ -70,7 +70,9 @@ export interface Product {
 const Inventory = () => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
-  const isTerminalRole = userInfo?.roles?.includes("TerminalRole") && !userInfo?.roles?.includes("Admin");
+  const isTerminalRole =
+    userInfo?.roles?.includes("TerminalRole") &&
+    !userInfo?.roles?.includes("Admin");
 
   const [scannedSkus, setScannedSkus] = useState([]);
   const [showScanModal, setShowScanModal] = useState(false);
