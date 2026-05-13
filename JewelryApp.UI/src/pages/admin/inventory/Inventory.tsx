@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { Col, Row, Stack } from "react-bootstrap";
-import { useAuth } from "../../../context/AuthContext";
 import {
   FaBox,
   FaDollarSign,
   FaEdit,
   FaFileExcel,
+  FaFire,
   FaPlus,
   FaPrint,
   FaSearch,
   FaSortAmountDown,
   FaSortAmountUp,
 } from "react-icons/fa";
-import { FaFire } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   exportProductsToExcel,
@@ -20,11 +19,12 @@ import {
   meltProduct,
   upsertProductSpecialPricing,
 } from "../../../apis/products.api/products.api";
+import { useAuth } from "../../../context/AuthContext";
 
-import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import MeltModal from "../../../components/modals/MeltModal/MeltModal";
+import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import SpecialPricingModal from "../../../components/modals/SpecialPricingModal/SpecialPricingModal";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
@@ -40,11 +40,11 @@ import {
   type ProductType,
 } from "../../../types/enums";
 import {
+  checkRequestSucceeded,
   handleSort,
   renderLongDescription,
-  showSuccess,
   showError,
-  checkRequestSucceeded,
+  showSuccess,
 } from "../../../utils";
 import "./inventory.scss";
 import TagsPopover from "./TagsPopover/TagsPopover";

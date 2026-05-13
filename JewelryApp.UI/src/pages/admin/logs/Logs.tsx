@@ -14,6 +14,7 @@ import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable, {
   type TableHeader,
 } from "../../../components/tables/Table/CustomTable";
+import TruncatedTextWithCopy from "../../../components/TruncatedTextWithCopy/TruncatedTextWithCopy";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { LogLevel, SortDirection } from "../../../types/enums";
 import {
@@ -23,7 +24,6 @@ import {
   showSuccess,
 } from "../../../utils";
 import "./logs.scss";
-import TruncatedTextWithCopy from "../../../components/TruncatedTextWithCopy/TruncatedTextWithCopy";
 
 interface LogItem {
   id: string;
@@ -115,7 +115,7 @@ const Logs = () => {
     const confirmed = window.confirm(
       idsArray.length > 1
         ? `Are you sure you want to delete ${idsArray.length} logs?`
-        : `Are you sure you want to delete this log?`
+        : `Are you sure you want to delete this log?`,
     );
     if (!confirmed) return;
 
@@ -170,8 +170,8 @@ const Logs = () => {
       level === LogLevel.Error
         ? "danger"
         : level === LogLevel.Warning
-        ? "warning"
-        : "info";
+          ? "warning"
+          : "info";
     return <Badge bg={variant}>{text}</Badge>;
   };
 
@@ -210,7 +210,7 @@ const Logs = () => {
           onClick={() =>
             handleOpenLogModal(
               "Message Details",
-              log.message || log.content || ""
+              log.message || log.content || "",
             )
           }
         >
