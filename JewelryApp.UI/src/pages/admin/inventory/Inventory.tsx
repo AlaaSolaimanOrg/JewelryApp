@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Col, Row, Stack } from "react-bootstrap";
+import { useAuth } from "../../../context/AuthContext";
 import {
   FaBox,
   FaDollarSign,
@@ -68,6 +69,8 @@ export interface Product {
 
 const Inventory = () => {
   const navigate = useNavigate();
+  const { userInfo } = useAuth();
+  const isTerminalRole = userInfo?.roles?.includes("TerminalRole") && !userInfo?.roles?.includes("Admin");
 
   const [scannedSkus, setScannedSkus] = useState([]);
   const [showScanModal, setShowScanModal] = useState(false);
@@ -248,13 +251,15 @@ const Inventory = () => {
             <FaPrint />
           </button>
         )}
-        <button
-          className="action-btn"
-          title="Edit"
-          onClick={() => handleEditProduct(product.id)}
-        >
-          <FaEdit />
-        </button>
+        {!isTerminalRole && (
+          <button
+            className="action-btn"
+            title="Edit"
+            onClick={() => handleEditProduct(product.id)}
+          >
+            <FaEdit />
+          </button>
+        )}
         {/* <button
           className="action-btn danger"
           title="Delete"
@@ -359,14 +364,16 @@ const Inventory = () => {
             <FaFileExcel className="me-1" />
             Export
           </button>
-          <button
-            className="btn-md btn-gold"
-            onClick={() => {
-              navigate("/admin/addProduct");
-            }}
-          >
-            <FaPlus className="me-1" /> Add Product
-          </button>
+          {!isTerminalRole && (
+            <button
+              className="btn-md btn-gold"
+              onClick={() => {
+                navigate("/admin/addProduct");
+              }}
+            >
+              <FaPlus className="me-1" /> Add Product
+            </button>
+          )}
         </div>
       </div>
 

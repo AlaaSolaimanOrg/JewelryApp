@@ -152,24 +152,15 @@ const SideNav = () => {
   const filteredNavItems = isTerminalOnlyUser
     ? navItems
         .filter((item) =>
-          ["Inventory", "Repair Analytics", "Return Management"].includes(
+          ["Inventory", "Pricing", "Customers", "Repair Analytics", "Return Management"].includes(
             item.label,
           ),
         )
-        .map((item) =>
-          item.label === "Inventory"
-            ? {
-                ...item,
-                subItems: item.subItems?.filter(
-                  (subItem) => subItem.path === "/admin/inventory/products",
-                ),
-              }
-            : item,
-        )
+        .map((item) => item)
     : navItems;
 
   const filteredOperationItems = isTerminalOnlyUser
-    ? operationItems.filter((item) => item.label === "Add Product")
+    ? []
     : operationItems;
 
   const handlePosRedirect = () => {
@@ -270,7 +261,7 @@ const SideNav = () => {
             );
           })}
 
-          {hasPosRole && (
+          {(hasPosRole || hasTerminalRole) && (
             <div>
               <div className="nav-section">System</div>
 

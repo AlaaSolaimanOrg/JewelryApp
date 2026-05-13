@@ -122,11 +122,17 @@ const AppRoutes = () => {
               path="/admin/inventory/melted"
               element={<MeltedProducts />}
             />
+            <Route
+              path="/admin/inventory/reports"
+              element={<InventoryReports />}
+            />
             <Route path="admin/repairAnalytics" element={<RepairAnalytics />} />
             <Route
               path="admin/returnManagement"
               element={<ReturnManagement />}
             />
+            <Route path="admin/pricing" element={<Pricing />} />
+            <Route path="admin/customers" element={<Customers />} />
             <Route
               path="admin/addProduct"
               element={<AddEditProduct isEdit={false} />}
@@ -146,13 +152,7 @@ const AppRoutes = () => {
           >
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/analytics" element={<Analytics />} />
-            <Route
-              path="/admin/inventory/reports"
-              element={<InventoryReports />}
-            />
-            <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />
-            <Route path="admin/customers" element={<Customers />} />
             <Route path="admin/staff" element={<Staff />} />
             <Route path="admin/settings" element={<Settings />} />
             <Route path="admin/print-tags" element={<TagPrinting />} />
