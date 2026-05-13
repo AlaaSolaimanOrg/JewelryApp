@@ -159,7 +159,10 @@ const RepairInvoiceModal = ({
             {/* NOTES (store owner only) */}
             {isStoreOwnerView && repairDetails?.notes && (
               <div className="receipt-notes">
-                <strong>Notes:</strong> {repairDetails.notes}
+                <strong>Notes:</strong>
+                <div style={{ whiteSpace: "pre-wrap" }}>
+                  {repairDetails.notes}
+                </div>
               </div>
             )}
 

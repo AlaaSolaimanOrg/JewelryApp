@@ -89,10 +89,15 @@
     padding: 10px 14px;
     border: 1px solid var(--border, #ddd);
     border-radius: var(--border-radius);
-    font-size: 0.9rem;
+    font-size: calc(0.9rem + 2px);
     color: #444;
     background: #fafafa;
     line-height: 1.5;
+
+    strong {
+      display: block;
+      margin-bottom: 4px;
+    }
   }
 
   .receipt-totals {
