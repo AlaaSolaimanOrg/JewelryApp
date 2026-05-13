@@ -1,12 +1,5 @@
 ﻿import React, { useEffect, useRef, useState } from "react";
-import {
-  FaArrowRight,
-  FaEdit,
-  FaEllipsisV,
-  FaFileInvoice,
-  FaList,
-  FaDollarSign,
-} from "react-icons/fa";
+import { FaEdit, FaEllipsisV, FaFileInvoice, FaList } from "react-icons/fa";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import "./pickUp.scss";
 
@@ -353,19 +346,48 @@ const PickUp: React.FC = () => {
                         )}
                       </td>
                       <td>
-                        <span
+                        <button
                           className={`badge-payment ${PaymentStatus[repair.paymentStatus]}`}
+                          onClick={() =>
+                            handleTogglePaymentStatus(
+                              repair.id,
+                              repair.paymentStatus,
+                            )
+                          }
                         >
                           {PaymentStatus[repair.paymentStatus]}
-                        </span>
+                          <span className="payment-tooltip">
+                            &#8594;&nbsp;
+                            {repair.paymentStatus === PaymentStatus.Paid
+                              ? "Mark Unpaid"
+                              : "Mark Paid"}
+                          </span>
+                        </button>
                       </td>
                       <td>{formatDueDate(repair.dueDate)}</td>
                       <td>{formatDueDate(repair.pickedUpDate)}</td>
                       <td>{formatCurrency(repair.cost)}</td>
                       <td>
-                        <span className={statusInfo.className}>
+                        <button
+                          className={`${statusInfo.className} status-advance-btn`}
+                          onClick={() =>
+                            handleStatusButtonClick(
+                              repair.id,
+                              repair.status,
+                              "next",
+                            )
+                          }
+                        >
                           {statusInfo.label}
-                        </span>
+                          <span className="status-tooltip">
+                            &#8594;&nbsp;
+                            {repair.status === RepairStatus.InProgress
+                              ? "Mark Complete"
+                              : repair.status === RepairStatus.Completed
+                                ? "Mark Picked Up"
+                                : "Mark In Progress"}
+                          </span>
+                        </button>
                       </td>
                       <td className="actions-cell">
                         <div
@@ -410,40 +432,7 @@ const PickUp: React.FC = () => {
                                 <FaFileInvoice />
                                 Invoice
                               </button>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => {
-                                  handleTogglePaymentStatus(
-                                    repair.id,
-                                    repair.paymentStatus,
-                                  );
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <FaDollarSign />
-                                {repair.paymentStatus === PaymentStatus.Paid
-                                  ? "Mark Unpaid"
-                                  : "Mark Paid"}
-                              </button>
-                              <button
-                                className={`dropdown-item status-dropdown-item ${NEXT_STATUS_BUTTON_CLASS[repair.status]}`}
-                                onClick={() => {
-                                  handleStatusButtonClick(
-                                    repair.id,
-                                    repair.status,
-                                    "next",
-                                  );
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <FaArrowRight />
-                                {repair.status === RepairStatus.InProgress
-                                  ? "Mark Complete"
-                                  : repair.status === RepairStatus.Completed
-                                    ? "Mark Picked Up"
-                                    : "Mark In Progress"}
-                              </button>
-                              {/* Back action removed per UX update */}
+                              {/* Status action moved to table row */}
                             </div>
                           )}
                         </div>
