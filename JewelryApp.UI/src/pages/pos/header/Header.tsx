@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import Clock from "../../../components/Clock/Clock";
-import { FaUser, FaSignOutAlt, FaBars, FaCog } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaBars, FaCog, FaSun } from "react-icons/fa";
 import "./header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
@@ -84,6 +84,23 @@ const Header = () => {
           className={`nav-controls ${isMobileMenuOpen ? "mobile-open" : ""}`}
         >
           <div className="nav-controls-top">
+            <div className="nav-time">
+              <Clock />
+            </div>
+
+            <div className="user-info">
+              <FaUser />
+              <span>{userInfo?.userName}</span>
+            </div>
+
+            <button
+              className="mode-btn"
+              title="Light / dark mode"
+              aria-label="Toggle light / dark mode"
+            >
+              <FaSun size={16} />
+            </button>
+
             {canAccessAdminPanel && (
               <button
                 className="admin-btn"
@@ -94,13 +111,6 @@ const Header = () => {
                 <span className="admin-text">Admin Panel</span>
               </button>
             )}
-
-            <div className="user-info">
-              <FaUser />
-              <span>{userInfo?.userName}</span>
-            </div>
-
-            <Clock />
 
             <button
               className="logout-btn"

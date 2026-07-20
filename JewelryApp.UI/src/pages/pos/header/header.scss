@@ -1,11 +1,18 @@
+$hdr-bg: #1a1a1a;
+$hdr-border: rgba(255, 255, 255, 0.08);
+$hdr-border-2: rgba(255, 255, 255, 0.15);
+$hdr-text-muted: #888;
+$hdr-text-soft: #ccc;
+$hdr-red: #e65b5b;
+
 #posHeader {
-  background: var(--dark);
+  background: $hdr-bg;
   color: white;
-  padding: 15px 20px;
+  padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--box-shadow);
+  border-bottom: 1px solid $hdr-border;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -30,48 +37,88 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   color: white;
-}
-
-.logo i {
-  color: var(--gold);
-  font-size: 2rem;
 }
 
 .logo h1 {
   font-weight: 600;
-  font-size: 1.6rem;
-  letter-spacing: 0.5px;
+  font-size: 1.15rem;
+  color: var(--gold);
   white-space: nowrap;
 }
 
 .nav-controls {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .nav-controls-top {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
+}
+
+.nav-time {
+  font-size: 0.85rem;
+  color: $hdr-text-muted;
+  white-space: nowrap;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: $hdr-text-soft;
+  white-space: nowrap;
+
+  svg {
+    color: $hdr-text-muted;
+    font-size: 0.9rem;
+  }
+}
+
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid $hdr-border-2;
+  background: transparent;
+  color: $hdr-text-muted;
+  cursor: default;
+}
+
+.admin-btn,
+.logout-btn {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  transition: all 0.12s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .admin-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  border: 1px solid $hdr-border-2;
+  background: transparent;
+  color: $hdr-text-soft;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
   }
 }
 
@@ -79,31 +126,13 @@
   display: inline;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.user-info i {
-  font-size: 1.2rem;
-}
-
 .logout-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  border: 1px solid rgba(230, 91, 91, 0.25);
+  background: rgba(230, 91, 91, 0.08);
+  color: $hdr-red;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(230, 91, 91, 0.15);
   }
 }
 
@@ -123,11 +152,13 @@
 }
 
 .posHeader-page-title {
-  background: var(--gold);
-  color: white;
-  padding: 12px 20px;
-  font-size: 1.4rem;
+  background: #141414;
+  color: $hdr-text-soft;
+  border-bottom: 1px solid $hdr-border;
+  padding: 10px 24px;
+  font-size: 1rem;
   font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .main-container {
@@ -145,20 +176,20 @@
   }
 
   .logo h1 {
-    font-size: 1.4rem;
+    font-size: 1.05rem;
   }
 
   .nav-controls-top {
-    gap: 15px;
+    gap: 10px;
   }
 
   .user-info span {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .posHeader-page-title {
-    padding: 10px 20px;
-    font-size: 1.2rem;
+    padding: 9px 20px;
+    font-size: 0.95rem;
   }
 }
 
@@ -182,7 +213,7 @@
   }
 
   .logo h1 {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   .nav-controls {
@@ -191,7 +222,7 @@
     right: -100%;
     height: 100vh;
     width: 280px;
-    background: var(--dark);
+    background: $hdr-bg;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
@@ -208,36 +239,40 @@
   .nav-controls-top {
     flex-direction: column;
     align-items: stretch;
-    gap: 20px;
+    gap: 14px;
     width: 100%;
+  }
+
+  .nav-time {
+    text-align: center;
+  }
+
+  .mode-btn {
+    align-self: center;
   }
 
   .admin-btn {
     justify-content: center;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: $hdr-border-2;
     margin: 0;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
     }
   }
 
   .user-info {
     justify-content: center;
     padding: 15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .logout-btn {
     justify-content: center;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
     margin: 0;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
   }
 
   .mobile-menu-overlay {
@@ -246,7 +281,7 @@
 
   .posHeader-page-title {
     padding: 8px 15px;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     text-align: center;
   }
 }
@@ -257,7 +292,7 @@
   }
 
   .logo h1 {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
 
   .logo img {
@@ -270,23 +305,23 @@
   }
 
   .posHeader-page-title {
-    font-size: 1rem;
+    font-size: 0.85rem;
     padding: 8px 12px;
   }
 
   .admin-text,
   .logout-text {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }
 
 @media (min-width: 1600px) {
   #posHeader {
-    padding: 20px 40px;
+    padding: 16px 40px;
   }
 
   .posHeader-page-title {
-    padding: 18px 40px;
-    font-size: 1.5rem;
+    padding: 14px 40px;
+    font-size: 1.05rem;
   }
 }
