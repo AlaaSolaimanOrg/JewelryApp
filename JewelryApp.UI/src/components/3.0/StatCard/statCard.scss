@@ -77,4 +77,16 @@
       opacity: 0.3;
     }
   }
+
+  &.dash-stat-accented::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--dash-stat-accent);
+    border-top-left-radius: var(--pos-radius-lg, 14px);
+    border-top-right-radius: var(--pos-radius-lg, 14px);
+  }
 }

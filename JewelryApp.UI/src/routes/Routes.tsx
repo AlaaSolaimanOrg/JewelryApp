@@ -45,8 +45,8 @@ const Header = lazy(() => import("../pages/pos/header/Header"));
 const Home = lazy(() => import("../pages/pos/home/Home"));
 const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
 const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
-const TransactionHistory = lazy(
-  () => import("../pages/pos/transactionHistory/TransactionHistory"),
+const CashManagement = lazy(
+  () => import("../pages/pos/cashManagement/CashManagement"),
 );
 
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
@@ -108,7 +108,7 @@ const AppRoutes = () => {
             <Route path="/sale" element={<MainPosPage />} />
             <Route
               path="/transactionHistory"
-              element={<TransactionHistory />}
+              element={<CashManagement />}
             />
             <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/repair" element={<Repair />} />

@@ -12,6 +12,7 @@ interface StatCardProps {
   blurred?: boolean;
   revealed?: boolean;
   lockIcon?: ReactNode;
+  accentColor?: string;
 }
 
 const StatCard = ({
@@ -25,6 +26,7 @@ const StatCard = ({
   blurred,
   revealed,
   lockIcon,
+  accentColor,
 }: StatCardProps) => {
   const classes = [
     "dash-stat-card",
@@ -38,8 +40,16 @@ const StatCard = ({
     ? { color: valueColor }
     : undefined;
 
+  const accentStyle: CSSProperties | undefined = accentColor
+    ? ({ "--dash-stat-accent": accentColor } as CSSProperties)
+    : undefined;
+
   return (
-    <div className={classes} onClick={onClick}>
+    <div
+      className={accentColor ? `${classes} dash-stat-accented` : classes}
+      style={accentStyle}
+      onClick={onClick}
+    >
       <div className="dash-stat-label">
         {labelIcon}
         {label}

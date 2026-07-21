@@ -1,0 +1,10 @@
+@use "../cashModalBase.scss";
+
+.cash-diff-preview {
+  padding: 8px 12px;
+  background: var(--pos-amber-bg);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--pos-amber);
+}

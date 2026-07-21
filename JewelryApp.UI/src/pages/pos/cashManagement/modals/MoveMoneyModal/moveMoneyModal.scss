@@ -1,0 +1,39 @@
+@use "../cashModalBase.scss";
+
+.cash-move-dir {
+  margin-bottom: 12px;
+}
+
+.cash-move-opt {
+  padding: 12px 8px;
+  border-radius: var(--pos-radius-sm);
+  border: 1px solid var(--pos-border-strong);
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--pos-font);
+  width: 100%;
+  color: inherit;
+
+  .cash-move-opt-ico {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .cash-move-opt-lbl {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--pos-text-muted);
+  }
+
+  &.sel {
+    border-color: var(--pos-amber);
+    background: var(--pos-amber-bg);
+    box-shadow: 0 0 0 1px var(--pos-amber);
+
+    .cash-move-opt-lbl {
+      color: var(--pos-amber);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+@use "../cashModalBase.scss";
+
+.cash-void-warning {
+  padding: 10px 14px;
+  background: var(--pos-red-bg);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--pos-red);
+}
