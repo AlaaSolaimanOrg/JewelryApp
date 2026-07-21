@@ -5,15 +5,18 @@ import { ToastContainer } from "react-toastify";
 import "./App.scss";
 import AppRoutes from "./routes/Routes";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="jewleryApp">
-        <AppRoutes />
-        <ToastContainer />
-      </div>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <div className="jewleryApp">
+          <AppRoutes />
+          <ToastContainer />
+        </div>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

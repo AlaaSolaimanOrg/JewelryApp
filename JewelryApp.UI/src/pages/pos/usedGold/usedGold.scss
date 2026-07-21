@@ -1,0 +1,45 @@
+.used-gold-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.used-gold-empty {
+  text-align: center;
+  color: var(--pos-text);
+
+  .used-gold-icon {
+    font-size: 48px;
+    color: var(--pos-gold);
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: var(--pos-font);
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-family: var(--pos-font);
+    color: var(--pos-text-muted);
+    margin-bottom: 20px;
+  }
+
+  .used-gold-back {
+    font-family: var(--pos-font);
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: var(--pos-radius-sm);
+    border: 1px solid var(--pos-border-strong);
+    color: var(--pos-text-secondary);
+    text-decoration: none;
+
+    &:hover {
+      border-color: var(--pos-gold);
+      color: var(--pos-gold);
+    }
+  }
+}

@@ -1,15 +1,19 @@
 #posHeader {
-  background: var(--dark);
-  color: white;
-  padding: 15px 20px;
+  font-family: var(--pos-font);
+  background: var(--pos-bg-surface);
+  color: var(--pos-text);
+  padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--box-shadow);
+  border-bottom: 1px solid var(--pos-border);
   position: sticky;
   top: 0;
   z-index: 100;
   gap: 20px;
+  transition:
+    background 0.25s,
+    border-color 0.25s;
 }
 
 .header-left {
@@ -22,7 +26,7 @@
   display: none;
   background: none;
   border: none;
-  color: white;
+  color: var(--pos-text);
   cursor: pointer;
   padding: 5px;
 }
@@ -30,85 +34,123 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: white;
-}
+  gap: 10px;
+  color: var(--pos-text);
 
-.logo i {
-  color: var(--gold);
-  font-size: 2rem;
-}
-
-.logo h1 {
-  font-weight: 600;
-  font-size: 1.6rem;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  h1 {
+    font-family: var(--pos-font);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    color: var(--pos-gold);
+  }
 }
 
 .nav-controls {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
+  gap: 12px;
 
-.nav-controls-top {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.admin-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
+  .nav-controls-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--pos-text-muted);
   }
 }
 
-.admin-text {
-  display: inline;
+.mode-btn {
+  font-family: var(--pos-font);
+  font-size: 16px;
+  padding: 7px 10px;
+  border-radius: var(--pos-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  border: 1px solid var(--pos-border-strong);
+  background: transparent;
+  color: var(--pos-text-muted);
+  transition: all 0.12s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    border-color: var(--pos-gold);
+    color: var(--pos-gold);
+  }
+}
+
+.admin-btn {
+  font-family: var(--pos-font);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--pos-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 1px solid var(--pos-border-strong);
+  background: transparent;
+  color: var(--pos-text-muted);
+  transition: all 0.12s;
+
+  &:hover {
+    border-color: var(--pos-border-strong);
+    color: var(--pos-text-secondary);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  .admin-text {
+    display: inline;
+  }
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
-}
-
-.user-info i {
-  font-size: 1.2rem;
+  color: var(--pos-text-muted);
 }
 
 .logout-btn {
-  background: none;
-  border: none;
+  font-family: var(--pos-font);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: var(--pos-radius-sm);
   cursor: pointer;
-  color: white;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  gap: 6px;
+  min-height: 36px;
+  border: 1px solid rgba(230, 91, 91, 0.25);
+  background: rgba(230, 91, 91, 0.08);
+  color: var(--pos-red);
+  transition: all 0.12s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(230, 91, 91, 0.15);
+    border-color: #b33a3a;
   }
-}
 
-.logout-text {
-  display: inline;
+  &:active {
+    transform: scale(0.97);
+  }
+
+  .logout-text {
+    display: inline;
+  }
 }
 
 .mobile-menu-overlay {
@@ -123,11 +165,16 @@
 }
 
 .posHeader-page-title {
-  background: var(--gold);
-  color: white;
-  padding: 12px 20px;
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-family: var(--pos-font);
+  background: var(--pos-bg-surface);
+  color: var(--pos-text-secondary);
+  padding: 10px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--pos-border);
+  transition:
+    background 0.25s,
+    border-color 0.25s;
 }
 
 .main-container {
@@ -145,11 +192,11 @@
   }
 
   .logo h1 {
-    font-size: 1.4rem;
+    font-size: 15px;
   }
 
   .nav-controls-top {
-    gap: 15px;
+    gap: 10px;
   }
 
   .user-info span {
@@ -157,8 +204,8 @@
   }
 
   .posHeader-page-title {
-    padding: 10px 20px;
-    font-size: 1.2rem;
+    padding: 8px 20px;
+    font-size: 12px;
   }
 }
 
@@ -174,15 +221,10 @@
 
   .logo {
     gap: 8px;
-  }
 
-  .logo img {
-    width: 30px;
-    height: 26px;
-  }
-
-  .logo h1 {
-    font-size: 1.2rem;
+    h1 {
+      font-size: 14px;
+    }
   }
 
   .nav-controls {
@@ -191,53 +233,41 @@
     right: -100%;
     height: 100vh;
     width: 280px;
-    background: var(--dark);
+    background: var(--pos-bg-surface);
+    border-left: 1px solid var(--pos-border);
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
     padding: 80px 20px 20px;
     transition: right 0.3s ease;
     z-index: 101;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
 
     &.mobile-open {
       right: 0;
     }
+
+    .nav-controls-top {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+      width: 100%;
+    }
   }
 
-  .nav-controls-top {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 20px;
-    width: 100%;
-  }
-
-  .admin-btn {
+  .admin-btn,
+  .logout-btn,
+  .mode-btn {
     justify-content: center;
     padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
     margin: 0;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+    width: 100%;
   }
 
   .user-info {
     justify-content: center;
     padding: 15px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .logout-btn {
-    justify-content: center;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 0;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+    border-bottom: 1px solid var(--pos-border);
   }
 
   .mobile-menu-overlay {
@@ -246,7 +276,7 @@
 
   .posHeader-page-title {
     padding: 8px 15px;
-    font-size: 1.1rem;
+    font-size: 12px;
     text-align: center;
   }
 }
@@ -257,12 +287,7 @@
   }
 
   .logo h1 {
-    font-size: 1.1rem;
-  }
-
-  .logo img {
-    width: 28px;
-    height: 24px;
+    font-size: 13px;
   }
 
   .nav-controls {
@@ -270,23 +295,18 @@
   }
 
   .posHeader-page-title {
-    font-size: 1rem;
+    font-size: 11px;
     padding: 8px 12px;
-  }
-
-  .admin-text,
-  .logout-text {
-    font-size: 0.9rem;
   }
 }
 
 @media (min-width: 1600px) {
   #posHeader {
-    padding: 20px 40px;
+    padding: 16px 40px;
   }
 
   .posHeader-page-title {
-    padding: 18px 40px;
-    font-size: 1.5rem;
+    padding: 14px 40px;
+    font-size: 14px;
   }
 }

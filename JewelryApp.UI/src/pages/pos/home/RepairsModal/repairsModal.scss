@@ -1,0 +1,148 @@
+.repair-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 50;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+  &.show {
+    display: flex;
+  }
+
+  .repair-modal {
+    font-family: var(--pos-font);
+    background: var(--pos-bg-surface);
+    border: 1px solid var(--pos-border-strong);
+    border-radius: var(--pos-radius-lg);
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    color: var(--pos-text);
+
+    .repair-modal-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--pos-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--pos-bg-surface);
+      z-index: 1;
+
+      .repair-modal-title {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .repair-modal-close {
+        background: none;
+        border: none;
+        color: var(--pos-text-muted);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px 8px;
+        min-height: 40px;
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+
+        &:active {
+          background: var(--pos-bg-raised-active);
+          color: var(--pos-text);
+        }
+      }
+    }
+
+    .repair-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--pos-border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .ri-slot {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        background: var(--pos-amber-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--pos-amber);
+        flex-shrink: 0;
+      }
+
+      .ri-info {
+        flex: 1;
+        min-width: 0;
+
+        .ri-name {
+          font-size: 14px;
+          font-weight: 500;
+        }
+
+        .ri-phone {
+          font-size: 12px;
+          color: var(--pos-text-muted);
+        }
+
+        .ri-notes {
+          font-size: 12px;
+          color: var(--pos-text-subtle);
+          margin-top: 2px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .ri-right {
+        text-align: right;
+        flex-shrink: 0;
+
+        .ri-cost {
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--pos-text);
+        }
+
+        .ri-due {
+          font-size: 11px;
+          margin-top: 2px;
+
+          &.overdue {
+            color: var(--pos-red);
+          }
+
+          &.today {
+            color: var(--pos-amber);
+          }
+
+          &.upcoming {
+            color: var(--pos-text-subtle);
+          }
+        }
+      }
+    }
+
+    .repair-empty {
+      padding: 30px 16px;
+      text-align: center;
+      color: var(--pos-text-subtle);
+      font-size: 13px;
+    }
+  }
+}

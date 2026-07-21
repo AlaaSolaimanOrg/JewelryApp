@@ -1,15 +1,24 @@
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../../assets/images/jewelary-logo.svg";
 import Clock from "../../../components/Clock/Clock";
-import { FaUser, FaSignOutAlt, FaBars, FaCog } from "react-icons/fa";
+import {
+  FaUser,
+  FaSignOutAlt,
+  FaBars,
+  FaCog,
+  FaSun,
+  FaMoon,
+} from "react-icons/fa";
 import "./header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
+import { useTheme } from "../../../context/ThemeContext";
 import { useState } from "react";
+import { getPageTitle } from "./Header.utils";
 
 const Header = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isAdminUser = userInfo?.roles?.includes("Admin");
@@ -17,22 +26,6 @@ const Header = () => {
   const canAccessAdminPanel = isAdminUser || hasTerminalRole;
 
   const location = useLocation();
-
-  const getPageTitle = (pathname: string) => {
-    const routeTitles = [
-      { path: "/", title: "POS Dashboard" },
-      { path: "/transactionHistory", title: "Transaction History" },
-      { path: "/receipt", title: "Receipt Preview" },
-      { path: "/sale", title: "Sale" },
-    ];
-
-    const matchedRoute = routeTitles.find(
-      (route) =>
-        pathname === route.path || pathname.startsWith(route.path + "/"),
-    );
-
-    return matchedRoute?.title || "POS Dashboard";
-  };
 
   // Logout handler
   const handleLogout = () => {
@@ -75,7 +68,6 @@ const Header = () => {
           </button>
 
           <Link to={"/"} className="logo text-decoration-none">
-            <img src={logo} alt="Logo" width={36} height={32} />
             <h1>Adi Jewelry POS</h1>
           </Link>
         </div>
@@ -84,6 +76,22 @@ const Header = () => {
           className={`nav-controls ${isMobileMenuOpen ? "mobile-open" : ""}`}
         >
           <div className="nav-controls-top">
+            <div className="user-info">
+              <FaUser />
+              <span>{userInfo?.userName}</span>
+            </div>
+
+            <Clock />
+
+            <button
+              className="mode-btn"
+              onClick={toggleTheme}
+              title="Light / dark mode"
+              aria-label="Toggle light and dark mode"
+            >
+              {theme === "dark" ? <FaSun size={16} /> : <FaMoon size={16} />}
+            </button>
+
             {canAccessAdminPanel && (
               <button
                 className="admin-btn"
@@ -94,13 +102,6 @@ const Header = () => {
                 <span className="admin-text">Admin Panel</span>
               </button>
             )}
-
-            <div className="user-info">
-              <FaUser />
-              <span>{userInfo?.userName}</span>
-            </div>
-
-            <Clock />
 
             <button
               className="logout-btn"

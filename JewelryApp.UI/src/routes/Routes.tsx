@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Loader from "../components/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
+import { useTheme } from "../context/ThemeContext";
 
 const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
 const InventoryReports = lazy(
@@ -49,6 +50,7 @@ const TransactionHistory = lazy(
 );
 
 const Repair = lazy(() => import("../pages/pos/repair/Repair"));
+const UsedGold = lazy(() => import("../pages/pos/usedGold/UsedGold"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 const ReturnManagement = lazy(
   () => import("../pages/admin/returnManagement/ReturnManagement"),
@@ -62,16 +64,20 @@ const LoadingFallback = () => (
 );
 
 // POS Layout (includes POS Header)
-const POSLayout = () => (
-  <>
-    <Suspense fallback={<LoadingFallback />}>
-      <Header />
-    </Suspense>
-    <main>
-      <Outlet />
-    </main>
-  </>
-);
+const POSLayout = () => {
+  const { theme } = useTheme();
+
+  return (
+    <div className="pos-app" data-theme={theme}>
+      <Suspense fallback={<LoadingFallback />}>
+        <Header />
+      </Suspense>
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
 // Admin Layout (can add AdminHeader/Sidebar if needed)
 const AdminLayout = () => (
@@ -106,6 +112,7 @@ const AppRoutes = () => {
             />
             <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/repair" element={<Repair />} />
+            <Route path="/usedgold" element={<UsedGold />} />
             <Route path="/return" element={<ReturnPage />} />
             <Route path="pickUp" element={<PickUp />} />
           </Route>

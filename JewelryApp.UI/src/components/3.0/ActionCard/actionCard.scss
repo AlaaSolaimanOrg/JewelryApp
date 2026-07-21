@@ -1,0 +1,58 @@
+.dash-action-btn {
+  background: var(--pos-bg-surface, #1a1a1a);
+  border: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
+  border-radius: var(--pos-radius-lg, 14px);
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--pos-font, inherit);
+  color: inherit;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(212, 160, 23, 0.35);
+  }
+
+  &:active {
+    transform: scale(0.97);
+    border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+  }
+
+  &:hover {
+    border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    background: var(--pos-bg-surface-hover, #222);
+
+    .dash-act-icon {
+      color: var(--pos-gold, #d4a017);
+    }
+  }
+
+  .dash-act-icon {
+    font-size: 24px;
+    line-height: 1;
+    color: var(--pos-text, #fff);
+  }
+
+  .dash-act-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pos-text, #fff);
+  }
+
+  .dash-act-sub {
+    font-size: 10px;
+    color: var(--pos-text-subtle, #555);
+  }
+}
