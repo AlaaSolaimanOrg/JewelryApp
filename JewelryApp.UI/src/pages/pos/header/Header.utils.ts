@@ -8,6 +8,7 @@ const ROUTE_TITLES: RouteTitle[] = [
   { path: "/cashManagement", title: "Transaction History" },
   { path: "/receipt", title: "Receipt Preview" },
   { path: "/sale", title: "Sale" },
+  { path: "/usedgold", title: "Used Gold" },
 ];
 
 export const getPageTitle = (pathname: string) => {
