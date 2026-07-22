@@ -59,22 +59,6 @@
         }
       }
     }
-
-    .log-filter {
-      font-family: var(--pos-font);
-      font-size: 13px;
-      padding: 8px 10px;
-      border-radius: var(--pos-radius-sm);
-      border: 1px solid var(--pos-border-strong);
-      background: var(--pos-bg-raised);
-      color: var(--pos-text);
-      cursor: pointer;
-
-      &:focus {
-        outline: none;
-        border-color: var(--pos-gold);
-      }
-    }
   }
 
   .log-cols,
@@ -120,33 +104,6 @@
         background: rgba(255, 255, 255, 0.02);
       }
 
-      &.voided {
-        opacity: 0.4;
-
-        .log-desc {
-          text-decoration: line-through;
-        }
-      }
-
-      &.is-correction {
-        border-left: 3px solid var(--pos-amber);
-      }
-
-      &.is-void-entry {
-        border-left: 3px solid var(--pos-red);
-      }
-
-      .voided-tag {
-        font-size: 9px;
-        font-weight: 600;
-        padding: 2px 6px;
-        border-radius: 4px;
-        background: var(--pos-red-bg);
-        color: var(--pos-red);
-        margin-left: 6px;
-        vertical-align: middle;
-      }
-
       .log-date {
         color: var(--pos-text-muted);
         font-size: 12px;
@@ -162,20 +119,25 @@
         margin-top: 1px;
       }
 
-      .log-box-tag {
+      .log-tag {
         font-size: 11px;
         padding: 2px 8px;
         border-radius: 10px;
         font-weight: 500;
 
-        &.log-box-store {
+        &.log-tag-cash {
           background: var(--pos-green-bg);
           color: var(--pos-green);
         }
 
-        &.log-box-transfer {
+        &.log-tag-card {
           background: var(--pos-blue-bg);
           color: var(--pos-blue);
+        }
+
+        &.log-tag-split {
+          background: var(--pos-amber-bg);
+          color: var(--pos-amber);
         }
       }
 
@@ -190,48 +152,6 @@
 
         &.out {
           color: var(--pos-red);
-        }
-      }
-
-      .log-balance {
-        text-align: right;
-        color: var(--pos-text-muted);
-        font-size: 12px;
-      }
-
-      .log-actions {
-        display: flex;
-        gap: 4px;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-
-        .log-act {
-          font-family: var(--pos-font);
-          font-size: 10px;
-          font-weight: 500;
-          padding: 4px 8px;
-          border-radius: 5px;
-          cursor: pointer;
-          border: 1px solid var(--pos-border-strong);
-          background: transparent;
-          color: var(--pos-text-subtle);
-          white-space: nowrap;
-
-          &:active {
-            transform: scale(0.95);
-          }
-
-          &.act-correct:active {
-            background: var(--pos-amber-bg);
-            color: var(--pos-amber);
-            border-color: var(--pos-amber);
-          }
-
-          &.act-void:active {
-            background: var(--pos-red-bg);
-            color: var(--pos-red);
-            border-color: var(--pos-red);
-          }
         }
       }
     }
