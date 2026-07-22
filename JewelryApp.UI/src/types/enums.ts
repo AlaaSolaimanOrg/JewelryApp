@@ -102,6 +102,13 @@ export enum PaymentStatus {
   Paid = 1,
 }
 
+export enum RepairPayMethod {
+  Unpaid,
+  Cash,
+  Card,
+  Split,
+}
+
 export enum ReportType {
   Daily = 0,
   Weekly = 1,

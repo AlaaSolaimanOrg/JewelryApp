@@ -7,6 +7,8 @@ export const createRepair = async (payload: {
   notes: string;
   cost: number;
   paymentStatus: PaymentStatus;
+  cashAmount?: number;
+  cardAmount?: number;
   dueDate?: string | null;
   receiverName?: string | null;
 }) => {
