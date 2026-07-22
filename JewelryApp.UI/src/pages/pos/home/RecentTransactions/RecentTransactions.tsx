@@ -38,7 +38,7 @@ const RecentTransactions = () => {
               {pagination.totalRecords ?? 0} transactions
             </span>
             <Link
-              to="/transactionHistory"
+              to="/cashManagement"
               className="dash-rr-receipt-btn text-decoration-none"
             >
               View all
@@ -52,7 +52,11 @@ const RecentTransactions = () => {
           <Col xs={3} md={2} style={{ textAlign: "right" }}>
             Amount
           </Col>
-          <Col md={2} className="d-none d-md-block" style={{ textAlign: "center" }}>
+          <Col
+            md={2}
+            className="d-none d-md-block"
+            style={{ textAlign: "center" }}
+          >
             Payment
           </Col>
           <Col xs={2} md={2} style={{ textAlign: "center" }}>

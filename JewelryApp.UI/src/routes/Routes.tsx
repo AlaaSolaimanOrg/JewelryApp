@@ -106,10 +106,7 @@ const AppRoutes = () => {
           >
             <Route path="/" element={<Home />} />
             <Route path="/sale" element={<MainPosPage />} />
-            <Route
-              path="/transactionHistory"
-              element={<CashManagement />}
-            />
+            <Route path="/cashManagement" element={<CashManagement />} />
             <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/repair" element={<Repair />} />
             <Route path="/usedgold" element={<UsedGold />} />

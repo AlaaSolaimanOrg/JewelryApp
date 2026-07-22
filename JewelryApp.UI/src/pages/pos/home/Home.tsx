@@ -101,7 +101,7 @@ const Home = () => {
         </Col>
         <Col xs={6} md={4}>
           <ActionCard
-            to="/transactionHistory"
+            to="/cashManagement"
             icon={<FaCoins />}
             label="Cash management"
             sub="Expenses, transfers, store box"
