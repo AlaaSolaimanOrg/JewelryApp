@@ -89,7 +89,7 @@ const Login = () => {
 
       <div className="login-card">
         <div className="login-brand">
-          <img src={logo} alt="Logo" width={36} height={32} />
+          <img src={logo} alt="Logo" width={22} height={20} />
           <h1>Adi Jewelry POS</h1>
         </div>
         <p className="login-subtitle">Sign in to your account to continue</p>

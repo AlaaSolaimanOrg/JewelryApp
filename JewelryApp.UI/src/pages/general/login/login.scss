@@ -51,18 +51,23 @@
       align-items: center;
       gap: 10px;
       margin-bottom: 6px;
-
       img {
+        width: 22px;
+        height: 22px;
         display: block;
+        flex-shrink: 0;
       }
 
       h1 {
-        font-size: 18px;
+        margin: 0;
+        font-size: 20px;
         font-weight: 600;
+        line-height: 1.2;
         color: var(--pos-gold);
+        display: flex;
+        align-items: center;
       }
     }
-
     .login-subtitle {
       font-size: 13px;
       color: var(--pos-text-muted);
@@ -146,6 +151,7 @@
 
         input {
           accent-color: var(--pos-gold);
+          cursor: pointer;
         }
       }
     }
