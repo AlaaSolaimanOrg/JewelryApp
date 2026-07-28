@@ -41,8 +41,10 @@ const SalesReports = lazy(
 const Settings = lazy(() => import("../pages/admin/settings/Settings"));
 const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
 const Staff = lazy(() => import("../pages/admin/staff/Staff"));
-const Header = lazy(() => import("../pages/pos/header/Header"));
-const Home = lazy(() => import("../pages/pos/home/Home"));
+const PosHeader = lazy(() => import("../pages/pos/posHeader/PosHeader"));
+const PosDashboard = lazy(
+  () => import("../pages/pos/posDashboard/PosDashboard"),
+);
 const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
 const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const CashManagement = lazy(
@@ -72,7 +74,7 @@ const POSLayout = () => {
   return (
     <div className="pos-app" data-theme={theme}>
       <Suspense fallback={<LoadingFallback />}>
-        <Header />
+        <PosHeader />
       </Suspense>
       <main>
         <Outlet />
@@ -106,7 +108,7 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<PosDashboard />} />
             <Route path="/sale" element={<MainPosPage />} />
             <Route path="/cashManagement" element={<CashManagement />} />
             <Route path="/receipt/:saleId" element={<Receipt />} />

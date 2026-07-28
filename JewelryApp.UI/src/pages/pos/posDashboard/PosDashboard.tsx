@@ -18,11 +18,11 @@ import { RepairStatus, SortDirection } from "../../../types/enums";
 import RepairsModal from "./RepairsModal/RepairsModal";
 import { getDueStatus, type Repair } from "./RepairsModal/RepairsModal.utils";
 import RecentTransactions from "./RecentTransactions/RecentTransactions";
-import "./home.scss";
+import "./posDashboard.scss";
 
 const SALES_PIN = "1234";
 
-const Home = () => {
+const PosDashboard = () => {
   const { data: repairs, isLoading: repairsLoading } =
     useLocalApiSearchSortPagination<Repair>({
       apiToCall: (data) => getRepairs(data.payload),
@@ -182,4 +182,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default PosDashboard;
