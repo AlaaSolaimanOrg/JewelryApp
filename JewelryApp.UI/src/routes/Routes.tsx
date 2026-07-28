@@ -179,6 +179,14 @@ const AppRoutes = () => {
           <Route path="admin/" element={<Login />} />
           <Route path="login" element={<Login />} />
           <Route path="unauthorized" element={<Unauthorized />} />
+          <Route
+            path="__preview-sale"
+            element={
+              <div className="pos-app" data-theme="dark">
+                <MainPosPage />
+              </div>
+            }
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>

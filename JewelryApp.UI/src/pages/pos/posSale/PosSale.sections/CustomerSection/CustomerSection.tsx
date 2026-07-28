@@ -8,13 +8,14 @@ import {
   FaBirthdayCake,
   FaEnvelope,
   FaPhone,
-  FaUser,
-  FaUserCircle,
+  FaSearch,
+  FaTimes,
 } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { getCustomers } from "../../../../../apis/customers.api/customers.api";
 import AddCustomerModal from "../../../../../components/modals/AddCustomerModal/AddCustomerModal";
 import type { Customer } from "../../types";
+import { getCustomerTier, getInitials } from "./CustomerSection.utils";
 import "./customerSection.scss";
 
 interface Props {
@@ -26,12 +27,7 @@ interface Props {
   onAddCustomerClick: () => void;
   showAddCustomerModal: boolean;
   setShowAddCustomerModal: (v: boolean) => void;
-  onOpenScanModal: () => void;
   setCustomerInfoActive: (v: boolean) => void;
-  actions?: any;
-  showScanProduct?: boolean;
-  showNotes?: boolean;
-  onToggleNotes?: () => void;
 }
 
 const CustomerSection: React.FC<Props> = ({
@@ -43,12 +39,7 @@ const CustomerSection: React.FC<Props> = ({
   onAddCustomerClick,
   showAddCustomerModal,
   setShowAddCustomerModal,
-  onOpenScanModal,
   setCustomerInfoActive,
-  actions = null,
-  showScanProduct = false,
-  showNotes = false,
-  onToggleNotes = () => {},
 }) => {
   // Refs for debounce
   const debouncedTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -103,148 +94,112 @@ const CustomerSection: React.FC<Props> = ({
     [performSearch],
   );
 
+  const clearCustomer = () => {
+    setCustomerInfoActive(false);
+    setCustomer(null);
+    setSearchInput("");
+  };
+
   return (
-    <div id="customerSection">
-      <header className="header">
-        <div className="logo">Adi Jewelry POS</div>
-        <div className="search-section">
-          <AsyncSelect
-            className="customerSearch"
-            cacheOptions
-            loadOptions={loadOptions} // <-- Debounced search
-            components={{
-              DropdownIndicator: () => null,
-              IndicatorSeparator: () => null,
-            }}
-            defaultOptions
-            placeholder="Search customer by name..."
-            noOptionsMessage={({ inputValue }) =>
-              inputValue ? "No customers found" : "Type to search customers"
-            }
-            loadingMessage={() => "Searching..."}
-            inputValue={searchInput}
-            onInputChange={(value) => setSearchInput(value)}
-            onChange={(selected) => {
-              if (selected) {
-                setCustomerInfoActive(true);
-                setCustomer(selected.data);
-              } else {
-                setCustomerInfoActive(false);
-                setCustomer(null);
-                setSearchInput("");
-              }
-            }}
-            value={
-              customer
-                ? { label: customer.name, value: customer.id, data: customer }
-                : null
-            }
-            isClearable
-            styles={{
-              control: (base) => ({
-                ...base,
-                width: "100%",
-                border: "none",
-                backgroundColor: "transparent",
-                boxShadow: "none",
-                "&:hover": { border: "none", boxShadow: "none" },
-              }),
-              placeholder: (base) => ({ ...base, color: "lightgray" }),
-              singleValue: (base) => ({ ...base, color: "white" }),
-              input: (base) => ({ ...base, color: "white", width: "100%" }),
-              container: (base) => ({ ...base, width: "100%" }),
-              menu: (base) => ({ ...base, marginTop: "20px" }),
-              option: (base, state) => ({
-                ...base,
-                backgroundColor: state.isFocused
-                  ? "var(--dark, #212529)"
-                  : "white",
-                color: state.isFocused ? "white" : "var(--dark, #212529)",
-                "&:hover": {
-                  backgroundColor: "var(--dark, #212529)",
-                  color: "white",
-                },
-              }),
-            }}
-          />
+    <div id="customerSection" className="ps-panel">
+      <h2 className="ps-panel-label">Customer</h2>
 
-          <button className="add-customer-btn" onClick={onAddCustomerClick}>
-            Add New Customer
-          </button>
-        </div>
-
-        {actions}
-
-        {showScanProduct && (
-          <div className="d-flex justify-content-end">
-            <button
-              className="notes-btn"
-              onClick={onToggleNotes}
-              title={showNotes ? "Hide Notes" : "Notes / Remarks"}
-            >
-              {showNotes ? "Hide Notes" : "Notes"}
-            </button>
-
-            <button className="scan-btn" onClick={onOpenScanModal}>
-              Scan Product
-            </button>
-          </div>
-        )}
-      </header>
-
-      {!!customer && (
-        <div
-          className={`customer-info${customerInfoActive ? " active" : ""}`}
-          id="customerInfo"
-        >
-          <h3 className="customer-title">
-            <FaUser /> Customer Information
-          </h3>
-          <div className="customer-details">
-            <div className="customer-detail">
-              <FaUserCircle
-                style={{ marginRight: "8px", color: "var(--dark)" }}
-              />
-              <span id="customerName">{customer.name}</span>
+      {customer ? (
+        <div className={`ps-cust-sel${customerInfoActive ? " active" : ""}`}>
+          <div className="ps-cust-av">{getInitials(customer.name)}</div>
+          <div className="ps-cust-info">
+            <div className="ps-cust-name-row">
+              <span className="ps-cust-nm" title={customer.name}>
+                {customer.name}
+              </span>
+              {(() => {
+                const tier = getCustomerTier(customer.totalPurchasesValue ?? 0);
+                return (
+                  <span className={`ps-tier-badge ${tier.className}`}>
+                    {tier.isVip ? (
+                      <span className="ps-tb-label">VIP</span>
+                    ) : (
+                      tier.name
+                    )}
+                  </span>
+                );
+              })()}
             </div>
-            {customer.email && (
-              <div className="customer-detail">
-                <FaEnvelope
-                  style={{ marginRight: "8px", color: "var(--dark)" }}
-                />
-                <span id="customerEmail">{customer.email ?? "-"}</span>
+
+            {customer.phoneNumber && (
+              <div className="ps-cust-ph">
+                <FaPhone /> {customer.phoneNumber}
               </div>
             )}
-            {customer.phoneNumber && (
-              <div className="customer-detail">
-                <FaPhone style={{ marginRight: "8px", color: "var(--dark)" }} />
-                <span id="customerPhone">{customer.phoneNumber ?? "-"}</span>
+            {customer.email && (
+              <div className="ps-cust-detail">
+                <FaEnvelope /> {customer.email}
               </div>
             )}
             {customer.birthday && (
-              <div className="customer-detail">
-                <FaBirthdayCake
-                  style={{ marginRight: "8px", color: "var(--dark)" }}
-                />
-                <span id="customerBirthday">{customer.birthday ?? "-"}</span>
+              <div className="ps-cust-detail">
+                <FaBirthdayCake /> {customer.birthday}
               </div>
             )}
-            <div className="customer-detail">
-              <span className="stat-pill">
+
+            <div className="ps-cust-stats">
+              <span className="ps-cust-stat-tag">
                 {customer.totalProductsPurchased ?? 0} items purchased
               </span>
-            </div>
-            <div className="customer-detail">
-              <span className="stat-pill highlight">
+              <span className="ps-cust-stat-tag highlight">
                 $
                 {(customer.totalPurchasesValue ?? 0).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                 })}{" "}
-                Lifetime Spent
+                lifetime
               </span>
             </div>
           </div>
+          <button className="ps-cust-x" onClick={clearCustomer}>
+            <FaTimes />
+          </button>
         </div>
+      ) : (
+        <>
+          <div className="ps-cust-search-wrap">
+            <FaSearch className="ps-cust-search-ico" />
+            <AsyncSelect
+              className="ps-cust-search"
+              cacheOptions
+              loadOptions={loadOptions} // <-- Debounced search
+              components={{
+                DropdownIndicator: () => null,
+                IndicatorSeparator: () => null,
+              }}
+              defaultOptions
+              placeholder="Search customer..."
+              noOptionsMessage={({ inputValue }) =>
+                inputValue ? "No customers found" : "Type to search customers"
+              }
+              loadingMessage={() => "Searching..."}
+              inputValue={searchInput}
+              onInputChange={(value) => setSearchInput(value)}
+              onChange={(selected) => {
+                if (selected) {
+                  setCustomerInfoActive(true);
+                  setCustomer(selected.data);
+                } else {
+                  clearCustomer();
+                }
+              }}
+              value={null}
+              isClearable
+              classNamePrefix="ps-cust-rs"
+            />
+          </div>
+
+          <button
+            className="ps-btn ps-btn-outline ps-cust-add-btn"
+            onClick={onAddCustomerClick}
+          >
+            + New customer
+          </button>
+        </>
       )}
 
       <AddCustomerModal

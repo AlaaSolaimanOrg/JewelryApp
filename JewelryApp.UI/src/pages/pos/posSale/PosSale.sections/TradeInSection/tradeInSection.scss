@@ -1,0 +1,147 @@
+.ps-trade-modal {
+  max-width: 560px;
+}
+
+.ps-modal-title svg {
+  margin-right: 6px;
+  vertical-align: -2px;
+}
+
+.ps-ti-cols {
+  display: grid;
+  grid-template-columns: 65px 1fr 1fr 85px 26px;
+  gap: 6px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--pos-border);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--pos-text-subtle);
+
+  span:nth-child(2),
+  span:nth-child(3) {
+    text-align: center;
+  }
+
+  span:nth-child(4) {
+    text-align: right;
+  }
+}
+
+.ps-ti-rows {
+  padding: 0 16px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ps-ti-row {
+  display: grid;
+  grid-template-columns: 65px 1fr 1fr 85px 26px;
+  gap: 6px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--pos-border);
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ps-ti-karat {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 4px;
+  border-radius: 5px;
+  text-align: center;
+  color: #1a1a1a;
+}
+
+.ps-ti-input {
+  font-family: var(--pos-font);
+  font-size: 13px;
+  padding: 6px 4px;
+  border-radius: 5px;
+  border: 1px solid var(--pos-border-strong);
+  background: var(--pos-bg-raised);
+  color: var(--pos-text);
+  text-align: center;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    border-color: var(--pos-amber);
+  }
+}
+
+.ps-ti-sub {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.ps-ti-remove {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--pos-text-muted);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+
+  &:active {
+    background: var(--pos-red-bg);
+    color: var(--pos-red);
+  }
+}
+
+.ps-ti-add-row {
+  padding: 8px 16px;
+  border-top: 1px solid var(--pos-border);
+
+  .ps-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+  }
+}
+
+.ps-ti-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--pos-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .ps-ti-footer-label {
+    font-size: 13px;
+    color: var(--pos-text-secondary);
+  }
+
+  .ps-ti-footer-weight {
+    font-size: 12px;
+    color: var(--pos-text-subtle);
+  }
+
+  .ps-ti-footer-total {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pos-amber);
+  }
+}
+
+.ps-ti-actions {
+  padding: 0 16px 16px;
+  display: flex;
+  gap: 8px;
+
+  .ps-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 12px;
+    font-size: 14px;
+  }
+}

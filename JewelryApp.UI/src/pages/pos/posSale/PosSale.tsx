@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaBarcode, FaExchangeAlt, FaStickyNote, FaTimes } from "react-icons/fa";
+import { GiGoldBar } from "react-icons/gi";
 import { createSale } from "../../../apis/sales.api/sales.api";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import { DiscountType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
+import ExchangeSection from "./PosSale.sections/ExchangeSection/ExchangeSection";
+import PaymentMethodSection from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection";
+import type { PayMethod } from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection.type";
 import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
 import ProductsSection from "./PosSale.sections/ProductsSection/ProductsSection";
+import TradeInSection from "./PosSale.sections/TradeInSection/TradeInSection";
 import type { Customer, Product } from "./types";
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 
@@ -18,14 +24,57 @@ const MainPosPage: React.FC = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([
+    {
+      id: "1",
+      sku: "RG260482",
+      name: "Quarter Lira Ring",
+      quantity: 5,
+      quantityForSale: 2,
+      karatType: 21 as any,
+      weight: 3.78,
+      category: 3 as any,
+      productType: 1 as any,
+      description: "",
+      originalPricePerGram: 88,
+      pricePerGram: 88,
+      price: 0,
+      images: [],
+      manual: false,
+    },
+    {
+      id: "2",
+      sku: "BC260222",
+      name: "Sonbli Bracelet",
+      quantity: 1,
+      quantityForSale: 1,
+      karatType: 18 as any,
+      weight: 11.29,
+      category: 2 as any,
+      productType: 1 as any,
+      description: "",
+      originalPricePerGram: 75,
+      pricePerGram: 82,
+      price: 0,
+      images: [],
+      manual: false,
+    },
+  ]);
   const [discountAmount, setDiscountAmount] = useState("0");
   const [discountType, setDiscountType] = useState(DiscountType.FixedAmount);
   const [notes, setNotes] = useState("");
-  const [showNotes, setShowNotes] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
   const [cashAmount, setCashAmount] = useState(0);
   const [cardAmount, setCardAmount] = useState(0);
+  const [payMethod, setPayMethod] = useState<PayMethod>("cash");
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
+
+  // Trade-in / Exchange are UI-only stubs — their credit affects the displayed
+  // total but is not sent to the backend when the sale is saved.
+  const [showTradeInModal, setShowTradeInModal] = useState(false);
+  const [tradeInCredit, setTradeInCredit] = useState(0);
+  const [showExchangeModal, setShowExchangeModal] = useState(false);
+  const [exchangeCredit, setExchangeCredit] = useState(0);
 
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
@@ -44,7 +93,9 @@ const MainPosPage: React.FC = () => {
       ? (subtotal * parseFloat(discountAmount.toString())) / 100
       : parseFloat(discountAmount.toString())
     : 0;
-  const total = subtotal - discount;
+
+  const rawTotal = subtotal - discount - tradeInCredit - exchangeCredit;
+  const total = Math.max(0, rawTotal);
 
   const anyProductWithUnfilledField = products.some((product) => {
     const quantity = product.quantityForSale || 0;
@@ -72,31 +123,23 @@ const MainPosPage: React.FC = () => {
     checkPaymentEqualTotal &&
     products.every((p) => p.quantityForSale && p.quantityForSale > 0);
 
-  // Sync payment amounts when total changes
+  // Sync payment amounts to the selected payment method when the total changes
   useEffect(() => {
-    if (total > 0 && cashAmount === 0 && cardAmount === 0) {
-      // Initial setup - set cash to total with proper precision
+    if (payMethod === "cash") {
       setCashAmount(parseFloat(total.toFixed(4)));
-    } else if (total > 0 && (cashAmount > 0 || cardAmount > 0)) {
-      // When total changes, adjust payments to maintain ratio or reset to cash
-      const currentPaymentTotal = parseFloat(
-        (cashAmount + cardAmount).toFixed(4),
-      );
-
-      if (
-        currentPaymentTotal > 0 &&
-        Math.abs(currentPaymentTotal - total) > 0.01
-      ) {
-        // If there's a significant difference, reset to cash payment with proper precision
+      setCardAmount(0);
+    } else if (payMethod === "card") {
+      setCardAmount(parseFloat(total.toFixed(4)));
+      setCashAmount(0);
+    } else {
+      const currentPaymentTotal = parseFloat((cashAmount + cardAmount).toFixed(4));
+      if (currentPaymentTotal === 0 || Math.abs(currentPaymentTotal - total) > 0.01) {
         setCashAmount(parseFloat(total.toFixed(4)));
         setCardAmount(0);
       }
-    } else if (total === 0) {
-      // Reset payments when no products
-      setCashAmount(0);
-      setCardAmount(0);
     }
-  }, [total]); // This will run whenever total changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [total]);
 
   // Format number input value
   const formatNumberInput = (value: string): string => {
@@ -135,9 +178,11 @@ const MainPosPage: React.FC = () => {
 
     setCashAmount(cashValue);
 
-    // Calculate card amount as total - cash, and fix precision
-    const cardValue = Math.max(0, parseFloat((total - cashValue).toFixed(4)));
-    setCardAmount(cardValue);
+    if (payMethod === "split") {
+      // Calculate card amount as total - cash, and fix precision
+      const cardValue = Math.max(0, parseFloat((total - cashValue).toFixed(4)));
+      setCardAmount(cardValue);
+    }
   };
 
   // Handle card amount change
@@ -153,9 +198,11 @@ const MainPosPage: React.FC = () => {
 
     setCardAmount(cardValue);
 
-    // Calculate cash amount as total - card, and fix precision
-    const cashValue = Math.max(0, parseFloat((total - cardValue).toFixed(4)));
-    setCashAmount(cashValue);
+    if (payMethod === "split") {
+      // Calculate cash amount as total - card, and fix precision
+      const cashValue = Math.max(0, parseFloat((total - cardValue).toFixed(4)));
+      setCashAmount(cashValue);
+    }
   };
   // Remove product
   const handleRemoveProduct = (idx: number) => {
@@ -295,99 +342,155 @@ const MainPosPage: React.FC = () => {
   };
 
   return (
-    <div id="mainPosPage" className="page-content">
-      <CustomerSection
-        customer={customer}
-        setCustomer={setCustomer}
-        customerInfoActive={customerInfoActive}
-        searchInput={searchInput}
-        setSearchInput={setSearchInput}
-        onAddCustomerClick={() => setShowAddCustomerModal(true)}
-        showAddCustomerModal={showAddCustomerModal}
-        setShowAddCustomerModal={setShowAddCustomerModal}
-        onOpenScanModal={() => setShowScanModal(true)}
-        setCustomerInfoActive={setCustomerInfoActive}
-        showScanProduct
-        showNotes={showNotes}
-        onToggleNotes={() => setShowNotes((s) => !s)}
-      />
-
-      <ProductsSection
-        products={products}
-        onProductAdded={(product) => setProducts((prev) => [...prev, product])}
-        handleRemoveProduct={handleRemoveProduct}
-        handleManualProductChange={handleManualProductChange}
-        onApplyPriceToKarat={handleApplyPriceToKarat}
-      />
-
-      <section className="discount-section">
-        <h2 className="section-title">Apply Discount</h2>
-        <div className="discount-inputs">
-          <input
-            type="text"
-            inputMode="decimal"
-            className="discount-amount"
-            placeholder="Discount amount"
-            value={discountAmount}
-            onChange={(e) => handleDiscountChange(e.target.value)}
-          />
-          <select
-            className="discount-type"
-            value={discountType}
-            onChange={(e) => setDiscountType(Number(e.target.value))}
+    <div id="mainPosPage" className="pos-sale-page">
+      <div className="ps-top-bar">
+        <span className="ps-top-title">New Sale</span>
+        <div className="ps-top-actions">
+          <button
+            className="ps-btn ps-btn-outline"
+            onClick={() => setShowNotesModal(true)}
           >
-            <option value={DiscountType.Percentage}>Percentage (%)</option>
-            <option value={DiscountType.FixedAmount}>Fixed Value ($)</option>
-          </select>
+            <FaStickyNote /> Notes
+          </button>
+          <button
+            className="ps-btn ps-btn-red"
+            onClick={() => setShowExchangeModal(true)}
+          >
+            <FaExchangeAlt /> Exchange
+          </button>
+          <button
+            className="ps-btn ps-btn-amber"
+            onClick={() => setShowTradeInModal(true)}
+          >
+            <GiGoldBar /> Trade-in
+          </button>
+          <button
+            className="ps-btn ps-btn-outline"
+            onClick={() => setShowScanModal(true)}
+          >
+            <FaBarcode /> Scan
+          </button>
+          <button className="ps-btn ps-btn-outline" onClick={() => navigate("/")}>
+            <FaArrowLeft /> Back to POS
+          </button>
         </div>
-      </section>
+      </div>
 
-      {showNotes && (
-        <section className="notes-section">
-          <h2 className="section-title">Notes / Remarks</h2>
-          <textarea
-            className="notes-textarea"
-            placeholder="Add any notes or remarks here..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+      <div className="ps-main">
+        <div className="ps-cart-col">
+          <ProductsSection
+            products={products}
+            onProductAdded={(product) => setProducts((prev) => [...prev, product])}
+            handleRemoveProduct={handleRemoveProduct}
+            handleManualProductChange={handleManualProductChange}
+            onApplyPriceToKarat={handleApplyPriceToKarat}
           />
-        </section>
-      )}
 
-      <section className="payment-section">
-        <h2 className="section-title">Payment</h2>
-        <div className="payment-inputs">
-          <div className="payment-input-group">
-            <label>Cash Amount</label>
-            <input
-              type="text"
-              inputMode="decimal"
-              className="payment-input"
-              placeholder="$0.00"
-              value={cashAmount}
-              onChange={(e) => handleCashAmountChange(e.target.value)}
-            />
-          </div>
-          <div className="payment-input-group">
-            <label>Card Amount</label>
-            <input
-              type="text"
-              inputMode="decimal"
-              className="payment-input"
-              placeholder="$0.00"
-              value={cardAmount}
-              onChange={(e) => handleCardAmountChange(e.target.value)}
-            />
+          <TradeInSection
+            show={showTradeInModal}
+            onOpen={() => setShowTradeInModal(true)}
+            onClose={() => setShowTradeInModal(false)}
+            onCreditChange={setTradeInCredit}
+          />
+
+          <ExchangeSection
+            show={showExchangeModal}
+            onOpen={() => setShowExchangeModal(true)}
+            onClose={() => setShowExchangeModal(false)}
+            onCreditChange={setExchangeCredit}
+          />
+        </div>
+
+        <div className="ps-side-col">
+          <CustomerSection
+            customer={customer}
+            setCustomer={setCustomer}
+            customerInfoActive={customerInfoActive}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            onAddCustomerClick={() => setShowAddCustomerModal(true)}
+            showAddCustomerModal={showAddCustomerModal}
+            setShowAddCustomerModal={setShowAddCustomerModal}
+            setCustomerInfoActive={setCustomerInfoActive}
+          />
+
+          <section className="ps-panel">
+            <h2 className="ps-panel-label">Discount</h2>
+            <div className="ps-disc-row">
+              <input
+                type="text"
+                inputMode="decimal"
+                className="ps-disc-input"
+                placeholder="Discount amount"
+                value={discountAmount}
+                onChange={(e) => handleDiscountChange(e.target.value)}
+              />
+              <select
+                className="ps-disc-sel"
+                value={discountType}
+                onChange={(e) => setDiscountType(Number(e.target.value))}
+              >
+                <option value={DiscountType.Percentage}>%</option>
+                <option value={DiscountType.FixedAmount}>$</option>
+              </select>
+            </div>
+          </section>
+
+          <PaymentMethodSection
+            payMethod={payMethod}
+            onPayMethodChange={setPayMethod}
+            cashAmount={cashAmount}
+            cardAmount={cardAmount}
+            total={total}
+            setCashAmount={setCashAmount}
+            setCardAmount={setCardAmount}
+            onCashInputChange={handleCashAmountChange}
+            onCardInputChange={handleCardAmountChange}
+          />
+
+          <PaymentSummary
+            subtotal={subtotal}
+            discount={discount}
+            tradeInCredit={tradeInCredit}
+            exchangeCredit={exchangeCredit}
+            rawTotal={rawTotal}
+            handleCreateSale={handleCreateSale}
+            canSaveSale={canSaveSale}
+          />
+        </div>
+      </div>
+
+      {showNotesModal && (
+        <div
+          className="ps-modal-overlay show"
+          onClick={(e) => e.target === e.currentTarget && setShowNotesModal(false)}
+        >
+          <div className="ps-modal">
+            <div className="ps-modal-head">
+              <span className="ps-modal-title">Sale notes</span>
+              <button className="ps-modal-close" onClick={() => setShowNotesModal(false)}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="ps-modal-body">
+              <div className="ps-fg">
+                <label>Notes (printed on receipt)</label>
+                <textarea
+                  className="ps-notes-textarea"
+                  placeholder="Add notes..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </div>
+              <div className="ps-modal-btns">
+                <button className="ps-btn ps-btn-gold" onClick={() => setShowNotesModal(false)}>
+                  Done
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-      <PaymentSummary
-        subtotal={subtotal}
-        discount={discount}
-        total={total}
-        handleCreateSale={handleCreateSale}
-        canSaveSale={canSaveSale}
-      />
+      )}
 
       <ScanModal
         show={showScanModal}

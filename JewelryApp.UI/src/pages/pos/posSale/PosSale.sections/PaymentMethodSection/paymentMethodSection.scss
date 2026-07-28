@@ -1,0 +1,105 @@
+.ps-payment-panel {
+  .ps-pay-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .ps-pay-tab {
+    padding: 10px 4px;
+    border-radius: var(--pos-radius-sm);
+    border: 1px solid var(--pos-border-strong);
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.12s;
+    font-family: var(--pos-font);
+
+    .ps-pt-ico {
+      font-size: 18px;
+      display: block;
+      margin: 0 auto 2px;
+      color: var(--pos-text-secondary);
+    }
+
+    .ps-pt-lbl {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--pos-text-secondary);
+    }
+
+    &.sel-cash {
+      border-color: var(--pos-green);
+      background: var(--pos-green-bg);
+      box-shadow: 0 0 0 1px var(--pos-green);
+
+      .ps-pt-ico,
+      .ps-pt-lbl {
+        color: var(--pos-green);
+      }
+    }
+
+    &.sel-card {
+      border-color: var(--pos-purple);
+      background: var(--pos-purple-bg);
+      box-shadow: 0 0 0 1px var(--pos-purple);
+
+      .ps-pt-ico,
+      .ps-pt-lbl {
+        color: var(--pos-purple);
+      }
+    }
+
+    &.sel-split {
+      border-color: var(--pos-amber);
+      background: var(--pos-amber-bg);
+      box-shadow: 0 0 0 1px var(--pos-amber);
+
+      .ps-pt-ico,
+      .ps-pt-lbl {
+        color: var(--pos-amber);
+      }
+    }
+  }
+
+  .ps-pay-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .ps-pf {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+
+    label {
+      font-size: 11px;
+      color: var(--pos-text-subtle);
+    }
+
+    input {
+      font-family: var(--pos-font);
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: var(--pos-radius-sm);
+      border: 1px solid var(--pos-border-strong);
+      background: var(--pos-bg-raised);
+      color: var(--pos-text);
+      width: 100%;
+      min-width: 0;
+
+      &:focus {
+        outline: none;
+        border-color: var(--pos-green);
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

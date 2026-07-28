@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { FaClone, FaEllipsisV, FaPlusCircle, FaTimes } from "react-icons/fa";
+import { useState } from "react";
+import { FaPlus, FaTimes } from "react-icons/fa";
 import type { Product } from "../../types";
 import "./productsSection.scss";
 import preventSignOnKeyDown from "../../../../../utils";
@@ -13,6 +13,14 @@ interface Props {
   onApplyPriceToKarat: (karatType: any, pricePerGram: string | number) => void;
 }
 
+const formatSubtotal = (value: number) => {
+  if (value % 1 === 0) return value.toString();
+  return value
+    .toFixed(4)
+    .replace(/\.?(0{1,4})$/, "")
+    .replace(/(\.\d{1,4})\d*$/, "$1");
+};
+
 const ProductsSection: React.FC<Props> = ({
   products,
   onProductAdded,
@@ -21,19 +29,7 @@ const ProductsSection: React.FC<Props> = ({
   onApplyPriceToKarat,
 }) => {
   const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenuIdx(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
   const handleQuantityChange = (idx: number, value: string) => {
     // Prevent negative numbers and ensure it's a valid number
     const numValue = Math.max(0, parseInt(value) || 0);
@@ -47,209 +43,138 @@ const ProductsSection: React.FC<Props> = ({
   };
 
   return (
-    <section className="products-section">
-      <h2 className="section-title">Cart Summary</h2>
+    <section className="ps-cart-box">
+      <div className="ps-cart-header">
+        <span className="ps-cart-title">Cart</span>
+        <span className="ps-cart-count">
+          {products.length} item{products.length !== 1 ? "s" : ""}
+        </span>
+      </div>
 
-      <table className="products-table">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Karat</th>
-            <th>Quantity</th>
-            <th>Quantity Available</th>
-            <th>Weight</th>
-            <th>Price/Gram</th>
-            <th>Subtotal</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="productsTableBody">
-          {products?.map((product, idx) => (
-            <tr key={idx}>
-              <td>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  {product.images?.[0] && (
-                    <img
-                      className="product-image"
-                      src={`${import.meta.env.VITE_API_URL}${
-                        product.images[0]?.imageUrl
-                      }`}
-                      alt={product.name}
-                    />
-                  )}
-                  <div style={{ marginLeft: "10px" }}>{product.name}</div>
+      {products.length > 0 && (
+        <div className="ps-cart-cols">
+          <span className="ps-col-lbl">Product</span>
+          <span className="ps-col-lbl ps-col-center">Qty</span>
+          <span className="ps-col-lbl ps-col-center">Avail</span>
+          <span className="ps-col-lbl ps-col-center">Weight</span>
+          <span className="ps-col-lbl ps-col-center">$/g</span>
+          <span className="ps-col-lbl ps-col-right">Subtotal</span>
+          <span />
+        </div>
+      )}
+
+      <div className="ps-cart-items">
+        {!products.length && (
+          <div className="ps-cart-empty">
+            <div className="ps-cart-empty-txt">Cart is empty</div>
+            <button
+              className="ps-btn ps-btn-gold"
+              onClick={() => setShowAddProductModal(true)}
+            >
+              <FaPlus /> Add first item
+            </button>
+          </div>
+        )}
+
+        {products.map((product, idx) => {
+          const quantity = product.quantityForSale || 1;
+          const subtotal =
+            parseFloat(product.pricePerGram?.toString() ?? "0") *
+            parseFloat(product.weight?.toString() ?? "0") *
+            quantity;
+          const canApplyToKarat =
+            Number(product.pricePerGram) !== Number(product.originalPricePerGram) &&
+            products.some(
+              (p, i) =>
+                i !== idx &&
+                Number(p.karatType) === Number(product.karatType) &&
+                Number(p.pricePerGram) !== Number(product.pricePerGram),
+            );
+
+          return (
+            <div className="ps-cart-row" key={idx}>
+              <div>
+                <div className="ps-cr-name">{product.name}</div>
+                <div className="ps-cr-meta">
+                  {product.karatType}K {product.productType} ·{" "}
+                  {product.sku ?? "—"}
                 </div>
-              </td>
-              <td>{product.karatType}</td>
-              <td>
-                <input
-                  type="number"
-                  onWheel={(e) => e.currentTarget.blur()}
-                  className="weight-input"
-                  placeholder="Qty"
-                  value={product.quantityForSale || 0}
-                  min="1"
-                  max={product.manual ? undefined : product.quantity}
-                  onKeyDown={preventSignOnKeyDown}
-                  onChange={(e) => handleQuantityChange(idx, e.target.value)}
-                  style={{ width: "70px" }}
-                />
-                {!product.manual &&
-                  product.quantityForSale > product.quantity && (
-                    <div
-                      style={{
-                        color: "red",
-                        fontSize: "12px",
-                        marginTop: "4px",
-                      }}
-                    >
-                      Exceeds available stock
-                    </div>
-                  )}
-              </td>
-              <td>{product.quantity}</td>
-              <td>
+              </div>
+
+              <input
+                type="number"
+                className="ps-cr-input"
+                onWheel={(e) => e.currentTarget.blur()}
+                placeholder="Qty"
+                value={product.quantityForSale || 0}
+                min="1"
+                max={product.manual ? undefined : product.quantity}
+                onKeyDown={preventSignOnKeyDown}
+                onChange={(e) => handleQuantityChange(idx, e.target.value)}
+              />
+
+              <div className="ps-cr-avail">{product.quantity}</div>
+
+              <input
+                type="text"
+                className="ps-cr-input"
+                value={product.weight as any}
+                onChange={(e) =>
+                  handleManualProductChange(idx, "weight", e.target.value)
+                }
+                maxLength={10}
+              />
+
+              <div className="ps-cr-ppg-wrap">
                 <input
                   type="text"
-                  className="weight-input"
-                  placeholder=""
-                  value={product.weight as any}
-                  onChange={(e) =>
-                    handleManualProductChange(idx, "weight", e.target.value)
-                  }
-                  maxLength={10}
-                />
-              </td>
-              <td>
-                <input
-                  type="text"
-                  className="price-input"
-                  placeholder=""
+                  className="ps-cr-input"
                   value={product.pricePerGram as any}
                   onChange={(e) =>
-                    handleManualProductChange(
-                      idx,
-                      "pricePerGram",
-                      e.target.value,
-                    )
+                    handleManualProductChange(idx, "pricePerGram", e.target.value)
                   }
                   maxLength={10}
                 />
-              </td>
-              <td>
-                <span>
-                  {(() => {
-                    const quantity = product.quantityForSale || 1;
-                    const subtotal =
-                      parseFloat(product.pricePerGram?.toString() ?? "0") *
-                      parseFloat(product.weight?.toString() ?? "0") *
-                      quantity;
-                    if (subtotal % 1 === 0) return subtotal;
-                    return subtotal
-                      .toFixed(4)
-                      .replace(/\.?(0{1,4})$/, "")
-                      .replace(/(\.\d{1,4})\d*$/, "$1");
-                  })()}
-                </span>
-              </td>
-              <td>
-                {(() => {
-                  const hasApplyAction =
-                    Number(product.pricePerGram) !==
-                      Number(product.originalPricePerGram) &&
-                    products.some(
-                      (p, i) =>
-                        i !== idx &&
-                        Number(p.karatType) === Number(product.karatType) &&
-                        Number(p.pricePerGram) !== Number(product.pricePerGram),
-                    );
+                {canApplyToKarat && (
+                  <button
+                    className="ps-cr-apply"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() =>
+                      onApplyPriceToKarat(product.karatType, product.pricePerGram)
+                    }
+                  >
+                    Apply to all {product.karatType}K
+                  </button>
+                )}
+              </div>
 
-                  if (!hasApplyAction) {
-                    return (
-                      <div className="action-cell">
-                        <button
-                          className="remove-btn"
-                          onClick={() => handleRemoveProduct(idx)}
-                        >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    );
-                  }
+              <div className="ps-cr-sub">${formatSubtotal(subtotal)}</div>
 
-                  return (
-                    <div
-                      className="action-cell"
-                      ref={openMenuIdx === idx ? menuRef : null}
-                    >
-                      <button
-                        className="action-menu-btn"
-                        onClick={() =>
-                          setOpenMenuIdx(openMenuIdx === idx ? null : idx)
-                        }
-                      >
-                        <FaEllipsisV />
-                      </button>
-
-                      {openMenuIdx === idx && (
-                        <div className="action-dropdown">
-                          <button
-                            className="dropdown-item"
-                            onClick={() => {
-                              onApplyPriceToKarat(
-                                product.karatType,
-                                product.pricePerGram,
-                              );
-                              setOpenMenuIdx(null);
-                            }}
-                          >
-                            <FaClone />
-                            Apply to all {product.karatType}K
-                          </button>
-                          <button
-                            className="dropdown-item danger"
-                            onClick={() => {
-                              handleRemoveProduct(idx);
-                              setOpenMenuIdx(null);
-                            }}
-                          >
-                            <FaTimes />
-                            Remove
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan={8} style={{ textAlign: "center", padding: "12px 0" }}>
               <button
-                className="manual-entry-btn"
-                id="manualEntryBtn"
-                onClick={() => setShowAddProductModal(true)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "2rem",
-                  color: "var(--dark)",
-                }}
-                title="Add product"
+                className="ps-cr-remove"
+                onClick={() => handleRemoveProduct(idx)}
               >
-                <FaPlusCircle />
+                <FaTimes />
               </button>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+
+              {!product.manual && product.quantityForSale > product.quantity && (
+                <div className="ps-cr-stock-warning">Exceeds available stock</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {products.length > 0 && (
+        <div className="ps-cart-footer">
+          <button
+            className="ps-btn ps-btn-gold"
+            onClick={() => setShowAddProductModal(true)}
+          >
+            <FaPlus /> Add item
+          </button>
+        </div>
+      )}
 
       <AddProductModal
         show={showAddProductModal}

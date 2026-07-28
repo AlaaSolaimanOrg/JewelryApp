@@ -4,55 +4,83 @@ import "./paymentSummary.scss";
 interface Props {
   subtotal: number;
   discount: number;
-  total: number;
+  tradeInCredit: number;
+  exchangeCredit: number;
+  rawTotal: number;
   handleCreateSale: () => void;
   canSaveSale: boolean;
 }
 
 const formatAmount = (value: number) => {
-  return parseFloat(value.toFixed(2)).toString();
+  return Math.abs(value).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 };
 
 const PaymentSummary: React.FC<Props> = ({
   subtotal,
   discount,
-  total,
+  tradeInCredit,
+  exchangeCredit,
+  rawTotal,
   handleCreateSale,
   canSaveSale,
 }) => {
   const navigate = useNavigate();
+  const total = Math.max(0, rawTotal);
+  const hasCredit = tradeInCredit > 0 || exchangeCredit > 0;
 
   return (
-    <section className="payment-section">
-      <h2 className="section-title">Payment Summary</h2>
-      <div className="order-summary">
-        <div className="summary-row">
-          <span>Subtotal:</span>
+    <>
+      <section className="ps-panel ps-sum-panel">
+        <h2 className="ps-panel-label">Summary</h2>
+        <div className="ps-sum-row">
+          <span>Subtotal</span>
           <span>${formatAmount(subtotal)}</span>
         </div>
-        <div className="summary-row">
-          <span>Discount:</span>
-          <span>${formatAmount(discount)}</span>
+        {tradeInCredit > 0 && (
+          <div className="ps-sum-row">
+            <span>Trade-in credit</span>
+            <span className="ps-sum-trade">−${formatAmount(tradeInCredit)}</span>
+          </div>
+        )}
+        {exchangeCredit > 0 && (
+          <div className="ps-sum-row">
+            <span>Exchange credit</span>
+            <span className="ps-sum-exch">−${formatAmount(exchangeCredit)}</span>
+          </div>
+        )}
+        <div className="ps-sum-row">
+          <span>Discount</span>
+          <span className="ps-sum-disc">−${formatAmount(discount)}</span>
         </div>
-        <div className="summary-row total">
-          <span>Total:</span>
-          <span>${formatAmount(total)}</span>
+        <div className="ps-sum-total">
+          <span>{rawTotal < 0 ? "Total" : "Customer pays"}</span>
+          <span className="ps-sum-total-price">${formatAmount(total)}</span>
         </div>
-      </div>
+        {rawTotal < 0 && (
+          <div className="ps-sum-overflow">
+            <span>Cash owed to customer</span>
+            <span>${formatAmount(rawTotal)}</span>
+          </div>
+        )}
+        {rawTotal === 0 && hasCredit && (
+          <div className="ps-sum-even">Even exchange — no payment needed</div>
+        )}
+      </section>
 
-      <div className="footer-buttons">
-        <button
-          className={`save-btn ${!canSaveSale ? "disabled-button-gold" : ""}`}
-          disabled={!canSaveSale}
-          onClick={handleCreateSale}
-        >
-          Save Sale
-        </button>
-        <button className="cancel-btn" onClick={() => navigate("/")}>
-          Cancel
-        </button>
+      <button
+        className="ps-save-btn"
+        disabled={!canSaveSale}
+        onClick={handleCreateSale}
+      >
+        {canSaveSale ? `Save sale — $${formatAmount(total)}` : "Save Sale"}
+      </button>
+      <div className="ps-cancel-link" onClick={() => navigate("/")}>
+        Cancel
       </div>
-    </section>
+    </>
   );
 };
 
