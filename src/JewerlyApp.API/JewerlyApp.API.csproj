@@ -21,4 +21,10 @@
     <ProjectReference Include="..\JewerlyApp.Infrastructure\JewerlyApp.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\18K\" />
+    <Folder Include="wwwroot\images\products\21K\" />
+    <Folder Include="wwwroot\images\products\24K\" />
+  </ItemGroup>
+
 </Project>
