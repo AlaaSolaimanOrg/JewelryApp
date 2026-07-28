@@ -24,42 +24,7 @@ const MainPosPage: React.FC = () => {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [customerInfoActive, setCustomerInfoActive] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: "1",
-      sku: "RG260482",
-      name: "Quarter Lira Ring",
-      quantity: 5,
-      quantityForSale: 2,
-      karatType: 21 as any,
-      weight: 3.78,
-      category: 3 as any,
-      productType: 1 as any,
-      description: "",
-      originalPricePerGram: 88,
-      pricePerGram: 88,
-      price: 0,
-      images: [],
-      manual: false,
-    },
-    {
-      id: "2",
-      sku: "BC260222",
-      name: "Sonbli Bracelet",
-      quantity: 1,
-      quantityForSale: 1,
-      karatType: 18 as any,
-      weight: 11.29,
-      category: 2 as any,
-      productType: 1 as any,
-      description: "",
-      originalPricePerGram: 75,
-      pricePerGram: 82,
-      price: 0,
-      images: [],
-      manual: false,
-    },
-  ]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [discountAmount, setDiscountAmount] = useState("0");
   const [discountType, setDiscountType] = useState(DiscountType.FixedAmount);
   const [notes, setNotes] = useState("");
