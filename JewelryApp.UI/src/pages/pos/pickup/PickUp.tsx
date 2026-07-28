@@ -1,480 +1,320 @@
-﻿import React, { useEffect, useRef, useState } from "react";
-import { FaEdit, FaEllipsisV, FaFileInvoice, FaList } from "react-icons/fa";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { useState } from "react";
+import { FaArrowLeft, FaClipboardList, FaSearch } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { showSuccess } from "../../../utils";
+import CompletedCard from "./CompletedCard/CompletedCard";
+import DetailModal from "./DetailModal/DetailModal";
+import EditModal from "./EditModal/EditModal";
+import NotifyModal from "./NotifyModal/NotifyModal";
+import PaymentModal from "./PaymentModal/PaymentModal";
+import type { ActiveViewFilter, BoardView, Repair } from "./PickUp.type";
+import { INITIAL_REPAIRS, formatCurrency, matchesSearch, todayIso } from "./PickUp.utils";
+import RepairCard from "./RepairCard/RepairCard";
 import "./pickUp.scss";
 
-import {
-  PaymentStatus,
-  RepairStatus,
-  SortDirection,
-} from "../../../types/enums";
+const PickUp = () => {
+  const [repairs, setRepairs] = useState<Repair[]>(INITIAL_REPAIRS);
+  const [view, setView] = useState<BoardView>("active");
+  const [filter, setFilter] = useState<ActiveViewFilter>("all");
+  const [search, setSearch] = useState("");
 
-import {
-  getRepairs,
-  updateRepairStatus,
-  updateRepairPaymentStatus,
-} from "../../../apis/repairs.api/repairs.api";
-import CommentTooltip from "../../../components/CommentTooltip/CommentTooltip";
-import CustomLoader from "../../../components/CustomLoader/CustomLoader";
-import EditRepairItemModal from "../../../components/modals/EditRepairItemModal/EditRepairItemModal";
-import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-import Paginator from "../../../components/Paginator/Paginator";
-import { showError, showSuccess, splitCamelCaseWords } from "../../../utils";
-import SmsConfirmPopup from "./SmsConfirmPopup/SmsConfirmPopup";
+  const [readyingId, setReadyingId] = useState<string | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [payId, setPayId] = useState<string | null>(null);
 
-export interface Repair {
-  id: string;
-  repairCode: string;
-  slotNumber: string;
-  customerId: string;
-  customerName: string;
-  customerPhone: string;
-  orderDate: string;
-  status: RepairStatus;
-  notes: string;
-  cost: number;
-  depositPaid: number;
-  paymentStatus: PaymentStatus;
-  dueDate: string | null;
-  receiverName: string | null;
-  pickedUpDate: string | null;
-}
+  const activeRepairs = repairs.filter(
+    (r) => r.status === "progress" || r.status === "done",
+  );
+  const completedRepairs = repairs.filter(
+    (r) => r.status === "completed" || r.status === "cancelled",
+  );
 
-const PickUp: React.FC = () => {
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [showInvoice, setShowInvoice] = useState(false);
-  const [repairIdToView, setRepairIdToView] = useState<string>("");
-  const [smsPopup, setSmsPopup] = useState<{
-    repairId: string;
-    direction: "next" | "prev";
-    currentStatus: RepairStatus;
-  } | null>(null);
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const filteredActive = activeRepairs.filter((r) => matchesSearch(r, search));
+  const progressRepairs = filteredActive.filter((r) => r.status === "progress");
+  let doneRepairs = filteredActive.filter((r) => r.status === "done");
+  if (filter === "awaiting") doneRepairs = doneRepairs.filter((r) => !r.notified);
+  const awaitingRepairs = filteredActive.filter(
+    (r) => r.status === "done" && !r.notified,
+  );
+  const unpaidTotal = filteredActive
+    .filter((r) => !r.paid)
+    .reduce((sum, r) => sum + r.cost, 0);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
+  const filteredCompleted = completedRepairs.filter((r) => matchesSearch(r, search));
 
-      const modalElement = document.querySelector(".modal");
-      if (modalElement && modalElement.contains(target)) return;
+  const showProgressCol = filter === "all" || filter === "progress";
+  const showDoneCol = filter === "all" || filter === "done" || filter === "awaiting";
+  const visibleCols = (showProgressCol ? 1 : 0) + (showDoneCol ? 1 : 0);
 
-      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-        setOpenDropdownId(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const updateRepair = (id: string, changes: Partial<Repair>) => {
+    setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, ...changes } : r)));
+  };
 
-  const {
-    data: repairs,
-    isLoading,
-    fetchData: recallGetRepairs,
-    onSearchChange,
-    pagination,
-    onPaginationChange,
-  } = useLocalApiSearchSortPagination<Repair>({
-    apiToCall: (data) => getRepairs(data.payload),
-    extraPayload: { status: statusFilter },
-    extraEffectDependency: [statusFilter],
-    initialPageSize: 10,
-    initialSortBy: "createdDate",
-    initialSortDirection: SortDirection.Descending,
-  });
+  const handleSetView = (next: BoardView) => {
+    setView(next);
+    setSearch("");
+  };
 
-  const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+  const handleFinishReady = (didNotify: boolean) => {
+    if (!readyingId) return;
+    const repair = repairs.find((r) => r.id === readyingId);
+    if (!repair) return;
+    updateRepair(readyingId, {
+      status: "done",
+      notified: didNotify,
+      notifiedDate: didNotify ? todayIso() : repair.notifiedDate,
     });
+    showSuccess(
+      `${repair.repairCode} — ${repair.customerName}${
+        didNotify ? " done & customer notified" : " done — call customer when possible"
+      }`,
+    );
+    setReadyingId(null);
   };
 
-  const handleTogglePaymentStatus = async (
-    repairId: string,
-    currentPaymentStatus: PaymentStatus,
-  ) => {
-    const newPaymentStatus =
-      currentPaymentStatus === PaymentStatus.Paid
-        ? PaymentStatus.Unpaid
-        : PaymentStatus.Paid;
+  const handleNotify = (id: string) => {
+    const repair = repairs.find((r) => r.id === id);
+    if (!repair) return;
+    updateRepair(id, { notified: true, notifiedDate: todayIso() });
+    showSuccess(`${repair.repairCode} — ${repair.customerName} notified`);
+  };
 
-    try {
-      const response = await updateRepairPaymentStatus({
-        id: repairId,
-        newPaymentStatus,
-      });
-
-      if (response.statusCode === 200 || response.success) {
-        showSuccess("Payment status updated");
-        recallGetRepairs();
-      } else {
-        showError(response.message || "Failed to update payment status");
-      }
-    } catch (err) {
-      console.error(err);
-      showError("Error updating payment status");
+  const handlePickedUp = (id: string) => {
+    const repair = repairs.find((r) => r.id === id);
+    if (!repair) return;
+    if (!repair.paid) {
+      setPayId(id);
+      return;
     }
+    updateRepair(id, { status: "completed", pickedUpDate: todayIso(), slotNumber: null });
+    showSuccess(`${repair.repairCode} — ${repair.customerName} picked up`);
   };
 
-  const formatDueDate = (dueDate: string | null) => {
-    if (!dueDate) return "-";
-    return new Date(dueDate).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+  const handleConfirmPayment = (id: string, payMethod: string) => {
+    const repair = repairs.find((r) => r.id === id);
+    if (!repair) return;
+    updateRepair(id, {
+      paid: true,
+      payMethod,
+      status: "completed",
+      pickedUpDate: todayIso(),
+      slotNumber: null,
     });
+    showSuccess(`${repair.repairCode} — ${repair.customerName} paid (${payMethod}) and picked up`);
+    setPayId(null);
   };
 
-  const REPAIR_STATUS_UI: Record<
-    RepairStatus,
-    { label: string; className: string }
-  > = {
-    [RepairStatus.InProgress]: {
-      label: "In Progress",
-      className: "status-badge in-progress",
-    },
-    [RepairStatus.Completed]: {
-      label: "Completed",
-      className: "status-badge completed",
-    },
-    [RepairStatus.PickedUp]: {
-      label: "Picked Up",
-      className: "status-badge pickedup",
-    },
-  };
-
-  const getNextStatus = (current: RepairStatus) => {
-    switch (current) {
-      case RepairStatus.InProgress:
-        return RepairStatus.Completed;
-      case RepairStatus.Completed:
-        return RepairStatus.PickedUp;
-      case RepairStatus.PickedUp:
-        return RepairStatus.InProgress;
-    }
-  };
-
-  const getPreviousStatus = (current: RepairStatus) => {
-    switch (current) {
-      case RepairStatus.PickedUp:
-        return RepairStatus.Completed;
-      case RepairStatus.Completed:
-        return RepairStatus.InProgress;
-      case RepairStatus.InProgress:
-        return RepairStatus.PickedUp;
-    }
-  };
-
-  const handleStatusUpdate = async (
-    repairId: string,
-    currentStatus: RepairStatus,
-    direction: "next" | "prev",
-    sendSms?: boolean,
+  const handleSaveEdit = (
+    id: string,
+    changes: { notes: string; cost: number; dueDate: string; paid: boolean },
   ) => {
-    const newStatus =
-      direction === "next"
-        ? getNextStatus(currentStatus)
-        : getPreviousStatus(currentStatus);
-
-    try {
-      const updatePayload: any = {
-        id: repairId,
-        status: newStatus,
-        sendSms: sendSms,
-      };
-
-      if (newStatus === RepairStatus.PickedUp) {
-        updatePayload.updateItemsPaymentStatus = true;
-        updatePayload.newPaymentStatus = PaymentStatus.Paid;
-      }
-
-      const response = await updateRepairStatus(updatePayload);
-
-      if (response.statusCode === 200 || response.success) {
-        showSuccess("Status updated successfully");
-        recallGetRepairs();
-      } else {
-        showError(response.message || "Failed to update status");
-      }
-    } catch (err) {
-      console.error(err);
-      showError("Error updating status");
-    }
+    const current = repairs.find((r) => r.id === id);
+    if (!current) return;
+    updateRepair(id, {
+      notes: changes.notes,
+      cost: changes.cost,
+      dueDate: changes.dueDate,
+      paid: changes.paid,
+      payMethod: changes.paid ? current.payMethod : "",
+    });
+    showSuccess(`${current.repairCode} updated`);
+    setEditId(null);
   };
 
-  const handleStatusButtonClick = (
-    repairId: string,
-    currentStatus: RepairStatus,
-    direction: "next" | "prev",
-  ) => {
-    const nextStatus =
-      direction === "next"
-        ? getNextStatus(currentStatus)
-        : getPreviousStatus(currentStatus);
-
-    if (nextStatus === RepairStatus.Completed) {
-      setSmsPopup({ repairId, direction, currentStatus });
-    } else {
-      handleStatusUpdate(repairId, currentStatus, direction);
-    }
+  const handleCancelRepair = (id: string) => {
+    const repair = repairs.find((r) => r.id === id);
+    if (!repair) return;
+    if (
+      !window.confirm(`Cancel repair ${repair.repairCode}? This will move it to completed.`)
+    )
+      return;
+    updateRepair(id, { status: "cancelled", cancelledDate: todayIso(), slotNumber: null });
+    showSuccess(`${repair.repairCode} — ${repair.customerName} cancelled`);
+    setEditId(null);
   };
 
-  const NEXT_STATUS_BUTTON_CLASS: Record<RepairStatus, string> = {
-    [RepairStatus.InProgress]: "completed-btn",
-    [RepairStatus.Completed]: "pickedup-btn",
-    [RepairStatus.PickedUp]: "inprogress-btn",
-  };
+  const readyingRepair = repairs.find((r) => r.id === readyingId) || null;
+  const detailRepair = repairs.find((r) => r.id === detailId) || null;
+  const editRepair = repairs.find((r) => r.id === editId) || null;
+  const payRepair = repairs.find((r) => r.id === payId) || null;
 
   return (
-    <div id="pickUp-page" className="page-content pickUp-page">
-      <section className="section repair-list-section">
-        <div className="section-header">
-          <h2 className="section-title">
-            <FaList className="section-title__icon" />
-            Repair Orders
-          </h2>
-          <span className="repair-count">{repairs?.length} repairs</span>
+    <div className="pickup-page">
+      <div className="pu-top-bar">
+        <span className="pu-top-title">
+          <FaClipboardList /> Repair orders
+        </span>
+        <div className="pu-top-right">
+          <span className="pu-header-count">
+            {view === "active"
+              ? `${filteredActive.length} active repair${filteredActive.length !== 1 ? "s" : ""}`
+              : `${filteredCompleted.length} completed repair${filteredCompleted.length !== 1 ? "s" : ""}`}
+          </span>
+          <Link to="/" className="pu-btn pu-btn-outline">
+            <FaArrowLeft /> Back to POS
+          </Link>
         </div>
+      </div>
 
-        {/* FILTERS */}
-        <div className="filter-section mt-4">
-          <div className="search-container">
-            <input
-              type="text"
-              className="search-input form-control"
-              placeholder="Search repairs..."
-              onChange={onSearchChange}
-            />
-          </div>
+      <div className="pu-controls">
+        <div className="pu-search-wrap">
+          <FaSearch className="pu-search-ico" />
+          <input
+            type="text"
+            className="pu-search-input"
+            placeholder="Search by name, phone, or repair code..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            autoComplete="off"
+          />
+        </div>
+        {view === "active" && (
+          <select
+            className="pu-filter-select"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as ActiveViewFilter)}
+          >
+            <option value="all">All active</option>
+            <option value="progress">In progress</option>
+            <option value="done">Done</option>
+            <option value="awaiting">Awaiting call</option>
+          </select>
+        )}
+        <button
+          className={`pu-tab-btn ${view === "active" ? "active" : ""}`}
+          onClick={() => handleSetView("active")}
+        >
+          Active
+        </button>
+        <button
+          className={`pu-tab-btn ${view === "completed" ? "active" : ""}`}
+          onClick={() => handleSetView("completed")}
+        >
+          Completed
+        </button>
+      </div>
 
-          <div className="filter-controls">
-            <div className="filter-group">
-              <label className="filter-label">Status</label>
-              <select
-                className="filter-select"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+      {view === "active" && (
+        <>
+          <div className="pu-stats">
+            <div className="pu-stat">
+              <div className="pu-stat-num" style={{ color: "var(--pos-amber)" }}>
+                {progressRepairs.length}
+              </div>
+              <div className="pu-stat-label">In progress</div>
+            </div>
+            <div className="pu-stat">
+              <div className="pu-stat-num" style={{ color: "var(--pos-green)" }}>
+                {filteredActive.filter((r) => r.status === "done").length}
+              </div>
+              <div className="pu-stat-label">Done</div>
+            </div>
+            <div className="pu-stat">
+              <div
+                className="pu-stat-num"
+                style={{
+                  color: awaitingRepairs.length ? "var(--pos-amber)" : "var(--pos-text-muted)",
+                }}
               >
-                <option value={""}>All Statuses</option>
-                <option value={RepairStatus.InProgress}>
-                  {splitCamelCaseWords(RepairStatus[RepairStatus.InProgress])}
-                </option>
-                <option value={RepairStatus.Completed}>
-                  {splitCamelCaseWords(RepairStatus[RepairStatus.Completed])}
-                </option>
-                <option value={RepairStatus.PickedUp}>
-                  {splitCamelCaseWords(RepairStatus[RepairStatus.PickedUp])}
-                </option>
-              </select>
+                {awaitingRepairs.length}
+              </div>
+              <div className="pu-stat-label">Awaiting call</div>
+            </div>
+            <div className="pu-stat">
+              <div className="pu-stat-num" style={{ color: "var(--pos-red)" }}>
+                {formatCurrency(unpaidTotal)}
+              </div>
+              <div className="pu-stat-label">Unpaid</div>
             </div>
           </div>
-        </div>
 
-        <div className="repairs-container">
-          {isLoading ? (
-            <div className="repairs-loader">
-              <CustomLoader />
-            </div>
-          ) : repairs?.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-state-icon">📋</div>
-              <h3>No Repairs Found</h3>
-              <p>Try adjusting your filters or add a new repair</p>
-            </div>
+          <div className={`pu-board pu-cols-${visibleCols}`}>
+            {showProgressCol && (
+              <div className="pu-col pu-col-progress">
+                <div className="pu-col-border" />
+                <div className="pu-col-head">
+                  <span>
+                    <span className="pu-col-dot" style={{ background: "var(--pos-amber)" }} />
+                    In progress
+                  </span>
+                  <span>{progressRepairs.length}</span>
+                </div>
+                {progressRepairs.length ? (
+                  progressRepairs.map((r) => (
+                    <RepairCard
+                      key={r.id}
+                      repair={r}
+                      onMarkReady={setReadyingId}
+                      onOpenDetail={setDetailId}
+                      onOpenEdit={setEditId}
+                      onNotify={handleNotify}
+                      onPickedUp={handlePickedUp}
+                    />
+                  ))
+                ) : (
+                  <div className="pu-empty-col">No repairs in progress</div>
+                )}
+              </div>
+            )}
+            {showDoneCol && (
+              <div className="pu-col pu-col-done">
+                <div className="pu-col-border" />
+                <div className="pu-col-head">
+                  <span>
+                    <span className="pu-col-dot" style={{ background: "var(--pos-green)" }} />
+                    Done
+                  </span>
+                  <span>{doneRepairs.length}</span>
+                </div>
+                {doneRepairs.length ? (
+                  doneRepairs.map((r) => (
+                    <RepairCard
+                      key={r.id}
+                      repair={r}
+                      onMarkReady={setReadyingId}
+                      onOpenDetail={setDetailId}
+                      onOpenEdit={setEditId}
+                      onNotify={handleNotify}
+                      onPickedUp={handlePickedUp}
+                    />
+                  ))
+                ) : (
+                  <div className="pu-empty-col">No finished repairs waiting</div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {view === "completed" && (
+        <div className="pu-completed-section">
+          {filteredCompleted.length ? (
+            filteredCompleted.map((r) => <CompletedCard key={r.id} repair={r} />)
           ) : (
-            <table className="repairs-table">
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Slot</th>
-                  <th>Customer</th>
-                  <th>Phone</th>
-                  <th>Order Date</th>
-                  <th>Notes</th>
-                  <th>Payment</th>
-                  <th>Due Date</th>
-                  <th>Pickup Date</th>
-                  <th>Cost</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {repairs?.map((repair) => {
-                  const statusInfo = REPAIR_STATUS_UI[repair.status];
-
-                  return (
-                    <tr
-                      key={repair.id}
-                      className={`repair-row status-${repair.status}`}
-                    >
-                      <td className="repair-code">{repair.repairCode}</td>
-                      <td>
-                        {repair.status === RepairStatus.PickedUp ? (
-                          <span className="slot-number-hidden">-</span>
-                        ) : (
-                          <span className="slot-number-tag">
-                            {repair.slotNumber}
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <div>{repair.customerName}</div>
-                        {repair.receiverName && (
-                          <div
-                            style={{
-                              fontSize: "11px",
-                              color: "var(--gold)",
-                              marginTop: "2px",
-                            }}
-                          >
-                            Receiver: {repair.receiverName}
-                          </div>
-                        )}
-                      </td>
-                      <td>{repair.customerPhone}</td>
-                      <td>{formatDate(repair.orderDate)}</td>
-                      <td>
-                        {repair.notes ? (
-                          <CommentTooltip comment={repair.notes} />
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-                      <td>
-                        <button
-                          className={`badge-payment ${PaymentStatus[repair.paymentStatus]}`}
-                          onClick={() =>
-                            handleTogglePaymentStatus(
-                              repair.id,
-                              repair.paymentStatus,
-                            )
-                          }
-                        >
-                          {PaymentStatus[repair.paymentStatus]}
-                          <span className="payment-tooltip">
-                            &#8594;&nbsp;
-                            {repair.paymentStatus === PaymentStatus.Paid
-                              ? "Mark Unpaid"
-                              : "Mark Paid"}
-                          </span>
-                        </button>
-                      </td>
-                      <td>{formatDueDate(repair.dueDate)}</td>
-                      <td>{formatDueDate(repair.pickedUpDate)}</td>
-                      <td>{formatCurrency(repair.cost)}</td>
-                      <td>
-                        <button
-                          className={`${statusInfo.className} status-advance-btn`}
-                          onClick={() =>
-                            handleStatusButtonClick(
-                              repair.id,
-                              repair.status,
-                              "next",
-                            )
-                          }
-                        >
-                          {statusInfo.label}
-                          <span className="status-tooltip">
-                            &#8594;&nbsp;
-                            {repair.status === RepairStatus.InProgress
-                              ? "Mark Complete"
-                              : repair.status === RepairStatus.Completed
-                                ? "Mark Picked Up"
-                                : "Mark In Progress"}
-                          </span>
-                        </button>
-                      </td>
-                      <td className="actions-cell">
-                        <div
-                          className="action-cell"
-                          ref={
-                            openDropdownId === repair.id ? dropdownRef : null
-                          }
-                        >
-                          <button
-                            className="action-menu-btn"
-                            onClick={() =>
-                              setOpenDropdownId(
-                                openDropdownId === repair.id ? null : repair.id,
-                              )
-                            }
-                          >
-                            <FaEllipsisV />
-                          </button>
-
-                          {openDropdownId === repair.id && (
-                            <div className="action-dropdown">
-                              <EditRepairItemModal
-                                item={{ id: repair.id, cost: repair.cost }}
-                                onRefresh={() => {
-                                  recallGetRepairs();
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <button className="dropdown-item">
-                                  <FaEdit />
-                                  Edit
-                                </button>
-                              </EditRepairItemModal>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => {
-                                  setRepairIdToView(repair.id);
-                                  setShowInvoice(true);
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <FaFileInvoice />
-                                Invoice
-                              </button>
-                              {/* Status action moved to table row */}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="pu-empty-col pu-empty-completed">No completed repairs found</div>
           )}
         </div>
+      )}
 
-        {repairIdToView && (
-          <RepairInvoiceModal
-            repairId={repairIdToView}
-            show={showInvoice}
-            onClose={() => setShowInvoice(false)}
-          />
-        )}
-
-        {smsPopup && (
-          <SmsConfirmPopup
-            onCancel={() => setSmsPopup(null)}
-            onConfirm={(sendSms) => {
-              handleStatusUpdate(
-                smsPopup.repairId,
-                smsPopup.currentStatus,
-                smsPopup.direction,
-                sendSms,
-              );
-              setSmsPopup(null);
-            }}
-          />
-        )}
-
-        <Paginator
-          totalRecords={pagination.totalRecords}
-          pageNumber={pagination.pageNumber}
-          pageSize={pagination.pageSize}
-          onPaginationChange={onPaginationChange}
-        />
-      </section>
+      <NotifyModal
+        repair={readyingRepair}
+        onClose={() => setReadyingId(null)}
+        onConfirm={handleFinishReady}
+      />
+      <DetailModal repair={detailRepair} onClose={() => setDetailId(null)} />
+      <EditModal
+        repair={editRepair}
+        onClose={() => setEditId(null)}
+        onSave={handleSaveEdit}
+        onCancelRepair={handleCancelRepair}
+      />
+      <PaymentModal
+        repair={payRepair}
+        onClose={() => setPayId(null)}
+        onConfirm={handleConfirmPayment}
+      />
     </div>
   );
 };
