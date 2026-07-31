@@ -1,27 +1,96 @@
 #customerModal {
-  .modal-title {
-    color: var(--dark);
+  .modal-content {
+    background: var(--pos-bg-surface, #1a1a1a);
+    border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    border-radius: var(--pos-radius-lg, 14px);
+    color: var(--pos-text, #fff);
   }
+
+  .modal-header {
+    border-bottom: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--pos-text, #fff);
+    }
+
+    .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+  }
+
   .form-label {
-    color: var(--dark);
+    color: var(--pos-text-secondary, #ccc);
+    font-size: 12px;
+    font-weight: 500;
   }
+
+  .form-control {
+    background: var(--pos-bg-raised, #2a2a2a);
+    border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    color: var(--pos-text, #fff);
+
+    &::placeholder {
+      color: var(--pos-text-muted, #888);
+    }
+
+    &:focus {
+      background: var(--pos-bg-raised, #2a2a2a);
+      border-color: var(--pos-blue, #5ba3e6);
+      color: var(--pos-text, #fff);
+      box-shadow: none;
+    }
+
+    &[readonly] {
+      opacity: 0.7;
+    }
+
+    &[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+  }
+
+  .modal-footer {
+    border-top: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
+  }
+
   .modal-cancel-btn {
     height: 40px;
+    background: transparent;
+    border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    color: var(--pos-text-secondary, #ccc);
+
+    &:hover,
+    &:focus {
+      background: var(--pos-bg-raised-active, #333);
+      border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+      color: var(--pos-text, #fff);
+    }
   }
+
   .modal-save-btn {
-    background-color: var(--gold);
-    color: var(--dark);
+    background-color: var(--pos-gold, #d4a017);
+    border-color: var(--pos-gold, #d4a017);
+    color: #1a1a1a;
     height: 40px;
+
+    &:hover,
+    &:focus {
+      background-color: var(--pos-gold-hover, #c4930f);
+      border-color: var(--pos-gold-hover, #c4930f);
+      color: #1a1a1a;
+    }
   }
+
   .error-text {
     margin-top: 6px;
-    color: var(--danger, #dc3545);
+    color: var(--pos-red, #e65b5b);
     font-size: 0.875rem;
   }
-  /* Phone input handled by PhoneNumberDigits component styles */
 
   .required {
-    color: var(--danger, #dc3545);
+    color: var(--pos-red, #e65b5b);
     margin-left: 4px;
   }
 }

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import PhoneNumberDigits from "../../PhoneNumberDigits/PhoneNumberDigits";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   createCustomer,
@@ -7,6 +6,7 @@ import {
   updateCustomer,
 } from "../../../apis/customers.api/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { formatPhoneDisplay, getCustomerModalTitle } from "./AddCustomerModal.utils";
 import "./addCustomerModal.scss";
 
 interface Customer {
@@ -58,9 +58,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       if (mode === "edit" || mode === "view") {
         setName(customerData?.name || "");
         setEmail(customerData?.email || "");
-        const raw = (customerData?.phoneNumber || "").replace(/\D/g, "");
-        setPhoneNumber(raw);
-        // phoneNumber is normalized digits-only string
+        setPhoneNumber((customerData?.phoneNumber || "").replace(/\D/g, ""));
         setBirthday(customerData?.birthday || "");
       } else {
         resetForm();
@@ -76,8 +74,6 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     setBirthday("");
     setErrors({});
   };
-
-  // Phone digit handling moved to PhoneNumberDigits component
 
   const validate = () => {
     const newErrors: {
@@ -235,32 +231,19 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     onClose();
   };
 
-  const getModalTitle = () => {
-    switch (mode) {
-      case "add":
-        return "Add New Customer";
-      case "edit":
-        return "Edit Customer";
-      case "view":
-        return "View Customer";
-      default:
-        return "Add New Customer";
-    }
-  };
-
   const isViewMode = mode === "view";
 
   return (
     <Modal id="customerModal" show={show} onHide={handleCancel} centered>
       <Modal.Header closeButton>
-        <Modal.Title>{getModalTitle()}</Modal.Title>
+        <Modal.Title>{getCustomerModalTitle(mode)}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="customerName">
             <Form.Label>
-              Customer Name <span className="required">*</span>
+              Customer name <span className="required">*</span>
             </Form.Label>
             <Form.Control
               type="text"
@@ -271,41 +254,35 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             />
             {errors.name && <div className="error-text">{errors.name}</div>}
           </Form.Group>
+          <Form.Group className="mb-3" controlId="customerPhone">
+            <Form.Label>
+              Phone number <span className="required">*</span>
+            </Form.Label>
+            <Form.Control
+              type="tel"
+              inputMode="tel"
+              maxLength={12}
+              placeholder="780-123-1234"
+              value={formatPhoneDisplay(phoneNumber)}
+              onChange={(e) =>
+                setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
+              }
+              readOnly={isViewMode}
+            />
+            {errors.phoneNumber && (
+              <div className="error-text">{errors.phoneNumber}</div>
+            )}
+          </Form.Group>
           <Form.Group className="mb-3" controlId="customerEmail">
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Enter email address"
+              placeholder="Optional"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               readOnly={isViewMode}
             />
             {errors.email && <div className="error-text">{errors.email}</div>}
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="customerPhone">
-            <Form.Label>
-              Phone Number <span className="required">*</span>
-            </Form.Label>
-            {isViewMode ? (
-              <Form.Control
-                type="text"
-                value={
-                  phoneNumber
-                    ? `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6, 10)}`
-                    : ""
-                }
-                readOnly
-              />
-            ) : (
-              <PhoneNumberDigits
-                value={phoneNumber}
-                onChange={(v) => setPhoneNumber(v)}
-                error={errors.phoneNumber}
-              />
-            )}
-            {errors.phoneNumber && (
-              <div className="error-text">{errors.phoneNumber}</div>
-            )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="customerBirthday">
             <Form.Label>Birthday</Form.Label>
@@ -338,7 +315,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             id="saveCustomerBtn"
             disabled={isLoading}
           >
-            {mode === "add" ? "Save" : "Update"}
+            {mode === "add" ? "Save customer" : "Update customer"}
           </Button>
         )}
       </Modal.Footer>
