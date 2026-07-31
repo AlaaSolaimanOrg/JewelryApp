@@ -130,7 +130,13 @@ const ScanModal: React.FC<ScanModalProps> = ({
   }, [show]);
 
   return (
-    <Modal show={show} onHide={onClose} centered className="scan-modal">
+    <Modal
+      show={show}
+      onHide={onClose}
+      centered
+      className="scan-modal"
+      container={() => document.querySelector(".pos-app") || document.body}
+    >
       <Modal.Header closeButton>
         <Modal.Title>SKU Scan</Modal.Title>
       </Modal.Header>
@@ -184,7 +190,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
                           <BiTrash
                             style={{
                               fontSize: "1.5rem", // Reduced size to fit better
-                              color: "var(--danger)",
+                              color: "var(--pos-red, #e65b5b)",
                               cursor: "pointer",
                             }}
                             onClick={() => handleRemove(scannedItem)}
@@ -222,7 +228,8 @@ const ScanModal: React.FC<ScanModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Button
-          variant="primary"
+          variant="warning"
+          className="modal-save-btn"
           disabled={!scannedItems.length}
           onClick={() => {
             if (scanOnly) {
@@ -234,7 +241,11 @@ const ScanModal: React.FC<ScanModalProps> = ({
         >
           {validationErrors.length ? "Proceed" : "Confirm"}
         </Button>
-        <Button variant="secondary" onClick={onClose}>
+        <Button
+          variant="secondary"
+          className="modal-cancel-btn"
+          onClick={onClose}
+        >
           Close
         </Button>
       </Modal.Footer>
