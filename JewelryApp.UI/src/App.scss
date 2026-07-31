@@ -479,6 +479,14 @@ select {
   appearance: none;
 }
 
+.pos-app {
+  input,
+  select,
+  textarea {
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
 .fw-100 {
   font-weight: 100 !important;
 }

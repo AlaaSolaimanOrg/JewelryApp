@@ -1,4 +1,8 @@
 #customerModal {
+  .modal-dialog {
+    max-width: 440px;
+  }
+
   .modal-content {
     background: var(--pos-bg-surface, #1a1a1a);
     border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
@@ -7,6 +11,7 @@
   }
 
   .modal-header {
+    padding: 14px 18px;
     border-bottom: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
 
     .modal-title {
@@ -16,17 +21,32 @@
     }
 
     .btn-close {
+      width: 20px;
+      height: 20px;
+      padding: 12px;
       filter: invert(1) grayscale(100%) brightness(200%);
     }
   }
 
+  .modal-body {
+    padding: 18px 18px 6px;
+  }
+
+  .form-group {
+    margin-bottom: 12px !important;
+  }
+
   .form-label {
-    color: var(--pos-text-secondary, #ccc);
     font-size: 12px;
+    color: var(--pos-text-secondary, #ccc);
     font-weight: 500;
+    margin-bottom: 4px;
   }
 
   .form-control {
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
     background: var(--pos-bg-raised, #2a2a2a);
     border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
     color: var(--pos-text, #fff);
@@ -52,14 +72,28 @@
   }
 
   .modal-footer {
-    border-top: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
+    display: flex;
+    padding: 4px 18px 18px;
+    gap: 8px;
+    border-top: none;
+  }
+
+  .modal-cancel-btn,
+  .modal-save-btn {
+    flex: 1 1 0;
+    margin: 0;
+    padding: 13px;
+    font-size: 14px;
+    text-align: center;
+    justify-content: center;
+    border-radius: var(--pos-radius-sm, 10px);
   }
 
   .modal-cancel-btn {
-    height: 40px;
     background: transparent;
     border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
-    color: var(--pos-text-secondary, #ccc);
+    color: var(--pos-text-muted, #888);
+    font-weight: 500;
 
     &:hover,
     &:focus {
@@ -73,7 +107,7 @@
     background-color: var(--pos-gold, #d4a017);
     border-color: var(--pos-gold, #d4a017);
     color: #1a1a1a;
-    height: 40px;
+    font-weight: 600;
 
     &:hover,
     &:focus {
@@ -87,10 +121,5 @@
     margin-top: 6px;
     color: var(--pos-red, #e65b5b);
     font-size: 0.875rem;
-  }
-
-  .required {
-    color: var(--pos-red, #e65b5b);
-    margin-left: 4px;
   }
 }

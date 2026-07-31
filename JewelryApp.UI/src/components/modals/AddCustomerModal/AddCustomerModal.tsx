@@ -234,7 +234,13 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   const isViewMode = mode === "view";
 
   return (
-    <Modal id="customerModal" show={show} onHide={handleCancel} centered>
+    <Modal
+      id="customerModal"
+      show={show}
+      onHide={handleCancel}
+      centered
+      container={() => document.querySelector(".pos-app") || document.body}
+    >
       <Modal.Header closeButton>
         <Modal.Title>{getCustomerModalTitle(mode)}</Modal.Title>
       </Modal.Header>
@@ -242,9 +248,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="customerName">
-            <Form.Label>
-              Customer name <span className="required">*</span>
-            </Form.Label>
+            <Form.Label>Customer name *</Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter customer name"
@@ -255,9 +259,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             {errors.name && <div className="error-text">{errors.name}</div>}
           </Form.Group>
           <Form.Group className="mb-3" controlId="customerPhone">
-            <Form.Label>
-              Phone number <span className="required">*</span>
-            </Form.Label>
+            <Form.Label>Phone number *</Form.Label>
             <Form.Control
               type="tel"
               inputMode="tel"
@@ -300,13 +302,6 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button
-          variant="secondary"
-          onClick={handleCancel}
-          className="modal-cancel-btn"
-        >
-          {isViewMode ? "Close" : "Cancel"}
-        </Button>
         {!isViewMode && (
           <Button
             variant="warning"
@@ -318,6 +313,13 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             {mode === "add" ? "Save customer" : "Update customer"}
           </Button>
         )}
+        <Button
+          variant="secondary"
+          onClick={handleCancel}
+          className="modal-cancel-btn"
+        >
+          {isViewMode ? "Close" : "Cancel"}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

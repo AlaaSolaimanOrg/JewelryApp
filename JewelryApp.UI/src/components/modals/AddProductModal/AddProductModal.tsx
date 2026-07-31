@@ -140,9 +140,9 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     <Modal
       show={show}
       onHide={onClose}
-      size="lg"
       centered
       className="add-product-modal"
+      container={() => document.querySelector(".pos-app") || document.body}
     >
       <Modal.Header closeButton>
         <Modal.Title>Add Product to Cart</Modal.Title>
