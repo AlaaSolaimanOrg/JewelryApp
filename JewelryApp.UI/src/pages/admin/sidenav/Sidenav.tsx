@@ -2,7 +2,6 @@ import { AiFillHome } from "react-icons/ai";
 import {
   FaBox,
   FaChartLine,
-  FaGem,
   FaTag,
   FaUser,
   FaUsers,
@@ -174,8 +173,9 @@ const SideNav = () => {
         <button
           className="mobile-toggle-btn"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
+          aria-label="Open menu"
         >
-          <FaBars />
+          <FaBars size={17} />
         </button>
       )}
 
@@ -184,14 +184,11 @@ const SideNav = () => {
       <aside className={`sidebar ${isMobileOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-header">
           <div className="logo">
-            <div className="logo-icon">
-              <FaGem className="icon" />
-            </div>
             <div className="logo-text">
               <h1>
                 Adi<span> Jewelry</span>
               </h1>
-              <small>Inventory System</small>
+              <small>Management System</small>
             </div>
           </div>
           {isMobileOpen && (
@@ -205,7 +202,7 @@ const SideNav = () => {
         </div>
 
         <div className="nav-links">
-          <div className="nav-section">Inventory</div>
+          <div className="nav-section">Main</div>
           {filteredNavItems.map((item) => {
             const hasSubItems = !!item.subItems?.length;
             const expanded = openSections[item.label];
@@ -294,9 +291,8 @@ const SideNav = () => {
           )}
 
           <button
-            className="nav-item no-subItems"
+            className="nav-item no-subItems logout-item"
             onClick={handleLogout}
-            style={{ marginTop: "16px", color: "#d9534f" }}
           >
             <FaUser className="icon" />
             <span>Logout</span>

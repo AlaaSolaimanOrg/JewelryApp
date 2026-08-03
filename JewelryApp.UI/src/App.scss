@@ -102,7 +102,7 @@
   --shadow-bottom: 0 4px 12px rgba(0, 0, 0, 0.08);
   --card-radius: 10px;
   --sidebar-width: 260px;
-  --header-height: 70px;
+  --header-height: 64px;
   --text-dark: #333333;
   --return-light: #ffeaea;
 }
@@ -142,6 +142,44 @@ body {
 .adminLayoutContainer {
   font-family: "Inter", sans-serif;
   height: 100vh;
+
+  --admin-bg: #111;
+  --admin-bg2: #1a1a1a;
+  --admin-bg3: #222;
+  --admin-bg4: #2a2a2a;
+  --admin-bg5: #333;
+  --admin-t1: #fff;
+  --admin-t2: #ccc;
+  --admin-t3: #888;
+  --admin-t4: #555;
+  --admin-bd: rgba(255, 255, 255, 0.08);
+  --admin-bd2: rgba(255, 255, 255, 0.15);
+  --admin-gold: #d4a017;
+  --admin-gold-hover: #c4930f;
+  --admin-gold-bg: rgba(212, 160, 23, 0.15);
+  --admin-red: #e65b5b;
+  --admin-radius-sm: 10px;
+  --admin-radius-lg: 14px;
+  --admin-font: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  &[data-theme="light"] {
+    --admin-bg: #f2f2f4;
+    --admin-bg2: #ffffff;
+    --admin-bg3: #f7f7f8;
+    --admin-bg4: #ededef;
+    --admin-bg5: #e2e2e5;
+    --admin-t1: #1a1a1a;
+    --admin-t2: #3a3a3a;
+    --admin-t3: #6b6b70;
+    --admin-t4: #9a9aa0;
+    --admin-bd: rgba(0, 0, 0, 0.09);
+    --admin-bd2: rgba(0, 0, 0, 0.18);
+    --admin-gold: #b8860b;
+    --admin-gold-hover: #a4780a;
+    --admin-gold-bg: rgba(184, 134, 11, 0.12);
+    --admin-red: #cf4444;
+  }
+
   h1,
   h2,
   h3,
@@ -154,10 +192,11 @@ body {
 .adminLayout-main {
   color: #333;
   padding: 30px 40px 30px 290px;
-  background-color: #fafafa;
+  background-color: var(--admin-bg);
   min-height: calc(100% - 70px);
   height: fit-content;
   margin-top: var(--header-height);
+  transition: background-color 0.25s;
 }
 
 .admin-page-content {

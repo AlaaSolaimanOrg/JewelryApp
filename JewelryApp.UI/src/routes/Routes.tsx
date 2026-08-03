@@ -84,17 +84,21 @@ const POSLayout = () => {
 };
 
 // Admin Layout (can add AdminHeader/Sidebar if needed)
-const AdminLayout = () => (
-  <div className="adminLayoutContainer">
-    <Suspense fallback={<LoadingFallback />}>
-      <SideNav />
-      <AdminHeader />
-    </Suspense>
-    <main className="adminLayout-main">
-      <Outlet />
-    </main>
-  </div>
-);
+const AdminLayout = () => {
+  const { theme } = useTheme();
+
+  return (
+    <div className="adminLayoutContainer" data-theme={theme}>
+      <Suspense fallback={<LoadingFallback />}>
+        <SideNav />
+        <AdminHeader />
+      </Suspense>
+      <main className="adminLayout-main">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
 const AppRoutes = () => {
   return (
