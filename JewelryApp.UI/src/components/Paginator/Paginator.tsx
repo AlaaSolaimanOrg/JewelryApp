@@ -1,5 +1,6 @@
 import type { ChangeEvent } from "react";
 import { Col, Row } from "react-bootstrap";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./paginator.scss";
 
 type PaginatorProps = {
@@ -30,7 +31,7 @@ const Paginator = ({
     ? pageSizeOptions
     : [...pageSizeOptions, pageSize].sort((a, b) => a - b);
 
-  const getPageNumbers = () => {
+  const getPageNumbers = (): (number | "ellipsis")[] => {
     let startPage = Math.max(pageNumber - Math.floor(maxPages / 2), 1);
     let endPage = startPage + maxPages - 1;
 
@@ -39,10 +40,22 @@ const Paginator = ({
       startPage = Math.max(endPage - maxPages + 1, 1);
     }
 
-    const pages = [] as any;
+    const pages: (number | "ellipsis")[] = [];
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) pages.push("ellipsis");
+    }
+
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) pages.push("ellipsis");
+      pages.push(totalPages);
+    }
+
     return pages;
   };
 
@@ -77,29 +90,35 @@ const Paginator = ({
 
           <div className="pagination">
             <button
-              className="page-item"
+              className="page-item page-nav"
               disabled={pageNumber === 1}
               onClick={() => handlePageClick(pageNumber - 1)}
             >
-              Prev
+              <FaChevronLeft size={12} /> Prev
             </button>
 
-            {getPageNumbers().map((page) => (
-              <div
-                key={page}
-                className={`page-item ${page === pageNumber ? "active" : ""}`}
-                onClick={() => handlePageClick(page)}
-              >
-                {page}
-              </div>
-            ))}
+            {getPageNumbers().map((page, index) =>
+              page === "ellipsis" ? (
+                <div key={`ellipsis-${index}`} className="page-item ellipsis">
+                  …
+                </div>
+              ) : (
+                <div
+                  key={page}
+                  className={`page-item ${page === pageNumber ? "active" : ""}`}
+                  onClick={() => handlePageClick(page)}
+                >
+                  {page}
+                </div>
+              )
+            )}
 
             <button
-              className="page-item"
+              className="page-item page-nav"
               disabled={pageNumber === totalPages}
               onClick={() => handlePageClick(pageNumber + 1)}
             >
-              Next
+              Next <FaChevronRight size={12} />
             </button>
           </div>
         </div>

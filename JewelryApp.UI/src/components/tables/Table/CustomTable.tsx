@@ -54,7 +54,14 @@ const CustomTable: React.FC<CustomTableProps> = ({
             </tr>
           ) : data?.length ? (
             data.map((row, rowIndex) => (
-              <tr key={rowIndex}>
+              <tr
+                key={rowIndex}
+                className={
+                  typeof row.rowClassName === "string"
+                    ? row.rowClassName
+                    : undefined
+                }
+              >
                 {headers.map((header, colIndex) => (
                   <td key={colIndex}>{row[header.key] ?? null}</td>
                 ))}

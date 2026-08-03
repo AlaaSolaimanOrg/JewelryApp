@@ -2,6 +2,7 @@
 using JewerlyApp.Application.Common.Dtos;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Users.Queries.GetUserStats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -92,6 +93,18 @@ namespace JewerlyApp.API.Controllers.Identity
         public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery query)
         {
             var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get staff stat counts (total, active/inactive, admins, terminal-role logins)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUserStats()
+        {
+            var response = await Mediator.Send(new GetUserStatsQuery());
             return CreateResponse(response);
         }
 

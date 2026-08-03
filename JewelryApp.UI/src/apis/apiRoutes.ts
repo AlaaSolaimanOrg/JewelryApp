@@ -34,10 +34,12 @@ export const apiRoutes = {
     getAllUsers: "Users/GetAllUsers",
     getAllRoles: "Users/GetAllRoles/roles",
     softDeleteUser: "Users/SoftDeleteUser",
+    restoreUser: "Users/RestoreUser",
     createUser: "Users/CreateUser",
     updateUser: "Users/UpdateUser",
     getUserById: "Users/GetUserById",
     getUserInfo: "Users/getUserInfo",
+    getUserStats: "Users/GetUserStats",
   },
   customers: {
     createCustomer: "Customer/CreateCustomer",

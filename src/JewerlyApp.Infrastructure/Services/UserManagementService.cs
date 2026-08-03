@@ -272,6 +272,13 @@ namespace JewerlyApp.Infrastructure.Services
             try
             {
                 var usersQuery =    from u in _context.Users
+
+                                    where string.IsNullOrWhiteSpace(query.Role) ||
+                                          _context.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                              _context.Roles.Any(r => r.Id == ur.RoleId && r.Name == query.Role))
+
+                                    where !query.IsActive.HasValue || u.IsActive == query.IsActive.Value
+
                                     join ur in _context.UserRoles on u.Id equals ur.UserId into userRoles
                                     from ur in userRoles.DefaultIfEmpty()
                                     join r in _context.Roles on ur.RoleId equals r.Id into roles

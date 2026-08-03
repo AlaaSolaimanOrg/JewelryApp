@@ -1,211 +1,390 @@
 #staff {
-  .card {
-    background: white;
-    border-radius: var(--card-radius);
-    box-shadow: 0 5px 15px var(--shadow);
-    padding: 25px;
-    margin-bottom: 25px;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    transition: var(--transition);
+  font-family: var(--admin-font);
+
+  .page-header {
+    margin-bottom: 16px;
   }
 
-  .card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    gap: 10px;
+
+    .icon {
+      width: auto;
+      height: auto;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+      color: var(--admin-gold);
+      font-size: 18px;
+    }
   }
 
-  .card-header {
+  .btn-md {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    min-height: 42px;
+    gap: 6px;
+    box-shadow: none;
+    transition: all 0.12s;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  .btn-gold {
+    background: var(--admin-gold) !important;
+    border-color: var(--admin-gold) !important;
+    color: #1a1a1a !important;
+
+    &:hover,
+    &:active {
+      background: var(--admin-gold-hover) !important;
+    }
+  }
+
+  /* =============================
+     PANEL / TABLE TOOLS
+  ============================== */
+  .panel {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd);
+    border-radius: var(--admin-radius-lg);
+    padding: 16px 18px;
+    transition:
+      background 0.25s,
+      border-color 0.25s;
+  }
+
+  .tbl-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border);
-    background-color: white !important;
-    @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
-    }
-    @media (max-width: 480px) {
-      gap: 12px;
-    }
+    margin-bottom: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .card-title {
-    font-size: 1.3rem;
+  .tbl-title {
+    font-size: 15px;
     font-weight: 600;
-    color: var(--dark-light);
-    @media (max-width: 480px) {
-      font-size: 1.1rem;
-    }
+    color: var(--admin-t1);
   }
 
-  .search-bar {
-    position: relative;
-  }
+  /* =============================
+     TABLE (CustomTable overrides)
+  ============================== */
+  .customTable {
+    border: none;
+    border-radius: 0;
 
-  .search-bar input {
-    padding: 10px 15px 10px 40px;
-    border: 1px solid var(--border);
-    border-radius: 30px;
-    width: 265px;
-    font-size: 14px;
-    transition: var(--transition);
-    background: var(--light);
-    color: var(--dark);
-    -webkit-text-fill-color: var(--dark);
-    @media (max-width: 768px) {
-      width: 100%;
-    }
-    @media (max-width: 480px) {
-      padding: 8px 12px 8px 35px;
+    table {
+      min-width: 700px;
       font-size: 13px;
     }
-  }
-  .search-bar input:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
-  }
 
-  .search-bar .icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--secondary);
-  }
-  .disabledIcon {
-    opacity: 0.5;
-    &:hover {
-      background: white !important;
-      color: #6c757d;
+    th {
+      background: none;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--admin-t4);
+      font-weight: 600;
+      padding: 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      white-space: nowrap;
     }
-    .icon {
-      cursor: default;
+
+    th:hover {
+      background: none;
+      color: var(--admin-t2);
+    }
+
+    th:hover::after {
+      content: none;
+    }
+
+    th .arrow {
+      font-size: 9px;
+      margin-left: 3px;
+      color: var(--admin-gold);
+    }
+
+    td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      color: var(--admin-t2);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: rgba(212, 160, 23, 0.05);
+    }
+
+    tr.inactive-row td {
+      opacity: 0.5;
+    }
+
+    .noResultsFound td {
+      background: transparent;
+      color: var(--admin-t4);
     }
   }
 
-  .table-container {
-    overflow-x: auto;
-    border-radius: var(--card-radius);
-    border: 1px solid var(--border);
+  /* =============================
+     STAFF NAME CELL
+  ============================== */
+  .staff-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-  }
-
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  th,
-  td {
-    padding: 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-
-  th {
-    background-color: var(--light);
-    font-weight: 600;
-    color: var(--dark);
-    cursor: pointer;
-    position: relative;
-  }
-
-  th:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-
-  th:hover:after {
-    content: "↕";
-    position: absolute;
-    right: 10px;
-    color: var(--gray-dark);
-  }
-
-  tr:hover {
-    background-color: rgba(212, 175, 55, 0.05);
-  }
-
-  .product-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 8px;
-    object-fit: cover;
-    background: linear-gradient(135deg, #f9f9f9, #f0f0f0);
+  .staff-av {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--dark);
-    font-size: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--light);
-    border-radius: 20px;
     font-size: 12px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border: 1px solid var(--border);
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #1a1a1a;
   }
 
-  .tag-new {
-    background: rgba(40, 167, 69, 0.1);
-    border-color: rgba(40, 167, 69, 0.2);
-    color: #28a745;
+  .staff-name-txt {
+    font-weight: 600;
+    color: var(--admin-t1);
   }
 
-  .tag-featured {
-    background: rgba(0, 123, 255, 0.1);
-    border-color: rgba(0, 123, 255, 0.2);
-    color: #0069d9;
+  .staff-name-sub {
+    font-size: 11px;
+    color: var(--admin-t4);
   }
 
-  .tag-premium {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: rgba(212, 175, 55, 0.2);
-    color: var(--primary-dark);
+  /* =============================
+     ROLE PILLS
+  ============================== */
+  .role-pill {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-right: 4px;
+    white-space: nowrap;
+    display: inline-block;
+    margin-bottom: 2px;
   }
 
-  .tag-low-stock {
-    background: rgba(220, 53, 69, 0.1);
-    border-color: rgba(220, 53, 69, 0.2);
-    color: var(--danger);
+  .r-admin {
+    background: rgba(155, 141, 230, 0.12);
+    color: var(--admin-purple);
+  }
+  .r-pos {
+    background: rgba(91, 163, 230, 0.12);
+    color: var(--admin-blue);
+  }
+  .r-terminal {
+    background: rgba(230, 162, 60, 0.12);
+    color: var(--admin-amber);
+  }
+  .r-default {
+    background: var(--admin-bg4);
+    color: var(--admin-t3);
   }
 
-  .action-btn {
-    background: none;
-    border: none;
-    color: var(--secondary);
+  /* =============================
+     STATUS PILL
+  ============================== */
+  .status-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 11px;
+    border-radius: 9px;
+    white-space: nowrap;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
-    transition: var(--transition);
-    font-size: 16px;
-    width: 36px;
-    height: 36px;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: all 0.12s;
+
+    &:hover {
+      border-color: currentColor;
+    }
+  }
+
+  .st-active {
+    background: rgba(76, 175, 124, 0.12);
+    color: var(--admin-green);
+  }
+
+  .st-inactive {
+    background: var(--admin-bg4);
+    color: var(--admin-t3);
+  }
+
+  /* =============================
+     ACTION ICON BUTTONS
+  ============================== */
+  .act-ico {
+    font-family: var(--admin-font);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    margin-left: 4px;
+    position: relative;
+    transition: all 0.12s;
+    color: var(--admin-t3);
+
+    svg {
+      display: block;
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: var(--admin-bg4);
+      color: var(--admin-t1);
+    }
+
+    &::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
   }
 
-  .action-btn:hover {
-    background: var(--primary-light);
-    color: var(--dark);
+  .act-del {
+    color: var(--admin-red);
+
+    &:hover {
+      background: rgba(230, 91, 91, 0.12);
+      color: var(--admin-red);
+    }
   }
 
-  .action-btn.danger:hover {
-    background: var(--danger-light);
-    color: var(--danger);
+  /* =============================
+     PAGINATOR (scoped override)
+  ============================== */
+  .paginator {
+    .paginator-controls {
+      margin-top: 18px;
+    }
+
+    .page-size-control {
+      color: var(--admin-t3);
+      font-size: 13px;
+
+      select {
+        min-width: 70px;
+        height: 36px;
+        border-radius: var(--admin-radius-sm);
+        border: 1px solid var(--admin-bd2);
+        background: var(--admin-bg4);
+        color: var(--admin-t1);
+        -webkit-text-fill-color: var(--admin-t1);
+        padding: 0 10px;
+        cursor: pointer;
+        font-family: var(--admin-font);
+      }
+    }
+
+    .page-item {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--admin-radius-sm);
+      background: var(--admin-bg4);
+      border: 1px solid var(--admin-bd2);
+      color: var(--admin-t3);
+      font-size: 13px;
+      font-family: var(--admin-font);
+      transition: all 0.12s;
+    }
+
+    .page-item:hover,
+    .page-item.active {
+      background: var(--admin-gold);
+      color: #1a1a1a;
+      border-color: var(--admin-gold);
+    }
+
+    .page-item:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: var(--admin-bg4);
+      color: var(--admin-t4);
+      border-color: var(--admin-bd2);
+    }
+
+    .page-nav {
+      width: auto;
+      padding: 0 16px;
+      gap: 6px;
+      font-weight: 600;
+
+      svg {
+        color: var(--admin-gold);
+      }
+    }
+
+    .page-nav:hover:not(:disabled) svg {
+      color: #1a1a1a;
+    }
+
+    .page-item.ellipsis {
+      background: transparent;
+      border-color: transparent;
+      color: var(--admin-t4);
+    }
   }
+
 }

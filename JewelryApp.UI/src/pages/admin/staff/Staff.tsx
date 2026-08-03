@@ -1,105 +1,82 @@
-import { FaEdit, FaPlus, FaTrash, FaUserShield } from "react-icons/fa";
+import { useState } from "react";
+import { FaPlus, FaUserShield } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  getAllRoles,
   getAllUsers,
+  restoreUser,
   softDeleteUser,
 } from "../../../apis/users.api/users.api";
-import Paginator from "../../../components/Paginator/Paginator";
+import { getUserStats } from "../../../apis/userStats.api/userStats.api";
 
+import Paginator from "../../../components/Paginator/Paginator";
+import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./staff.scss";
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/tables/Table/CustomTable";
-
-export interface User {
-  id: number;
-  userName: string;
-  email: string;
-  fullName: string;
-  lastName: string;
-  phoneNumber: string;
-  isActive: boolean;
-  roles: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import CustomTable from "../../../components/tables/Table/CustomTable";
+import {
+  buildStaffHeaders,
+  buildStaffTableData,
+  getStatusFilterValue,
+  type User,
+} from "./Staff.utils";
+import StaffStats from "./StaffStats/StaffStats";
+import type { UserStats } from "./StaffStats/StaffStats.type";
+import StaffFilters from "./StaffFilters/StaffFilters";
+import DeleteStaffModal from "./DeleteStaffModal/DeleteStaffModal";
 
 const Staff = () => {
   const navigate = useNavigate();
+  const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
+
   const {
     data: users,
     isLoading: isLoadingUsers,
     fetchData: recallGetUsers,
+    sortCriteria,
+    onSortChange,
     onSearchChange,
     onPaginationChange,
     pagination,
   } = useLocalApiSearchSortPagination<User>({
     apiToCall: (data) => getAllUsers(data.payload),
+    extraPayload: {
+      role: roleFilter || undefined,
+      isActive: getStatusFilterValue(statusFilter),
+    },
+    extraEffectDependency: [roleFilter, statusFilter],
   });
 
-  const { data: allRoles, isLoading: isLoadingAllRoles } =
-    useLocalApiSearchSortPagination<string>({
-      apiToCall: () => getAllRoles(),
-    });
+  const { data: userStats, fetchData: recallStats } = useLocalApi({
+    apiToCall: () => getUserStats(),
+    effectDependency: [],
+  }) as { data: UserStats | null; fetchData: () => void };
 
-  // Table headers
-  const staffMembersHeaders: TableHeader[] = [
-    { key: "name", label: "Name", width: "200px", sortable: false },
-    { key: "roles", label: "Role(s)", width: "150px", sortable: false },
-    { key: "email", label: "Email", width: "250px", sortable: false },
-    { key: "phone", label: "Phone", width: "150px", sortable: false },
-    { key: "createdAt", label: "Created At", width: "150px", sortable: false },
-    { key: "status", label: "Status", width: "120px", sortable: false },
-    { key: "actions", label: "Actions", width: "150px", sortable: false },
-  ];
+  const handleRoleFilterChange = (value: string) => {
+    setRoleFilter(value);
+    onPaginationChange(1);
+  };
 
-  // Dynamic data mapping
-  const staffMembersData = users?.map((user) => ({
-    name: user.fullName ?? user.userName,
-    roles: user.roles?.join(", "),
-    email: user.email,
-    phone: user.phoneNumber ?? "—",
-    createdAt: new Date(user.createdAt).toLocaleDateString(),
-    status: user.isActive ? (
-      <span className="tag tag-new">Active</span>
-    ) : (
-      <span className="tag tag-featured">Inactive</span>
-    ),
-    actions: (
-      <>
-        <button
-          className="action-btn"
-          title="Edit"
-          onClick={() => handleEditUser(user.id)}
-        >
-          <FaEdit />
-        </button>
-        <button
-          className={`action-btn ${!user.isActive ? "disabledIcon" : "danger"}`}
-          title="Delete"
-          onClick={() => handleDeleteUser(user.id)}
-          disabled={!user.isActive}
-        >
-          <FaTrash className="icon" />
-        </button>
-      </>
-    ),
-  }));
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    onPaginationChange(1);
+  };
 
   const handleEditUser = (userId: number) => {
     navigate(`/admin/editStaff/${userId}`);
   };
 
-  const handleDeleteUser = (userId) => {
-    const payload = { userId: userId };
-    softDeleteUser(payload)
+  const handleToggleStatus = (user: User) => {
+    const payload = { userId: String(user.id) };
+    const apiToCall = user.isActive ? softDeleteUser : restoreUser;
+    apiToCall(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
           recallGetUsers();
+          recallStats();
         } else {
           showError(response?.message);
         }
@@ -108,32 +85,50 @@ const Staff = () => {
         throw e;
       });
   };
+
+  const handleStaffDeleted = () => {
+    recallGetUsers();
+    recallStats();
+    setDeleteTarget(null);
+  };
+
+  const staffMembersHeaders = buildStaffHeaders(sortCriteria, onSortChange);
+  const staffMembersData = buildStaffTableData(users, {
+    onToggleStatus: handleToggleStatus,
+    onEdit: handleEditUser,
+    onDelete: setDeleteTarget,
+  });
+
   return (
     <div id="staff" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaUserShield className="icon" /> <span>Staff Management</span>
+          <FaUserShield className="icon" /> <span>Staff management</span>
         </h1>
 
         <div className="page-actions">
           <Link to={"/admin/addStaff"} className="text-decoration-none">
             <button className="btn-md btn-gold">
-              <FaPlus /> Add Staff
+              <FaPlus /> Add staff
             </button>
           </Link>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Staff Members</h3>
-          <div style={{ width: "250px" }} className="search-bar">
-            <input
-              type="text"
-              placeholder="Search staff..."
-              onChange={onSearchChange}
-            />
-          </div>
+      <StaffStats stats={userStats} />
+
+      <div className="panel">
+        <div className="tbl-head">
+          <span className="tbl-title">
+            Staff members ({pagination.totalRecords})
+          </span>
+          <StaffFilters
+            roleFilter={roleFilter}
+            onRoleFilterChange={handleRoleFilterChange}
+            statusFilter={statusFilter}
+            onStatusFilterChange={handleStatusFilterChange}
+            onSearchChange={onSearchChange}
+          />
         </div>
         <CustomTable
           headers={staffMembersHeaders}
@@ -145,24 +140,15 @@ const Staff = () => {
           pageNumber={pagination.pageNumber}
           pageSize={pagination.pageSize}
           onPaginationChange={onPaginationChange}
+          maxPages={4}
         />
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Roles</h3>
-        </div>
-
-        <CustomTable
-          headers={[{ key: "role", label: "Role", width: "200px" }]}
-          data={allRoles.map((role) => {
-            return {
-              role: role,
-            };
-          })}
-          isLoading={isLoadingAllRoles}
-        />
-      </div>
+      <DeleteStaffModal
+        user={deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onDeleted={handleStaffDeleted}
+      />
     </div>
   );
 };

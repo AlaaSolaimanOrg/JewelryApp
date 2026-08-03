@@ -1,0 +1,64 @@
+.deleteStaffModal {
+  font-family: var(--admin-font);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+
+  .mo-box {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd2);
+    border-radius: var(--admin-radius-lg);
+    width: 100%;
+    max-width: 400px;
+    padding: 22px;
+  }
+
+  .mo-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    margin-bottom: 8px;
+  }
+
+  .mo-text {
+    font-size: 13px;
+    color: var(--admin-t3);
+    margin-bottom: 18px;
+    line-height: 1.5;
+
+    b {
+      color: var(--admin-t1);
+    }
+  }
+
+  .mo-btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .mo-cancel {
+    background: var(--admin-bg5);
+    color: var(--admin-t1);
+    border: none;
+
+    &:hover {
+      background: var(--admin-bg4);
+    }
+  }
+
+  .mo-remove {
+    background: var(--admin-red);
+    color: #fff;
+    border: none;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

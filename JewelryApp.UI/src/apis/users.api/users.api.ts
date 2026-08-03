@@ -16,6 +16,13 @@ export const softDeleteUser = async (payload: { userId: string }) => {
   );
 };
 
+export const restoreUser = async (payload: { userId: string }) => {
+  return requestApi(
+    "PATCH",
+    `${apiRoutes.users.restoreUser}/${payload.userId}/restore`
+  );
+};
+
 export const createUser = async (payload) => {
   return requestApi("POST", apiRoutes.users.createUser, payload);
 };

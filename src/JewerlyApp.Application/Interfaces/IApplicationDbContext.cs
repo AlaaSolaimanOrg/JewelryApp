@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<SaleItem> SaleItems { get; set; }
         DbSet<ApplicationUser> Users { get; set; }
         DbSet<ApplicationRole> Roles { get; set; }
+        DbSet<IdentityUserRole<int>> UserRoles { get; set; }
         DbSet<ProductTag> ProductTags { get; set; }
         DbSet<Log> Logs { get; set; }
         DbSet<Return> Returns { get; set; }

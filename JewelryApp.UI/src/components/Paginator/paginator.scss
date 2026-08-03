@@ -53,6 +53,34 @@
     border-color: var(--gold);
   }
 
+  .page-nav {
+    width: auto;
+    padding: 0 16px;
+    gap: 6px;
+    font-family: inherit;
+
+    svg {
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+  }
+
+  .page-nav:hover:not(:disabled) svg {
+    color: white;
+  }
+
+  .page-nav:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .page-item.ellipsis {
+    background: transparent;
+    border-color: transparent;
+    cursor: default;
+    pointer-events: none;
+  }
+
   @media (max-width: 768px) {
     .paginator-controls {
       flex-direction: column;
