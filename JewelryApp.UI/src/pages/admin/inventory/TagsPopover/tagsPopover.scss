@@ -81,23 +81,11 @@
   font-size: 13px;
 }
 
-// Original action buttons remain unchanged
-.action-btn {
-  background: none;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 4px;
-  color: #6c757d;
-  transition: all 0.2s ease;
-  margin: 0 2px;
+.act-tags {
+  color: var(--admin-purple, #9b8de6);
 
   &:hover {
-    background-color: #f8f9fa;
-    color: #495057;
-  }
-
-  &.danger:hover {
-    background-color: #f8d7da;
-    color: #dc3545;
+    background: rgba(155, 141, 230, 0.12);
+    color: var(--admin-purple, #9b8de6);
   }
 }

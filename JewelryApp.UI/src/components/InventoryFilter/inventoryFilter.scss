@@ -1,466 +1,109 @@
-.filter-sidebar {
-  background: white;
-  border-radius: var(--card-radius, 8px);
-  padding: 20px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  width: 100%;
+.invFilterPanel {
+  font-family: var(--admin-font);
 
-  // Filter Header
-  .filter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    @media (min-width: 993px) {
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .filter-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--dark-light, #333);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0;
-    }
-  }
-
-  .icon {
-    color: var(--gold, #d4af37);
-  }
-
-  // Mobile Collapse Toggle
-  .collapse-toggle {
-    @media (max-width: 992px) {
-      display: flex;
-      padding: 8px 16px;
-      border: none;
-      background: var(--gold, #d4af37);
-      color: white;
-      font-size: 0.9rem;
-      font-weight: 500;
-      border-radius: 6px;
-      cursor: pointer;
-      align-items: center;
-      gap: 6px;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background: darken(#d4af37, 10%);
-      }
-    }
-
-    @media (min-width: 993px) {
-      display: none;
-    }
-  }
-
-  // Filter Content
-  .filter-content {
-    @media (max-width: 992px) {
-      display: none;
-
-      &.open {
-        display: block;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-      }
-    }
-
-    @media (min-width: 993px) {
-      display: block;
-    }
-  }
-
-  // Main Filter Grid - OPTIMIZED LAYOUT
   .filter-grid {
     display: grid;
-    gap: 16px;
-
-    // Desktop - Compact layout with Karat + Category side by side
-    @media (min-width: 1200px) {
-      grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr auto;
-      grid-template-areas: "karat category stock weight price actions";
-
-      .karat-group {
-        grid-area: karat;
-      }
-      .category-group {
-        grid-area: category;
-      }
-      .stock-group {
-        grid-area: stock;
-      }
-      .weight-group {
-        grid-area: weight;
-      }
-      .price-group {
-        grid-area: price;
-      }
-      .actions-group {
-        grid-area: actions;
-      }
-    }
-
-    // Large Desktop (1440px+) - More balanced layout
-    @media (min-width: 1440px) {
-      grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr auto;
-    }
-
-    // Large Tablet/Laptop - 3 rows, Karat spans full width
-    @media (min-width: 993px) and (max-width: 1199px) {
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:
-        "karat karat"
-        "category stock"
-        "weight price"
-        "actions actions";
-      gap: 20px;
-
-      .karat-group {
-        grid-area: karat;
-      }
-      .category-group {
-        grid-area: category;
-      }
-      .stock-group {
-        grid-area: stock;
-      }
-      .weight-group {
-        grid-area: weight;
-      }
-      .price-group {
-        grid-area: price;
-      }
-      .actions-group {
-        grid-area: actions;
-      }
-    }
-
-    // Tablet - 2 columns
-    @media (min-width: 768px) and (max-width: 992px) {
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:
-        "karat karat"
-        "category stock"
-        "weight price"
-        "actions actions";
-      gap: 20px;
-
-      .karat-group {
-        grid-area: karat;
-      }
-      .category-group {
-        grid-area: category;
-      }
-      .stock-group {
-        grid-area: stock;
-      }
-      .weight-group {
-        grid-area: weight;
-      }
-      .price-group {
-        grid-area: price;
-      }
-      .actions-group {
-        grid-area: actions;
-      }
-    }
-
-    // Mobile
-    @media (max-width: 767px) {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "karat"
-        "category"
-        "stock"
-        "weight"
-        "price"
-        "actions";
-      gap: 20px;
-
-      .stock-group {
-        grid-area: stock;
-      }
-    }
+    grid-template-columns: 1.3fr 1fr 1fr 1.1fr 1.1fr auto;
+    gap: 12px;
+    align-items: end;
   }
 
-  // Filter Groups
-  .filter-group {
-    background: #fafafa;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    min-height: 80px; // Consistent height
-
-    &.karat-group {
-      padding: 16px 16px 12px 16px; // Slightly less bottom padding
-    }
-
-    &.actions-group {
-      background: transparent;
-      border: none;
-      padding: 0;
-      justify-content: flex-end;
-      min-height: auto;
-
-      .invisible {
-        visibility: hidden;
-        height: 0;
-        margin: 0;
-      }
-    }
-  }
-
-  .filter-group-title {
-    font-weight: 600;
-    margin-bottom: 12px;
-    display: block;
-    color: var(--dark-light, #333);
-    font-size: 0.85rem;
+  .f-label {
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
+    letter-spacing: 0.6px;
+    color: var(--admin-t4);
+    font-weight: 600;
+    margin-bottom: 7px;
+    display: block;
   }
 
-  // COMPACT Karat Checkboxes - Now 2x2 grid
-  .karat-checkboxes {
-    display: grid;
-    gap: 8px;
-    margin-top: auto; // Push to bottom to align with category
-
-    // Always 2 columns for consistency
-    grid-template-columns: repeat(4, 1fr);
+  .karat-checks {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-height: 42px;
+    align-items: center;
   }
 
-  .filter-option {
+  .kcheck {
     display: flex;
     align-items: center;
-    height: 32px; // Fixed height for alignment
+    gap: 5px;
+    font-size: 13px;
+    color: var(--admin-t2);
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0;
 
-    input[type="checkbox"] {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-
-      &:checked + label .checkbox-custom {
-        background-color: var(--gold, #d4af37);
-        border-color: var(--gold, #d4af37);
-
-        &::after {
-          content: "";
-          position: absolute;
-          left: 5px;
-          top: 1px;
-          width: 6px;
-          height: 10px;
-          border: solid white;
-          border-width: 0 2px 2px 0;
-          transform: rotate(45deg);
-        }
-      }
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--admin-gold);
       cursor: pointer;
-      font-size: 0.85rem;
-      color: var(--dark-light, #333);
-      user-select: none;
-      width: 100%;
-      height: 100%;
-
-      .checkbox-custom {
-        width: 16px;
-        height: 16px;
-        min-width: 16px;
-        border: 2px solid #ddd;
-        border-radius: 4px;
-        position: relative;
-        transition: all 0.2s ease;
-      }
-
-      &:hover .checkbox-custom {
-        border-color: var(--gold, #d4af37);
-      }
     }
   }
 
-  // Range Inputs - More compact
-  .range-inputs {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 8px;
-    align-items: center;
-    margin-top: auto; // Align inputs to bottom
-  }
-
-  .range-separator {
-    color: #999;
-    font-weight: 500;
-    font-size: 0.9rem;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  // Form Controls - More compact
-  .form-control {
+  .f-select,
+  .f-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    background: white;
-    transition: all 0.2s ease;
-    height: 38px; // Consistent height
+    min-height: 42px;
 
     &:focus {
       outline: none;
-      border-color: var(--gold, #d4af37);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-    }
-
-    &[type="number"] {
-      &::-webkit-inner-spin-button,
-      &::-webkit-outer-spin-button {
-        opacity: 1;
-        height: 20px;
-      }
+      border-color: var(--admin-gold);
     }
 
     &::placeholder {
-      color: #999;
-      font-size: 0.85rem;
+      color: var(--admin-t4);
+      -webkit-text-fill-color: var(--admin-t4);
     }
   }
 
-  select.form-control {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 14px;
-    padding-right: 32px;
-    appearance: none;
-    height: 38px;
-    margin-top: auto; // Align to bottom
-  }
-
-  // Action Buttons
-  .desktop-actions {
-    @media (max-width: 992px) {
-      display: none;
-    }
-  }
-
-  .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-block: auto; // Push buttons to bottom
-
-    @media (min-width: 993px) {
-      min-width: 120px;
-    }
-  }
-
-  .btn-sm {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
+  .f-select {
     cursor: pointer;
+  }
+
+  .range-row {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
-    transition: all 0.2s ease;
-    height: 38px; // Match input height
-    white-space: nowrap;
 
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    &:active {
-      transform: translateY(0);
+    .f-input {
+      width: 0;
+      flex: 1;
     }
   }
 
-  .btn-gold {
-    background: var(--gold, #d4af37);
-    color: white;
-
-    &:hover {
-      background: darken(#d4af37, 10%);
-    }
+  .range-sep {
+    font-size: 12px;
+    color: var(--admin-t4);
   }
 
-  .btn-dark {
-    background: var(--dark, #333);
-    color: white;
-
-    &:hover {
-      background: darken(#333, 10%);
+  .filter-actions-col {
+    .filter-btns {
+      display: flex;
+      gap: 8px;
     }
   }
+}
 
-  // Responsive Adjustments
-  @media (max-width: 767px) {
-    padding: 16px;
-    margin-bottom: 16px;
-
-    .filter-group {
-      padding: 14px;
-      min-height: auto;
-    }
-
-    .karat-checkboxes {
-      gap: 10px;
-    }
-
-    .form-control {
-      padding: 10px 12px;
-      font-size: 0.95rem;
-      height: 42px;
-    }
-
-    select.form-control {
-      height: 42px;
-    }
-
-    .btn-sm {
-      height: 42px;
-    }
+@media (max-width: 1100px) {
+  .invFilterPanel .filter-grid {
+    grid-template-columns: 1fr 1fr 1fr;
   }
+}
 
-  @media (max-width: 480px) {
-    padding: 12px;
-
-    .filter-group {
-      padding: 12px;
-    }
-
-    .karat-checkboxes {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .btn-sm {
-      padding: 10px;
-      width: 100%;
-    }
+@media (max-width: 620px) {
+  .invFilterPanel .filter-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }

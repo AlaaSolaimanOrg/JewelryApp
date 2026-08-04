@@ -12,6 +12,10 @@ export const generateSKU = async (payload: {
 export const getProducts = async (payload: any) => {
   return requestApi("GET", apiRoutes.product.getProducts, payload);
 };
+
+export const getInventorySummary = async (payload: any) => {
+  return requestApi("GET", apiRoutes.product.getInventorySummary, payload);
+};
 export const getProductById = async (payload: {
   id?: string;
   sku?: string;

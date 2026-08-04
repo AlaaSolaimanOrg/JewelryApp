@@ -142,7 +142,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProducts
                     }).ToList(),
                     DaysInInventory = product.CreatedDate.HasValue
                         ? (int)(DateTime.UtcNow - product.CreatedDate.Value).TotalDays
-                        : null
+                        : null,
+                    CreatedDate = product.CreatedDate
                 };
             });
 

@@ -20,6 +20,7 @@ export const apiRoutes = {
     createProduct: "Product/CreateProduct",
     editProduct: "Product/EditProduct",
     getProducts: "Product/GetProducts",
+    getInventorySummary: "Product/GetInventorySummary",
     getProductById: "Product/GetProductById",
     getProductsBySkus: "Product/GetProductsBySkus",
     exportProductsToExcel: "Product/ExportProductsToExcel",

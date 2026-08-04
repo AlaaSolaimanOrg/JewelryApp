@@ -7,6 +7,7 @@ using JewerlyApp.Application.Products.Commands.UpsertProductSpecialPricing;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
+using JewerlyApp.Application.Products.Queries.GetInventorySummary;
 using JewerlyApp.Application.Products.Queries.GetMeltedProducts;
 using JewerlyApp.Application.Products.Queries.GetMeltedReports;
 using JewerlyApp.Application.Products.Queries.GetProductSpecialPricing;
@@ -89,6 +90,18 @@ namespace JewerlyApp.API.Controllers.Products
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProductsBySkus([FromQuery] GetProductsBySkusQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get aggregated inventory summary (product count, quantity, weight, value) for the given filters
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetInventorySummary([FromQuery] GetInventorySummaryQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
