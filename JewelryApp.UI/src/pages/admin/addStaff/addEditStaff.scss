@@ -120,6 +120,11 @@
       .req {
         color: var(--admin-red);
       }
+
+      .opt {
+        color: var(--admin-t4);
+        font-weight: 400;
+      }
     }
 
     input {
@@ -142,6 +147,21 @@
 
       &::placeholder {
         color: var(--admin-t4);
+        -webkit-text-fill-color: var(--admin-t4);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px var(--admin-bg4) inset !important;
+        -webkit-text-fill-color: var(--admin-t1) !important;
+        caret-color: var(--admin-t1);
+        transition: background-color 9999s ease-in-out 0s;
       }
     }
   }

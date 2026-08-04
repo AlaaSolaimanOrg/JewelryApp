@@ -50,10 +50,10 @@ namespace JewerlyApp.Infrastructure.Services
 
                 var user = new ApplicationUser
                 {
-                    UserName = request.UserName,
+                    UserName = request.Email,
                     Email = request.Email,
                     FullName = request.FullName,
-                    PhoneNumber = request.PhoneNumber,
+                    PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -117,17 +117,17 @@ namespace JewerlyApp.Infrastructure.Services
                     };
                 }
 
-                if (!string.IsNullOrEmpty(request.UserName))
-                    user.UserName = request.UserName;
-
                 if (!string.IsNullOrEmpty(request.Email))
+                {
                     user.Email = request.Email;
+                    user.UserName = request.Email;
+                }
 
                 if (request.IsActive.HasValue)
                     user.IsActive = request.IsActive.Value;
 
                 user.FullName = request.FullName;
-                user.PhoneNumber = request.PhoneNumber; 
+                user.PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber;
 
                 user.UpdatedAt = DateTime.UtcNow;
 

@@ -11,11 +11,11 @@ import {
 import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { formatPhoneDisplay } from "./AddEditStaff.utils";
 import "./addEditStaff.scss";
 
 const staffFieldsInitialState = {
   fullName: "",
-  userName: "",
   email: "",
   password: "",
   phoneNumber: "",
@@ -48,10 +48,9 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     if (isEdit && staff) {
       setStaffFields({
         fullName: staff.fullName || "",
-        userName: staff.userName,
         email: staff.email,
         password: "",
-        phoneNumber: staff.phoneNumber || "",
+        phoneNumber: (staff.phoneNumber || "").replace(/\D/g, ""),
         roles: staff.roles || [],
         isActive: staff.isActive ?? true,
       });
@@ -75,7 +74,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     setIsLoading(true);
     const createPayload = {
       fullName: staffFields.fullName,
-      userName: staffFields.userName,
       email: staffFields.email,
       password: staffFields.password,
       phoneNumber: staffFields.phoneNumber,
@@ -84,7 +82,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     const editPayload = {
       userId: userId,
       fullName: staffFields.fullName,
-      userName: staffFields.userName,
       email: staffFields.email,
       phoneNumber: staffFields.phoneNumber,
       isActive: staffFields.isActive,
@@ -108,16 +105,10 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const validateFields = () => {
     if (!staffFields.fullName?.trim()) return false;
 
-    if (!staffFields.userName?.trim()) return false;
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(staffFields.email)) return false;
 
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (
-      !staffFields.phoneNumber?.trim() ||
-      !phoneRegex.test(staffFields.phoneNumber.replace(/[\s\-\(\)]/g, ""))
-    ) {
+    if (staffFields.phoneNumber && staffFields.phoneNumber.length !== 10) {
       return false;
     }
 
@@ -199,21 +190,9 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
           <div className="fg">
             <label>
-              Username <span className="req">*</span>
+              Username <span className="opt">(email — used to log in)</span>
             </label>
-            <input
-              type="text"
-              value={staffFields.userName}
-              maxLength={50}
-              onChange={(e) =>
-                handleFieldChange("userName", e.target.value.replace(/\s/g, ""))
-              }
-              onKeyDown={(e) => {
-                if (e.key === " ") e.preventDefault();
-              }}
-              placeholder="Enter username"
-              required
-            />
+            <input type="text" value={staffFields.email} placeholder="Auto-set to email" disabled />
           </div>
 
           <div className="fg">
@@ -240,20 +219,20 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
           <div className="fg">
             <label>
-              Phone number <span className="req">*</span>
+              Phone number <span className="opt">(optional)</span>
             </label>
             <input
               type="tel"
-              value={staffFields.phoneNumber}
-              maxLength={20}
+              inputMode="tel"
+              value={formatPhoneDisplay(staffFields.phoneNumber)}
+              maxLength={12}
               onChange={(e) =>
                 handleFieldChange(
                   "phoneNumber",
-                  e.target.value.replace(/[^0-9+\-\s()]/g, "")
+                  e.target.value.replace(/\D/g, "").slice(0, 10)
                 )
               }
-              placeholder="Enter phone number"
-              required
+              placeholder="780-123-1234"
             />
           </div>
 
