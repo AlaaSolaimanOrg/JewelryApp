@@ -7,7 +7,6 @@ import {
   FaUsers,
   FaBars,
   FaTimes,
-  FaTools,
   FaUndo,
   FaChevronDown,
 } from "react-icons/fa";
@@ -57,12 +56,27 @@ const SideNav = () => {
           path: "/admin/inventory/products",
         },
         {
+          label: "Melted Products",
+          path: "/admin/inventory/melted",
+        },
+      ],
+    },
+    {
+      label: "Reports",
+      icon: <FaChartLine className="icon" />,
+      path: "/admin/sales-reports",
+      subItems: [
+        {
+          label: "Sales Reports",
+          path: "/admin/sales-reports",
+        },
+        {
           label: "Inventory Reports",
           path: "/admin/inventory/reports",
         },
         {
-          label: "Melted Products",
-          path: "/admin/inventory/melted",
+          label: "Repair Analytics",
+          path: "/admin/repairAnalytics",
         },
       ],
     },
@@ -72,21 +86,11 @@ const SideNav = () => {
       path: "/admin/pricing",
     },
     {
-      label: "Sales Reports",
-      icon: <FaChartLine className="icon" />,
-      path: "/admin/sales-reports",
-    },
-    {
       label: "Customers",
       icon: <FaUsers className="icon" />,
       path: "/admin/customers",
     },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
-    {
-      label: "Repair Analytics",
-      icon: <FaTools className="icon" />,
-      path: "/admin/repairAnalytics",
-    },
     {
       label: "Return Management",
       icon: <FaUndo className="icon" />,
@@ -155,7 +159,7 @@ const SideNav = () => {
             "Inventory",
             "Pricing",
             "Customers",
-            "Repair Analytics",
+            "Reports",
             "Return Management",
           ].includes(item.label),
         )
@@ -167,6 +171,7 @@ const SideNav = () => {
   const handlePosRedirect = () => {
     navigate("/");
   };
+  
   return (
     <>
       {!isMobileOpen && (
