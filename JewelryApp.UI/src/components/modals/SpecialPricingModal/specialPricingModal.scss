@@ -1,19 +1,200 @@
-.special-pricing-modal .control-group {
-  margin-bottom: 1rem;
-}
+.special-pricing-modal {
+  font-family: var(--admin-font);
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
 
-.special-pricing-modal .control-label {
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  display: block;
-}
+  .mo-box {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd2);
+    border-radius: var(--admin-radius-lg);
+    width: 100%;
+    max-width: 440px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-.special-pricing-modal .global-price-hint {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 1rem;
-  padding: 0.5rem 0.75rem;
-  background: #faf7f2;
-  border-left: 3px solid #d4af37;
-  border-radius: 4px;
+  .mo-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--admin-bd);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mo-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .sku {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 14px;
+      color: var(--admin-t3);
+    }
+  }
+
+  .mo-x {
+    background: none;
+    border: none;
+    color: var(--admin-t3);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    display: inline-flex;
+
+    &:hover {
+      background: var(--admin-bg5);
+      color: var(--admin-t1);
+    }
+  }
+
+  .mo-body {
+    padding: 18px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mo-foot {
+    padding: 14px 18px;
+    border-top: 1px solid var(--admin-bd);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .info-strip {
+    background: var(--admin-bg3);
+    border-left: 3px solid var(--admin-gold);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-size: 13px;
+    color: var(--admin-t2);
+    margin-bottom: 14px;
+
+    b {
+      color: var(--admin-t1);
+    }
+  }
+
+  .fg2 {
+    margin-bottom: 14px;
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--admin-t2);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input {
+      font-family: var(--admin-font);
+      font-size: 15px;
+      padding: 12px 13px;
+      border-radius: var(--admin-radius-sm);
+      border: 1px solid var(--admin-bd2);
+      background: var(--admin-bg4);
+      color: var(--admin-t1);
+      -webkit-text-fill-color: var(--admin-t1);
+      width: 100%;
+
+      &::placeholder {
+        color: var(--admin-t4);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--admin-gold);
+        box-shadow: none;
+      }
+    }
+  }
+
+  .fetching-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--admin-t3);
+    font-size: 13px;
+    padding: 12px 0;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--admin-t4);
+    margin-top: 5px;
+  }
+
+  .item-summary {
+    background: var(--admin-bg3);
+    border-radius: var(--admin-radius-sm);
+    padding: 11px 13px;
+    font-size: 12px;
+    color: var(--admin-t3);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+
+    b {
+      color: var(--admin-t1);
+      font-weight: 600;
+    }
+
+    span:nth-child(even) {
+      text-align: right;
+    }
+
+    .new-price b {
+      color: var(--admin-green);
+    }
+  }
+
+  .mo-btn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: var(--admin-radius-sm);
+    cursor: pointer;
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.12s;
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  .mo-btn-dark {
+    background: var(--admin-bg5);
+    border-color: var(--admin-bg5);
+    color: var(--admin-t1);
+  }
+
+  .mo-btn-gold {
+    background: var(--admin-gold);
+    border-color: var(--admin-gold);
+    color: #1a1a1a;
+  }
 }

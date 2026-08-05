@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Modal, Spinner } from "react-bootstrap";
-import { FaDollarSign } from "react-icons/fa";
+import { Form, Spinner } from "react-bootstrap";
+import { FaDollarSign, FaTimes } from "react-icons/fa";
 import { getProductSpecialPricing } from "../../../apis/products.api/products.api";
 import "./specialPricingModal.scss";
 
@@ -8,6 +8,9 @@ interface ProductMinimal {
   id: string;
   sku: string;
   pricePerGram?: number;
+  weight?: number;
+  karatType?: number;
+  price?: number;
 }
 
 interface SpecialPricingModalProps {
@@ -40,10 +43,11 @@ const SpecialPricingModal: React.FC<SpecialPricingModalProps> = ({
     }
   }, [show, product]);
 
-  if (!product) return null;
+  if (!show || !product) return null;
 
   const parsedPrice = parseFloat(price);
   const isValid = price !== "" && !isNaN(parsedPrice) && parsedPrice > 0;
+  const newTotal = isValid ? parsedPrice * (product.weight ?? 0) : null;
 
   const handleConfirm = () => {
     if (!isValid) return;
@@ -51,33 +55,31 @@ const SpecialPricingModal: React.FC<SpecialPricingModalProps> = ({
   };
 
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      className="special-pricing-modal"
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          <FaDollarSign className="me-2" /> Special Price — {product.sku}
-        </Modal.Title>
-      </Modal.Header>
+    <div className="special-pricing-modal mo" onClick={onClose}>
+      <div className="mo-box" onClick={(e) => e.stopPropagation()}>
+        <div className="mo-head">
+          <span className="mo-title">
+            <FaDollarSign /> Special price — <span className="sku">{product.sku}</span>
+          </span>
+          <button className="mo-x" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
 
-      <Modal.Body>
-        <div className="special-pricing-section">
+        <div className="mo-body">
           {product.pricePerGram !== undefined && product.pricePerGram > 0 && (
-            <div className="global-price-hint">
-              Global price per gram:{" "}
-              <strong>{product.pricePerGram.toFixed(2)}</strong>
+            <div className="info-strip">
+              Global {product.karatType ? `${product.karatType}K ` : ""}price
+              per gram: <b>${product.pricePerGram.toFixed(2)}</b>
             </div>
           )}
 
-          <div className="control-group">
-            <label className="control-label">Special Price per Gram</label>
+          <div className="fg2">
+            <label>Special price per gram</label>
             {isFetching ? (
-              <div className="d-flex align-items-center gap-2 mt-2">
+              <div className="fetching-row">
                 <Spinner animation="border" size="sm" />
-                <small>Loading current value…</small>
+                <span>Loading current value…</span>
               </div>
             ) : (
               <Form.Control
@@ -90,26 +92,46 @@ const SpecialPricingModal: React.FC<SpecialPricingModalProps> = ({
                 onChange={(e) => setPrice(e.target.value)}
               />
             )}
-            <small className="text-muted mt-2 d-block">
-              Leave unchanged or enter a new value to override global pricing.
-            </small>
+            <div className="hint">
+              Leave unchanged or enter a new value to override global pricing
+              for this item only.
+            </div>
+          </div>
+
+          <div className="item-summary">
+            <span>
+              SKU: <b>{product.sku}</b>
+            </span>
+            <span>
+              Weight: <b>{product.weight ?? 0}g</b>
+            </span>
+            {product.price !== undefined && (
+              <span>
+                Current price: <b>${product.price.toFixed(2)}</b>
+              </span>
+            )}
+            {newTotal !== null && (
+              <span className="new-price">
+                New price: <b>${newTotal.toFixed(2)}</b>
+              </span>
+            )}
           </div>
         </div>
-      </Modal.Body>
 
-      <Modal.Footer>
-        <button className="btn btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn btn-primary btn-gold"
-          onClick={handleConfirm}
-          disabled={!isValid || isFetching}
-        >
-          <FaDollarSign className="me-2" /> Set Price
-        </button>
-      </Modal.Footer>
-    </Modal>
+        <div className="mo-foot">
+          <button className="mo-btn mo-btn-dark" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className="mo-btn mo-btn-gold"
+            onClick={handleConfirm}
+            disabled={!isValid || isFetching}
+          >
+            <FaDollarSign /> Set price
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

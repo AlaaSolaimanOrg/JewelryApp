@@ -13,6 +13,7 @@ export type TableHeader = {
   label: React.ReactNode;
   width?: string;
   sortable?: boolean;
+  align?: "left" | "center" | "right";
   onHeaderClick?: () => void;
 };
 
@@ -35,7 +36,7 @@ const CustomTable: React.FC<CustomTableProps> = ({
             {headers.map((header, i) => (
               <th
                 key={i}
-                style={{ width: header.width }}
+                style={{ width: header.width, textAlign: header.align }}
                 onClick={() => {
                   header.onHeaderClick?.();
                 }}

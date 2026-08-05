@@ -91,7 +91,7 @@ export const buildInventoryHeaders = (
     onHeaderClick: () =>
       handleSort("createdDate", sortCriteria, onSortChange),
   },
-  { key: "actions", label: "Actions" },
+  { key: "actions", label: "Actions", align: "right" },
 ];
 
 export type InventoryRowActions = {
