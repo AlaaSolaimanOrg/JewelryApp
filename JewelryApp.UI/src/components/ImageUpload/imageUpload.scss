@@ -1,34 +1,81 @@
 .imageUpload {
   .imageUploadZone {
     width: 100%;
-    background-color: #f8f9fa;
-    height: 200px;
+    min-height: 100px;
+    background: var(--admin-bg3);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
+    border-radius: var(--admin-radius-lg);
+    border: 1.5px dashed var(--admin-bd2);
+    color: var(--admin-t4);
+    font-size: 13px;
+    padding: 20px;
+    text-align: center;
+
     .browse {
-      color: #d4af37;
-      text-decoration: underline;
+      color: var(--admin-gold);
+      font-weight: 600;
+      text-decoration: none;
     }
   }
 
   .dragZone {
-    border: 2px dashed #d4af37;
-    color: #d4af37;
+    border-color: var(--admin-gold);
+    color: var(--admin-gold);
+  }
+
+  .droppedImages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .droppedImageWrapper {
-    position: relative;
+    width: 180px;
+
+    .thumb {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: var(--admin-radius-sm);
+      border: 1px solid var(--admin-bd);
+      background: var(--admin-bg3);
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
     .closeIcon {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      color: #dc3545;
+      top: 6px;
+      right: 6px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 6px;
+      padding: 5px;
+      box-sizing: content-box;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 14px;
+      transition: background 0.12s;
+
+      &:hover {
+        background: var(--admin-red);
+      }
+    }
+
+    .fileName {
+      margin-top: 5px;
+      font-size: 11px;
+      color: var(--admin-t3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
