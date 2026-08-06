@@ -152,6 +152,7 @@ export const buildCustomerTableData = (
         <div className="row-actions">
           <ReceiptHistoryModal
             customerId={customer.id}
+            customerName={customer.name}
             totalWeight18K={customer.total18K}
             totalWeight21K={customer.total21K}
             totalAmount={customer.totalPurchasesValue}

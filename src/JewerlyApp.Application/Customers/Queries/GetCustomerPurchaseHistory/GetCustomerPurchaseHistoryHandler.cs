@@ -44,7 +44,10 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerPurchaseHistory
                 .Select(s => new PurchaseHistoryVm
                 {
                     SaleId = s.Id,
+                    SerialNumber = s.SerialNumber,
                     PurchaseDate = (DateTime)s.CreatedDate,
+                    ItemCount = s.SaleItems.Sum(si => (int?)si.Quantity) ?? 0,
+                    Discount = s.Discount ?? 0,
                     TotalAmount = s.Total
                 })
                 .ToListAsync(cancellationToken);
