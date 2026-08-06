@@ -1,19 +1,15 @@
 import { useState } from "react";
-import { FaEdit, FaEye, FaPlus, FaSearch, FaUsers } from "react-icons/fa";
-import { LuHistory } from "react-icons/lu";
+import { FaPlus, FaSearch, FaUsers } from "react-icons/fa";
 import { getCustomers } from "../../../apis/customers.api/customers.api";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
-import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
-import CustomTable, {
-  type TableHeader,
-} from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/Table/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import { handleSort } from "../../../utils";
+import { buildCustomerHeaders, buildCustomerTableData } from "./Customers.utils";
 import "./customers.scss";
 
-interface Customer {
+export interface Customer {
   id: string;
   name: string;
   email: string;
@@ -24,7 +20,9 @@ interface Customer {
   total18K: number;
   total21K: number;
   totalDiscount: number;
+  lastPurchaseDate: string;
 }
+
 const Customers = () => {
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [addCustomerModalView, setAddCustomerModalView] = useState<
@@ -40,129 +38,58 @@ const Customers = () => {
     onSortChange,
     onSearchChange,
     onPaginationChange,
+    onPageSizeChange,
     pagination,
   } = useLocalApiSearchSortPagination<Customer>({
     apiToCall: (data) => getCustomers(data.payload),
-    initialPageSize: 5,
+    initialPageSize: 25,
   });
 
-  const headers: TableHeader[] = [
-    {
-      key: "name",
-      label: "Name",
-      width: "200px",
-      onHeaderClick: () => {
-        handleSort("name", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "phoneNumber",
-      label: "Phone",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("phoneNumber", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "totalProductsPurchased",
-      label: "Items Sold",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("totalProductsPurchased", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "totalPurchasesValue",
-      label: "Total Purchases Value",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("totalPurchasesValue", sortCriteria, onSortChange);
-      },
-    },
+  const openAdd = () => {
+    setCustomerData(null);
+    setAddCustomerModalView("add");
+    setShowAddCustomerModal(true);
+  };
 
-    { key: "actions", label: "Actions", width: "150px" },
-  ];
+  const openEdit = (customer: Customer) => {
+    setCustomerData(customer);
+    setAddCustomerModalView("edit");
+    setShowAddCustomerModal(true);
+  };
 
-  const data = customers?.map((customer) => {
-    return {
-      name: customer.name,
-      phoneNumber: customer.phoneNumber,
-      totalProductsPurchased: customer.totalProductsPurchased,
-      totalPurchasesValue: customer.totalPurchasesValue,
-      actions: (
-        <div className="action-buttons">
-          <button
-            className="action-btn"
-            title="View"
-            onClick={() => {
-              setCustomerData(customer);
-              setAddCustomerModalView("view");
-              setShowAddCustomerModal(true);
-            }}
-          >
-            <FaEye />
-          </button>
-          <ReceiptHistoryModal
-            customerId={customer.id}
-            totalWeight18K={customer.total18K}
-            totalWeight21K={customer.total21K}
-            totalAmount={customer.totalPurchasesValue}
-            totalDiscount={customer.totalDiscount}
-          >
-            <button className="action-btn" title="View">
-              <LuHistory />
-            </button>
-          </ReceiptHistoryModal>
-          <button
-            className="action-btn"
-            title="Edit"
-            onClick={() => {
-              setCustomerData(customer);
-              setAddCustomerModalView("edit");
-              setShowAddCustomerModal(true);
-            }}
-          >
-            <FaEdit />
-          </button>
-        </div>
-      ),
-    };
-  });
+  const headers = buildCustomerHeaders(sortCriteria, onSortChange);
+  const data = buildCustomerTableData(customers ?? [], { onEdit: openEdit });
 
   return (
     <div id="customers" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaUsers className="icon" /> <span>Customer Management</span>
+          <FaUsers className="icon" />
+          <span>Customer management</span>
         </h1>
         <div className="page-actions">
-          <button
-            className="btn-md btn-gold"
-            onClick={() => {
-              setCustomerData(null);
-              setAddCustomerModalView("add");
-              setShowAddCustomerModal(true);
-            }}
-          >
-            <FaPlus /> Add Customer
+          <button className="btn-md btn-gold" onClick={openAdd}>
+            <FaPlus /> Add customer
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Customer List</h3>
-          <div>
-            <div className="search-bar" style={{ width: "250px" }}>
-              <FaSearch className="icon me-1" />
-              <input
-                type="text"
-                placeholder="Search customers..."
-                onChange={onSearchChange}
-              />
-            </div>
+      <div className="panel">
+        <div className="tbl-head">
+          <span className="tbl-title">
+            Customers ({pagination.totalRecords ?? 0})
+          </span>
+          <div className="search-wrap">
+            <FaSearch className="search-ico" />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search name, phone, email..."
+              onChange={onSearchChange}
+            />
           </div>
         </div>
+
         <CustomTable headers={headers} data={data} isLoading={isLoading} />
 
         <Paginator
@@ -170,6 +97,7 @@ const Customers = () => {
           pageNumber={pagination.pageNumber}
           pageSize={pagination.pageSize}
           onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
         />
       </div>
 

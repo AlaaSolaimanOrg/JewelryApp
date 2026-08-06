@@ -50,15 +50,19 @@
     background: var(--pos-bg-raised, #2a2a2a);
     border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
     color: var(--pos-text, #fff);
+    -webkit-text-fill-color: var(--pos-text, #fff);
+    color-scheme: dark;
 
     &::placeholder {
       color: var(--pos-text-muted, #888);
+      -webkit-text-fill-color: var(--pos-text-muted, #888);
     }
 
     &:focus {
       background: var(--pos-bg-raised, #2a2a2a);
       border-color: var(--pos-blue, #5ba3e6);
       color: var(--pos-text, #fff);
+      -webkit-text-fill-color: var(--pos-text, #fff);
       box-shadow: none;
     }
 
@@ -68,6 +72,15 @@
 
     &[type="date"]::-webkit-calendar-picker-indicator {
       filter: invert(1);
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--pos-text, #fff);
+      -webkit-box-shadow: 0 0 0 1000px var(--pos-bg-raised, #2a2a2a) inset;
+      box-shadow: 0 0 0 1000px var(--pos-bg-raised, #2a2a2a) inset;
+      transition: background-color 5000s ease-in-out 0s;
     }
   }
 
