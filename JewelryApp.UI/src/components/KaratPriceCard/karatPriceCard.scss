@@ -1,0 +1,80 @@
+.karatPriceCard {
+  font-family: var(--admin-font);
+  background: var(--admin-bg3);
+  border: 1px solid var(--admin-bd);
+  border-radius: var(--admin-radius-lg);
+  padding: 12px 14px;
+  transition: border-color 0.2s;
+
+  &.changed {
+    border-color: var(--admin-gold);
+  }
+
+  .pcard-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+
+  .pcard-karat {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--admin-gold);
+  }
+
+  .pcard-stock {
+    font-size: 11px;
+    color: var(--admin-t4);
+  }
+
+  .pcard-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pcard-cur {
+    font-size: 14px;
+    color: var(--admin-t4);
+    font-weight: 600;
+  }
+
+  input {
+    font-family: var(--admin-font);
+    font-size: 17px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1.5px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    width: 100%;
+    min-width: 0;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  .pcard-delta {
+    font-size: 11px;
+    margin-top: 6px;
+    min-height: 15px;
+    font-weight: 500;
+
+    &.d-up {
+      color: var(--admin-green);
+    }
+
+    &.d-down {
+      color: var(--admin-red);
+    }
+
+    &.d-none {
+      color: var(--admin-t4);
+    }
+  }
+}

@@ -32,6 +32,25 @@ namespace JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings
                 })
                 .ToListAsync(cancellationToken);
 
+            var stockByKaratAndType = await _context.Products
+                .AsNoTracking()
+                .Where(p => p.Weight > 0 && p.Quantity > 0)
+                .GroupBy(p => new { p.Type, p.KaratType })
+                .Select(g => new
+                {
+                    g.Key.Type,
+                    g.Key.KaratType,
+                    TotalWeight = g.Sum(p => p.Weight * (p.Quantity ?? 0))
+                })
+                .ToListAsync(cancellationToken);
+
+            foreach (var setting in pricingSettings)
+            {
+                var stock = stockByKaratAndType.FirstOrDefault(x =>
+                    x.Type == setting.ProductType && x.KaratType == setting.KaratType);
+                setting.StockWeight = stock?.TotalWeight ?? 0;
+            }
+
             return new GenericResponse<List<GetPricingSettingsVM>>
             {
                 Data = pricingSettings,

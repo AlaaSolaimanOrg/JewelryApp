@@ -27,6 +27,7 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPricingSettings([FromBody] EditPricingSettingsCommand command)
         {
             var response = await Mediator.Send(command);
@@ -34,8 +35,8 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,PosRole")]
-        public async Task<IActionResult> GetPricingSettings([FromQuery] GetPricingSettingsQuery query) 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetPricingSettings([FromQuery] GetPricingSettingsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

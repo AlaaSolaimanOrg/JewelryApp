@@ -7,5 +7,6 @@ namespace JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings
         public ProductType ProductType { get; set; }
         public KaratType KaratType { get; set; }
         public decimal PricePerGram { get; set; }
+        public decimal StockWeight { get; set; }
     }
 }

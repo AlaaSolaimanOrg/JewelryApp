@@ -1,222 +1,106 @@
-import { Col, Row } from "react-bootstrap";
 import { FaSyncAlt, FaTag } from "react-icons/fa";
 import {
   editPricingSettings,
-  getGlobalPricingSettings,
   getPricingSettings,
 } from "../../../apis/pricingSettings.api/pricingSettings.api";
-import PricingCard from "../../../components/PricingCard/PricingCard";
+import KaratPriceCard from "../../../components/KaratPriceCard/KaratPriceCard";
 import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";
-import { useEffect, useState, useMemo } from "react";
-import { Currency, KaratType, ProductType } from "../../../types/enums";
+import { useEffect, useMemo, useState } from "react";
+import { KaratType, ProductType } from "../../../types/enums";
 import {
   checkRequestSucceeded,
-  safeValue,
   showError,
   showSuccess,
 } from "../../../utils";
+import type { PriceItem } from "./Pricing.type";
+import { buildKaratCards, computeTotalStockValue, fmtCurrency } from "./Pricing.utils";
 
-export interface PriceItem {
-  productType: ProductType;
-  karatType: KaratType;
-  pricePerGram: number;
-}
+const GOLD_KARATS = [
+  KaratType.Karat18,
+  KaratType.Karat21,
+  KaratType.Karat22,
+  KaratType.Karat24,
+];
 
-interface MetalPricing {
-  productType: "Silver" | "Gold";
-  price_gram_24k: number;
-  price_gram_22k: number;
-  price_gram_21k: number;
-  price_gram_20k: number;
-  price_gram_18k: number;
-  price_gram_16k: number;
-  price_gram_14k: number;
-  price_gram_10k: number;
-}
+const emptyGoldPrices = (): PriceItem[] =>
+  GOLD_KARATS.map((karatType) => ({
+    productType: ProductType.Gold,
+    karatType,
+    pricePerGram: 0,
+  }));
 
 const Pricing = () => {
-  const [initialPrices, setInitialPrices] = useState<PriceItem[]>([
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat18,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat21,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat22,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat24,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat18,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat21,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat22,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Silver,
-      karatType: KaratType.Karat24,
-      pricePerGram: 0,
-    },
-  ]);
+  const [initialPrices, setInitialPrices] = useState<PriceItem[]>(
+    emptyGoldPrices()
+  );
+  const [prices, setPrices] = useState<PriceItem[]>(emptyGoldPrices());
 
-  const [prices, setPrices] = useState<PriceItem[]>([...initialPrices]);
-
-  const [globalGoldPrices, setGlobalGoldPrices] = useState<PriceItem[]>([
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat18,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat21,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat22,
-      pricePerGram: 0,
-    },
-    {
-      productType: ProductType.Gold,
-      karatType: KaratType.Karat24,
-      pricePerGram: 0,
-    },
-  ]);
-
-  // Check if prices have changed
   const hasChanges = useMemo(() => {
-    if (initialPrices.length !== prices.length) return true;
-
     return prices.some((currentPrice, index) => {
       const initialPrice = initialPrices[index];
-      return (
-        currentPrice.pricePerGram !== initialPrice.pricePerGram ||
-        currentPrice.productType !== initialPrice.productType ||
-        currentPrice.karatType !== initialPrice.karatType
-      );
+      return currentPrice.pricePerGram !== initialPrice?.pricePerGram;
     });
   }, [prices, initialPrices]);
 
-  const anyPriceHasNoValue = prices.some(
-    (price) =>
-      price.productType == ProductType.Gold && price.pricePerGram == null
-  );
+  const anyPriceHasNoValue = prices.some((price) => price.pricePerGram == null);
 
-  const handlePriceChange = (productType, karatType, value) => {
+  const handlePriceChange = (karatType: KaratType, value: number | null) => {
     setPrices((prev) =>
       prev.map((price) =>
-        price.karatType === karatType && price.productType === productType
-          ? { ...price, pricePerGram: value }
-          : price
+        price.karatType === karatType ? { ...price, pricePerGram: value } : price
       )
     );
-  };
-
-  const handleProductTypePrices = (productType: ProductType) => {
-    const removedOldPrices = prices.filter(
-      (price) => price.productType != productType
-    );
-
-    setPrices([...removedOldPrices, ...globalGoldPrices]);
   };
 
   const { data: pricingSettings } = useLocalApi({
     apiToCall: () => getPricingSettings(),
   }) as {
-    data: any;
-    setData: any;
-  };
-
-  const {
-    data: goldGlobalPricingSettings,
-    fetchData: recallGoldGlobalPricingSettings,
-  } = useLocalApi({
-    apiToCall: (data) => getGlobalPricingSettings(data.payload),
-    payload: {
-      productType: ProductType.Gold,
-      currency: Currency.CAD,
-    },
-  }) as {
-    data: MetalPricing;
-    fetchData: any;
-    setData: any;
+    data: (PriceItem & { stockWeight: number })[];
   };
 
   useEffect(() => {
     if (pricingSettings && pricingSettings.length > 0) {
-      const newPrices = initialPrices.map((oldPrice) => {
-        const newPriceSetting = pricingSettings.find(
-          (priceSetting) =>
-            priceSetting.productType == oldPrice.productType &&
-            priceSetting.karatType == oldPrice.karatType
+      const goldSettings = pricingSettings.filter(
+        (setting) => setting.productType === ProductType.Gold
+      );
+      const newPrices = emptyGoldPrices().map((defaultPrice) => {
+        const match = goldSettings.find(
+          (setting) => setting.karatType === defaultPrice.karatType
         );
-
-        return newPriceSetting ?? oldPrice;
+        return match ?? defaultPrice;
       });
-
       setPrices(newPrices);
-      setInitialPrices(newPrices); // Set both current and initial prices
+      setInitialPrices(newPrices);
     }
   }, [pricingSettings]);
 
-  useEffect(() => {
-    if (goldGlobalPricingSettings) {
-      const newGlobalPrices = [
-        {
-          productType: ProductType.Gold,
-          karatType: KaratType.Karat18,
-          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_18k, 0),
-        },
-        {
-          productType: ProductType.Gold,
-          karatType: KaratType.Karat21,
-          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_21k, 0),
-        },
-        {
-          productType: ProductType.Gold,
-          karatType: KaratType.Karat22,
-          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_22k, 0),
-        },
-        {
-          productType: ProductType.Gold,
-          karatType: KaratType.Karat24,
-          pricePerGram: safeValue(goldGlobalPricingSettings.price_gram_24k, 0),
-        },
-      ];
-      setGlobalGoldPrices(newGlobalPrices);
-    }
-  }, [goldGlobalPricingSettings]);
+  const stockByKarat: Record<number, number> = useMemo(() => {
+    const map: Record<number, number> = {};
+    (pricingSettings ?? [])
+      .filter((setting) => setting.productType === ProductType.Gold)
+      .forEach((setting) => {
+        map[setting.karatType] = setting.stockWeight;
+      });
+    return map;
+  }, [pricingSettings]);
 
-  const callEditPrice = (prices) => {
-    const payload = {
-      pricingSettings: prices,
-    };
+  const karatCards = useMemo(
+    () => buildKaratCards(prices, initialPrices, stockByKarat),
+    [prices, initialPrices, stockByKarat]
+  );
+
+  const totalImpact = karatCards.reduce((sum, card) => sum + card.valueImpact, 0);
+  const changedCount = karatCards.filter((card) => card.changed).length;
+  const currentStockValue = computeTotalStockValue(initialPrices, stockByKarat);
+
+  const handleApplyPrices = () => {
+    const payload = { pricingSettings: prices };
     editPricingSettings(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          setInitialPrices(prices); // Update initial prices after successful save
+          setInitialPrices(prices);
         } else {
           showError(response?.message);
         }
@@ -226,52 +110,58 @@ const Pricing = () => {
       });
   };
 
-  const handleApplyPrices = () => {
-    callEditPrice(prices);
-  };
-
   return (
     <div id="pricing" className="page">
-      <div className="page-header">
-        <h1 className="page-title">
-          <FaTag className="icon me-2" />
-          <span>Pricing Control</span>
-        </h1>
-        <div className="page-actions">
-          <button
-            className={`btn-md ${hasChanges ? "btn-gold" : "btn-gray"}`}
-            onClick={handleApplyPrices}
-            disabled={!hasChanges || anyPriceHasNoValue}
-          >
-            <FaSyncAlt className="me-1" />
-            {hasChanges ? "Apply Prices" : "No Changes"}
-          </button>
+      <div className="pricing-inner">
+        <div className="page-header">
+          <h1 className="page-title">
+            <FaTag className="icon" />
+            <span>Gold pricing</span>
+          </h1>
+          <div className="page-actions">
+            <button
+              className={`btn-md ${hasChanges ? "btn-gold" : ""}`}
+              onClick={handleApplyPrices}
+              disabled={!hasChanges || anyPriceHasNoValue}
+            >
+              <FaSyncAlt />
+              {hasChanges
+                ? `Apply ${changedCount} change${changedCount !== 1 ? "s" : ""}`
+                : "No changes"}
+            </button>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="price-grid">
+            {karatCards.map((card) => (
+              <KaratPriceCard
+                key={card.karatType}
+                karatLabel={card.karatLabel}
+                stockGrams={card.stockGrams}
+                price={card.price}
+                changed={card.changed}
+                deltaDirection={card.deltaDirection}
+                deltaText={card.deltaText}
+                onChange={(value) => handlePriceChange(card.karatType, value)}
+              />
+            ))}
+          </div>
+
+          {hasChanges && (
+            <div className="impact-box">
+              Applying these prices revalues your stock by{" "}
+              <b>
+                {totalImpact >= 0 ? "+" : "−"}
+                {fmtCurrency(Math.abs(totalImpact))}
+              </b>{" "}
+              ({fmtCurrency(currentStockValue)} →{" "}
+              <b>{fmtCurrency(currentStockValue + totalImpact)}</b>). POS
+              prices update immediately.
+            </div>
+          )}
         </div>
       </div>
-
-      <Row>
-        <Col sm={12} lg={6}>
-          <PricingCard
-            cardTitle="Gold Pricing"
-            productType={ProductType.Gold}
-            prices={prices.filter(
-              (price) => price.productType == ProductType.Gold
-            )}
-            handlePriceChange={handlePriceChange}
-            handleProductTypePrices={handleProductTypePrices}
-          />
-        </Col>
-        <Col sm={12} lg={6}>
-          <PricingCard
-            cardTitle="Global Gold Pricing"
-            productType={ProductType.Gold}
-            prices={globalGoldPrices}
-            isGlobal
-            recallGlobalPrices={recallGoldGlobalPricingSettings}
-            handleProductTypePrices={handleProductTypePrices}
-          />
-        </Col>
-      </Row>
     </div>
   );
 };
