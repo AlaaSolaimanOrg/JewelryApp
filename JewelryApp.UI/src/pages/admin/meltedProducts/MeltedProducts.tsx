@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Card, Form } from "react-bootstrap";
 import {
-  FaChartBar,
   FaFire,
   FaList,
   FaSearch,
@@ -74,28 +72,6 @@ const MeltedProducts = () => {
     setAppliedDateRange({ dateFrom: null, dateTo: null });
   };
 
-  const renderCards = (
-    title: string,
-    icon: React.ReactNode,
-    rows: any[],
-    accent?: "gold",
-  ) => (
-    <div className="inventory-report-group">
-      <h4 className="section-subtitle">
-        {icon} {title}
-      </h4>
-      <div className="summary-cards">
-        {rows?.map((r) => (
-          <div key={r.karatType} className={`summary-card ${accent ?? ""}`}>
-            <h3>{r.karatType}K Gold</h3>
-            <div className="amount">{r.itemCount} items</div>
-            <div className="sub-info">{(r.totalWeight ?? 0).toFixed(2)} g</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   const {
     data: products,
     isLoading,
@@ -164,12 +140,13 @@ const MeltedProducts = () => {
     <div id="melted-products" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaFire className="icon me-2" /> Melted Products
+          <FaFire className="icon" />
+          <span>Melted products</span>
         </h1>
 
         <div className="page-actions">
           <div className="date-filters">
-            <Form.Control
+            <input
               type="date"
               value={dateRange.dateFrom ?? ""}
               onChange={(e) =>
@@ -179,7 +156,7 @@ const MeltedProducts = () => {
                 }))
               }
             />
-            <Form.Control
+            <input
               type="date"
               value={dateRange.dateTo ?? ""}
               onChange={(e) =>
@@ -197,44 +174,51 @@ const MeltedProducts = () => {
               Apply
             </button>
             <button
-              className="btn-md btn-gold"
+              className="btn-md btn-outline"
               onClick={handleAllTime}
               disabled={
                 appliedDateRange.dateFrom == null &&
                 appliedDateRange.dateTo == null
               }
             >
-              All Time
+              All time
             </button>
           </div>
         </div>
       </div>
 
-      <Card className="inventory-reports-wrapper mb-3">
-        {renderCards(
-          "Items Melted",
-          <FaFire className="icon" />,
-          meltedRows,
-          "gold",
-        )}
-      </Card>
+      <div className="panel">
+        <div className="panel-title">
+          <FaFire className="icon" /> Items melted
+        </div>
+        <div className="melt-summary-grid">
+          {meltedRows.map((r) => (
+            <div key={r.karatType} className="melt-card">
+              <span className="melt-karat">{r.karatType}K Gold</span>
+              <div className="melt-count">{r.itemCount} items</div>
+              <div className="melt-weight">{r.totalWeight.toFixed(2)} g</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <div className="card">
-        <div className="table-header">
-          <h5 className="section-title">
-            <FaList className="icon" /> Melted Records
-          </h5>
-          <div className="table-actions">
-            <div className="search-bar">
-              <FaSearch className="icon" />
+      <div className="panel">
+        <div className="tbl-head">
+          <span className="tbl-title">
+            <FaList className="icon" /> Melted records
+          </span>
+          <div className="tbl-tools">
+            <div className="search-wrap">
+              <FaSearch className="search-ico" />
               <input
                 type="text"
+                className="search-input"
                 placeholder="Search melted records..."
                 onChange={onSearchChange}
               />
             </div>
             <button
-              className="btn-md btn-gold"
+              className="btn-md btn-outline"
               title={`Sort by Date ${
                 sortCriteria.sortDirection === "Ascending"
                   ? "Descending"
@@ -247,6 +231,7 @@ const MeltedProducts = () => {
               ) : (
                 <FaSortAmountDown />
               )}
+              Date
             </button>
           </div>
         </div>
