@@ -3,7 +3,7 @@ import {
   editPricingSettings,
   getPricingSettings,
 } from "../../../apis/pricingSettings.api/pricingSettings.api";
-import KaratPriceCard from "../../../components/KaratPriceCard/KaratPriceCard";
+import KaratPriceCard from "../../../components/cards/KaratPriceCard/KaratPriceCard";
 import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";
 import { useEffect, useMemo, useState } from "react";

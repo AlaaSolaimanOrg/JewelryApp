@@ -13,7 +13,7 @@ import {
 
 import { getReturns } from "../../../apis/returns.api/returns.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomLoader from "../../../components/CustomLoader/CustomLoader";
+import CustomLoader from "../../../components/loaders/CustomLoader/CustomLoader";
 
 export interface ReturnItem {
   id: string;

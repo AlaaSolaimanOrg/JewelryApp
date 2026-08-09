@@ -3,8 +3,8 @@ import { getTopSellingCategories } from "../../../../apis/sales.api/sales.api";
 
 import useLocalApi from "../../../../hooks/useLocalApi";
 import type { KaratType } from "../../../../types/enums";
-import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
-import CustomTable from "../../../../components/tables/Table/CustomTable";
+import type { TableHeader } from "../../../../components/tables/CustomTable/CustomTable";
+import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
 import { useEffect } from "react";
 
 interface TopSellingCategory {

@@ -1,6 +1,6 @@
 import "./karatPriceCard.scss";
-import { fmtWeight } from "../../pages/admin/pricing/Pricing.utils";
-import preventSignOnKeyDown from "../../utils";
+import { fmtWeight } from "../../../pages/admin/pricing/Pricing.utils";
+import preventSignOnKeyDown from "../../../utils";
 import type { KaratPriceCardProps } from "./KaratPriceCard.type";
 
 const KaratPriceCard = ({

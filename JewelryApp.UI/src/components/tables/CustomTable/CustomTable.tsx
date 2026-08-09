@@ -1,6 +1,6 @@
 // CustomTable.tsx
 
-import CustomLoader from "../../CustomLoader/CustomLoader";
+import CustomLoader from "../../loaders/CustomLoader/CustomLoader";
 import "./customTable.scss";
 
 type TableRow = Record<

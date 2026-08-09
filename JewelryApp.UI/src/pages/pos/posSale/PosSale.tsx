@@ -15,7 +15,7 @@ import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
 import ProductsSection from "./PosSale.sections/ProductsSection/ProductsSection";
 import TradeInSection from "./PosSale.sections/TradeInSection/TradeInSection";
 import type { Customer, Product } from "./types";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 
 const MainPosPage: React.FC = () => {
   const navigate = useNavigate();

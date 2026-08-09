@@ -8,7 +8,7 @@ import {
   getUserById,
   updateUser,
 } from "../../../apis/users.api/users.api";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { formatPhoneDisplay } from "./AddEditStaff.utils";

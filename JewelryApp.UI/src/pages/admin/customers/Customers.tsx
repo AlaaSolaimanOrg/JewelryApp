@@ -4,9 +4,12 @@ import { getCustomers } from "../../../apis/customers.api/customers.api";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import Paginator from "../../../components/Paginator/Paginator";
 
-import CustomTable from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import { buildCustomerHeaders, buildCustomerTableData } from "./Customers.utils";
+import {
+  buildCustomerHeaders,
+  buildCustomerTableData,
+} from "./Customers.utils";
 import "./customers.scss";
 
 export interface Customer {

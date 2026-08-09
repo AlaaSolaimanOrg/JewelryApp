@@ -1,4 +1,4 @@
-// components/Loader/Loader.tsx
+// components/loaders/Loader/Loader.tsx
 import React from 'react';
 import './loader.scss';
 

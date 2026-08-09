@@ -1,5 +1,5 @@
 import { FaDollarSign, FaEdit, FaFire, FaPrint } from "react-icons/fa";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import { ProductCategory, SortDirection } from "../../../types/enums";
 import type { SortCriteria } from "../../../types/general";
 import { handleSort, renderLongDescription } from "../../../utils";
@@ -88,8 +88,7 @@ export const buildInventoryHeaders = (
     key: "added",
     label: renderSortLabel("Added", "createdDate", sortCriteria),
     sortable: true,
-    onHeaderClick: () =>
-      handleSort("createdDate", sortCriteria, onSortChange),
+    onHeaderClick: () => handleSort("createdDate", sortCriteria, onSortChange),
   },
   { key: "actions", label: "Actions", align: "right" },
 ];

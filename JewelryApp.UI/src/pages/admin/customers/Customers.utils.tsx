@@ -1,5 +1,5 @@
 import { FaPen, FaReceipt } from "react-icons/fa";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import ReceiptHistoryModal from "../../../components/modals/ReceiptHistoryModal/ReceiptHistoryModal";
 import { SortDirection } from "../../../types/enums";
 import type { SortCriteria } from "../../../types/general";
@@ -50,7 +50,8 @@ const TIERS = [
   { min: 8000, name: "BRONZE", className: "tier-bronze" },
 ];
 
-export const tierOf = (spent: number) => TIERS.find((t) => spent >= t.min) ?? null;
+export const tierOf = (spent: number) =>
+  TIERS.find((t) => spent >= t.min) ?? null;
 
 export const renderSortLabel = (
   label: string,
@@ -90,7 +91,11 @@ export const buildCustomerHeaders = (
   },
   {
     key: "spent",
-    label: renderSortLabel("Total purchases", "TotalPurchasesValue", sortCriteria),
+    label: renderSortLabel(
+      "Total purchases",
+      "TotalPurchasesValue",
+      sortCriteria,
+    ),
     sortable: true,
     align: "right",
     onHeaderClick: () =>

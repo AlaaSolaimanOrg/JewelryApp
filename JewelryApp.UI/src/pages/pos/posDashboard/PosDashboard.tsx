@@ -11,7 +11,7 @@ import { GiCardPickup, GiGoldBar } from "react-icons/gi";
 import { Row, Col } from "react-bootstrap";
 import { getRepairs } from "../../../apis/repairs.api/repairs.api";
 import PinPad from "../../../components/PinPad/PinPad";
-import ActionCard from "../../../components/ActionCard/ActionCard";
+import ActionCard from "../../../components/cards/ActionCard/ActionCard";
 import StatCard from "../../../components/StatCard/StatCard";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { RepairStatus, SortDirection } from "../../../types/enums";

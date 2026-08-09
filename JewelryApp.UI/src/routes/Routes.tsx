@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import Loader from "../components/Loader/Loader";
+import Loader from "../components/loaders/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 import { useTheme } from "../context/ThemeContext";
 

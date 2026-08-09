@@ -11,7 +11,7 @@ import {
   getMeltedReports,
 } from "../../../apis/products.api/products.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";

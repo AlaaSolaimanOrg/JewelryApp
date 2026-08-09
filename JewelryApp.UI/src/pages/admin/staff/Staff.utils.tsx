@@ -1,5 +1,5 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import { SortDirection } from "../../../types/enums";
 import type { SortCriteria } from "../../../types/general";
 import { handleSort } from "../../../utils";
@@ -44,7 +44,7 @@ export const getRoleClass = (role: string): string => {
 export const renderSortLabel = (
   label: string,
   field: string,
-  sortCriteria: SortCriteria
+  sortCriteria: SortCriteria,
 ) => (
   <>
     {label}
@@ -58,7 +58,7 @@ export const renderSortLabel = (
 
 // "" (no filter) -> undefined, "active" -> true, "inactive" -> false
 export const getStatusFilterValue = (
-  statusFilter: string
+  statusFilter: string,
 ): boolean | undefined => {
   if (statusFilter === "active") return true;
   if (statusFilter === "inactive") return false;
@@ -67,7 +67,7 @@ export const getStatusFilterValue = (
 
 export const buildStaffHeaders = (
   sortCriteria: SortCriteria,
-  onSortChange: (sortBy: string, value?: SortDirection) => void
+  onSortChange: (sortBy: string, value?: SortDirection) => void,
 ): TableHeader[] => [
   {
     key: "name",
@@ -95,7 +95,7 @@ export type StaffRowActions = {
 
 export const buildStaffTableData = (
   users: User[],
-  { onToggleStatus, onEdit, onDelete }: StaffRowActions
+  { onToggleStatus, onEdit, onDelete }: StaffRowActions,
 ) =>
   users?.map((user) => ({
     rowClassName: user.isActive ? "" : "inactive-row",

@@ -27,8 +27,8 @@ import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
   type InventoryFilters,
-} from "../../../components/InventoryFilter/InventoryFilter";
-import CustomTable from "../../../components/tables/Table/CustomTable";
+} from "./InventoryFilter/InventoryFilter";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
@@ -44,7 +44,10 @@ import {
   showSuccess,
 } from "../../../utils";
 import "./inventory.scss";
-import { buildInventoryHeaders, buildInventoryTableData } from "./Inventory.utils";
+import {
+  buildInventoryHeaders,
+  buildInventoryTableData,
+} from "./Inventory.utils";
 import InventorySummary from "./InventorySummary/InventorySummary";
 import type { InventorySummaryData } from "./InventorySummary/InventorySummary.type";
 
@@ -83,8 +86,7 @@ const Inventory = () => {
   const [selectedProductForMelt, setSelectedProductForMelt] =
     useState<Product | null>(null);
 
-  const [showSpecialPricingModal, setShowSpecialPricingModal] =
-    useState(false);
+  const [showSpecialPricingModal, setShowSpecialPricingModal] = useState(false);
   const [
     selectedProductForSpecialPricing,
     setSelectedProductForSpecialPricing,
@@ -134,24 +136,22 @@ const Inventory = () => {
     initialSortDirection: SortDirection.Descending,
   });
 
-  const {
-    data: inventorySummary,
-    fetchData: fetchInventorySummary,
-  } = useLocalApi({
-    apiToCall: (data) => getInventorySummary(data.payload),
-    payload: {
-      inStock: appliedFilters?.inStock ?? undefined,
-      skus: scannedSkus,
-      karatTypeFilter: appliedFilters?.karatTypes,
-      weightFromFilter: appliedFilters?.weightFrom,
-      weightToFilter: appliedFilters?.weightTo,
-      priceFromFilter: appliedFilters?.priceFrom,
-      priceToFilter: appliedFilters?.priceTo,
-      productCategoryFilter: appliedFilters?.category,
-    },
-    effectDependency: [appliedFilters, scannedSkus],
-    dataInitalValue: null,
-  }) as { data: InventorySummaryData | null; fetchData: () => void };
+  const { data: inventorySummary, fetchData: fetchInventorySummary } =
+    useLocalApi({
+      apiToCall: (data) => getInventorySummary(data.payload),
+      payload: {
+        inStock: appliedFilters?.inStock ?? undefined,
+        skus: scannedSkus,
+        karatTypeFilter: appliedFilters?.karatTypes,
+        weightFromFilter: appliedFilters?.weightFrom,
+        weightToFilter: appliedFilters?.weightTo,
+        priceFromFilter: appliedFilters?.priceFrom,
+        priceToFilter: appliedFilters?.priceTo,
+        productCategoryFilter: appliedFilters?.category,
+      },
+      effectDependency: [appliedFilters, scannedSkus],
+      dataInitalValue: null,
+    }) as { data: InventorySummaryData | null; fetchData: () => void };
 
   const toggleSelect = (sku: string) => {
     setSelectedSkus((prev) => {
@@ -165,7 +165,9 @@ const Inventory = () => {
   const toggleAllOnPage = (checked: boolean) => {
     setSelectedSkus((prev) => {
       const next = new Set(prev);
-      products?.forEach((p) => (checked ? next.add(p.sku) : next.delete(p.sku)));
+      products?.forEach((p) =>
+        checked ? next.add(p.sku) : next.delete(p.sku),
+      );
       return next;
     });
   };

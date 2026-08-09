@@ -1,4 +1,6 @@
-import CustomTable, { type TableHeader } from "../../../components/tables/Table/CustomTable";
+import CustomTable, {
+  type TableHeader,
+} from "../../../components/tables/CustomTable/CustomTable";
 import "./tagPrinting.scss";
 import { FaPrint, FaSearch, FaRedo, FaGem, FaHeart } from "react-icons/fa";
 

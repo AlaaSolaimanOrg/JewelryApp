@@ -11,7 +11,7 @@ import {
   getProductById,
 } from "../../../apis/products.api/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";

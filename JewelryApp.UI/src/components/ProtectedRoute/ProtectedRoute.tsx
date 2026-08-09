@@ -1,7 +1,7 @@
 import React, { type JSX } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import Loader from "../Loader/Loader";
+import Loader from "../loaders/Loader/Loader";
 
 interface ProtectedRouteProps {
   children: JSX.Element;

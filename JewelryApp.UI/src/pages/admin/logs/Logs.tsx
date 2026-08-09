@@ -8,12 +8,12 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { deleteLogs, getLogs } from "../../../apis/logs.api/logs.api";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import LogDataModal from "../../../components/modals/LogDataModal/LogDataModal";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable, {
   type TableHeader,
-} from "../../../components/tables/Table/CustomTable";
+} from "../../../components/tables/CustomTable/CustomTable";
 import TruncatedTextWithCopy from "../../../components/TruncatedTextWithCopy/TruncatedTextWithCopy";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { LogLevel, SortDirection } from "../../../types/enums";

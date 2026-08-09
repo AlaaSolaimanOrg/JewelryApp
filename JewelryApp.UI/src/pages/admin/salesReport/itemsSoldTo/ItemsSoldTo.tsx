@@ -12,8 +12,8 @@ import {
   SortDirection,
 } from "../../../../types/enums";
 import "./itemsSoldTo.scss";
-import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
-import CustomTable from "../../../../components/tables/Table/CustomTable";
+import type { TableHeader } from "../../../../components/tables/CustomTable/CustomTable";
+import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
 import dateFormat from "dateformat";
 import { handleSort } from "../../../../utils";
 

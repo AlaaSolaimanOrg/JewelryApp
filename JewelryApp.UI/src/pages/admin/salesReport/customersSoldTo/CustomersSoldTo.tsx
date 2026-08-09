@@ -8,9 +8,8 @@ import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModa
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { CustomerFilter } from "../../../../types/enums";
 import "./customersSoldTo.scss";
-import type { TableHeader } from "../../../../components/tables/Table/CustomTable";
-import CustomTable from "../../../../components/tables/Table/CustomTable";
-
+import type { TableHeader } from "../../../../components/tables/CustomTable/CustomTable";
+import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
 
 interface SaleCustomers {
   customerId: string;

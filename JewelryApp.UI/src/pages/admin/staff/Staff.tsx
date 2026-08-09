@@ -13,7 +13,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./staff.scss";
-import CustomTable from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import {
   buildStaffHeaders,
   buildStaffTableData,

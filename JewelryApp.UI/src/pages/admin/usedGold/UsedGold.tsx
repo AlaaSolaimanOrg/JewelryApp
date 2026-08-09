@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { FaBoxOpen, FaFire, FaHistory, FaSearch } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
-import AdminStatCard from "../../../components/AdminStatCard/AdminStatCard";
-import GoldPoolCard from "../../../components/GoldPoolCard/GoldPoolCard";
-import CustomTable from "../../../components/tables/Table/CustomTable";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import AdminStatCard from "../../../components/cards/AdminStatCard/AdminStatCard";
+import GoldPoolCard from "../../../components/cards/GoldPoolCard/GoldPoolCard";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import { showSuccess } from "../../../utils";
 import MeltGoldModal from "./MeltGoldModal/MeltGoldModal";
 import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
@@ -38,8 +38,10 @@ const TYPE_LABEL: Record<UsedGoldHistoryEntry["type"], string> = {
 const UsedGold = () => {
   const now = new Date();
 
-  const [pools, setPools] = useState<Record<number, GoldPool>>(createMockPools());
-  const [history, setHistory] = useState<UsedGoldHistoryEntry[]>(createMockHistory());
+  const [pools, setPools] =
+    useState<Record<number, GoldPool>>(createMockPools());
+  const [history, setHistory] =
+    useState<UsedGoldHistoryEntry[]>(createMockHistory());
   const [nextHistId, setNextHistId] = useState(1000);
 
   const [period, setPeriod] = useState<Period>("month");
@@ -47,7 +49,9 @@ const UsedGold = () => {
   const [selYear, setSelYear] = useState(2026);
 
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | UsedGoldHistoryEntry["type"]>("all");
+  const [typeFilter, setTypeFilter] = useState<
+    "all" | UsedGoldHistoryEntry["type"]
+  >("all");
 
   const [showMeltModal, setShowMeltModal] = useState(false);
   const [showStockModal, setShowStockModal] = useState(false);
@@ -58,7 +62,11 @@ const UsedGold = () => {
   const avgPurity = getAvgPurity(pools);
 
   const periodLabel =
-    period === "month" ? `${MONTHS[selMonth]} ${selYear}` : period === "year" ? `${selYear}` : "All time";
+    period === "month"
+      ? `${MONTHS[selMonth]} ${selYear}`
+      : period === "year"
+        ? `${selYear}`
+        : "All time";
 
   const filteredHistory = useMemo(
     () => filterHistoryByPeriod(history, period, selMonth, selYear),
@@ -74,13 +82,18 @@ const UsedGold = () => {
     if (typeFilter !== "all") rows = rows.filter((h) => h.type === typeFilter);
     if (q) {
       rows = rows.filter(
-        (h) => h.desc.toLowerCase().includes(q) || h.notes.toLowerCase().includes(q),
+        (h) =>
+          h.desc.toLowerCase().includes(q) || h.notes.toLowerCase().includes(q),
       );
     }
-    return [...rows].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    return [...rows].sort(
+      (a, b) => b.date.localeCompare(a.date) || b.id - a.id,
+    );
   }, [filteredHistory, typeFilter, search]);
 
-  const otherKarats = getAllKarats(pools).filter((k) => !STANDARD_KARATS.includes(k));
+  const otherKarats = getAllKarats(pools).filter(
+    (k) => !STANDARD_KARATS.includes(k),
+  );
 
   const logHeaders: TableHeader[] = [
     { key: "date", label: "Date", width: "90px" },
@@ -116,7 +129,9 @@ const UsedGold = () => {
         {fmtCurrency(h.cost)}
       </span>
     ),
-    type: <span className={`lr-badge badge-${h.type}`}>{h.type.toUpperCase()}</span>,
+    type: (
+      <span className={`lr-badge badge-${h.type}`}>{h.type.toUpperCase()}</span>
+    ),
   }));
 
   const poolCard = (k: number) => (
@@ -166,7 +181,9 @@ const UsedGold = () => {
     ]);
     setNextHistId((id) => id + 1);
     setShowMeltModal(false);
-    showSuccess(`Sent ${bagWeight.toFixed(2)}g to melt — ${fmtCurrencyRounded(totalCostRemoved)} value`);
+    showSuccess(
+      `Sent ${bagWeight.toFixed(2)}g to melt — ${fmtCurrencyRounded(totalCostRemoved)} value`,
+    );
   };
 
   const handleStockConfirm = (karat: number, weight: number, notes: string) => {
@@ -208,12 +225,17 @@ const UsedGold = () => {
           <span>Used gold</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-green" onClick={() => setShowStockModal(true)}>
+          <button
+            className="btn-md btn-green"
+            onClick={() => setShowStockModal(true)}
+          >
             <FaBoxOpen /> Return to stock
           </button>
           <button
             className="btn-md btn-amber"
-            onClick={() => (totalOnHand > 0 ? setShowMeltModal(true) : undefined)}
+            onClick={() =>
+              totalOnHand > 0 ? setShowMeltModal(true) : undefined
+            }
             disabled={totalOnHand <= 0}
           >
             <FaFire /> Send to melt
@@ -310,7 +332,9 @@ const UsedGold = () => {
 
       {otherKarats.length > 0 && (
         <>
-          <div className="section-title">Other purities — odd buys (9K, 23K, ...)</div>
+          <div className="section-title">
+            Other purities — odd buys (9K, 23K, ...)
+          </div>
           <div className="pools">{otherKarats.map((k) => poolCard(k))}</div>
         </>
       )}
@@ -336,7 +360,11 @@ const UsedGold = () => {
             <select
               className="log-filter"
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as "all" | UsedGoldHistoryEntry["type"])}
+              onChange={(e) =>
+                setTypeFilter(
+                  e.target.value as "all" | UsedGoldHistoryEntry["type"],
+                )
+              }
             >
               <option value="all">All</option>
               <option value="purchase">{TYPE_LABEL.purchase}</option>

@@ -1,6 +1,6 @@
 import dateFormat from "dateformat";
 import { FaTimes } from "react-icons/fa";
-import CustomLoader from "../../../../components/CustomLoader/CustomLoader";
+import CustomLoader from "../../../../components/loaders/CustomLoader/CustomLoader";
 import { getDueStatus, type Repair } from "./RepairsModal.utils";
 import "./repairsModal.scss";
 

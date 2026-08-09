@@ -1,7 +1,7 @@
 import { Row, Col } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import { getSalesList } from "../../../../apis/sales.api/sales.api";
-import CustomLoader from "../../../../components/CustomLoader/CustomLoader";
+import CustomLoader from "../../../../components/loaders/CustomLoader/CustomLoader";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../../types/enums";
 import {

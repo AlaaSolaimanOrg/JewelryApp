@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaFilter, FaRedo } from "react-icons/fa";
-import { KaratType, ProductCategory } from "../../types/enums";
+import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./inventoryFilter.scss";
 
 export interface InventoryFilters {
@@ -33,9 +33,7 @@ interface InventoryFilterProps {
 }
 
 const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
-  const [filters, setFilters] = useState<InventoryFilters>(
-    filtersInitialState,
-  );
+  const [filters, setFilters] = useState<InventoryFilters>(filtersInitialState);
 
   const toggleValueInArray = (array: any[], currentValue: any): any[] => {
     return array.includes(currentValue)

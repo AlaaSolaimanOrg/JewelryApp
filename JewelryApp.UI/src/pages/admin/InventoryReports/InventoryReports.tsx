@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { FaClipboardList, FaStore } from "react-icons/fa";
-import HorizontalBarRow from "../../../components/HorizontalBarRow/HorizontalBarRow";
-import MiniStatCard from "../../../components/MiniStatCard/MiniStatCard";
-import ReportStatCard from "../../../components/ReportStatCard/ReportStatCard";
-import CustomTable from "../../../components/tables/Table/CustomTable";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
+import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
+import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
+import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import type { DateRange, Period } from "./InventoryReports.type";
 import {
   AGING_BUCKETS,
@@ -99,12 +99,17 @@ const InventoryReports = () => {
     { key: "name", label: "Item" },
     { key: "type", label: "Type" },
     { key: "stock", label: "In stock", align: "right" },
-    { key: "sold", label: `Sold (${periodLabel.toLowerCase()})`, align: "right" },
+    {
+      key: "sold",
+      label: `Sold (${periodLabel.toLowerCase()})`,
+      align: "right",
+    },
     { key: "status", label: "Stock status", align: "center" },
   ];
 
   const purityMovement = MOVEMENT_BY_PURITY[period];
-  const maxAddedGrams = Math.max(...purityMovement.added.map((x) => x.grams)) || 1;
+  const maxAddedGrams =
+    Math.max(...purityMovement.added.map((x) => x.grams)) || 1;
   const maxReturnedGrams =
     Math.max(...purityMovement.returned.map((x) => x.grams)) || 1;
   const totalAdded = purityMovement.added.reduce(
@@ -205,7 +210,9 @@ const InventoryReports = () => {
         </div>
       </div>
 
-      <div className="sec-title move-title">Movement & bullion — filtered by period</div>
+      <div className="sec-title move-title">
+        Movement & bullion — filtered by period
+      </div>
       <div className="period-bar">
         {PERIODS.map((p) => (
           <button
@@ -286,7 +293,9 @@ const InventoryReports = () => {
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Items added by purity</span>
-            <span className="panel-sub">{totalAdded.toLocaleString()} items</span>
+            <span className="panel-sub">
+              {totalAdded.toLocaleString()} items
+            </span>
           </div>
           {purityMovement.added.map((x) => (
             <HorizontalBarRow
@@ -301,7 +310,9 @@ const InventoryReports = () => {
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Items returned by purity</span>
-            <span className="panel-sub">{totalReturned.toLocaleString()} items</span>
+            <span className="panel-sub">
+              {totalReturned.toLocaleString()} items
+            </span>
           </div>
           {purityMovement.returned.map((x) => (
             <HorizontalBarRow
