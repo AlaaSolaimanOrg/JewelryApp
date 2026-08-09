@@ -1,0 +1,27 @@
+.miniStatCard {
+  font-family: var(--admin-font);
+  background: var(--admin-bg3);
+  border-radius: var(--admin-radius-sm);
+  padding: 11px 13px;
+
+  .mini-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--admin-t4);
+    font-weight: 500;
+  }
+
+  .mini-val {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 3px;
+    color: var(--admin-t1);
+  }
+
+  .mini-sub {
+    font-size: 11px;
+    color: var(--admin-t4);
+    margin-top: 1px;
+  }
+}

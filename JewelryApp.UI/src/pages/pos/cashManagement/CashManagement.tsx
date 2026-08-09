@@ -10,8 +10,8 @@ import {
   FaPaperPlane,
   FaArrowLeft,
 } from "react-icons/fa";
-import StatCard from "../../../components/3.0/StatCard/StatCard";
-import PinPad from "../../../components/3.0/PinPad/PinPad";
+import StatCard from "../../../components/StatCard/StatCard";
+import PinPad from "../../../components/PinPad/PinPad";
 import { showError, showSuccess } from "../../../utils";
 import TransactionLogs from "./TransactionLogs/TransactionLogs";
 import ExpenseModal from "./modals/ExpenseModal/ExpenseModal";

@@ -1,174 +1,294 @@
 #inventory-reports {
-  /* ================= PAGE HEADER ================= */
+  font-family: var(--admin-font);
+
   .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
-    gap: 16px;
+    margin-bottom: 16px;
+    gap: 10px;
     flex-wrap: wrap;
   }
 
   .page-title {
-    font-size: 1.8rem;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--dark-light);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .icon {
-      color: var(--gold);
-      background: var(--primary-light);
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-    }
-  }
-
-  .page-actions {
-    display: flex;
-    align-items: center;
-  }
-
-  .date-filters {
+    color: var(--admin-t1);
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
 
-    input {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--light);
-      font-size: 14px;
-      width: 150px;
+    .icon {
+      width: auto;
+      height: auto;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+      color: var(--admin-gold);
+      font-size: 20px;
     }
   }
 
-  .btn-md {
-    height: 38px;
-    padding: 0 16px;
-    border-radius: 6px;
+  .sec-title {
+    font-size: 13px;
     font-weight: 600;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
+    color: var(--admin-t3);
+    margin: 0 0 10px 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.move-title {
+      margin-top: 4px;
+    }
+  }
+
+  /* =============================
+     GRIDS
+  ============================== */
+  .stats4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr;
+    }
+
+    .panel {
+      margin-bottom: 0;
+    }
+  }
+
+  .mini-grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* =============================
+     PANEL
+  ============================== */
+  .panel {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd);
+    border-radius: var(--admin-radius-lg);
+    padding: 16px 18px;
+    transition:
+      background 0.25s,
+      border-color 0.25s;
+    margin-bottom: 18px;
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
+    margin-bottom: 14px;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .btn-gold {
-    background: var(--gold);
-    color: var(--dark);
-
-    &:hover {
-      background: #e6c035;
-    }
-  }
-
-  .btn-outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--secondary);
-
-    &:hover {
-      background: var(--primary-light);
-      color: var(--dark);
-    }
-  }
-
-  /* ================= CONTENT ================= */
-  .inventory-reports-wrapper {
-    background-color: white;
-    border-radius: var(--border-radius);
-    padding: 20px;
-    box-shadow: var(--shadow-bottom);
-  }
-
-  .inventory-report-group {
-    margin-bottom: 30px;
-  }
-
-  .section-subtitle {
-    font-size: 18px;
+  .panel-title {
+    font-size: 14px;
     font-weight: 600;
-    color: var(--dark);
-    margin-bottom: 15px;
+    color: var(--admin-t1);
     display: flex;
     align-items: center;
     gap: 8px;
 
     .icon {
-      color: var(--gold);
+      color: var(--admin-gold);
     }
   }
 
-  /* ================= CARDS ================= */
-  .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
+  .panel-sub {
+    font-size: 11px;
+    color: var(--admin-t4);
   }
 
-  .summary-card {
-    background-color: #f9f9f9;
-    border-radius: var(--border-radius);
-    padding: 25px 20px;
-    text-align: center;
-    border-left: 4px solid var(--dark);
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: translateY(-2px);
-    }
-
-    h3 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      color: var(--dark);
-    }
-
-    .amount {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--dark);
-    }
-
-    .sub-info {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #666;
-    }
+  /* =============================
+     PERIOD BAR
+  ============================== */
+  .period-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
-  .summary-card.gold {
-    border-left-color: var(--gold);
+  .pbtn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    cursor: pointer;
+    min-height: 42px;
 
-    .amount {
-      color: var(--gold);
+    &.active {
+      background: var(--admin-gold);
+      border-color: var(--admin-gold);
+      color: #1a1a1a;
+      font-weight: 600;
     }
   }
 
-  /* ================= RESPONSIVE ================= */
+  .range-inputs {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .range-sep {
+    font-size: 12px;
+    color: var(--admin-t4);
+  }
+
+  .date-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 9px 10px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    min-height: 42px;
+    -webkit-appearance: none;
+    color-scheme: dark;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  .apply-btn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: var(--admin-radius-sm);
+    border: none;
+    background: var(--admin-gold);
+    color: #1a1a1a;
+    cursor: pointer;
+    min-height: 42px;
+
+    &:active {
+      background: var(--admin-gold-hover);
+      transform: scale(0.97);
+    }
+  }
+
+  /* =============================
+     STAPLES TABLE
+  ============================== */
+  .stpl-name {
+    font-weight: 600;
+    color: var(--admin-t1);
+  }
+
+  .stpl-sold {
+    color: var(--admin-gold);
+    font-weight: 600;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .b-low {
+    background: rgba(230, 91, 91, 0.12);
+    color: var(--admin-red);
+  }
+
+  .b-ok {
+    background: rgba(76, 175, 124, 0.12);
+    color: var(--admin-green);
+  }
+
+  .b-type {
+    background: var(--admin-bg4);
+    color: var(--admin-t3);
+  }
+
+  .customTable {
+    border: none;
+    border-radius: 0;
+
+    table {
+      min-width: 640px;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--admin-bg2);
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--admin-t4);
+      font-weight: 500;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      color: var(--admin-t2);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .noResultsFound td {
+      background: transparent;
+      color: var(--admin-t4);
+    }
+  }
+
   @media (max-width: 768px) {
     .page-header {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
-    .date-filters {
+    .range-inputs {
+      margin-left: 0;
       width: 100%;
 
-      input,
-      button {
-        width: 100%;
+      .date-input {
+        flex: 1;
       }
     }
   }
