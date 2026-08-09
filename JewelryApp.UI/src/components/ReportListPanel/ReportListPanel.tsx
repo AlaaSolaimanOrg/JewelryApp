@@ -3,6 +3,7 @@ import "./reportListPanel.scss";
 
 const ReportListPanel = ({
   title,
+  subtitle,
   rows,
   emptyMessage,
   search,
@@ -10,7 +11,10 @@ const ReportListPanel = ({
   return (
     <div className="reportListPanel">
       <div className="rlp-head">
-        <span className="rlp-title">{title}</span>
+        <div className="rlp-head-text">
+          <span className="rlp-title">{title}</span>
+          {subtitle && <span className="rlp-subtitle">{subtitle}</span>}
+        </div>
         {search && (
           <input
             type="text"
@@ -31,8 +35,11 @@ const ReportListPanel = ({
                 {row.secondary && <div className="rlp-sub">{row.secondary}</div>}
               </div>
               <span
-                className="rlp-val"
-                style={row.valueColor ? { color: row.valueColor } : undefined}
+                className={`rlp-val${row.valueBg ? " pill" : ""}`}
+                style={{
+                  color: row.valueColor,
+                  background: row.valueBg,
+                }}
               >
                 {row.value}
               </span>

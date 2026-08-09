@@ -16,10 +16,26 @@
     gap: 8px;
   }
 
+  .rlp-head-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
   .rlp-title {
     font-size: 13px;
     font-weight: 600;
     color: var(--admin-t3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .rlp-subtitle {
+    font-size: 11px;
+    color: var(--admin-t4);
+    font-weight: 400;
   }
 
   .rlp-search {
@@ -84,6 +100,12 @@
     font-size: 13px;
     font-weight: 600;
     white-space: nowrap;
+
+    &.pill {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
   }
 
   .rlp-empty {

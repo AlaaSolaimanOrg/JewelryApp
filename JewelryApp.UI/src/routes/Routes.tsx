@@ -16,6 +16,9 @@ const Unauthorized = lazy(
 const RepairsReports = lazy(
   () => import("../pages/admin/repairsReports/RepairsReports"),
 );
+const CustomersReports = lazy(
+  () => import("../pages/admin/customersReports/CustomersReports"),
+);
 
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
 const AddEditProduct = lazy(
@@ -167,6 +170,10 @@ const AppRoutes = () => {
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/analytics" element={<Analytics />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />
+            <Route
+              path="admin/customers-reports"
+              element={<CustomersReports />}
+            />
             <Route path="admin/staff" element={<Staff />} />
             <Route path="admin/settings" element={<Settings />} />
             <Route path="admin/print-tags" element={<TagPrinting />} />

@@ -1,0 +1,337 @@
+#customers-reports {
+  font-family: var(--admin-font);
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .icon {
+      width: auto;
+      height: auto;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+      color: var(--admin-gold);
+      font-size: 20px;
+    }
+  }
+
+  .sec-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-t3);
+    margin: 0 0 10px 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* =============================
+     STATS
+  ============================== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* =============================
+     CONTROLS
+  ============================== */
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .ctrl-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .ctrl-label {
+    font-size: 12px;
+    color: var(--admin-t3);
+    white-space: nowrap;
+  }
+
+  .period-btn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    cursor: pointer;
+    min-height: 42px;
+
+    &.active {
+      background: var(--admin-gold);
+      border-color: var(--admin-gold);
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+  }
+
+  .range-inputs {
+    margin-left: auto;
+  }
+
+  .date-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 9px 10px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    min-height: 42px;
+    -webkit-appearance: none;
+    color-scheme: dark;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  .apply-btn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: var(--admin-radius-sm);
+    border: none;
+    background: var(--admin-gold);
+    color: #1a1a1a;
+    cursor: pointer;
+    min-height: 42px;
+
+    &:active {
+      background: var(--admin-gold-hover);
+    }
+  }
+
+  /* =============================
+     PANELS / LAYOUT
+  ============================== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    @media (max-width: 1000px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd);
+    border-radius: var(--admin-radius-lg);
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+
+  .two-col .panel {
+    margin-bottom: 0;
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .icon {
+      color: var(--admin-red);
+      font-size: 13px;
+    }
+  }
+
+  .panel-sub {
+    font-size: 11px;
+    color: var(--admin-t4);
+  }
+
+  .panel-footnote {
+    font-size: 12px;
+    color: var(--admin-t4);
+    margin-top: 10px;
+  }
+
+  .chart-container {
+    background: var(--admin-bg3);
+    border: 1px solid var(--admin-bd);
+    border-radius: var(--admin-radius-lg);
+    padding: 16px;
+  }
+
+  /* =============================
+     REVENUE MIX
+  ============================== */
+  .mix-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .mini-divider {
+    border-top: 1px solid var(--admin-bd);
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+
+  .mix-note {
+    font-size: 12px;
+    color: var(--admin-t4);
+  }
+
+  /* =============================
+     TOP CUSTOMERS TABLE
+  ============================== */
+  .tbl-tools {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 9px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    width: 200px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+
+    &::placeholder {
+      color: var(--admin-t4);
+    }
+  }
+
+  .tbl-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.25);
+      border-radius: 4px;
+    }
+  }
+
+  .cr-name {
+    font-weight: 600;
+    color: var(--admin-t1);
+  }
+
+  .cr-muted {
+    color: var(--admin-t4);
+  }
+
+  .num {
+    display: block;
+    text-align: right;
+    font-weight: 600;
+    color: var(--admin-t2);
+  }
+
+  .customTable {
+    border: none;
+    border-radius: 0;
+
+    table {
+      min-width: 720px;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--admin-bg2);
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--admin-t4);
+      font-weight: 600;
+      padding: 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      color: var(--admin-t2);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: rgba(212, 160, 23, 0.05);
+    }
+
+    .noResultsFound td {
+      background: transparent;
+      color: var(--admin-t4);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}

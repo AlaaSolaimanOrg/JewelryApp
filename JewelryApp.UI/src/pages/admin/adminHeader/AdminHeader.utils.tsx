@@ -6,6 +6,7 @@ const PAGE_TITLES: { path: string; title: string }[] = [
   { path: "/admin/inventory", title: "Inventory" },
   { path: "/admin/pricing", title: "Pricing" },
   { path: "/admin/sales-reports", title: "Sales Reports" },
+  { path: "/admin/customers-reports", title: "Customers Reports" },
   { path: "/admin/customers", title: "Customers" },
   { path: "/admin/usedGold", title: "Used Gold" },
   { path: "/admin/staff", title: "Staff" },

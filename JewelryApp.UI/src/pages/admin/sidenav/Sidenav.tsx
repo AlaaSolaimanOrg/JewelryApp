@@ -79,6 +79,10 @@ const SideNav = () => {
           label: "Repairs Reports",
           path: "/admin/repairs/reports",
         },
+        {
+          label: "Customers Reports",
+          path: "/admin/customers-reports",
+        },
       ],
     },
     {
