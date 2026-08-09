@@ -54,14 +54,6 @@ export const getSalesCustomers = async (payload: {
   return requestApi("GET", apiRoutes.sales.getSalesCustomers, payload);
 };
 
-export const getDashboardInsights = async () => {
-  return requestApi("GET", apiRoutes.sales.getDashboardInsights, {});
-};
-
-export const getTopSellingCategories = async () => {
-  return requestApi("GET", apiRoutes.sales.getTopSellingCategories, {});
-};
-
 export const searchSales = async (payload: {
   serialNumber: string;
   customerPhone: string;

@@ -1,0 +1,42 @@
+.splitBarRow {
+  font-family: var(--admin-font);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .sbr-label {
+    font-size: 12px;
+    color: var(--admin-t3);
+    width: 48px;
+    flex-shrink: 0;
+  }
+
+  .sbr-track {
+    flex: 1;
+    height: 22px;
+    background: var(--admin-bg4);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .sbr-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    min-width: fit-content;
+    white-space: nowrap;
+  }
+
+  .sbr-amt {
+    font-size: 12px;
+    font-weight: 600;
+    width: 78px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+}
