@@ -1,0 +1,374 @@
+#used-gold {
+  font-family: var(--admin-font);
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--admin-t1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .icon {
+      width: auto;
+      height: auto;
+      padding: 0;
+      background: none;
+      border-radius: 0;
+      color: var(--admin-gold);
+      font-size: 20px;
+    }
+  }
+
+  .page-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-md {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: none;
+    transition: all 0.12s;
+    cursor: pointer;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-amber {
+    background: rgba(230, 162, 60, 0.12) !important;
+    border: 1px solid rgba(230, 162, 60, 0.35) !important;
+    color: var(--admin-amber) !important;
+  }
+
+  .btn-green {
+    background: rgba(76, 175, 124, 0.12) !important;
+    border: 1px solid rgba(76, 175, 124, 0.3) !important;
+    color: var(--admin-green) !important;
+  }
+
+  /* =============================
+     PERIOD CONTROLS
+  ============================== */
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .ctrl-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .ctrl-label {
+    font-size: 12px;
+    color: var(--admin-t3);
+    white-space: nowrap;
+  }
+
+  .pbtn {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    cursor: pointer;
+    min-height: 42px;
+
+    &.active {
+      background: var(--admin-gold);
+      border-color: var(--admin-gold);
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+  }
+
+  .ctrl-select {
+    font-family: var(--admin-font);
+    font-size: 14px;
+    padding: 10px 36px 10px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  /* =============================
+     STATS
+  ============================== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+
+    @media (max-width: 700px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--admin-t3);
+    margin: 14px 0 8px 2px;
+  }
+
+  /* =============================
+     GOLD POOLS
+  ============================== */
+  .pools {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+
+    @media (max-width: 700px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* =============================
+     PANEL / TABLE TOOLS
+  ============================== */
+  .panel {
+    background: var(--admin-bg2);
+    border: 1px solid var(--admin-bd);
+    border-radius: var(--admin-radius-lg);
+    padding: 16px 18px;
+    transition:
+      background 0.25s,
+      border-color 0.25s;
+    margin-bottom: 14px;
+  }
+
+  .tbl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tbl-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--admin-t3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tbl-tools {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-ico {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-t4);
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 10px 12px 10px 32px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    width: 200px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+
+    &::placeholder {
+      color: var(--admin-t4);
+    }
+  }
+
+  .log-filter {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 9px 30px 9px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  /* =============================
+     LOG BADGES
+  ============================== */
+  .lr-date {
+    color: var(--admin-t3);
+  }
+
+  .lr-desc {
+    color: var(--admin-t1);
+  }
+
+  .lr-sub {
+    font-size: 11px;
+    color: var(--admin-t4);
+    margin-top: 2px;
+  }
+
+  .lr-cost {
+    font-weight: 500;
+  }
+
+  .lr-badge {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .badge-purchase {
+    background: rgba(230, 91, 91, 0.12);
+    color: var(--admin-red);
+  }
+
+  .badge-melt {
+    background: rgba(230, 162, 60, 0.12);
+    color: var(--admin-amber);
+  }
+
+  .badge-stock {
+    background: rgba(76, 175, 124, 0.12);
+    color: var(--admin-green);
+  }
+
+  /* =============================
+     TABLE (CustomTable overrides)
+  ============================== */
+  .customTable {
+    border: none;
+    border-radius: 0;
+
+    table {
+      min-width: 720px;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--admin-bg2);
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--admin-t4);
+      font-weight: 600;
+      padding: 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--admin-bd);
+      color: var(--admin-t2);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: rgba(212, 160, 23, 0.05);
+    }
+
+    .noResultsFound td {
+      background: transparent;
+      color: var(--admin-t4);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}

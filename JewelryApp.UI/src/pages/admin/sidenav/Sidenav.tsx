@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
+import { GiGoldBar } from "react-icons/gi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useState, useEffect } from "react";
@@ -90,6 +91,11 @@ const SideNav = () => {
       icon: <FaUsers className="icon" />,
       path: "/admin/customers",
     },
+    {
+      label: "Used Gold",
+      icon: <GiGoldBar className="icon" />,
+      path: "/admin/usedGold",
+    },
     { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
     {
       label: "Return Management",
@@ -161,6 +167,7 @@ const SideNav = () => {
             "Customers",
             "Reports",
             "Return Management",
+            "Used Gold",
           ].includes(item.label),
         )
         .map((item) => item)

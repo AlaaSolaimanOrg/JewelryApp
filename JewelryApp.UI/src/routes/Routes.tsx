@@ -59,6 +59,7 @@ const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 const ReturnManagement = lazy(
   () => import("../pages/admin/returnManagement/ReturnManagement"),
 );
+const UsedGoldAdmin = lazy(() => import("../pages/admin/usedGold/UsedGold"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -145,6 +146,7 @@ const AppRoutes = () => {
             />
             <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/customers" element={<Customers />} />
+            <Route path="admin/usedGold" element={<UsedGoldAdmin />} />
             <Route
               path="admin/addProduct"
               element={<AddEditProduct isEdit={false} />}

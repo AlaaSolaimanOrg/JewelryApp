@@ -1,0 +1,20 @@
+.adminStatCard {
+  font-family: var(--admin-font);
+  background: var(--admin-bg4);
+  border-radius: var(--admin-radius-sm);
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid var(--admin-bd);
+
+  .stat-n {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--admin-t1);
+  }
+
+  .stat-l {
+    font-size: 10px;
+    color: var(--admin-t3);
+    margin-top: 2px;
+  }
+}
