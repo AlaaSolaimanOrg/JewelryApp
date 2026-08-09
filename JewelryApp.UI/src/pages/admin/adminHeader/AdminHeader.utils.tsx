@@ -9,7 +9,7 @@ const PAGE_TITLES: { path: string; title: string }[] = [
   { path: "/admin/customers", title: "Customers" },
   { path: "/admin/usedGold", title: "Used Gold" },
   { path: "/admin/staff", title: "Staff" },
-  { path: "/admin/repairAnalytics", title: "Repair Analytics" },
+  { path: "/admin/repairs/reports", title: "Repairs Reports" },
   { path: "/admin/returnManagement", title: "Return Management" },
   { path: "/admin/settings", title: "Settings" },
   { path: "/admin/print-tags", title: "Print Tags" },

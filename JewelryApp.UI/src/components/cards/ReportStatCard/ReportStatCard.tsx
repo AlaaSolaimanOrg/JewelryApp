@@ -9,8 +9,10 @@ const ReportStatCard = ({
   valueColor,
 }: ReportStatCardProps) => {
   return (
-    <div className="reportStatCard">
-      <span className="scard-bar" style={{ background: accentColor }} />
+    <div className={`reportStatCard ${accentColor ? "" : "no-accent"}`}>
+      {accentColor && (
+        <span className="scard-bar" style={{ background: accentColor }} />
+      )}
       <div className="scard-label">{label}</div>
       <div className="scard-value" style={valueColor ? { color: valueColor } : undefined}>
         {value}

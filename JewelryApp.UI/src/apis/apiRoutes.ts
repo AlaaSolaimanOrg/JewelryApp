@@ -71,7 +71,6 @@ export const apiRoutes = {
     updateRepairStatus: "Repairs/UpdateRepairStatus",
     updateRepairPaymentStatus: "Repairs/UpdateRepairPaymentStatus",
     updateRepair: "Repairs/UpdateRepair",
-    getRepairAnalytics: "Repairs/GetRepairAnalytics",
   },
   analytics: {
     getSalesOverTime: "Analytics/GetSalesOverTime",

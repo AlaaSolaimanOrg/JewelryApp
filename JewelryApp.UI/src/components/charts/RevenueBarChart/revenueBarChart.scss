@@ -1,0 +1,46 @@
+.revenueBarChart {
+  font-family: var(--admin-font);
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 160px;
+  padding-top: 8px;
+
+  .bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+  }
+
+  .bar-val {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--admin-t2);
+    white-space: nowrap;
+    height: 14px;
+    line-height: 14px;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    min-height: 1px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  .bar-label {
+    font-size: 10px;
+    color: var(--admin-t4);
+    height: 14px;
+    line-height: 14px;
+    margin-top: 3px;
+  }
+}

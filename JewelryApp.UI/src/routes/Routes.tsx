@@ -13,8 +13,8 @@ const Login = lazy(() => import("../pages/general/login/Login"));
 const Unauthorized = lazy(
   () => import("../pages/general/unauthorized/Unauthorized"),
 );
-const RepairAnalytics = lazy(
-  () => import("../pages/admin/repairAnalytics/RepairAnalytics"),
+const RepairsReports = lazy(
+  () => import("../pages/admin/repairsReports/RepairsReports"),
 );
 
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
@@ -139,7 +139,7 @@ const AppRoutes = () => {
               path="/admin/inventory/reports"
               element={<InventoryReports />}
             />
-            <Route path="admin/repairAnalytics" element={<RepairAnalytics />} />
+            <Route path="admin/repairs/reports" element={<RepairsReports />} />
             <Route
               path="admin/returnManagement"
               element={<ReturnManagement />}

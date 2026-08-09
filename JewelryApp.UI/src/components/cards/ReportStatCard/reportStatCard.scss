@@ -7,6 +7,10 @@
   position: relative;
   overflow: hidden;
 
+  &.no-accent {
+    padding: 14px 16px;
+  }
+
   .scard-bar {
     position: absolute;
     top: 0;

@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
+
 export interface ReportStatCardProps {
   label: string;
   value: string;
-  sub?: string;
-  accentColor: string;
+  sub?: ReactNode;
+  accentColor?: string;
   valueColor?: string;
 }

@@ -2,7 +2,6 @@ using JewerlyApp.Application.Repairs.Commands.CreateRepair;
 using JewerlyApp.Application.Repairs.Commands.UpdateRepair;
 using JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus;
 using JewerlyApp.Application.Repairs.Commands.UpdateRepairPaymentStatus;
-using JewerlyApp.Application.Repairs.Queries.GetAnalytics;
 using JewerlyApp.Application.Repairs.Queries.GetRepairById;
 using JewerlyApp.Application.Repairs.Queries.GetRepairs;
 using Microsoft.AspNetCore.Mvc;
@@ -54,11 +53,5 @@ namespace JewerlyApp.API.Controllers
             return CreateResponse(response);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetRepairAnalytics([FromQuery] GetRepairAnalyticsQuery query)
-        {
-            var response = await Mediator.Send(query);
-            return CreateResponse(response);
-        }
     }
 }
