@@ -6,4 +6,5 @@ export interface RevenueBarChartPoint {
 export interface RevenueBarChartProps {
   data: RevenueBarChartPoint[];
   formatValue: (value: number) => string;
+  color?: string;
 }

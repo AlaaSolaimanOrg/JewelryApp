@@ -42,18 +42,6 @@ export const getSoldItems = async (payload: {
   return requestApi("GET", apiRoutes.sales.getSoldItems, payload);
 };
 
-export const getSalesCustomers = async (payload: {
-  dateFrom: string;
-  dateTo: string;
-  pageSize: number;
-  pageNumber: number;
-  sortBy: string;
-  sortDirection: SortDirection;
-  searchBy: string;
-}) => {
-  return requestApi("GET", apiRoutes.sales.getSalesCustomers, payload);
-};
-
 export const searchSales = async (payload: {
   serialNumber: string;
   customerPhone: string;

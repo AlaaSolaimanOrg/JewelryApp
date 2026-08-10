@@ -3,7 +3,7 @@ import "./revenueBarChart.scss";
 
 const MAX_BAR_HEIGHT = 120;
 
-const RevenueBarChart = ({ data, formatValue }: RevenueBarChartProps) => {
+const RevenueBarChart = ({ data, formatValue, color = "var(--admin-green)" }: RevenueBarChartProps) => {
   const maxVal = Math.max(...data.map((d) => d.value)) || 1;
   const skipLabels = data.length > 15;
 
@@ -24,7 +24,7 @@ const RevenueBarChart = ({ data, formatValue }: RevenueBarChartProps) => {
               className="bar"
               style={{
                 height,
-                background: d.value > 0 ? "var(--admin-green)" : "var(--admin-bg5)",
+                background: d.value > 0 ? color : "var(--admin-bg5)",
               }}
             />
             <div className="bar-label">{showLabel ? d.label : ""}</div>

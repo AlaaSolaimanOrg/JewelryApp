@@ -1,7 +1,6 @@
 ﻿using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Sales.Commands.CreateSale;
 using JewerlyApp.Application.Sales.Queries.GetSaleById;
-using JewerlyApp.Application.Sales.Queries.GetSalesCustomers;
 using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using JewerlyApp.Application.Sales.Queries.GetSoldItems;
@@ -82,18 +81,6 @@ namespace JewerlyApp.API.Controllers.Sales
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetSoldItems([FromQuery] GetSoldItemsQuery command)
-        {
-            var response = await Mediator.Send(command);
-            return CreateResponse(response);
-        }
-        
-        /// <summary>
-        /// get sales customers
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetSalesCustomers([FromQuery] GetSalesCustomersQuery command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);

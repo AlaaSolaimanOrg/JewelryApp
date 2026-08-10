@@ -1,264 +1,364 @@
-import {
-  addDays,
-  endOfDay,
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  startOfDay,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-} from "date-fns";
 import { useState } from "react";
-import { Stack } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import { FaChartBar, FaWeightHanging } from "react-icons/fa";
+import { FaChartBar, FaExpand } from "react-icons/fa";
+import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api/analytics.api";
 import { getSalesInsights } from "../../../apis/sales.api/sales.api";
+import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
+import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
+import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
+import ChartExpandModal from "../../../components/modals/ChartExpandModal/ChartExpandModal";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { DatePillFilter, KaratType } from "../../../types/enums";
-import CustomersSoldTo from "./customersSoldTo/CustomersSoldTo";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
+import type { Period } from "./SalesReports.type";
+import {
+  MOCK_STATIC,
+  PERIODS,
+  PERIOD_LABELS,
+  computePercent,
+  fmtCurrency,
+  fmtNumber,
+  formatRangeLabel,
+  getCustomRange,
+  getPeriodRange,
+  getReportType,
+  scaleStaticForCustomRange,
+} from "./SalesReports.utils";
 import "./salesReports.scss";
+
+interface GoldByKarat {
+  karatType: number;
+  weight: number;
+  pricePerGram: number;
+  totalValue: number;
+}
 
 interface SalesInsights {
   totalSalesAmount: number;
   cashAmountPaid: number;
   cardAmountPaid: number;
   discountAmount: number;
-  goldByKarat: {
-    karatType: KaratType;
-    weight: number;
-    pricePerGram: number;
-    totalValue: number;
-  }[];
+  goldByKarat: GoldByKarat[];
 }
 
+interface SalesOverTimeItem {
+  dateLabel: string;
+  revenue: number;
+}
+
+interface SalesByCategoryItem {
+  categoryName: string;
+  revenue: number;
+  percentage: number;
+}
+
+type ExpandedChart = "revenue" | "units" | "category" | null;
+
 const SalesReports = () => {
-  const [startDate, setStartDate] = useState<any>(new Date());
-  const [endDate, setEndDate] = useState<any>(addDays(new Date(), 1));
-  const [dateFilterPill, setDateFilterPill] = useState<DatePillFilter | null>(
-    DatePillFilter.All,
-  );
-  const [appliedDateFilter, setAppliedDateFilter] = useState<any>(null);
+  const [period, setPeriod] = useState<Period>("month");
+  const [dateFrom, setDateFrom] = useState("2026-06-01");
+  const [dateTo, setDateTo] = useState("2026-06-11");
+  const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
+  const [expandedChart, setExpandedChart] = useState<ExpandedChart>(null);
 
-  const today = new Date();
+  const handleSetPeriod = (p: Exclude<Period, "custom">) => {
+    setPeriod(p);
+    setAppliedRange(null);
+  };
 
-  const pillOptions = [
-    {
-      label: "All",
-      value: DatePillFilter.All,
-      startDate: null,
-      endDate: null,
-    },
-    {
-      label: "Today",
-      value: DatePillFilter.Today,
-      startDate: startOfDay(today),
-      endDate: endOfDay(today),
-    },
-    {
-      label: "This Week",
-      value: DatePillFilter.ThisWeek,
-      startDate: startOfWeek(today, { weekStartsOn: 1 }), // week starts on Monday
-      endDate: endOfWeek(today, { weekStartsOn: 1 }),
-    },
-    {
-      label: "This Month",
-      value: DatePillFilter.ThisMonth,
-      startDate: startOfMonth(today),
-      endDate: endOfMonth(today),
-    },
-    {
-      label: "This Year",
-      value: DatePillFilter.ThisYear,
-      startDate: startOfYear(today),
-      endDate: endOfYear(today),
-    },
-  ];
+  const handleApplyRange = () => {
+    if (!dateFrom || !dateTo) return;
+    setAppliedRange({ dateFrom, dateTo });
+    setPeriod("custom");
+  };
+
+  const activeRange =
+    period === "custom" && appliedRange
+      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
+      : getPeriodRange(period as Exclude<Period, "custom">);
+
+  const reportType = getReportType(period);
+
+  const periodLabel =
+    period === "custom" && appliedRange
+      ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
+      : PERIOD_LABELS[period];
+
+  const staticStats =
+    period === "custom" && appliedRange
+      ? scaleStaticForCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
+      : MOCK_STATIC[period as Exclude<Period, "custom">];
 
   const { data: salesInsights } = useLocalApi({
     apiToCall: (data) => getSalesInsights(data.payload),
-    payload: {
-      dateFrom: appliedDateFilter
-        ? appliedDateFilter?.startDate
-        : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-            ?.startDate,
-      dateTo: appliedDateFilter
-        ? appliedDateFilter?.endDate
-        : pillOptions.find((pillOption) => pillOption.value == dateFilterPill)
-            ?.endDate,
-    },
-    effectDependency: [dateFilterPill, appliedDateFilter],
-  }) as {
-    data: SalesInsights;
-  };
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, appliedRange],
+  }) as { data: Partial<SalesInsights> };
 
-  // Format currency function
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
+  const { data: salesOverTime } = useLocalApi({
+    apiToCall: (data) => getSalesOverTime(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, reportType },
+    effectDependency: [period, appliedRange],
+  }) as { data: SalesOverTimeItem[] };
 
-  // Format weight function
-  const formatWeight = (weight: number) => {
-    return `${weight.toFixed(2)}g`;
-  };
+  const { data: salesByCategory } = useLocalApi({
+    apiToCall: (data) => getSalesByCategory(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, reportType },
+    effectDependency: [period, appliedRange],
+  }) as { data: SalesByCategoryItem[] };
+
+  const revenue = salesInsights.totalSalesAmount ?? 0;
+  const cash = salesInsights.cashAmountPaid ?? 0;
+  const card = salesInsights.cardAmountPaid ?? 0;
+  const discount = salesInsights.discountAmount ?? 0;
+  const cashPct = cash + card > 0 ? Math.round((cash / (cash + card)) * 100) : 0;
+  const netRevenue = revenue - staticStats.refunds;
+
+  const goldByKarat = [...(salesInsights.goldByKarat ?? [])].sort((a, b) => b.weight - a.weight);
+  const totalWeight = goldByKarat.reduce((sum, k) => sum + k.weight, 0);
+  const maxKaratWeight = Math.max(...goldByKarat.map((k) => k.weight), 1);
+  const karat21 = goldByKarat.find((k) => k.karatType === 21);
+  const karat18 = goldByKarat.find((k) => k.karatType === 18);
+
+  const maxCategoryRevenue = Math.max(...salesByCategory.map((c) => c.revenue), 1);
+
+  const revenueChartData = salesOverTime.map((d) => ({ label: d.dateLabel, value: d.revenue }));
+
+  const topCustomerRows = staticStats.topCustomers.map((c) => ({
+    key: c.name,
+    primary: c.name,
+    secondary: `${c.transactions} sales`,
+    value: fmtCurrency(c.spent),
+    valueColor: "var(--admin-green)",
+  }));
 
   return (
     <div id="sales-reports" className="page">
       <div className="page-header">
         <h1 className="page-title">
           <FaChartBar className="icon" />
-          <span>Sales Reports</span>
+          <span>Sales reports</span>
         </h1>
       </div>
 
-      <header className="headerFilter">
-        <div className="filters-container">
-          <div className="pills-row">
-            <div className="pills-scroll-container">
-              <Stack direction="horizontal" gap={2} className="pill-stack">
-                {pillOptions.map((pill) => (
-                  <div
-                    key={pill.value}
-                    className={`dateFilterPill ${
-                      dateFilterPill === pill.value ? " activePillFilter" : ""
-                    }`}
-                    onClick={() => {
-                      setAppliedDateFilter(null);
-                      setDateFilterPill(pill.value);
-                    }}
-                  >
-                    {pill.label}
-                  </div>
-                ))}
-              </Stack>
-            </div>
-          </div>
+      <div className="period-bar">
+        {PERIODS.map((p) => (
+          <button
+            key={p}
+            className={`pbtn ${period === p ? "active" : ""}`}
+            onClick={() => handleSetPeriod(p)}
+          >
+            {PERIOD_LABELS[p]}
+          </button>
+        ))}
+        <div className="range-inputs">
+          <input
+            type="date"
+            className="date-input"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <span className="range-sep">to</span>
+          <input
+            type="date"
+            className="date-input"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
+          <button className="apply-btn" onClick={handleApplyRange}>
+            Apply
+          </button>
+        </div>
+      </div>
 
-          <div className="date-range-row">
-            <div className="date-inputs-container">
-              <div className="date-input-group">
-                <DatePicker
-                  className="date-input"
-                  selected={startDate}
-                  onChange={(date) => {
-                    if (!!date && date > endDate) {
-                      const oneDayAfterDate = addDays(date, 1);
-                      setEndDate(oneDayAfterDate);
-                    }
-                    setStartDate(date);
-                  }}
-                  placeholderText="Start Date"
-                />
-              </div>
+      <div className="stats4">
+        <ReportStatCard
+          label="Total revenue"
+          value={fmtCurrency(revenue)}
+          valueColor="var(--admin-green)"
+          accentColor="var(--admin-green)"
+          sub={`${staticStats.transactions.toLocaleString()} transactions`}
+        />
+        <ReportStatCard
+          label="Refunds"
+          value={`-${fmtCurrency(staticStats.refunds)}`}
+          valueColor="var(--admin-red)"
+          accentColor="var(--admin-red)"
+          sub={`Net: ${fmtCurrency(netRevenue)}`}
+        />
+        <ReportStatCard
+          label="Items sold"
+          value={staticStats.itemsSold.toLocaleString()}
+          accentColor="var(--admin-gold)"
+          sub={`${totalWeight.toLocaleString()}g of gold`}
+        />
+        <ReportStatCard
+          label="Avg sale"
+          value={fmtCurrency(staticStats.avgSale)}
+          accentColor="var(--admin-purple)"
+          sub="per transaction"
+        />
+      </div>
 
-              <span className="date-separator">to</span>
+      <div className="stats4">
+        <ReportStatCard
+          label="Cash collected"
+          value={fmtCurrency(cash)}
+          valueColor="var(--admin-green)"
+          accentColor="var(--admin-green)"
+          sub={`${cashPct}% of payments`}
+        />
+        <ReportStatCard
+          label="Card collected"
+          value={fmtCurrency(card)}
+          valueColor="var(--admin-purple)"
+          accentColor="var(--admin-purple)"
+          sub={`${100 - cashPct}% of payments`}
+        />
+        <ReportStatCard
+          label="Discounts given"
+          value={fmtCurrency(discount)}
+          valueColor="var(--admin-red)"
+          accentColor="var(--admin-red)"
+          sub={`${revenue > 0 ? ((discount / revenue) * 100).toFixed(1) : "0.0"}% of revenue`}
+        />
+        <ReportStatCard
+          label="Avg price per gram"
+          accentColor="var(--admin-gold)"
+          value={
+            <span className="two-line-value">
+              21K — {karat21 ? fmtCurrency(karat21.pricePerGram) : "–"}
+              <br />
+              18K — {karat18 ? fmtCurrency(karat18.pricePerGram) : "–"}
+            </span>
+          }
+        />
+      </div>
 
-              <div className="date-input-group">
-                <DatePicker
-                  className="date-input"
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  minDate={addDays(startDate, 1)}
-                  placeholderText="End Date"
-                />
-              </div>
-
-              <button
-                className="apply-btn"
-                onClick={() => {
-                  setAppliedDateFilter({
-                    startDate: startDate,
-                    endDate: endDate,
-                  });
-                  setDateFilterPill(null);
-                }}
-              >
-                Apply
-              </button>
-            </div>
+      <div className="panel">
+        <div className="panel-head">
+          <span className="panel-title">Revenue over time</span>
+          <div className="panel-right">
+            <span className="panel-sub">{fmtCurrency(revenue)} total</span>
+            <button className="expand-btn" onClick={() => setExpandedChart("revenue")}>
+              <FaExpand />
+            </button>
           </div>
         </div>
-      </header>
+        {revenueChartData.length > 0 ? (
+          <RevenueBarChart data={revenueChartData} formatValue={fmtCurrency} color="var(--admin-gold)" />
+        ) : (
+          <div className="no-data">No data available</div>
+        )}
+      </div>
 
-      <section className="section">
-        <h2 className="section-title">
-          <FaChartBar className="icon" style={{ marginRight: "8px" }} /> Summary
-          of Sales
-        </h2>
-        <div className="summary-cards">
-          <div className="summary-card">
-            <h3>Total Sales Amount</h3>
-            <div className="amount">
-              {salesInsights.totalSalesAmount
-                ? formatCurrency(salesInsights.totalSalesAmount)
-                : "$0.00"}
-            </div>
+      <div className="grid2">
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Items sold over time</span>
+            <button className="expand-btn" onClick={() => setExpandedChart("units")}>
+              <FaExpand />
+            </button>
           </div>
-          <div className="summary-card">
-            <h3>Cash Amount Paid</h3>
-            <div className="amount">
-              {salesInsights.cashAmountPaid
-                ? formatCurrency(salesInsights.cashAmountPaid)
-                : "$0.00"}
-            </div>
-          </div>
-          <div className="summary-card">
-            <h3>Card Amount Paid</h3>
-            <div className="amount">
-              {salesInsights.cardAmountPaid
-                ? formatCurrency(salesInsights.cardAmountPaid)
-                : "$0.00"}
-            </div>
-          </div>
-          <div className="summary-card gold">
-            <h3>Discount Amount</h3>
-            <div className="amount">
-              {salesInsights.discountAmount
-                ? formatCurrency(salesInsights.discountAmount)
-                : "$0.00"}
-            </div>
-          </div>
+          <RevenueBarChart data={staticStats.unitsChart} formatValue={fmtNumber} color="var(--admin-blue)" />
         </div>
-      </section>
 
-      <section className="section">
-        <h2 className="section-title">
-          <FaWeightHanging className="icon" style={{ marginRight: "8px" }} />
-          Gold Sold by Karat
-        </h2>
-        <div className="karat-cards">
-          {salesInsights?.goldByKarat?.map((karatData) => (
-            <div key={karatData.karatType} className="karat-card">
-              <h3>{`${karatData.karatType}K Gold`}</h3>
-              <div className="grams">{formatWeight(karatData.weight)}</div>
-              <div className="price">
-                {formatCurrency(karatData.pricePerGram)}/g
-              </div>
-              <div className="value">
-                {formatCurrency(karatData.totalValue)}
-              </div>
-            </div>
-          ))}
-
-          {(!salesInsights?.goldByKarat ||
-            salesInsights.goldByKarat.length === 0) && (
-            <div className="karat-card">
-              <h3>No Gold Sales Data</h3>
-              <div className="grams">0g</div>
-              <div className="price">$0.00/g</div>
-              <div className="value">$0.00</div>
-            </div>
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Sales by category</span>
+            <button className="expand-btn" onClick={() => setExpandedChart("category")}>
+              <FaExpand />
+            </button>
+          </div>
+          {salesByCategory.length > 0 ? (
+            salesByCategory.map((c) => (
+              <HorizontalBarRow
+                key={c.categoryName}
+                label={c.categoryName}
+                percent={computePercent(c.revenue, maxCategoryRevenue)}
+                color="var(--admin-gold)"
+                amountLabel={`${fmtCurrency(c.revenue)} · ${Math.round(c.percentage)}%`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
           )}
         </div>
-      </section>
+      </div>
 
-      <ItemsSoldTo />
+      <div className="grid2">
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Gold sold by karat</span>
+            <span className="panel-sub">{totalWeight.toLocaleString()}g total</span>
+          </div>
+          {goldByKarat.length > 0 ? (
+            goldByKarat.map((k) => (
+              <HorizontalBarRow
+                key={k.karatType}
+                label={`${k.karatType}K`}
+                percent={computePercent(k.weight, maxKaratWeight)}
+                color="var(--admin-gold)"
+                amountLabel={`${k.weight.toLocaleString()}g · ${fmtCurrency(k.pricePerGram)}/g`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
+        </div>
 
-      <CustomersSoldTo />
+        <ReportListPanel
+          title="Top customers"
+          subtitle="by spend in period"
+          rows={topCustomerRows}
+          emptyMessage="No customer data"
+        />
+      </div>
+
+      <ItemsSoldTo dateFrom={activeRange.dateFrom} dateTo={activeRange.dateTo} />
+
+      <ChartExpandModal
+        show={expandedChart === "revenue"}
+        title="Revenue over time"
+        subtitle={periodLabel}
+        onClose={() => setExpandedChart(null)}
+      >
+        {revenueChartData.length > 0 ? (
+          <RevenueBarChart data={revenueChartData} formatValue={fmtCurrency} color="var(--admin-gold)" />
+        ) : (
+          <div className="no-data">No data available</div>
+        )}
+      </ChartExpandModal>
+
+      <ChartExpandModal
+        show={expandedChart === "units"}
+        title="Items sold over time"
+        subtitle={periodLabel}
+        onClose={() => setExpandedChart(null)}
+      >
+        <RevenueBarChart data={staticStats.unitsChart} formatValue={fmtNumber} color="var(--admin-blue)" />
+      </ChartExpandModal>
+
+      <ChartExpandModal
+        show={expandedChart === "category"}
+        title="Sales by category"
+        subtitle={periodLabel}
+        onClose={() => setExpandedChart(null)}
+      >
+        {salesByCategory.length > 0 ? (
+          salesByCategory.map((c) => (
+            <HorizontalBarRow
+              key={c.categoryName}
+              label={c.categoryName}
+              percent={computePercent(c.revenue, maxCategoryRevenue)}
+              color="var(--admin-gold)"
+              amountLabel={`${fmtCurrency(c.revenue)} · ${Math.round(c.percentage)}%`}
+            />
+          ))
+        ) : (
+          <div className="no-data">No data available</div>
+        )}
+      </ChartExpandModal>
     </div>
   );
 };
