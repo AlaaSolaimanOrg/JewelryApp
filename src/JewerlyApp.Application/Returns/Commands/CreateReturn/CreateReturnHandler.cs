@@ -110,10 +110,12 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
             sale.Discount = oldDiscount * (sale.SubTotal / oldSaleSubtotal);
             sale.DiscountPercentage = sale.Total == 0 ? 0 : sale.Discount / sale.Total * 100;
 
-            // Deduct refund from the correct wallet
+            // Deduct refund from the correct wallet. StoreCredit means the amount is
+            // applied toward a different (new) sale instead of leaving the register now,
+            // so the original sale's wallets are left untouched.
             if (request.RefundMethod == Domain.Enums.RefundMethod.Cash)
                 sale.CashAmount = (sale.CashAmount ?? 0) - totalRefund;
-            else
+            else if (request.RefundMethod == Domain.Enums.RefundMethod.Card)
                 sale.CardAmount = (sale.CardAmount ?? 0) - totalRefund;
 
             //-----------------------------------------------------

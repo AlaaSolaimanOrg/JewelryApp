@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaBarcode, FaExchangeAlt, FaStickyNote, FaTimes } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
+import { createReturn } from "../../../apis/returns.api/returns.api";
 import { createSale } from "../../../apis/sales.api/sales.api";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import { DiscountType } from "../../../types/enums";
+import { DiscountType, RefundMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
 import ExchangeSection from "./PosSale.sections/ExchangeSection/ExchangeSection";
+import type { ExchangeApplyData } from "./PosSale.sections/ExchangeSection/ExchangeSection.type";
 import PaymentMethodSection from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection";
 import type { PayMethod } from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection.type";
 import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
@@ -34,12 +36,13 @@ const MainPosPage: React.FC = () => {
   const [payMethod, setPayMethod] = useState<PayMethod>("cash");
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
 
-  // Trade-in / Exchange are UI-only stubs — their credit affects the displayed
-  // total but is not sent to the backend when the sale is saved.
+  // Trade-in is a UI-only stub — its credit affects the displayed total but is
+  // not sent to the backend when the sale is saved.
   const [showTradeInModal, setShowTradeInModal] = useState(false);
   const [tradeInCredit, setTradeInCredit] = useState(0);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
   const [exchangeCredit, setExchangeCredit] = useState(0);
+  const [exchangeData, setExchangeData] = useState<ExchangeApplyData | null>(null);
 
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
@@ -265,6 +268,18 @@ const MainPosPage: React.FC = () => {
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
+          if (exchangeData) {
+            createReturn({
+              saleId: exchangeData.saleId,
+              refundMethod: RefundMethod.StoreCredit,
+              items: exchangeData.items,
+            }).catch((e) => {
+              console.error(e);
+              showError(
+                `Sale saved, but the exchange return for ${exchangeData.saleSerialNumber} could not be processed. Please process it manually from Returns.`,
+              );
+            });
+          }
           setTimeout(() => {
             navigate(`/receipt/${response.data}`);
           }, 3000);
@@ -363,6 +378,7 @@ const MainPosPage: React.FC = () => {
             onOpen={() => setShowExchangeModal(true)}
             onClose={() => setShowExchangeModal(false)}
             onCreditChange={setExchangeCredit}
+            onExchangeChange={setExchangeData}
           />
         </div>
 

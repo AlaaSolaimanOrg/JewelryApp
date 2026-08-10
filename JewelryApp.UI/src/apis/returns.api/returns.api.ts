@@ -1,5 +1,6 @@
 import type {
   ItemCondition,
+  RefundMethod,
   ReturnOption,
   ReturnReason,
 } from "../../types/enums";
@@ -8,6 +9,7 @@ import { apiRoutes } from "../apiRoutes";
 
 export const createReturn = async (payload: {
   saleId: string;
+  refundMethod?: RefundMethod;
   items: {
     saleItemId: string;
     quantityToReturn: number;

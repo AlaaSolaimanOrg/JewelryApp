@@ -1,30 +1,50 @@
-export interface ExchangeTransactionItem {
-  name: string;
-  karat: number;
-  weight: string;
-  sku: string;
-  unitPrice: number;
-  qty: number;
-}
+import type { ItemCondition, KaratType, ReturnOption, ReturnReason } from "../../../../../types/enums";
 
-export interface PastTransaction {
+export interface ExchangeSaleItem {
   id: string;
-  date: string;
-  customer: string;
-  phone: string;
-  desc: string;
-  items: ExchangeTransactionItem[];
+  productName: string;
+  productImage?: string;
+  sku?: string;
+  karat: KaratType;
+  weight: number;
+  subtotalAfterDiscount: number;
+  quantity: number;
+  quantityReturned: number;
 }
 
-export type ExchangeDestination = "stock" | "melt" | "";
+export interface ExchangeSearchSale {
+  id: string;
+  serialNumber: string;
+  createdDate: string;
+  customerName: string;
+  customerPhone: string;
+  total: number;
+  saleItems: ExchangeSaleItem[];
+}
 
 export interface SelectedExchangeItem {
-  idx: number;
+  saleItemId: string;
   name: string;
-  karat: number;
-  sku: string;
+  karat: KaratType;
+  sku?: string;
   unitPrice: number;
   purchasedQty: number;
+  alreadyReturnedQty: number;
   returnQty: number;
-  dest: ExchangeDestination;
+  dest: ReturnOption | "";
+  condition: ItemCondition | "";
+}
+
+export interface ExchangeApplyData {
+  saleId: string;
+  saleSerialNumber: string;
+  items: {
+    saleItemId: string;
+    quantityToReturn: number;
+    reason: ReturnReason;
+    reasonNote?: string;
+    returnAmount: number;
+    condition: ItemCondition;
+    option: ReturnOption;
+  }[];
 }

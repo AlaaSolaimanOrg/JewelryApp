@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 65vh;
 
   .ps-cart-header {
     display: flex;
@@ -51,6 +52,9 @@
   }
 
   .ps-cart-items {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     padding: 0 14px;
   }
 
@@ -190,6 +194,7 @@
   }
 
   .ps-cart-empty {
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;

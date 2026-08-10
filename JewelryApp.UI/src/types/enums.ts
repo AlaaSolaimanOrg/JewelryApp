@@ -65,6 +65,12 @@ export enum ReturnOption {
   MeltAfterReturn = 2,
 }
 
+export enum RefundMethod {
+  Cash = 1,
+  Card = 2,
+  StoreCredit = 3,
+}
+
 export enum RepairType {
   Resize,
   Solder,
