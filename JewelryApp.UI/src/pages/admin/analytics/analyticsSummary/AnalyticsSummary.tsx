@@ -1,15 +1,7 @@
-import {
-  FaAward,
-  FaChartLine,
-  FaDollarSign,
-  FaGem,
-  FaRing,
-  FaUserTie,
-} from "react-icons/fa";
+import ReportStatCard from "../../../../components/cards/ReportStatCard/ReportStatCard";
 import { getAnalyticsSummary } from "../../../../apis/analytics.api/analytics.api";
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { smartRound } from "../../../../utils";
-import "./analyticsSummary.scss";
 import { ReportType } from "../../../../types/enums";
 
 export interface AnalyticsSummary {
@@ -37,87 +29,33 @@ const AnalyticsSummary = ({ appliedFilters, refreshKey }) => {
   }) as { data: AnalyticsSummary };
 
   return (
-    <div className="analytics-summary-card">
-      <div className="analytics-summary-header">
-        <h3 className="card-title">Analytics Summary</h3>
-      </div>
-
-      <div className="kpi-grid-analytics">
-        {/* Avg Daily Sales */}
-        {appliedFilters.reportType != ReportType.AllTime && (
-          <div className="kpi-card">
-            <div className="kpi-header">
-              <div className="kpi-title">Avg. Daily Sales</div>
-              <div className="kpi-icon">
-                <FaDollarSign />
-              </div>
-            </div>
-
-            <div className="kpi-value">
-              ${smartRound(analyticsSummary.avgDailySales)}
-            </div>
-          </div>
-        )}
-
-        {/* Best Selling Category */}
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Best Selling Category</div>
-            <div className="kpi-icon">
-              <FaRing />
-            </div>
-          </div>
-
-          <div className="kpi-value">
-            {analyticsSummary.bestSellingCategory || "-"}
-          </div>
-
-          <div className="kpi-trend">
-            <FaChartLine />
-            {smartRound(analyticsSummary.bestSellingCategoryPercentage)}% of
-            total sales
-          </div>
-        </div>
-
-        {/* Top Performer */}
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Top Performer</div>
-            <div className="kpi-icon">
-              <FaUserTie />
-            </div>
-          </div>
-
-          <div className="kpi-value">
-            {analyticsSummary.topPerformer || "-"}
-          </div>
-
-          <div className="kpi-trend">
-            <FaAward />${smartRound(analyticsSummary.topPerformerSales)} in
-            sales
-          </div>
-        </div>
-
-        {/* Most Valuable Karat */}
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Most Valuable Karat</div>
-            <div className="kpi-icon">
-              <FaGem />
-            </div>
-          </div>
-
-          <div className="kpi-value">
-            {analyticsSummary.mostValuableKarat || "-"}
-          </div>
-
-          <div className="kpi-trend">
-            <FaGem />
-            {smartRound(analyticsSummary.mostValuableKaratPercentage)}% of
-            inventory value
-          </div>
-        </div>
-      </div>
+    <div className="stats">
+      {appliedFilters.reportType != ReportType.AllTime && (
+        <ReportStatCard
+          label="Avg. daily sales"
+          value={`$${smartRound(analyticsSummary.avgDailySales)}`}
+          accentColor="var(--admin-gold)"
+        />
+      )}
+      <ReportStatCard
+        label="Best selling category"
+        value={analyticsSummary.bestSellingCategory || "-"}
+        accentColor="var(--admin-blue)"
+        sub={`${smartRound(analyticsSummary.bestSellingCategoryPercentage)}% of total sales`}
+      />
+      <ReportStatCard
+        label="Top performer"
+        value={analyticsSummary.topPerformer || "-"}
+        accentColor="var(--admin-green)"
+        valueColor="var(--admin-green)"
+        sub={`$${smartRound(analyticsSummary.topPerformerSales)} in sales`}
+      />
+      <ReportStatCard
+        label="Most valuable karat"
+        value={analyticsSummary.mostValuableKarat || "-"}
+        accentColor="var(--admin-purple)"
+        sub={`${smartRound(analyticsSummary.mostValuableKaratPercentage)}% of inventory value`}
+      />
     </div>
   );
 };
