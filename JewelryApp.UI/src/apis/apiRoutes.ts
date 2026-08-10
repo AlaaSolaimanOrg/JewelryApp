@@ -59,7 +59,9 @@ export const apiRoutes = {
   },
   returns: {
     createReturn: "Returns/CreateReturn",
-    getReturns: "Returns/GetReturns",
+    getReturnItems: "Returns/GetReturnItems",
+    getReturnItemsCounts: "Returns/GetReturnItemsCounts",
+    markReturnItemsPrinted: "Returns/MarkReturnItemsPrinted",
   },
   repairs: {
     createRepair: "Repairs/CreateRepair",

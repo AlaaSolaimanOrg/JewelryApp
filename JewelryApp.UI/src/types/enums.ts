@@ -71,6 +71,12 @@ export enum RefundMethod {
   StoreCredit = 3,
 }
 
+export enum ReturnItemsView {
+  NeedsTags = 1,
+  Printed = 2,
+  All = 3,
+}
+
 export enum RepairType {
   Resize,
   Solder,

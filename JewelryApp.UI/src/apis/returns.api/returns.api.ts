@@ -1,8 +1,10 @@
 import type {
   ItemCondition,
   RefundMethod,
+  ReturnItemsView,
   ReturnOption,
   ReturnReason,
+  SortDirection,
 } from "../../types/enums";
 import { requestApi } from "../../utils";
 import { apiRoutes } from "../apiRoutes";
@@ -23,13 +25,23 @@ export const createReturn = async (payload: {
   return requestApi("POST", apiRoutes.returns.createReturn, payload);
 };
 
-export const getReturns = async (payload: {
-  searchQuery?: string;
+export const getReturnItems = async (payload: {
+  searchBy?: string;
+  view: ReturnItemsView;
   pageNumber?: number;
   pageSize?: number;
-  sortColumn?: string;
-  sortDirection?: number;
-  returnOption?: ReturnOption | string;
+  sortBy?: string;
+  sortDirection?: SortDirection;
 }) => {
-  return requestApi("GET", apiRoutes.returns.getReturns, payload);
+  return requestApi("GET", apiRoutes.returns.getReturnItems, payload);
+};
+
+export const getReturnItemsCounts = async () => {
+  return requestApi("GET", apiRoutes.returns.getReturnItemsCounts);
+};
+
+export const markReturnItemsPrinted = async (payload: {
+  returnItemIds: string[];
+}) => {
+  return requestApi("POST", apiRoutes.returns.markReturnItemsPrinted, payload);
 };
