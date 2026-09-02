@@ -33,17 +33,9 @@ const RecentTransactions = () => {
       <div className="dash-recent-panel">
         <div className="dash-recent-head">
           <span className="dash-recent-title">Last transactions</span>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span className="dash-recent-count">
-              {pagination.totalRecords ?? 0} transactions
-            </span>
-            <Link
-              to="/cashManagement"
-              className="dash-rr-receipt-btn text-decoration-none"
-            >
-              View all
-            </Link>
-          </div>
+          <span className="dash-recent-count">
+            {pagination.totalRecords ?? 0} transactions
+          </span>
         </div>
         <Row className="g-2 dash-recent-cols">
           <Col xs={5} md={4}>
