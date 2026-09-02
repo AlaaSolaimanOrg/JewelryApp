@@ -153,10 +153,20 @@ const AppRoutes = () => {
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/analytics" element={<Analytics />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />
-            <Route path="admin/staff" element={<Staff />} />
             <Route path="admin/settings" element={<Settings />} />
             <Route path="admin/print-tags" element={<TagPrinting />} />
             <Route path="admin/export-data" element={<ExportData />} />
+            <Route path="admin/logs" element={<Logs />} />
+          </Route>
+
+          <Route
+            element={
+              <ProtectedRoute allowedRoles={["StaffManager"]}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="admin/staff" element={<Staff />} />
             <Route
               path="admin/addStaff"
               element={<AddEditStaff isEdit={false} />}
@@ -165,7 +175,6 @@ const AppRoutes = () => {
               path="admin/editStaff/:userId"
               element={<AddEditStaff isEdit={true} />}
             />
-            <Route path="admin/logs" element={<Logs />} />
           </Route>
 
           <Route path="admin/" element={<Login />} />

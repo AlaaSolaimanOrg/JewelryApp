@@ -147,11 +147,12 @@ const SideNav = () => {
   const hasAdminRole = userInfo?.roles?.includes("Admin");
   const hasTerminalRole = userInfo?.roles?.includes("TerminalRole");
   const hasPosRole = userInfo?.roles?.includes("PosRole");
+  const hasStaffManagerRole = userInfo?.roles?.includes("StaffManager");
   const isTerminalOnlyUser = hasTerminalRole && !hasAdminRole;
 
-  const filteredNavItems = isTerminalOnlyUser
-    ? navItems
-        .filter((item) =>
+  const filteredNavItems = (
+    isTerminalOnlyUser
+      ? navItems.filter((item) =>
           [
             "Inventory",
             "Pricing",
@@ -160,10 +161,14 @@ const SideNav = () => {
             "Return Management",
           ].includes(item.label),
         )
-        .map((item) => item)
-    : navItems;
+      : navItems
+  ).filter((item) => item.label !== "Staff" || hasStaffManagerRole);
 
-  const filteredOperationItems = isTerminalOnlyUser ? [] : operationItems;
+  const filteredOperationItems = isTerminalOnlyUser
+    ? []
+    : operationItems.filter(
+        (item) => item.label !== "Add Staff" || hasStaffManagerRole,
+      );
 
   const handlePosRedirect = () => {
     navigate("/");

@@ -24,6 +24,8 @@ const Login = () => {
       navigate("/admin/dashboard");
     } else if (userInfo?.roles?.includes("TerminalRole")) {
       navigate("/admin/inventory/products");
+    } else if (userInfo?.roles?.includes("StaffManager")) {
+      navigate("/admin/staff");
     } else {
       // Default redirect if no roles match
       navigate("/unauthorized");

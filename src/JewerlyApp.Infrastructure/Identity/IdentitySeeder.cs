@@ -26,12 +26,23 @@ namespace JewerlyApp.Infrastructure.Identity
             string posEmail = "pos@gmail.com";
             string posPassword = "Pos@123";
 
+            string staffManagerRole = "StaffManager";
+
             // create admin
             await CreateUserWithRolesAsync(userManager, roleManager,
                 adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, terminalRoleName, posRole });
 
             await CreateUserWithRolesAsync(userManager, roleManager,
                 posEmail, posPassword, "Pos user", new[] { posRole });
+
+            if (!await roleManager.RoleExistsAsync(staffManagerRole))
+            {
+                await roleManager.CreateAsync(new ApplicationRole
+                {
+                    Name = staffManagerRole,
+                    Description = "Staff Manager Role"
+                });
+            }
         }
 
         /// <summary>
