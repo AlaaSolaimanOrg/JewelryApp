@@ -42,13 +42,28 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
             if (request.Status == RepairStatus.PickedUp)
             {
                 repair.PickedUpDate = BusinessTimeZoneHelper.GetEdmontonDate();
+                repair.SlotNumber = null;
+
+                if (!string.IsNullOrWhiteSpace(request.PayMethod))
+                {
+                    repair.PayMethod = request.PayMethod.Trim();
+                    repair.PaymentStatus = PaymentStatus.Paid;
+                }
             }
             else
             {
                 repair.PickedUpDate = null;
             }
 
-
+            if (request.Status == RepairStatus.Cancelled)
+            {
+                repair.CancelledDate = BusinessTimeZoneHelper.GetEdmontonDate();
+                repair.SlotNumber = null;
+            }
+            else
+            {
+                repair.CancelledDate = null;
+            }
 
             if (request.SendSMS && !string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
             {
@@ -60,6 +75,9 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                     repair.Customer.PhoneNumber,
                     message
                 );
+
+                repair.Notified = true;
+                repair.NotifiedDate = BusinessTimeZoneHelper.GetEdmontonDate();
             }
 
             await _context.SaveChangesAsync(cancellationToken);

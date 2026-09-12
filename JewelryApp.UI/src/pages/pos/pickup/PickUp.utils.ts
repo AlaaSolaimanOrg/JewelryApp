@@ -1,4 +1,32 @@
+import { PaymentStatus, RepairStatus } from "../../../types/enums";
 import type { Repair, RepairBoardStatus } from "./PickUp.type";
+
+const STATUS_MAP: Record<RepairStatus, RepairBoardStatus> = {
+  [RepairStatus.InProgress]: "progress",
+  [RepairStatus.Completed]: "done",
+  [RepairStatus.PickedUp]: "completed",
+  [RepairStatus.Cancelled]: "cancelled",
+};
+
+export const mapRepairDtoToRepair = (dto: any): Repair => ({
+  id: dto.id,
+  repairCode: dto.repairCode,
+  slotNumber: dto.slotNumber ?? null,
+  customerId: dto.customerId,
+  customerName: dto.customerName,
+  customerPhone: dto.customerPhone,
+  notes: dto.notes ?? "",
+  cost: dto.cost ?? 0,
+  paid: dto.paymentStatus === PaymentStatus.Paid,
+  payMethod: dto.payMethod ?? "",
+  status: STATUS_MAP[dto.status as RepairStatus] ?? "progress",
+  notified: !!dto.notified,
+  dueDate: dto.dueDate ?? "",
+  orderDate: dto.orderDate ?? "",
+  notifiedDate: dto.notifiedDate ?? null,
+  pickedUpDate: dto.pickedUpDate ?? null,
+  cancelledDate: dto.cancelledDate ?? null,
+});
 
 export const formatCurrency = (n: number) =>
   "$" +
@@ -31,12 +59,6 @@ const toIsoDate = (d: Date) => {
 
 export const todayIso = () => toIsoDate(new Date());
 
-const addDays = (n: number) => {
-  const d = new Date();
-  d.setDate(d.getDate() + n);
-  return toIsoDate(d);
-};
-
 export const formatDate = (dateStr: string | null) => {
   if (!dateStr) return "—";
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -60,17 +82,6 @@ export const getDueBadge = (dueDate: string): DueBadgeInfo => {
   if (diff === 0) return { label: "Due today", className: "today" };
   if (diff === 1) return { label: "Due tomorrow", className: "upcoming" };
   return { label: `Due ${formatDate(dueDate)}`, className: "upcoming" };
-};
-
-export const matchesSearch = (repair: Repair, query: string) => {
-  if (!query.trim()) return true;
-  const q = query.toLowerCase().trim();
-  const phoneDigits = q.replace(/\D/g, "");
-  return (
-    repair.customerName.toLowerCase().includes(q) ||
-    (phoneDigits.length > 0 && repair.customerPhone.includes(phoneDigits)) ||
-    repair.repairCode.toLowerCase().includes(q)
-  );
 };
 
 export const getStatusLabel = (status: RepairBoardStatus, notified: boolean) => {
@@ -98,203 +109,3 @@ export const getStatusColor = (status: RepairBoardStatus) => {
   }
 };
 
-export const INITIAL_REPAIRS: Repair[] = [
-  {
-    id: "R-000008",
-    repairCode: "R-000008",
-    slotNumber: 8,
-    customerName: "Hanan Saleh",
-    customerPhone: "7806021988",
-    notes: "Ring to size 7 (weight 6.34)\nPolish + rhodium plate",
-    cost: 45,
-    paid: false,
-    payMethod: "",
-    status: "progress",
-    notified: false,
-    dueDate: addDays(0),
-    orderDate: addDays(-3),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000007",
-    repairCode: "R-000007",
-    slotNumber: 7,
-    customerName: "Mariam Taha",
-    customerPhone: "5874490033",
-    notes: "Necklace clasp replacement",
-    cost: 25,
-    paid: true,
-    payMethod: "Cash",
-    status: "progress",
-    notified: false,
-    dueDate: addDays(1),
-    orderDate: addDays(-4),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000006",
-    repairCode: "R-000006",
-    slotNumber: 6,
-    customerName: "Ahmad Khalil",
-    customerPhone: "5875550274",
-    notes: "Earring post re-solder\nClean both earrings",
-    cost: 15,
-    paid: false,
-    payMethod: "",
-    status: "done",
-    notified: true,
-    dueDate: addDays(-5),
-    orderDate: addDays(-8),
-    notifiedDate: addDays(-5),
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000005",
-    repairCode: "R-000005",
-    slotNumber: 5,
-    customerName: "Sara Mansour",
-    customerPhone: "7805550341",
-    notes: "Pendant bail repair (weight 8.1)",
-    cost: 25,
-    paid: true,
-    payMethod: "Card",
-    status: "done",
-    notified: true,
-    dueDate: addDays(-4),
-    orderDate: addDays(-7),
-    notifiedDate: addDays(-2),
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000004",
-    repairCode: "R-000004",
-    slotNumber: 4,
-    customerName: "Ousama Adi",
-    customerPhone: "3688820038",
-    notes: "Weld bracelet (weight 14.8)\nReplace spring ring clasp",
-    cost: 40,
-    paid: false,
-    payMethod: "",
-    status: "progress",
-    notified: false,
-    dueDate: addDays(-2),
-    orderDate: addDays(-5),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000003",
-    repairCode: "R-000003",
-    slotNumber: 3,
-    customerName: "Ousama Adi",
-    customerPhone: "3688820038",
-    notes: "Ring to size 9 (weight 4.12)",
-    cost: 30,
-    paid: true,
-    payMethod: "Cash",
-    status: "done",
-    notified: false,
-    dueDate: addDays(-2),
-    orderDate: addDays(-5),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000002",
-    repairCode: "R-000002",
-    slotNumber: 2,
-    customerName: "Rajaa Annouka",
-    customerPhone: "7806802022",
-    notes: "Chain solder + replace spring ring",
-    cost: 20,
-    paid: false,
-    payMethod: "",
-    status: "progress",
-    notified: false,
-    dueDate: addDays(-4),
-    orderDate: addDays(-6),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: null,
-  },
-  {
-    id: "R-000001",
-    repairCode: "R-000001",
-    slotNumber: null,
-    customerName: "Zainab Al Mutlak",
-    customerPhone: "8259833199",
-    notes: "Resize engagement ring (weight 3.2)",
-    cost: 30,
-    paid: true,
-    payMethod: "Cash",
-    status: "completed",
-    notified: true,
-    dueDate: addDays(-5),
-    orderDate: addDays(-7),
-    notifiedDate: addDays(-5),
-    pickedUpDate: addDays(-4),
-    cancelledDate: null,
-  },
-  {
-    id: "R-000009",
-    repairCode: "R-000009",
-    slotNumber: null,
-    customerName: "Fatima Hassan",
-    customerPhone: "7805550192",
-    notes: "Bracelet link removal (weight 22.4)",
-    cost: 20,
-    paid: true,
-    payMethod: "Card",
-    status: "completed",
-    notified: true,
-    dueDate: addDays(-8),
-    orderDate: addDays(-10),
-    notifiedDate: addDays(-8),
-    pickedUpDate: addDays(-7),
-    cancelledDate: null,
-  },
-  {
-    id: "R-000010",
-    repairCode: "R-000010",
-    slotNumber: null,
-    customerName: "Ali Mahmoud",
-    customerPhone: "5874430122",
-    notes: "Watch battery replacement",
-    cost: 15,
-    paid: true,
-    payMethod: "Cash",
-    status: "completed",
-    notified: true,
-    dueDate: addDays(-9),
-    orderDate: addDays(-9),
-    notifiedDate: addDays(-9),
-    pickedUpDate: addDays(-9),
-    cancelledDate: null,
-  },
-  {
-    id: "R-000011",
-    repairCode: "R-000011",
-    slotNumber: null,
-    customerName: "Hanan Saleh",
-    customerPhone: "7806021988",
-    notes: "Chain solder repair",
-    cost: 20,
-    paid: true,
-    payMethod: "Cash",
-    status: "cancelled",
-    notified: false,
-    dueDate: addDays(-7),
-    orderDate: addDays(-9),
-    notifiedDate: null,
-    pickedUpDate: null,
-    cancelledDate: addDays(-8),
-  },
-];

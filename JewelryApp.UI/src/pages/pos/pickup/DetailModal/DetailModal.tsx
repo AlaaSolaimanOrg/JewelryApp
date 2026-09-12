@@ -65,7 +65,11 @@ const DetailModal = ({ repair, onClose }: DetailModalProps) => {
                 className="pu-detail-value"
                 style={{ color: repair.paid ? "var(--pos-green)" : "var(--pos-red)" }}
               >
-                {repair.paid ? `Paid — ${repair.payMethod}` : "Unpaid"}
+                {repair.paid
+                  ? repair.payMethod
+                    ? `Paid — ${repair.payMethod}`
+                    : "Paid"
+                  : "Unpaid"}
               </div>
             </div>
             <div>

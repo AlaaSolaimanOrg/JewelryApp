@@ -53,7 +53,11 @@ const RepairCard = ({
 
       <div className="card-row">
         <span className={`badge ${repair.paid ? "paid" : "unpaid"}`}>
-          {repair.paid ? `Paid — ${repair.payMethod}` : "Unpaid"}
+          {repair.paid
+            ? repair.payMethod
+              ? `Paid — ${repair.payMethod}`
+              : "Paid"
+            : "Unpaid"}
         </span>
         {repair.status === "done" && (
           <span className={`badge ${repair.notified ? "notified" : "notnotified"}`}>

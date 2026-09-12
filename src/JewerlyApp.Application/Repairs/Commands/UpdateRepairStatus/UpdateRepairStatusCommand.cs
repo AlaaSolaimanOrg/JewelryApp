@@ -11,5 +11,6 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
         public RepairStatus Status { get; set; }
 
         public bool SendSMS { get; set; }
+        public string? PayMethod { get; set; }
     }
 }

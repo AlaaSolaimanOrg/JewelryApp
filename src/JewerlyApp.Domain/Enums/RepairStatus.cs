@@ -4,6 +4,7 @@ namespace JewerlyApp.Domain.Enums
     {
         InProgress,
         Completed,
-        PickedUp
+        PickedUp,
+        Cancelled
     }
 }

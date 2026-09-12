@@ -34,7 +34,8 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
             }
 
             repair.Cost = request.Cost;
-
+            repair.Notes = request.Notes;
+            repair.DueDate = request.DueDate;
 
             await _context.SaveChangesAsync(cancellationToken);
 

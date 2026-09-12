@@ -63,6 +63,10 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
                 SlotNumber = r.SlotNumber,
                 ReceiverName = r.ReceiverName,
                 PickedUpDate = r.PickedUpDate,
+                Notified = r.Notified,
+                NotifiedDate = r.NotifiedDate,
+                CancelledDate = r.CancelledDate,
+                PayMethod = r.PayMethod,
             }).ToList();
 
             return new PaginatedResponse<RepairDto>
@@ -85,9 +89,21 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
             /* =============================
                  FILTER BY STATUS
             ============================== */
-            if (request.Status.HasValue)
+            if (request.Statuses != null && request.Statuses.Count > 0)
+            {
+                query = query.Where(r => request.Statuses.Contains(r.Status));
+            }
+            else if (request.Status.HasValue)
             {
                 query = query.Where(r => r.Status == request.Status.Value);
+            }
+
+            /* =============================
+                 FILTER BY NOTIFIED
+            ============================== */
+            if (request.Notified.HasValue)
+            {
+                query = query.Where(r => r.Notified == request.Notified.Value);
             }
 
             /* =============================

@@ -1,137 +1,221 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowLeft, FaClipboardList, FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { showSuccess } from "../../../utils";
+import {
+  getRepairs,
+  updateRepair,
+  updateRepairPaymentStatus,
+  updateRepairStatus,
+} from "../../../apis/repairs.api/repairs.api";
+import { PaymentStatus, RepairStatus } from "../../../types/enums";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import CompletedCard from "./CompletedCard/CompletedCard";
 import DetailModal from "./DetailModal/DetailModal";
 import EditModal from "./EditModal/EditModal";
 import NotifyModal from "./NotifyModal/NotifyModal";
 import PaymentModal from "./PaymentModal/PaymentModal";
 import type { ActiveViewFilter, BoardView, Repair } from "./PickUp.type";
-import { INITIAL_REPAIRS, formatCurrency, matchesSearch, todayIso } from "./PickUp.utils";
+import { formatCurrency, mapRepairDtoToRepair } from "./PickUp.utils";
 import RepairCard from "./RepairCard/RepairCard";
 import "./pickUp.scss";
 
+const ACTIVE_STATUSES = [RepairStatus.InProgress, RepairStatus.Completed];
+const COMPLETED_STATUSES = [RepairStatus.PickedUp, RepairStatus.Cancelled];
+
 const PickUp = () => {
-  const [repairs, setRepairs] = useState<Repair[]>(INITIAL_REPAIRS);
+  const [repairs, setRepairs] = useState<Repair[]>([]);
+  const [loading, setLoading] = useState(false);
   const [view, setView] = useState<BoardView>("active");
   const [filter, setFilter] = useState<ActiveViewFilter>("all");
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [readyingId, setReadyingId] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [payId, setPayId] = useState<string | null>(null);
 
-  const activeRepairs = repairs.filter(
-    (r) => r.status === "progress" || r.status === "done",
-  );
-  const completedRepairs = repairs.filter(
-    (r) => r.status === "completed" || r.status === "cancelled",
-  );
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(timeoutId);
+  }, [search]);
 
-  const filteredActive = activeRepairs.filter((r) => matchesSearch(r, search));
-  const progressRepairs = filteredActive.filter((r) => r.status === "progress");
-  let doneRepairs = filteredActive.filter((r) => r.status === "done");
+  const fetchRepairs = async () => {
+    setLoading(true);
+    try {
+      const response = await getRepairs({
+        statuses: view === "active" ? ACTIVE_STATUSES : COMPLETED_STATUSES,
+        searchBy: debouncedSearch || undefined,
+        pageNumber: 1,
+        pageSize: 300,
+      });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        setRepairs((response?.data || []).map(mapRepairDtoToRepair));
+      } else if (response?.statusCode !== 204) {
+        showError(response?.message || "Failed to load repairs");
+      } else {
+        setRepairs([]);
+      }
+    } catch {
+      showError("Failed to load repairs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRepairs();
+  }, [view, debouncedSearch]);
+
+  const progressRepairs = repairs.filter((r) => r.status === "progress");
+  let doneRepairs = repairs.filter((r) => r.status === "done");
   if (filter === "awaiting") doneRepairs = doneRepairs.filter((r) => !r.notified);
-  const awaitingRepairs = filteredActive.filter(
-    (r) => r.status === "done" && !r.notified,
-  );
-  const unpaidTotal = filteredActive
-    .filter((r) => !r.paid)
-    .reduce((sum, r) => sum + r.cost, 0);
-
-  const filteredCompleted = completedRepairs.filter((r) => matchesSearch(r, search));
+  const awaitingRepairs = repairs.filter((r) => r.status === "done" && !r.notified);
+  const unpaidTotal = repairs.filter((r) => !r.paid).reduce((sum, r) => sum + r.cost, 0);
 
   const showProgressCol = filter === "all" || filter === "progress";
   const showDoneCol = filter === "all" || filter === "done" || filter === "awaiting";
   const visibleCols = (showProgressCol ? 1 : 0) + (showDoneCol ? 1 : 0);
 
-  const updateRepair = (id: string, changes: Partial<Repair>) => {
-    setRepairs((prev) => prev.map((r) => (r.id === id ? { ...r, ...changes } : r)));
-  };
-
   const handleSetView = (next: BoardView) => {
     setView(next);
     setSearch("");
+    setDebouncedSearch("");
   };
 
-  const handleFinishReady = (didNotify: boolean) => {
+  const handleFinishReady = async (didNotify: boolean) => {
     if (!readyingId) return;
     const repair = repairs.find((r) => r.id === readyingId);
     if (!repair) return;
-    updateRepair(readyingId, {
-      status: "done",
-      notified: didNotify,
-      notifiedDate: didNotify ? todayIso() : repair.notifiedDate,
+
+    const response = await updateRepairStatus({
+      id: readyingId,
+      status: RepairStatus.Completed,
+      sendSms: didNotify,
     });
-    showSuccess(
-      `${repair.repairCode} — ${repair.customerName}${
-        didNotify ? " done & customer notified" : " done — call customer when possible"
-      }`,
-    );
+
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(
+        response?.message ||
+          `${repair.repairCode} — ${repair.customerName}${
+            didNotify ? " done & customer notified" : " done — call customer when possible"
+          }`,
+      );
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to update repair");
+    }
     setReadyingId(null);
   };
 
-  const handleNotify = (id: string) => {
+  const handleNotify = async (id: string) => {
     const repair = repairs.find((r) => r.id === id);
     if (!repair) return;
-    updateRepair(id, { notified: true, notifiedDate: todayIso() });
-    showSuccess(`${repair.repairCode} — ${repair.customerName} notified`);
+
+    const response = await updateRepairStatus({
+      id,
+      status: RepairStatus.Completed,
+      sendSms: true,
+    });
+
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(response?.message || `${repair.repairCode} — ${repair.customerName} notified`);
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to notify customer");
+    }
   };
 
-  const handlePickedUp = (id: string) => {
+  const handlePickedUp = async (id: string) => {
     const repair = repairs.find((r) => r.id === id);
     if (!repair) return;
     if (!repair.paid) {
       setPayId(id);
       return;
     }
-    updateRepair(id, { status: "completed", pickedUpDate: todayIso(), slotNumber: null });
-    showSuccess(`${repair.repairCode} — ${repair.customerName} picked up`);
+
+    const response = await updateRepairStatus({ id, status: RepairStatus.PickedUp });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(response?.message || `${repair.repairCode} — ${repair.customerName} picked up`);
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to mark as picked up");
+    }
   };
 
-  const handleConfirmPayment = (id: string, payMethod: string) => {
+  const handleConfirmPayment = async (id: string, payMethod: string) => {
     const repair = repairs.find((r) => r.id === id);
     if (!repair) return;
-    updateRepair(id, {
-      paid: true,
+
+    const response = await updateRepairStatus({
+      id,
+      status: RepairStatus.PickedUp,
       payMethod,
-      status: "completed",
-      pickedUpDate: todayIso(),
-      slotNumber: null,
     });
-    showSuccess(`${repair.repairCode} — ${repair.customerName} paid (${payMethod}) and picked up`);
-    setPayId(null);
+
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(
+        response?.message ||
+          `${repair.repairCode} — ${repair.customerName} paid (${payMethod}) and picked up`,
+      );
+      setPayId(null);
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to record payment");
+    }
   };
 
-  const handleSaveEdit = (
+  const handleSaveEdit = async (
     id: string,
     changes: { notes: string; cost: number; dueDate: string; paid: boolean },
   ) => {
     const current = repairs.find((r) => r.id === id);
     if (!current) return;
-    updateRepair(id, {
-      notes: changes.notes,
+
+    const response = await updateRepair({
+      id,
       cost: changes.cost,
-      dueDate: changes.dueDate,
-      paid: changes.paid,
-      payMethod: changes.paid ? current.payMethod : "",
+      notes: changes.notes,
+      dueDate: changes.dueDate || null,
     });
+
+    if (!checkRequestSucceeded(response?.statusCode)) {
+      showError(response?.message || "Failed to update repair");
+      return;
+    }
+
+    if (changes.paid !== current.paid) {
+      const payResponse = await updateRepairPaymentStatus({
+        id,
+        newPaymentStatus: changes.paid ? PaymentStatus.Paid : PaymentStatus.Unpaid,
+      });
+      if (!checkRequestSucceeded(payResponse?.statusCode)) {
+        showError(payResponse?.message || "Failed to update payment status");
+        return;
+      }
+    }
+
     showSuccess(`${current.repairCode} updated`);
     setEditId(null);
+    await fetchRepairs();
   };
 
-  const handleCancelRepair = (id: string) => {
+  const handleCancelRepair = async (id: string) => {
     const repair = repairs.find((r) => r.id === id);
     if (!repair) return;
     if (
       !window.confirm(`Cancel repair ${repair.repairCode}? This will move it to completed.`)
     )
       return;
-    updateRepair(id, { status: "cancelled", cancelledDate: todayIso(), slotNumber: null });
-    showSuccess(`${repair.repairCode} — ${repair.customerName} cancelled`);
-    setEditId(null);
+
+    const response = await updateRepairStatus({ id, status: RepairStatus.Cancelled });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(response?.message || `${repair.repairCode} — ${repair.customerName} cancelled`);
+      setEditId(null);
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to cancel repair");
+    }
   };
 
   const readyingRepair = repairs.find((r) => r.id === readyingId) || null;
@@ -147,9 +231,11 @@ const PickUp = () => {
         </span>
         <div className="pu-top-right">
           <span className="pu-header-count">
-            {view === "active"
-              ? `${filteredActive.length} active repair${filteredActive.length !== 1 ? "s" : ""}`
-              : `${filteredCompleted.length} completed repair${filteredCompleted.length !== 1 ? "s" : ""}`}
+            {loading
+              ? "Loading..."
+              : view === "active"
+                ? `${repairs.length} active repair${repairs.length !== 1 ? "s" : ""}`
+                : `${repairs.length} completed repair${repairs.length !== 1 ? "s" : ""}`}
           </span>
           <Link to="/" className="pu-btn pu-btn-outline">
             <FaArrowLeft /> Back to POS
@@ -206,7 +292,7 @@ const PickUp = () => {
             </div>
             <div className="pu-stat">
               <div className="pu-stat-num" style={{ color: "var(--pos-green)" }}>
-                {filteredActive.filter((r) => r.status === "done").length}
+                {repairs.filter((r) => r.status === "done").length}
               </div>
               <div className="pu-stat-label">Done</div>
             </div>
@@ -290,8 +376,8 @@ const PickUp = () => {
 
       {view === "completed" && (
         <div className="pu-completed-section">
-          {filteredCompleted.length ? (
-            filteredCompleted.map((r) => <CompletedCard key={r.id} repair={r} />)
+          {repairs.length ? (
+            repairs.map((r) => <CompletedCard key={r.id} repair={r} />)
           ) : (
             <div className="pu-empty-col pu-empty-completed">No completed repairs found</div>
           )}

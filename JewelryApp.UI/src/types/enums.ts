@@ -94,6 +94,7 @@ export enum RepairStatus {
   InProgress,
   Completed,
   PickedUp,
+  Cancelled,
 }
 
 export enum PaymentStatus {

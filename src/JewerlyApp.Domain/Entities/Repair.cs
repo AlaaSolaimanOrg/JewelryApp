@@ -18,5 +18,9 @@ namespace JewerlyApp.Domain.Entities
         public int? SlotNumber { get; set; }
         public string? ReceiverName { get; set; }
         public DateOnly? PickedUpDate { get; set; }
+        public bool Notified { get; set; }
+        public DateOnly? NotifiedDate { get; set; }
+        public DateOnly? CancelledDate { get; set; }
+        public string? PayMethod { get; set; }
     }
 }

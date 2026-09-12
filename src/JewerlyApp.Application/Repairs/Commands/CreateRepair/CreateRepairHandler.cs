@@ -87,7 +87,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
         private async Task<int?> AssignSlotNumberAsync(CancellationToken cancellationToken)
         {
             var occupiedSlots = (await _context.Repairs
-                .Where(r => r.Status != RepairStatus.PickedUp && r.SlotNumber != null)
+                .Where(r => r.Status != RepairStatus.PickedUp && r.Status != RepairStatus.Cancelled && r.SlotNumber != null)
                 .Select(r => r.SlotNumber!.Value)
                 .ToListAsync(cancellationToken))
                 .ToHashSet();

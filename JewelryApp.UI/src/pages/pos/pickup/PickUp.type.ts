@@ -4,6 +4,7 @@ export interface Repair {
   id: string;
   repairCode: string;
   slotNumber: number | null;
+  customerId: string;
   customerName: string;
   customerPhone: string;
   notes: string;

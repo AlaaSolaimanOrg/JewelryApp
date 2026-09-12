@@ -15,7 +15,14 @@ export const createRepair = async (payload: {
   return requestApi("POST", apiRoutes.repairs.createRepair, payload);
 };
 
-export const getRepairs = async (payload: { status?: RepairStatus }) => {
+export const getRepairs = async (payload: {
+  status?: RepairStatus;
+  statuses?: RepairStatus[];
+  notified?: boolean;
+  searchBy?: string;
+  pageNumber?: number;
+  pageSize?: number;
+}) => {
   return requestApi("GET", apiRoutes.repairs.getRepairs, payload);
 };
 
@@ -23,13 +30,17 @@ export const updateRepairStatus = async (payload: {
   id: string;
   status: RepairStatus;
   sendSms?: boolean;
-  updateItemsPaymentStatus?: boolean;
-  newPaymentStatus?: PaymentStatus;
+  payMethod?: string;
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairStatus, payload);
 };
 
-export const updateRepair = async (payload: { id: string; cost: number }) => {
+export const updateRepair = async (payload: {
+  id: string;
+  cost: number;
+  notes: string;
+  dueDate?: string | null;
+}) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepair, payload);
 };
 
