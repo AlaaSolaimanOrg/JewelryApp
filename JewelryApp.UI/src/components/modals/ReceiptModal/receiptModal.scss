@@ -12,7 +12,7 @@
   }
   .modal-header {
     background: var(--dark);
-    color: #fff;
+    color: var(--white);
     border-bottom: 2px solid var(--gold);
     .modal-title {
       font-weight: 600;
@@ -22,7 +22,7 @@
       gap: 10px;
     }
     .close {
-      color: #fff;
+      color: var(--white);
       opacity: 0.8;
     }
   }

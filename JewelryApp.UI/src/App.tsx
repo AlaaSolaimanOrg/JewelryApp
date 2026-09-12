@@ -5,16 +5,24 @@ import { ToastContainer } from "react-toastify";
 import "./App.scss";
 import AppRoutes from "./routes/Routes";
 import { AuthProvider } from "./context/AuthContext";
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+
+function AppContent() {
+  const { theme } = useTheme();
+
+  return (
+    <div className="jewleryApp" data-theme={theme}>
+      <AppRoutes />
+      <ToastContainer />
+    </div>
+  );
+}
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <div className="jewleryApp">
-          <AppRoutes />
-          <ToastContainer />
-        </div>
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
   );

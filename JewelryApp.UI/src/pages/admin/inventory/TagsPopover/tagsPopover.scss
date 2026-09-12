@@ -45,7 +45,7 @@
 
 .tags-popover-body {
   padding: 16px;
-  background: #ffffff;
+  background: var(--white);
   max-height: 250px;
   overflow-y: auto;
 }
@@ -74,7 +74,7 @@
 }
 
 .no-tags {
-  color: #6c757d;
+  color: var(--secondary);
   font-style: italic;
   text-align: center;
   padding: 16px;

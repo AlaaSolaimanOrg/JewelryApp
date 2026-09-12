@@ -78,7 +78,7 @@
   .btn-gold {
     background: var(--admin-gold) !important;
     border-color: var(--admin-gold) !important;
-    color: #1a1a1a !important;
+    color: var(--on-gold-text) !important;
 
     &:hover,
     &:active {

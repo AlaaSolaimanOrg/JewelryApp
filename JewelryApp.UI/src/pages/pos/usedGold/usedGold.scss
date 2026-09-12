@@ -59,7 +59,7 @@
     &.ug-btn-gold {
       background: var(--pos-gold);
       border-color: var(--pos-gold);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
       font-weight: 600;
 
       &:active {

@@ -67,14 +67,14 @@
   .modal-save-btn {
     background-color: var(--pos-gold, #d4a017);
     border-color: var(--pos-gold, #d4a017);
-    color: #1a1a1a;
+    color: var(--on-gold-text);
     font-weight: 600;
 
     &:hover,
     &:focus {
       background-color: var(--pos-gold-hover, #c4930f);
       border-color: var(--pos-gold-hover, #c4930f);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
     }
 
     &:disabled {
@@ -133,7 +133,7 @@
 
     &:hover {
       background: var(--pos-red, #e65b5b);
-      color: #fff;
+      color: var(--white);
     }
   }
 

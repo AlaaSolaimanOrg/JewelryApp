@@ -157,7 +157,7 @@
 
     &:active {
       background: var(--pos-blue);
-      color: #fff;
+      color: var(--white);
     }
   }
 
@@ -179,7 +179,7 @@
 
     &:active {
       background: var(--pos-green);
-      color: #fff;
+      color: var(--white);
     }
   }
 
@@ -190,7 +190,7 @@
 
     &:active {
       background: var(--pos-amber);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
     }
   }
 

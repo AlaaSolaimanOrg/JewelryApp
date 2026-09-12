@@ -58,7 +58,7 @@
   .btn-gold {
     background: var(--admin-gold) !important;
     border-color: var(--admin-gold) !important;
-    color: #1a1a1a !important;
+    color: var(--on-gold-text) !important;
 
     &:hover,
     &:active {
@@ -115,7 +115,7 @@
     &.active {
       background: var(--admin-gold);
       border-color: var(--admin-gold);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
       font-weight: 600;
     }
 
@@ -130,7 +130,7 @@
 
     &.active .rm-vt-count {
       background: rgba(0, 0, 0, 0.15);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
     }
   }
 
@@ -306,7 +306,7 @@
     justify-content: center;
     flex-shrink: 0;
     cursor: pointer;
-    color: #1a1a1a;
+    color: var(--on-gold-text);
     font-size: 11px;
     transition: all 0.15s;
 
@@ -469,7 +469,7 @@
     .page-item:hover,
     .page-item.active {
       background: var(--admin-gold);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
       border-color: var(--admin-gold);
     }
 

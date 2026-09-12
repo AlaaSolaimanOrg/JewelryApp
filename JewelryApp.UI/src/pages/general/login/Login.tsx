@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   return (
-    <div className="pos-app login-page" data-theme={theme}>
+    <div className="pos-app login-page">
       <button
         type="button"
         className="login-theme-toggle"

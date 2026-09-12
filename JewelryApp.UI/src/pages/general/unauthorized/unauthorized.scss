@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f5f7fa;
+  background-color: var(--light-bg);
   height: 100vh;
   .unauthorized-container {
     display: flex;

@@ -113,7 +113,7 @@
     .btn-gold {
       background: var(--pos-gold, #d4a017) !important;
       border: 1px solid var(--pos-gold, #d4a017);
-      color: #1a1a1a !important;
+      color: var(--on-gold-text) !important;
       box-shadow: none;
 
       &:hover {

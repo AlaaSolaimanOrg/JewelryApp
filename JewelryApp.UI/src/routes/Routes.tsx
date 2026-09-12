@@ -2,7 +2,6 @@ import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import Loader from "../components/loaders/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import { useTheme } from "../context/ThemeContext";
 
 const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
 const InventoryReports = lazy(
@@ -73,10 +72,8 @@ const LoadingFallback = () => (
 
 // POS Layout (includes POS Header)
 const POSLayout = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className="pos-app" data-theme={theme}>
+    <div className="pos-app">
       <Suspense fallback={<LoadingFallback />}>
         <PosHeader />
       </Suspense>
@@ -89,10 +86,8 @@ const POSLayout = () => {
 
 // Admin Layout (can add AdminHeader/Sidebar if needed)
 const AdminLayout = () => {
-  const { theme } = useTheme();
-
   return (
-    <div className="adminLayoutContainer" data-theme={theme}>
+    <div className="adminLayoutContainer">
       <Suspense fallback={<LoadingFallback />}>
         <SideNav />
         <AdminHeader />

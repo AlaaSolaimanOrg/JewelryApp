@@ -144,7 +144,7 @@
       &.active {
         background: var(--pos-gold);
         border-color: var(--pos-gold);
-        color: #1a1a1a;
+        color: var(--on-gold-text);
         font-weight: 600;
       }
     }
@@ -396,7 +396,7 @@
 .pu-btn-save {
   background: var(--pos-gold);
   border: none;
-  color: #1a1a1a;
+  color: var(--on-gold-text);
 
   &:active {
     background: var(--pos-gold-hover);
@@ -415,7 +415,7 @@
 
   &:active {
     background: var(--pos-red);
-    color: #fff;
+    color: var(--white);
   }
 }
 

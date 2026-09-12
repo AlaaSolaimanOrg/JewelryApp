@@ -77,7 +77,7 @@
     cursor: pointer;
     border: none;
     background: var(--admin-gold);
-    color: #1a1a1a;
+    color: var(--on-gold-text);
     min-height: 38px;
     display: inline-flex;
     align-items: center;
@@ -110,7 +110,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1a1a1a;
+    color: var(--on-gold-text);
     font-weight: 700;
     font-size: 11px;
     flex-shrink: 0;

@@ -166,7 +166,7 @@
       cursor: pointer;
       border: 1px solid var(--pos-gold);
       background: var(--pos-gold);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
       transition: all 0.12s;
 
       &:hover {

@@ -70,7 +70,7 @@
   .btn-gold {
     background: var(--admin-gold) !important;
     border-color: var(--admin-gold) !important;
-    color: #1a1a1a !important;
+    color: var(--on-gold-text) !important;
 
     &:hover,
     &:active {
@@ -258,7 +258,7 @@
 
     &:hover {
       background: var(--admin-gold);
-      color: #1a1a1a;
+      color: var(--on-gold-text);
     }
   }
 
@@ -277,7 +277,7 @@
   }
 
   .barcode-preview {
-    background: #fff;
+    background: var(--white);
     padding: 10px 14px;
     border-radius: var(--admin-radius-sm);
 

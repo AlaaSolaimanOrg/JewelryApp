@@ -61,7 +61,7 @@
   .btn-gold {
     background: var(--admin-gold) !important;
     border-color: var(--admin-gold) !important;
-    color: #1a1a1a !important;
+    color: var(--on-gold-text) !important;
 
     &:hover,
     &:active {
@@ -253,7 +253,7 @@
         align-items: center;
         justify-content: center;
         transition: all 0.12s;
-        color: #1a1a1a;
+        color: var(--on-gold-text);
 
         svg {
           opacity: 0;
@@ -315,7 +315,7 @@
       width: 20px;
       left: 3px;
       bottom: 3px;
-      background: #fff;
+      background: var(--white);
       border-radius: 50%;
       transition: 0.2s;
     }
