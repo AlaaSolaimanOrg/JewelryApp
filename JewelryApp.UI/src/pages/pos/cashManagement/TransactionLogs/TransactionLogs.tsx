@@ -1,25 +1,31 @@
 import { Row, Col } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
-import { getSalesList } from "../../../../apis/sales.api/sales.api";
+import { getCashTransactions } from "../../../../apis/cashManagement.api/cashManagement.api";
 import CustomLoader from "../../../../components/loaders/CustomLoader/CustomLoader";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../../types/enums";
 import {
-  getPaymentTag,
+  getBoxTag,
+  getDescription,
   formatCurrency,
   formatLogDate,
-  type Sale,
+  type CashTransactionRow,
 } from "./TransactionLogs.utils";
 import "./transactionLogs.scss";
 
-const TransactionLogs = () => {
+interface TransactionLogsProps {
+  refreshKey: number;
+}
+
+const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
   const {
-    data: sales,
+    data: transactions,
     isLoading,
     onSearchChange,
-  } = useLocalApiSearchSortPagination<Sale>({
-    apiToCall: (data) => getSalesList(data.payload),
+  } = useLocalApiSearchSortPagination<CashTransactionRow>({
+    apiToCall: (data) => getCashTransactions(data.payload),
     extraPayload: {},
+    extraEffectDependency: [refreshKey],
     initialPageSize: 100,
     initialSortBy: "createdDate",
     initialSortDirection: SortDirection.Descending,
@@ -51,7 +57,7 @@ const TransactionLogs = () => {
           Description
         </Col>
         <Col md={2} className="d-none d-md-block" style={{ textAlign: "center" }}>
-          Payment
+          Box
         </Col>
         <Col xs={4} md={3} style={{ textAlign: "right" }}>
           Amount
@@ -61,21 +67,20 @@ const TransactionLogs = () => {
       <div className="log-body">
         {isLoading ? (
           <CustomLoader size="compact" text="Loading transactions..." height={200} />
-        ) : !sales?.length ? (
+        ) : !transactions?.length ? (
           <div className="log-empty">No transactions found</div>
         ) : (
-          sales.map((sale) => {
-            const tag = getPaymentTag(sale);
+          transactions.map((row) => {
+            const tag = getBoxTag(row);
+            const desc = getDescription(row);
             return (
-              <Row className="g-2 log-row" key={sale.id}>
+              <Row className="g-2 log-row" key={row.id}>
                 <Col xs={3} md={2} className="log-date">
-                  {formatLogDate(sale.createdDate)}
+                  {formatLogDate(row.createdDate)}
                 </Col>
                 <Col xs={5} md={5}>
-                  <div className="log-desc">Sale #{sale.serialNumber}</div>
-                  <div className="log-desc-sub">
-                    {sale.customerName || "Walk-in"}
-                  </div>
+                  <div className="log-desc">{desc.title}</div>
+                  {desc.sub && <div className="log-desc-sub">{desc.sub}</div>}
                 </Col>
                 <Col
                   md={2}
@@ -84,8 +89,13 @@ const TransactionLogs = () => {
                 >
                   <span className={`log-tag ${tag.className}`}>{tag.label}</span>
                 </Col>
-                <Col xs={4} md={3} className="log-amount in">
-                  +{formatCurrency(sale.total)}
+                <Col
+                  xs={4}
+                  md={3}
+                  className={`log-amount ${row.isCredit ? "in" : "out"}`}
+                >
+                  {row.isCredit ? "+" : "-"}
+                  {formatCurrency(row.amount)}
                 </Col>
               </Row>
             );

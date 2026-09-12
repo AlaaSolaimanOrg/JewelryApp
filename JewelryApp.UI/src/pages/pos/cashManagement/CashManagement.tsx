@@ -12,7 +12,16 @@ import {
 } from "react-icons/fa";
 import StatCard from "../../../components/StatCard/StatCard";
 import PinPad from "../../../components/PinPad/PinPad";
-import { showError, showSuccess } from "../../../utils";
+import useLocalApi from "../../../hooks/useLocalApi";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import { CashBoxType } from "../../../types/enums";
+import {
+  getCashBalances,
+  addExpense,
+  manualCashIn,
+  transferIncome,
+  moveMoney,
+} from "../../../apis/cashManagement.api/cashManagement.api";
 import TransactionLogs from "./TransactionLogs/TransactionLogs";
 import ExpenseModal from "./modals/ExpenseModal/ExpenseModal";
 import MoveMoneyModal, {
@@ -22,15 +31,30 @@ import TransferIncomeModal from "./modals/TransferIncomeModal/TransferIncomeModa
 import ManualCashInModal from "./modals/ManualCashInModal/ManualCashInModal";
 import {
   TODAY,
-  INITIAL_STORE_BALANCE,
-  INITIAL_TRANSFER_BALANCE,
-  STATIC_TODAY_TOTALS,
   formatCurrency,
   formatCurrencyShort,
 } from "./CashManagement.utils";
 import "./cashManagement.scss";
 
 const OWNER_PIN = "1234";
+
+interface CashBalances {
+  storeBalance: number;
+  transferBalance: number;
+  storeTodayIn: number;
+  storeTodayOut: number;
+  transferTodayIn: number;
+  transferTodayOut: number;
+}
+
+const EMPTY_BALANCES: CashBalances = {
+  storeBalance: 0,
+  transferBalance: 0,
+  storeTodayIn: 0,
+  storeTodayOut: 0,
+  transferTodayIn: 0,
+  transferTodayOut: 0,
+};
 
 interface PendingExpense {
   cat: string;
@@ -39,10 +63,13 @@ interface PendingExpense {
 }
 
 const CashManagement = () => {
-  const [storeBalance, setStoreBalance] = useState(INITIAL_STORE_BALANCE);
-  const [transferBalance, setTransferBalance] = useState(
-    INITIAL_TRANSFER_BALANCE,
-  );
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const { data: balances } = useLocalApi({
+    apiToCall: () => getCashBalances(),
+    dataInitalValue: EMPTY_BALANCES,
+    effectDependency: [refreshKey],
+  }) as { data: CashBalances };
 
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);
@@ -53,17 +80,24 @@ const CashManagement = () => {
     null,
   );
 
-  const finalizeExpense = (cat: string, amount: number) => {
-    setStoreBalance((b) => b - amount);
-    showSuccess(`Expense added: ${cat} — ${formatCurrency(amount)}`);
+  const refresh = () => setRefreshKey((k) => k + 1);
+
+  const finalizeExpense = async (cat: string, amount: number, notes: string) => {
+    const response = await addExpense({ category: cat, amount, notes });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(response?.message || `Expense added: ${cat} — ${formatCurrency(amount)}`);
+      refresh();
+    } else {
+      showError(response?.message || "Failed to add expense");
+    }
   };
 
   const handleExpenseSubmit = (cat: string, amount: number, notes: string) => {
     if (!cat) return showError("Select a category");
     if (amount <= 0) return showError("Enter an amount");
     if (!notes) return showError("Notes are required");
-    if (amount > storeBalance)
-      return showError(`Store box only has ${formatCurrency(storeBalance)}`);
+    if (amount > balances.storeBalance)
+      return showError(`Store box only has ${formatCurrency(balances.storeBalance)}`);
 
     if (cat === "Owner Withdrawal") {
       setPendingExpense({ cat, amount, notes });
@@ -72,14 +106,14 @@ const CashManagement = () => {
       return;
     }
 
-    finalizeExpense(cat, amount);
+    finalizeExpense(cat, amount, notes);
     setExpenseOpen(false);
   };
 
   const handlePinSuccess = () => {
     setPinOpen(false);
     if (pendingExpense) {
-      finalizeExpense(pendingExpense.cat, pendingExpense.amount);
+      finalizeExpense(pendingExpense.cat, pendingExpense.amount, pendingExpense.notes);
       setPendingExpense(null);
     }
   };
@@ -89,47 +123,79 @@ const CashManagement = () => {
     setPendingExpense(null);
   };
 
-  const handleMoveSubmit = (direction: MoveDirection, amount: number) => {
+  const handleMoveSubmit = async (
+    direction: MoveDirection,
+    amount: number,
+    reason: string,
+  ) => {
     if (amount <= 0) return showError("Enter an amount");
 
-    if (direction === "t2s") {
-      if (amount > transferBalance)
-        return showError(
-          `Transfers box only has ${formatCurrency(transferBalance)}`,
-        );
-      setTransferBalance((b) => b - amount);
-      setStoreBalance((b) => b + amount);
-    } else {
-      if (amount > storeBalance)
-        return showError(`Store box only has ${formatCurrency(storeBalance)}`);
-      setStoreBalance((b) => b - amount);
-      setTransferBalance((b) => b + amount);
-    }
+    const fromBox = direction === "t2s" ? CashBoxType.Transfers : CashBoxType.Store;
+    const fromBalance =
+      direction === "t2s" ? balances.transferBalance : balances.storeBalance;
+    const fromLabel = direction === "t2s" ? "Transfers" : "Store";
 
-    setMoveOpen(false);
-    showSuccess(
-      `Moved ${formatCurrency(amount)} ${
-        direction === "t2s" ? "Transfers → Store" : "Store → Transfers"
-      }`,
-    );
+    if (amount > fromBalance)
+      return showError(`${fromLabel} box only has ${formatCurrency(fromBalance)}`);
+
+    const response = await moveMoney({ fromBox, amount, reason });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setMoveOpen(false);
+      showSuccess(
+        response?.message ||
+          `Moved ${formatCurrency(amount)} ${
+            direction === "t2s" ? "Transfers → Store" : "Store → Transfers"
+          }`,
+      );
+      refresh();
+    } else {
+      showError(response?.message || "Failed to move money");
+    }
   };
 
-  const handleTransferSubmit = (customerName: string, amount: number) => {
+  const handleTransferSubmit = async (
+    customerName: string,
+    amount: number,
+    destination: string,
+    notes: string,
+  ) => {
     if (!customerName) return showError("Enter customer name");
     if (amount <= 0) return showError("Enter an amount");
 
-    setTransferBalance((b) => b + amount);
-    setTransferOpen(false);
-    showSuccess(`Transfer income: ${formatCurrency(amount)} from ${customerName}`);
+    const response = await transferIncome({
+      customerName,
+      amount,
+      destination,
+      notes,
+    });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setTransferOpen(false);
+      showSuccess(
+        response?.message ||
+          `Transfer income: ${formatCurrency(amount)} from ${customerName}`,
+      );
+      refresh();
+    } else {
+      showError(response?.message || "Failed to record transfer income");
+    }
   };
 
-  const handleManualSubmit = (source: string, amount: number) => {
+  const handleManualSubmit = async (
+    source: string,
+    amount: number,
+    notes: string,
+  ) => {
     if (!source) return showError("Select a source");
     if (amount <= 0) return showError("Enter an amount");
 
-    setStoreBalance((b) => b + amount);
-    setManualOpen(false);
-    showSuccess(`Cash in: ${formatCurrency(amount)} — ${source}`);
+    const response = await manualCashIn({ source, amount, notes });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setManualOpen(false);
+      showSuccess(response?.message || `Cash in: ${formatCurrency(amount)} — ${source}`);
+      refresh();
+    } else {
+      showError(response?.message || "Failed to record cash in");
+    }
   };
 
   return (
@@ -160,7 +226,7 @@ const CashManagement = () => {
           <StatCard
             label="Store cash box"
             labelIcon={<FaStore />}
-            value={formatCurrency(storeBalance)}
+            value={formatCurrency(balances.storeBalance)}
             valueColor="var(--pos-green)"
             accentColor="var(--pos-green)"
             sub={
@@ -168,13 +234,13 @@ const CashManagement = () => {
                 <div className="cash-box-row">
                   <span>Today in</span>
                   <span className="cash-box-in">
-                    +{formatCurrencyShort(STATIC_TODAY_TOTALS.storeIn)}
+                    +{formatCurrencyShort(balances.storeTodayIn)}
                   </span>
                 </div>
                 <div className="cash-box-row">
                   <span>Today out</span>
                   <span className="cash-box-out">
-                    -{formatCurrencyShort(STATIC_TODAY_TOTALS.storeOut)}
+                    -{formatCurrencyShort(balances.storeTodayOut)}
                   </span>
                 </div>
               </div>
@@ -185,7 +251,7 @@ const CashManagement = () => {
           <StatCard
             label="Transfers cash box"
             labelIcon={<FaExchangeAlt />}
-            value={formatCurrency(transferBalance)}
+            value={formatCurrency(balances.transferBalance)}
             valueColor="var(--pos-blue)"
             accentColor="var(--pos-blue)"
             sub={
@@ -193,13 +259,13 @@ const CashManagement = () => {
                 <div className="cash-box-row">
                   <span>Today in</span>
                   <span className="cash-box-in">
-                    +{formatCurrencyShort(STATIC_TODAY_TOTALS.transferIn)}
+                    +{formatCurrencyShort(balances.transferTodayIn)}
                   </span>
                 </div>
                 <div className="cash-box-row">
                   <span>Today out</span>
                   <span className="cash-box-out">
-                    -{formatCurrencyShort(STATIC_TODAY_TOTALS.transferOut)}
+                    -{formatCurrencyShort(balances.transferTodayOut)}
                   </span>
                 </div>
               </div>
@@ -235,7 +301,7 @@ const CashManagement = () => {
         </button>
       </div>
 
-      <TransactionLogs />
+      <TransactionLogs refreshKey={refreshKey} />
 
       <ExpenseModal
         show={expenseOpen}

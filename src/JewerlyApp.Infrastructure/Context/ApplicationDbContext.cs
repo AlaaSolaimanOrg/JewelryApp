@@ -40,6 +40,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<PrintJob> PrintJobs { get; set; }
         public virtual DbSet<Printer> Printers { get; set; }
         public virtual DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
+        public virtual DbSet<CashTransaction> CashTransactions { get; set; }
 
 
 
@@ -175,6 +176,18 @@ namespace JewerlyApp.Infrastructure.Context
                     .WithMany()
                     .HasForeignKey(x => x.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<CashTransaction>(entity =>
+            {
+                entity.Property(x => x.Amount).HasPrecision(18, 2);
+                entity.HasIndex(x => new { x.BoxType, x.CreatedDate });
+                entity.HasIndex(x => x.TransferGroupId);
+
+                entity.HasOne(x => x.Sale)
+                    .WithMany()
+                    .HasForeignKey(x => x.SaleId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

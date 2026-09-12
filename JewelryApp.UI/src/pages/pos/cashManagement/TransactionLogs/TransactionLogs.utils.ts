@@ -1,18 +1,55 @@
-export interface Sale {
+import { CashBoxType, CashTransactionType } from "../../../../types/enums";
+
+export interface CashTransactionRow {
   id: string;
-  serialNumber: number;
+  boxType: CashBoxType;
+  type: CashTransactionType;
+  amount: number;
+  isCredit: boolean;
+  category: string | null;
+  customerName: string | null;
+  destination: string | null;
+  notes: string | null;
+  saleId: string | null;
+  saleSerialNumber: string | null;
+  createdByName: string | null;
   createdDate: string;
-  total: number;
-  cardPayment: boolean;
-  cashPayment: boolean;
-  customerName: string;
 }
 
-export const getPaymentTag = (sale: Sale) => {
-  if (sale.cardPayment && sale.cashPayment)
-    return { label: "Split", className: "log-tag-split" };
-  if (sale.cardPayment) return { label: "Card", className: "log-tag-card" };
-  return { label: "Cash", className: "log-tag-cash" };
+export const getBoxTag = (row: CashTransactionRow) =>
+  row.boxType === CashBoxType.Store
+    ? { label: "Store", className: "log-tag-cash" }
+    : { label: "Transfers", className: "log-tag-card" };
+
+export const getDescription = (row: CashTransactionRow) => {
+  switch (row.type) {
+    case CashTransactionType.Expense:
+      return { title: `Expense — ${row.category}`, sub: row.notes || "" };
+    case CashTransactionType.ManualCashIn:
+      return { title: `Manual cash in — ${row.category}`, sub: row.notes || "" };
+    case CashTransactionType.TransferIncome:
+      return {
+        title: `Transfer income — ${row.customerName}`,
+        sub: row.destination ? `To ${row.destination}` : row.notes || "",
+      };
+    case CashTransactionType.MoveMoneyOut:
+      return {
+        title: `Move to ${row.boxType === CashBoxType.Store ? "Transfers" : "Store"}`,
+        sub: row.notes || "",
+      };
+    case CashTransactionType.MoveMoneyIn:
+      return {
+        title: `Move from ${row.boxType === CashBoxType.Store ? "Transfers" : "Store"}`,
+        sub: row.notes || "",
+      };
+    case CashTransactionType.SaleCashIn:
+      return {
+        title: `Sale #${row.saleSerialNumber}`,
+        sub: "Cash payment",
+      };
+    default:
+      return { title: row.notes || "", sub: "" };
+  }
 };
 
 export const formatCurrency = (n: number) =>

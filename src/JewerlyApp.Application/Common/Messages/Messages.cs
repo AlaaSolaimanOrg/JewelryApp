@@ -136,6 +136,20 @@
         public const string Error_Repair_No_Slots_Available = "No available repair slots. All slots are currently in use.";
         public const string Error_RepairItem_Not_Found = "Repair item not found.";
         public const string Error_RepairCantBeCompleted = "Repair can't be completed";
+
+        // --------------------------------------------------
+        // CASH MANAGEMENT MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_Cash_Expense_Added = "Expense added successfully.";
+        public const string Success_Cash_ManualCashIn_Added = "Cash in recorded successfully.";
+        public const string Success_Cash_TransferIncome_Added = "Transfer income recorded successfully.";
+        public const string Success_Cash_MoneyMoved = "Money moved successfully.";
+        public const string Error_Cash_InvalidAmount = "Enter a valid amount greater than zero.";
+        public const string Error_Cash_InsufficientBalance = "This box does not have enough balance for this operation.";
+        public const string Error_Cash_CategoryRequired = "Select a category.";
+        public const string Error_Cash_NotesRequired = "Notes are required.";
+        public const string Error_Cash_SourceRequired = "Select a source.";
+        public const string Error_Cash_CustomerNameRequired = "Enter a customer name.";
     }
 
 

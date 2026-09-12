@@ -110,6 +110,21 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // 7. SAVE SALE
             // -------------------------------
             _context.Sales.Add(sale);
+
+            // Cash portion of the payment goes straight into the store cash box.
+            if (sale.CashAmount.HasValue && sale.CashAmount.Value > 0)
+            {
+                _context.CashTransactions.Add(new CashTransaction
+                {
+                    Id = Guid.NewGuid(),
+                    BoxType = CashBoxType.Store,
+                    Type = CashTransactionType.SaleCashIn,
+                    Amount = sale.CashAmount.Value,
+                    SaleId = sale.Id,
+                    Notes = $"Sale #{sale.SerialNumber}",
+                });
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return new GenericResponse<string>

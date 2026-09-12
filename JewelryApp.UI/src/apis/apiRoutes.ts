@@ -83,6 +83,14 @@ export const apiRoutes = {
     getLogs: "Logs/GetLogs",
     deleteLogs: "Logs/DeleteLogs",
   },
+  cashManagement: {
+    getCashBalances: "CashManagement/GetCashBalances",
+    getCashTransactions: "CashManagement/GetCashTransactions",
+    addExpense: "CashManagement/AddExpense",
+    manualCashIn: "CashManagement/ManualCashIn",
+    transferIncome: "CashManagement/TransferIncome",
+    moveMoney: "CashManagement/MoveMoney",
+  },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",
     claimNextPrintJob: "PrintJobs/ClaimNextPrintJob",
