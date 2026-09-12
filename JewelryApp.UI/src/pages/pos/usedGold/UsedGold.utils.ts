@@ -1,5 +1,3 @@
-import type { Seller } from "./UsedGold.type";
-
 export const DEFAULT_KARATS = [24, 22, 21, 18, 14, 10];
 
 export const DEFAULT_KARAT_PRICES: Record<number, number> = {
@@ -27,18 +25,6 @@ export const getKaratColor = (karat: number) => {
   if (karat >= 15) return { bg: "#a07a3b", text: "#1a1a1a" };
   return { bg: "#7d6340", text: "#fff" };
 };
-
-export const INITIAL_SELLERS: Seller[] = [
-  { name: "Ousama Adi", phone: "3688820038" },
-  { name: "Fatima Hassan", phone: "7805550192" },
-  { name: "Ahmad Khalil", phone: "5875550274" },
-  { name: "Sara Mansour", phone: "7805550341" },
-  { name: "Hanan Saleh", phone: "7806021988" },
-  { name: "Rajaa Annouka", phone: "7806802022" },
-  { name: "Zainab Al Mutlak", phone: "8259833199" },
-  { name: "Mariam Taha", phone: "5874490033" },
-  { name: "Ali Mahmoud", phone: "5874430122" },
-];
 
 export const formatCurrency = (n: number) =>
   "$" +

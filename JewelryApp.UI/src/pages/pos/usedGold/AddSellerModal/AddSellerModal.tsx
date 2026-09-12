@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { showError } from "../../../../utils";
+import { createCustomer } from "../../../../apis/customers.api/customers.api";
+import { checkRequestSucceeded, showError } from "../../../../utils";
 import type { Seller } from "../UsedGold.type";
 import "./addSellerModal.scss";
 
@@ -12,15 +13,17 @@ interface AddSellerModalProps {
 const AddSellerModal = ({ show, onClose, onAdd }: AddSellerModalProps) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (show) {
       setName("");
       setPhone("");
+      setSaving(false);
     }
   }, [show]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const trimmedName = name.trim();
     const digits = phone.replace(/\D/g, "");
 
@@ -29,7 +32,24 @@ const AddSellerModal = ({ show, onClose, onAdd }: AddSellerModalProps) => {
       return;
     }
 
-    onAdd({ name: trimmedName, phone: digits });
+    setSaving(true);
+    try {
+      const response = await createCustomer({
+        name: trimmedName,
+        email: "",
+        phoneNumber: digits,
+        birthday: null,
+      });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        onAdd({ id: response.data as string, name: trimmedName, phone: digits });
+      } else {
+        showError(response?.message || "Failed to add seller");
+      }
+    } catch {
+      showError("Failed to add seller");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -62,8 +82,12 @@ const AddSellerModal = ({ show, onClose, onAdd }: AddSellerModalProps) => {
             />
           </div>
           <div className="ug-m-btns">
-            <button className="ug-btn ug-btn-gold" onClick={handleSave}>
-              Save
+            <button
+              className="ug-btn ug-btn-gold"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save"}
             </button>
             <button className="ug-btn ug-btn-outline" onClick={onClose}>
               Cancel

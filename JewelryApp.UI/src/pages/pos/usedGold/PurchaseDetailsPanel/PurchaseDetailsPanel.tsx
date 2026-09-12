@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaMobileAlt,
   FaMoneyBillWave,
@@ -6,12 +6,12 @@ import {
   FaSearch,
   FaTimes,
 } from "react-icons/fa";
+import { getCustomers } from "../../../../apis/customers.api/customers.api";
 import type { GoldRow, PayMethod, Seller } from "../UsedGold.type";
 import { formatCurrency, formatPhone, getInitials } from "../UsedGold.utils";
 import "./purchaseDetailsPanel.scss";
 
 interface PurchaseDetailsPanelProps {
-  sellers: Seller[];
   seller: Seller | null;
   onSelectSeller: (seller: Seller | null) => void;
   onAddSellerClick: () => void;
@@ -27,7 +27,6 @@ interface PurchaseDetailsPanelProps {
 }
 
 const PurchaseDetailsPanel = ({
-  sellers,
   seller,
   onSelectSeller,
   onAddSellerClick,
@@ -43,17 +42,37 @@ const PurchaseDetailsPanel = ({
 }: PurchaseDetailsPanelProps) => {
   const [searchInput, setSearchInput] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [searchResults, setSearchResults] = useState<Seller[]>([]);
 
-  const searchResults = useMemo(() => {
-    const query = searchInput.trim().toLowerCase();
-    if (!query) return [];
-    const phoneQuery = searchInput.replace(/\D/g, "");
-    return sellers.filter(
-      (s) =>
-        s.name.toLowerCase().includes(query) ||
-        (phoneQuery && s.phone.includes(phoneQuery)),
-    );
-  }, [sellers, searchInput]);
+  useEffect(() => {
+    const query = searchInput.trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    let cancelled = false;
+    const timeoutId = setTimeout(async () => {
+      const response = await getCustomers({
+        searchBy: query,
+        pageNumber: 1,
+        pageSize: 8,
+      });
+      if (cancelled) return;
+      setSearchResults(
+        (response?.data || []).map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          phone: c.phoneNumber,
+        })),
+      );
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [searchInput]);
 
   const handlePickSeller = (picked: Seller) => {
     onSelectSeller(picked);
@@ -106,7 +125,7 @@ const PurchaseDetailsPanel = ({
                 <div className="ug-seller-drop">
                   {searchResults.map((s) => (
                     <div
-                      key={s.phone}
+                      key={s.id}
                       className="ug-seller-opt"
                       onMouseDown={() => handlePickSeller(s)}
                     >

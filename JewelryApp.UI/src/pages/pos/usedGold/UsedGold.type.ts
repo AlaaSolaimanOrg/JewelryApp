@@ -6,6 +6,7 @@ export interface GoldRow {
 }
 
 export interface Seller {
+  id: string;
   name: string;
   phone: string;
 }

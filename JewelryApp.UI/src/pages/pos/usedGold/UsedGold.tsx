@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import { showSuccess } from "../../../utils";
+import { createUsedGoldPurchase } from "../../../apis/usedGold.api/usedGold.api";
+import { UsedGoldPayMethod } from "../../../types/enums";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import AddKaratModal from "./AddKaratModal/AddKaratModal";
 import AddSellerModal from "./AddSellerModal/AddSellerModal";
 import GoldItemsPanel from "./GoldItemsPanel/GoldItemsPanel";
@@ -11,7 +13,6 @@ import type { GoldRow, PayMethod, Seller } from "./UsedGold.type";
 import {
   DEFAULT_KARATS,
   DEFAULT_KARAT_PRICES,
-  INITIAL_SELLERS,
   formatCurrency,
 } from "./UsedGold.utils";
 import "./usedGold.scss";
@@ -28,12 +29,12 @@ const UsedGold = () => {
     }));
 
   const [rows, setRows] = useState<GoldRow[]>(createDefaultRows);
-  const [sellers, setSellers] = useState<Seller[]>(INITIAL_SELLERS);
   const [seller, setSeller] = useState<Seller | null>(null);
   const [payMethod, setPayMethod] = useState<PayMethod>("cash");
   const [notes, setNotes] = useState("");
   const [showAddKarat, setShowAddKarat] = useState(false);
   const [showAddSeller, setShowAddSeller] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const handleWeightChange = (id: number, value: string) => {
     setRows((prev) =>
@@ -67,7 +68,6 @@ const UsedGold = () => {
   };
 
   const handleAddSeller = (newSeller: Seller) => {
-    setSellers((prev) => [...prev, newSeller]);
     setSeller(newSeller);
     setShowAddSeller(false);
   };
@@ -86,14 +86,40 @@ const UsedGold = () => {
     setNotes("");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!seller) return;
-    showSuccess(
-      `Purchased ${totalWeight.toFixed(2)}g from ${seller.name} — ${formatCurrency(
-        total,
-      )} (${payMethod === "cash" ? "Cash" : "E-Transfer"})`,
-    );
-    resetForm();
+    setSaving(true);
+    try {
+      const response = await createUsedGoldPurchase({
+        customerId: seller.id,
+        payMethod:
+          payMethod === "cash"
+            ? UsedGoldPayMethod.Cash
+            : UsedGoldPayMethod.ETransfer,
+        notes: notes || undefined,
+        items: activeRows.map((r) => ({
+          karat: r.karat,
+          weight: r.weight,
+          pricePerGram: r.pricePerGram,
+        })),
+      });
+
+      if (checkRequestSucceeded(response?.statusCode)) {
+        showSuccess(
+          response?.message ||
+            `Purchased ${totalWeight.toFixed(2)}g from ${seller.name} — ${formatCurrency(
+              total,
+            )} (${payMethod === "cash" ? "Cash" : "E-Transfer"})`,
+        );
+        resetForm();
+      } else {
+        showError(response?.message || "Failed to record purchase");
+      }
+    } catch {
+      showError("Failed to record purchase");
+    } finally {
+      setSaving(false);
+    }
   };
 
   let saveLabel = "Add gold items to start";
@@ -104,10 +130,12 @@ const UsedGold = () => {
     } else if (total <= 0) {
       saveLabel = "Total must be > $0";
     } else {
-      saveLabel = `Pay ${formatCurrency(total)} — ${
-        payMethod === "cash" ? "cash out" : "e-transfer"
-      }`;
-      canSave = true;
+      saveLabel = saving
+        ? "Saving..."
+        : `Pay ${formatCurrency(total)} — ${
+            payMethod === "cash" ? "cash out" : "e-transfer"
+          }`;
+      canSave = !saving;
     }
   }
 
@@ -134,7 +162,6 @@ const UsedGold = () => {
         </div>
 
         <PurchaseDetailsPanel
-          sellers={sellers}
           seller={seller}
           onSelectSeller={setSeller}
           onAddSellerClick={() => setShowAddSeller(true)}

@@ -134,4 +134,10 @@ export enum CashTransactionType {
   MoveMoneyOut = 4,
   MoveMoneyIn = 5,
   SaleCashIn = 6,
+  UsedGoldPurchaseOut = 7,
+}
+
+export enum UsedGoldPayMethod {
+  Cash = 1,
+  ETransfer = 2,
 }

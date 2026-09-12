@@ -41,6 +41,8 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<Printer> Printers { get; set; }
         public virtual DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
         public virtual DbSet<CashTransaction> CashTransactions { get; set; }
+        public virtual DbSet<UsedGoldPurchase> UsedGoldPurchases { get; set; }
+        public virtual DbSet<UsedGoldPurchaseItem> UsedGoldPurchaseItems { get; set; }
 
 
 
@@ -188,6 +190,38 @@ namespace JewerlyApp.Infrastructure.Context
                     .WithMany()
                     .HasForeignKey(x => x.SaleId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.UsedGoldPurchase)
+                    .WithMany()
+                    .HasForeignKey(x => x.UsedGoldPurchaseId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<UsedGoldPurchase>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.CustomerName).IsRequired().HasMaxLength(128);
+                entity.Property(x => x.CustomerPhone).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.TotalWeight).HasPrecision(18, 3);
+                entity.Property(x => x.TotalAmount).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
+
+                entity.HasOne(x => x.Customer)
+                    .WithMany()
+                    .HasForeignKey(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<UsedGoldPurchaseItem>(entity =>
+            {
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.PricePerGram).HasPrecision(18, 2);
+                entity.Property(x => x.Subtotal).HasPrecision(18, 2);
+
+                entity.HasOne(x => x.Purchase)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.PurchaseId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

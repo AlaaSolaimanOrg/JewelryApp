@@ -150,6 +150,17 @@
         public const string Error_Cash_NotesRequired = "Notes are required.";
         public const string Error_Cash_SourceRequired = "Select a source.";
         public const string Error_Cash_CustomerNameRequired = "Enter a customer name.";
+
+        // --------------------------------------------------
+        // USED GOLD PURCHASE MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_UsedGold_Purchase_Created = "Used gold purchase recorded successfully.";
+        public const string Error_UsedGold_Customer_Not_Found = "Seller (customer) not found.";
+        public const string Error_UsedGold_Purchase_No_Items = "Purchase must include at least one gold item.";
+        public const string Error_UsedGold_Purchase_Invalid_Karat = "Karat must be between 1 and 24.";
+        public const string Error_UsedGold_Purchase_Invalid_Weight = "Weight must be greater than 0 for every item.";
+        public const string Error_UsedGold_Purchase_Invalid_Price = "Price per gram must be greater than 0 for every item.";
+        public const string Error_UsedGold_Purchase_InsufficientBalance = "Store cash box does not have enough balance for this purchase.";
     }
 
 

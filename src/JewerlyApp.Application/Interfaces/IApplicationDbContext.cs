@@ -34,6 +34,8 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<Printer> Printers { get; set; }
         DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
         DbSet<CashTransaction> CashTransactions { get; set; }
+        DbSet<UsedGoldPurchase> UsedGoldPurchases { get; set; }
+        DbSet<UsedGoldPurchaseItem> UsedGoldPurchaseItems { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

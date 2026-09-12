@@ -91,6 +91,9 @@ export const apiRoutes = {
     transferIncome: "CashManagement/TransferIncome",
     moveMoney: "CashManagement/MoveMoney",
   },
+  usedGold: {
+    createPurchase: "UsedGold/CreatePurchase",
+  },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",
     claimNextPrintJob: "PrintJobs/ClaimNextPrintJob",
