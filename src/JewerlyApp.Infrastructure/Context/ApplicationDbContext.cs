@@ -43,6 +43,9 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<CashTransaction> CashTransactions { get; set; }
         public virtual DbSet<UsedGoldPurchase> UsedGoldPurchases { get; set; }
         public virtual DbSet<UsedGoldPurchaseItem> UsedGoldPurchaseItems { get; set; }
+        public virtual DbSet<UsedGoldMeltBatch> UsedGoldMeltBatches { get; set; }
+        public virtual DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
+        public virtual DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
 
 
 
@@ -222,6 +225,33 @@ namespace JewerlyApp.Infrastructure.Context
                     .WithMany(x => x.Items)
                     .HasForeignKey(x => x.PurchaseId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<UsedGoldMeltBatch>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.TotalWeight).HasPrecision(18, 3);
+                entity.Property(x => x.TotalCost).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
+            });
+
+            builder.Entity<UsedGoldMeltBatchItem>(entity =>
+            {
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.Cost).HasPrecision(18, 2);
+
+                entity.HasOne(x => x.MeltBatch)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.MeltBatchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<UsedGoldStockReturn>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.Cost).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
             });
         }
     }

@@ -93,6 +93,10 @@ export const apiRoutes = {
   },
   usedGold: {
     createPurchase: "UsedGold/CreatePurchase",
+    getPools: "UsedGold/GetPools",
+    getHistory: "UsedGold/GetHistory",
+    sendToMelt: "UsedGold/SendToMelt",
+    returnToStock: "UsedGold/ReturnToStock",
   },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",

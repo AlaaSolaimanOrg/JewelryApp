@@ -161,6 +161,15 @@
         public const string Error_UsedGold_Purchase_Invalid_Weight = "Weight must be greater than 0 for every item.";
         public const string Error_UsedGold_Purchase_Invalid_Price = "Price per gram must be greater than 0 for every item.";
         public const string Error_UsedGold_Purchase_InsufficientBalance = "Store cash box does not have enough balance for this purchase.";
+
+        public const string Success_UsedGold_Melt_Created = "Melt batch recorded successfully.";
+        public const string Error_UsedGold_Melt_InvalidWeight = "Bag weight must be greater than 0.";
+        public const string Error_UsedGold_Melt_InsufficientStock = "Bag weight exceeds the gold currently on hand.";
+
+        public const string Success_UsedGold_StockReturn_Created = "Returned to stock successfully.";
+        public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";
+        public const string Error_UsedGold_StockReturn_InvalidWeight = "Weight must be greater than 0.";
+        public const string Error_UsedGold_StockReturn_InsufficientStock = "Weight exceeds what's currently on hand for this karat.";
     }
 
 

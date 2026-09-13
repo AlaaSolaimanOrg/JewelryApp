@@ -23,8 +23,9 @@
       height: 36px;
       border-radius: 8px;
       border: 1px solid var(--pos-border-strong);
-      background: var(--pos-bg-raised);
-      color: var(--pos-text);
+      background-color: var(--pos-bg-raised) !important;
+      color: var(--pos-text) !important;
+      -webkit-text-fill-color: var(--pos-text) !important;
       padding: 0 10px;
       cursor: pointer;
     }

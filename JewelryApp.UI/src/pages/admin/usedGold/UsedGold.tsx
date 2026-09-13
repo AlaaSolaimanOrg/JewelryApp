@@ -1,20 +1,27 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaBoxOpen, FaFire, FaHistory, FaSearch } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
 import AdminStatCard from "../../../components/cards/AdminStatCard/AdminStatCard";
 import GoldPoolCard from "../../../components/cards/GoldPoolCard/GoldPoolCard";
+import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
-import { showSuccess } from "../../../utils";
+import {
+  getUsedGoldPools,
+  getUsedGoldHistory,
+  sendToMelt,
+  returnToStock,
+} from "../../../apis/usedGold.api/usedGold.api";
+import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { checkRequestSucceeded, handleSort, showError, showSuccess } from "../../../utils";
+import { SortDirection } from "../../../types/enums";
 import MeltGoldModal from "./MeltGoldModal/MeltGoldModal";
 import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
 import type { GoldPool, Period, UsedGoldHistoryEntry } from "./UsedGold.type";
 import {
   MONTHS,
   STANDARD_KARATS,
-  createMockHistory,
-  createMockPools,
-  filterHistoryByPeriod,
   fmtCurrency,
   fmtCurrencyRounded,
   fmtDate,
@@ -29,6 +36,8 @@ import "./usedGold.scss";
 
 const YEARS = [2026, 2025];
 
+const EMPTY_POOL: GoldPool = { weight: 0, cost: 0, totalInvested: 0 };
+
 const TYPE_LABEL: Record<UsedGoldHistoryEntry["type"], string> = {
   purchase: "Purchases",
   melt: "Melts",
@@ -38,17 +47,32 @@ const TYPE_LABEL: Record<UsedGoldHistoryEntry["type"], string> = {
 const UsedGold = () => {
   const now = new Date();
 
-  const [pools, setPools] =
-    useState<Record<number, GoldPool>>(createMockPools());
-  const [history, setHistory] =
-    useState<UsedGoldHistoryEntry[]>(createMockHistory());
-  const [nextHistId, setNextHistId] = useState(1000);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = () => setRefreshKey((k) => k + 1);
 
   const [period, setPeriod] = useState<Period>("month");
-  const [selMonth, setSelMonth] = useState(5);
-  const [selYear, setSelYear] = useState(2026);
+  const [selMonth, setSelMonth] = useState(now.getMonth());
+  const [selYear, setSelYear] = useState(now.getFullYear());
 
-  const [search, setSearch] = useState("");
+  const { data: poolsResult } = useLocalApi({
+    apiToCall: (data) => getUsedGoldPools(data.payload),
+    payload: { period, month: selMonth, year: selYear },
+    dataInitalValue: {
+      pools: {} as Record<number, GoldPool>,
+      periodPurchaseCount: 0,
+      periodSpent: 0,
+    },
+    effectDependency: [refreshKey, period, selMonth, selYear],
+  }) as {
+    data: {
+      pools: Record<number, GoldPool>;
+      periodPurchaseCount: number;
+      periodSpent: number;
+    };
+  };
+
+  const { pools, periodPurchaseCount, periodSpent } = poolsResult;
+
   const [typeFilter, setTypeFilter] = useState<
     "all" | UsedGoldHistoryEntry["type"]
   >("all");
@@ -68,43 +92,89 @@ const UsedGold = () => {
         ? `${selYear}`
         : "All time";
 
-  const filteredHistory = useMemo(
-    () => filterHistoryByPeriod(history, period, selMonth, selYear),
-    [history, period, selMonth, selYear],
-  );
+  const {
+    data: history,
+    isLoading: isLoadingHistory,
+    onSearchChange,
+    onSortChange,
+    onPaginationChange,
+    onPageSizeChange,
+    sortCriteria,
+    pagination,
+  } = useLocalApiSearchSortPagination<UsedGoldHistoryEntry>({
+    apiToCall: (data) => getUsedGoldHistory(data.payload),
+    extraPayload: {
+      typeFilter: typeFilter === "all" ? undefined : typeFilter,
+      period,
+      month: selMonth,
+      year: selYear,
+    },
+    extraEffectDependency: [refreshKey, typeFilter, period, selMonth, selYear],
+    initialPageSize: 10,
+    initialSortBy: "date",
+    initialSortDirection: SortDirection.Descending,
+  });
 
-  const periodPurchases = filteredHistory.filter((h) => h.type === "purchase");
-  const periodSpent = periodPurchases.reduce((sum, h) => sum + h.cost, 0);
+  const handlePeriodFilterChange = (value: Period) => {
+    setPeriod(value);
+    onPaginationChange(1);
+  };
 
-  const logRows = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    let rows = filteredHistory;
-    if (typeFilter !== "all") rows = rows.filter((h) => h.type === typeFilter);
-    if (q) {
-      rows = rows.filter(
-        (h) =>
-          h.desc.toLowerCase().includes(q) || h.notes.toLowerCase().includes(q),
-      );
-    }
-    return [...rows].sort(
-      (a, b) => b.date.localeCompare(a.date) || b.id - a.id,
-    );
-  }, [filteredHistory, typeFilter, search]);
+  const handleTypeFilterChange = (value: "all" | UsedGoldHistoryEntry["type"]) => {
+    setTypeFilter(value);
+    onPaginationChange(1);
+  };
 
   const otherKarats = getAllKarats(pools).filter(
     (k) => !STANDARD_KARATS.includes(k),
   );
 
+  const renderSortArrow = (field: string) =>
+    sortCriteria.sortBy === field && (
+      <span className="sort-arrow">
+        {sortCriteria.sortDirection === SortDirection.Ascending ? "▲" : "▼"}
+      </span>
+    );
+
   const logHeaders: TableHeader[] = [
-    { key: "date", label: "Date", width: "90px" },
+    {
+      key: "date",
+      label: <>Date {renderSortArrow("date")}</>,
+      width: "90px",
+      onHeaderClick: () => handleSort("date", sortCriteria, onSortChange),
+    },
     { key: "desc", label: "Description" },
-    { key: "karat", label: "Karat", width: "70px", align: "center" },
-    { key: "weight", label: "Weight", width: "70px", align: "center" },
-    { key: "cost", label: "Cost", width: "100px", align: "right" },
-    { key: "type", label: "Type", width: "90px", align: "center" },
+    {
+      key: "karat",
+      label: <>Karat {renderSortArrow("karat")}</>,
+      width: "70px",
+      align: "center",
+      onHeaderClick: () => handleSort("karat", sortCriteria, onSortChange),
+    },
+    {
+      key: "weight",
+      label: <>Weight {renderSortArrow("weight")}</>,
+      width: "70px",
+      align: "center",
+      onHeaderClick: () => handleSort("weight", sortCriteria, onSortChange),
+    },
+    {
+      key: "cost",
+      label: <>Cost {renderSortArrow("cost")}</>,
+      width: "100px",
+      align: "right",
+      onHeaderClick: () => handleSort("cost", sortCriteria, onSortChange),
+    },
+    {
+      key: "type",
+      label: <>Type {renderSortArrow("type")}</>,
+      width: "90px",
+      align: "center",
+      onHeaderClick: () => handleSort("type", sortCriteria, onSortChange),
+    },
   ];
 
-  const logData = logRows.map((h) => ({
+  const logData = (history || []).map((h) => ({
     date: <span className="lr-date">{fmtDate(h.date)}</span>,
     desc: (
       <div>
@@ -112,7 +182,7 @@ const UsedGold = () => {
         <div className="lr-sub">{h.notes}</div>
       </div>
     ),
-    karat: h.karat === "mixed" ? "Mixed" : `${h.karat}K`,
+    karat: h.karat == null ? "Mixed" : `${h.karat}K`,
     weight: `${h.weight.toFixed(1)}g`,
     cost: (
       <span
@@ -134,87 +204,41 @@ const UsedGold = () => {
     ),
   }));
 
-  const poolCard = (k: number) => (
-    <GoldPoolCard
-      key={k}
-      karat={k}
-      weightGrams={pools[k].weight}
-      valueAmount={pools[k].cost}
-      accentColor={getKaratColor(k)}
-    />
-  );
-
-  const handleMeltConfirm = (bagWeight: number, notes: string) => {
-    const total = getTotalOnHand(pools);
-    const ratio = Math.min(bagWeight / total, 1);
-
-    let totalCostRemoved = 0;
-    const nextPools: Record<number, GoldPool> = {};
-    getAllKarats(pools).forEach((k) => {
-      const p = pools[k];
-      if (p.weight <= 0) {
-        nextPools[k] = p;
-        return;
-      }
-      const removeCost = p.cost * ratio;
-      totalCostRemoved += removeCost;
-      nextPools[k] = {
-        ...p,
-        weight: Math.max(0, p.weight - p.weight * ratio),
-        cost: Math.max(0, p.cost - removeCost),
-      };
-    });
-
-    setPools(nextPools);
-    setHistory((prev) => [
-      {
-        id: nextHistId,
-        date: now.toISOString().slice(0, 10),
-        type: "melt",
-        desc: "Melt batch",
-        notes: notes || "Mixed bag sent to dealer",
-        karat: "mixed",
-        weight: bagWeight,
-        cost: totalCostRemoved,
-      },
-      ...prev,
-    ]);
-    setNextHistId((id) => id + 1);
-    setShowMeltModal(false);
-    showSuccess(
-      `Sent ${bagWeight.toFixed(2)}g to melt — ${fmtCurrencyRounded(totalCostRemoved)} value`,
+  const poolCard = (k: number) => {
+    const pool = pools[k] ?? EMPTY_POOL;
+    return (
+      <GoldPoolCard
+        key={k}
+        karat={k}
+        weightGrams={pool.weight}
+        valueAmount={pool.cost}
+        accentColor={getKaratColor(k)}
+      />
     );
   };
 
-  const handleStockConfirm = (karat: number, weight: number, notes: string) => {
-    const p = pools[karat];
-    const avg = p.cost / p.weight;
-    const costRemoved = avg * weight;
+  const handleMeltConfirm = async (bagWeight: number, notes: string) => {
+    const response = await sendToMelt({ totalWeight: bagWeight, notes: notes || undefined });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setShowMeltModal(false);
+      showSuccess(
+        response?.message || `Sent ${bagWeight.toFixed(2)}g to melt`,
+      );
+      refresh();
+    } else {
+      showError(response?.message || "Failed to record melt batch");
+    }
+  };
 
-    setPools((prev) => ({
-      ...prev,
-      [karat]: {
-        ...prev[karat],
-        weight: Math.max(0, prev[karat].weight - weight),
-        cost: Math.max(0, prev[karat].cost - costRemoved),
-      },
-    }));
-    setHistory((prev) => [
-      {
-        id: nextHistId,
-        date: now.toISOString().slice(0, 10),
-        type: "stock",
-        desc: "Return to stock",
-        notes: notes || `${karat}K returned to display`,
-        karat,
-        weight,
-        cost: costRemoved,
-      },
-      ...prev,
-    ]);
-    setNextHistId((id) => id + 1);
-    setShowStockModal(false);
-    showSuccess(`${weight.toFixed(2)}g ${karat}K returned to stock`);
+  const handleStockConfirm = async (karat: number, weight: number, notes: string) => {
+    const response = await returnToStock({ karat, weight, notes: notes || undefined });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setShowStockModal(false);
+      showSuccess(`${weight.toFixed(2)}g ${karat}K returned to stock`);
+      refresh();
+    } else {
+      showError(response?.message || "Failed to return gold to stock");
+    }
   };
 
   return (
@@ -248,19 +272,19 @@ const UsedGold = () => {
           <span className="ctrl-label">Period:</span>
           <button
             className={`pbtn ${period === "month" ? "active" : ""}`}
-            onClick={() => setPeriod("month")}
+            onClick={() => handlePeriodFilterChange("month")}
           >
             Month
           </button>
           <button
             className={`pbtn ${period === "year" ? "active" : ""}`}
-            onClick={() => setPeriod("year")}
+            onClick={() => handlePeriodFilterChange("year")}
           >
             Year
           </button>
           <button
             className={`pbtn ${period === "all" ? "active" : ""}`}
-            onClick={() => setPeriod("all")}
+            onClick={() => handlePeriodFilterChange("all")}
           >
             All time
           </button>
@@ -271,7 +295,10 @@ const UsedGold = () => {
               <select
                 className="ctrl-select"
                 value={selMonth}
-                onChange={(e) => setSelMonth(Number(e.target.value))}
+                onChange={(e) => {
+                  setSelMonth(Number(e.target.value));
+                  onPaginationChange(1);
+                }}
               >
                 {MONTHS.map((m, i) => (
                   <option key={m} value={i}>
@@ -283,7 +310,10 @@ const UsedGold = () => {
             <select
               className="ctrl-select"
               value={selYear}
-              onChange={(e) => setSelYear(Number(e.target.value))}
+              onChange={(e) => {
+                setSelYear(Number(e.target.value));
+                onPaginationChange(1);
+              }}
             >
               {YEARS.map((y) => (
                 <option key={y} value={y}>
@@ -322,7 +352,7 @@ const UsedGold = () => {
           valueColor="var(--admin-blue)"
         />
         <AdminStatCard
-          value={`${periodPurchases.length}`}
+          value={`${periodPurchaseCount}`}
           label={`Purchases (${periodLabel})`}
         />
       </div>
@@ -339,12 +369,12 @@ const UsedGold = () => {
         </>
       )}
 
-      <div className="section-title">History</div>
+      <div className="section-title">History ({periodLabel})</div>
       <div className="panel">
         <div className="tbl-head">
           <span className="tbl-title">
-            <FaHistory className="icon" /> {logRows.length}{" "}
-            {logRows.length === 1 ? "entry" : "entries"}
+            <FaHistory className="icon" /> {pagination.totalRecords}{" "}
+            {pagination.totalRecords === 1 ? "entry" : "entries"}
           </span>
           <div className="tbl-tools">
             <div className="search-wrap">
@@ -353,15 +383,15 @@ const UsedGold = () => {
                 type="text"
                 className="search-input"
                 placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                autoComplete="off"
+                onChange={onSearchChange}
               />
             </div>
             <select
               className="log-filter"
               value={typeFilter}
               onChange={(e) =>
-                setTypeFilter(
+                handleTypeFilterChange(
                   e.target.value as "all" | UsedGoldHistoryEntry["type"],
                 )
               }
@@ -373,7 +403,16 @@ const UsedGold = () => {
             </select>
           </div>
         </div>
-        <CustomTable headers={logHeaders} data={logData} />
+        <CustomTable headers={logHeaders} data={logData} isLoading={isLoadingHistory} />
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+          pageSizeOptions={[10, 25, 50, 100]}
+          maxPages={4}
+        />
       </div>
 
       <MeltGoldModal

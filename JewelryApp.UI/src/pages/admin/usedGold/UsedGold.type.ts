@@ -9,12 +9,12 @@ export interface GoldPool {
 }
 
 export interface UsedGoldHistoryEntry {
-  id: number;
+  id: string;
   date: string;
   type: HistoryType;
   desc: string;
   notes: string;
-  karat: number | "mixed";
+  karat: number | null;
   weight: number;
   cost: number;
 }
