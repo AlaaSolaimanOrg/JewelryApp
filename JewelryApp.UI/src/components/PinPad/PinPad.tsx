@@ -13,7 +13,7 @@ interface PinPadProps {
   title?: string;
   subtitle?: string;
   pinLength?: number;
-  onSuccess: () => void;
+  onSuccess: (pin: string) => void;
   onCancel: () => void;
 }
 
@@ -49,7 +49,7 @@ const PinPad = ({
 
     if (isCorrect) {
       reset();
-      onSuccess();
+      onSuccess(value);
     } else {
       setWrong(true);
       setVerifying(false);

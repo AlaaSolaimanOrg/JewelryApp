@@ -10,17 +10,35 @@ import {
 import { GiCardPickup, GiGoldBar } from "react-icons/gi";
 import { Row, Col } from "react-bootstrap";
 import { getRepairs } from "../../../apis/repairs.api/repairs.api";
+import { getPosDashboardStats } from "../../../apis/dashboard.api/dashboard.api";
+import { getTodaySalesSummary } from "../../../apis/sales.api/sales.api";
 import { verifySalesPin } from "../../../apis/securitySettings.api/securitySettings.api";
 import PinPad from "../../../components/PinPad/PinPad";
 import ActionCard from "../../../components/cards/ActionCard/ActionCard";
 import StatCard from "../../../components/StatCard/StatCard";
+import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { RepairStatus, SortDirection } from "../../../types/enums";
 import { checkRequestSucceeded, showError } from "../../../utils";
 import RepairsModal from "./RepairsModal/RepairsModal";
 import { getDueStatus, type Repair } from "./RepairsModal/RepairsModal.utils";
 import RecentTransactions from "./RecentTransactions/RecentTransactions";
+import type { PosDashboardStats, TodaySalesSummary } from "./PosDashboard.type";
+import { formatCurrency, formatCurrencyShort } from "./PosDashboard.utils";
 import "./posDashboard.scss";
+
+const EMPTY_STATS: PosDashboardStats = {
+  storeCashBalance: 0,
+  storeCashTodayDelta: 0,
+  usedGoldWeight: 0,
+  usedGoldAverageKarat: 0,
+  usedGoldValue: 0,
+};
+
+const EMPTY_SALES_SUMMARY: TodaySalesSummary = {
+  todaySalesTotal: 0,
+  todaySalesCount: 0,
+};
 
 const PosDashboard = () => {
   const { data: repairs, isLoading: repairsLoading } =
@@ -32,9 +50,16 @@ const PosDashboard = () => {
       initialSortDirection: SortDirection.Ascending,
     });
 
+  const { data: stats } = useLocalApi({
+    apiToCall: () => getPosDashboardStats(),
+    dataInitalValue: EMPTY_STATS,
+  }) as { data: PosDashboardStats };
+
   const [repairsModalOpen, setRepairsModalOpen] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
   const [salesRevealed, setSalesRevealed] = useState(false);
+  const [salesSummary, setSalesSummary] =
+    useState<TodaySalesSummary>(EMPTY_SALES_SUMMARY);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const overdueCount =
@@ -49,11 +74,23 @@ const PosDashboard = () => {
     setPinOpen(false);
   };
 
-  const handleSalesPinSuccess = () => {
+  const hideSales = () => {
+    setSalesRevealed(false);
+    setSalesSummary(EMPTY_SALES_SUMMARY);
+  };
+
+  const handleSalesPinSuccess = async (pin: string) => {
     setPinOpen(false);
-    setSalesRevealed(true);
-    if (revealTimer.current) clearTimeout(revealTimer.current);
-    revealTimer.current = setTimeout(() => setSalesRevealed(false), 60000);
+
+    const response = await getTodaySalesSummary({ pin });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setSalesSummary(response.data);
+      setSalesRevealed(true);
+      if (revealTimer.current) clearTimeout(revealTimer.current);
+      revealTimer.current = setTimeout(hideSales, 60000);
+    } else {
+      showError(response?.message || "Failed to load sales");
+    }
   };
 
   const handleVerifySalesPin = async (pin: string) => {
@@ -120,9 +157,9 @@ const PosDashboard = () => {
         <Col xs={6} md={3}>
           <StatCard
             label="Today's sales"
-            value="$12,437.27"
+            value={formatCurrency(salesSummary.todaySalesTotal)}
             valueColor="var(--pos-green)"
-            sub="6 transactions"
+            sub={`${salesSummary.todaySalesCount} transactions`}
             clickable
             blurred
             revealed={salesRevealed}
@@ -134,9 +171,9 @@ const PosDashboard = () => {
         <Col xs={6} md={3}>
           <StatCard
             label="Store cash box"
-            value="$15,241"
+            value={formatCurrency(stats.storeCashBalance)}
             valueColor="var(--pos-green)"
-            sub="+$3,059 today"
+            sub={`${formatCurrencyShort(stats.storeCashTodayDelta)} today`}
           />
         </Col>
 
@@ -162,9 +199,13 @@ const PosDashboard = () => {
         <Col xs={6} md={3}>
           <StatCard
             label="Used gold on hand"
-            value="212.5g"
+            value={`${stats.usedGoldWeight.toLocaleString("en-US", {
+              maximumFractionDigits: 1,
+            })}g`}
             valueColor="var(--pos-gold)"
-            sub="Avg 19.8K · $34,608 value"
+            sub={`Avg ${stats.usedGoldAverageKarat.toLocaleString("en-US", {
+              maximumFractionDigits: 1,
+            })}K · ${formatCurrency(stats.usedGoldValue)} value`}
           />
         </Col>
       </Row>

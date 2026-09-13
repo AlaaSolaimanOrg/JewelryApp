@@ -42,6 +42,10 @@ export const getSoldItems = async (payload: {
   return requestApi("GET", apiRoutes.sales.getSoldItems, payload);
 };
 
+export const getTodaySalesSummary = async (payload: { pin: string }) => {
+  return requestApi("POST", apiRoutes.sales.getTodaySalesSummary, payload);
+};
+
 export const searchSales = async (payload: {
   serialNumber: string;
   customerPhone: string;

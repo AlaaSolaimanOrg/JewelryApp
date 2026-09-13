@@ -55,6 +55,7 @@ export const apiRoutes = {
     getSalesList: "Sales/GetSalesList",
     getSalesInsights: "Sales/GetSalesInsights",
     getSoldItems: "Sales/GetSoldItems",
+    getTodaySalesSummary: "Sales/GetTodaySalesSummary",
     searchSales: "Sales/SearchSales",
   },
   returns: {
@@ -102,6 +103,9 @@ export const apiRoutes = {
     getSalesPin: "SecuritySettings/GetSalesPin",
     updateSalesPin: "SecuritySettings/UpdateSalesPin",
     verifySalesPin: "SecuritySettings/VerifySalesPin",
+  },
+  dashboard: {
+    getPosDashboardStats: "Dashboard/GetPosDashboardStats",
   },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",
