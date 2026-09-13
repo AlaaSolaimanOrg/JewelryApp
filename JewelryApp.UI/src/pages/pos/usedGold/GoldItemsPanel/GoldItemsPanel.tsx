@@ -68,6 +68,7 @@ const GoldItemsPanel = ({
                 min={0}
                 step="any"
                 inputMode="decimal"
+                placeholder="0"
                 value={row.pricePerGram || ""}
                 onChange={(e) => onPriceChange(row.id, e.target.value)}
               />

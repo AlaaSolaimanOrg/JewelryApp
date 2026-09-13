@@ -59,7 +59,9 @@ const AddKaratModal = ({
               max={24}
               placeholder="e.g. 9, 12, 19"
               value={karat}
-              onChange={(e) => setKarat(e.target.value)}
+              onChange={(e) =>
+                setKarat(e.target.value.slice(0, 2))
+              }
             />
           </div>
           <div className="ug-fg">

@@ -1,12 +1,12 @@
 export const DEFAULT_KARATS = [24, 22, 21, 18, 14, 10];
 
 export const DEFAULT_KARAT_PRICES: Record<number, number> = {
-  24: 90,
-  22: 82,
-  21: 75,
-  18: 60,
-  14: 47,
-  10: 33,
+  24: 0,
+  22: 0,
+  21: 0,
+  18: 0,
+  14: 0,
+  10: 0,
 };
 
 const KARAT_COLORS: Record<number, { bg: string; text: string }> = {
