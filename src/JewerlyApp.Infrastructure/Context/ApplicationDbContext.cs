@@ -46,6 +46,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<UsedGoldMeltBatch> UsedGoldMeltBatches { get; set; }
         public virtual DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
         public virtual DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
+        public virtual DbSet<SecurityPinSetting> SecurityPinSettings { get; set; }
 
 
 
@@ -252,6 +253,11 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(x => x.Weight).HasPrecision(18, 3);
                 entity.Property(x => x.Cost).HasPrecision(18, 2);
                 entity.HasIndex(x => x.SerialNumber).IsUnique();
+            });
+
+            builder.Entity<SecurityPinSetting>(entity =>
+            {
+                entity.Property(x => x.Pin).IsRequired().HasMaxLength(4);
             });
         }
     }

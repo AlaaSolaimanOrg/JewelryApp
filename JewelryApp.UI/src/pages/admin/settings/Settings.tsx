@@ -1,149 +1,78 @@
+import { useEffect, useState } from "react";
+import { FaCog, FaSave, FaShieldAlt } from "react-icons/fa";
 import {
-  FaCog,
-  FaCommentAlt,
-  FaCreditCard,
-  FaGlobe,
-  FaMoneyBillWave,
-  FaSave,
-} from "react-icons/fa";
+  getSalesPin,
+  updateSalesPin,
+} from "../../../apis/securitySettings.api/securitySettings.api";
+import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./settings.scss";
 
 const Settings = () => {
+  const [salesPin, setSalesPin] = useState("");
+  const [savingPin, setSavingPin] = useState(false);
+
+  useEffect(() => {
+    const fetchSalesPin = async () => {
+      const response = await getSalesPin();
+      if (checkRequestSucceeded(response?.statusCode)) {
+        setSalesPin(response?.data || "");
+      }
+    };
+    fetchSalesPin();
+  }, []);
+
+  const handleSalesPinSave = async () => {
+    if (!/^\d{4}$/.test(salesPin)) {
+      showError("PIN must be exactly 4 digits.");
+      return;
+    }
+    setSavingPin(true);
+    try {
+      const response = await updateSalesPin({ pin: salesPin });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        showSuccess(response?.message || "Sales PIN updated successfully.");
+      } else {
+        showError(response?.message || "Failed to update sales PIN.");
+      }
+    } finally {
+      setSavingPin(false);
+    }
+  };
+
   return (
     <div id="settings" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaCog className="icon" /> <span>Global Settings</span>
+          <FaCog className="icon" /> <span>Settings</span>
         </h1>
-        <div className="page-actions">
-          <button className="btn-md btn-gold">
-            <FaSave /> Save Settings
-          </button>
-        </div>
       </div>
 
       <div className="settings-grid">
         <div className="setting-card">
           <h3>
-            <FaMoneyBillWave /> Pricing Settings
+            <FaShieldAlt /> Security Settings
           </h3>
           <div className="form-group">
-            <label className="form-label">Default 18K Price/Gram</label>
-            <input
-              type="number"
-              onWheel={(e) => e.currentTarget.blur()}
-              step="0.01"
-              className="form-control"
-              value="45.75"
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Default 21K Price/Gram</label>
-            <input
-              type="number"
-              onWheel={(e) => e.currentTarget.blur()}
-              step="0.01"
-              className="form-control"
-              value="52.40"
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Tax Rate (%)</label>
-            <input
-              type="number"
-              onWheel={(e) => e.currentTarget.blur()}
-              step="0.1"
-              className="form-control"
-              value="8.5"
-            />
-          </div>
-        </div>
-
-        <div className="setting-card">
-          <h3>
-            <FaCommentAlt /> SMS Settings
-          </h3>
-          <div className="form-group">
-            <label className="form-label">SMS Gateway API Key</label>
+            <label className="form-label">POS "View sales" PIN</label>
             <input
               type="text"
+              inputMode="numeric"
+              maxLength={4}
               className="form-control"
-              placeholder="Enter API key"
+              placeholder="4-digit PIN"
+              value={salesPin}
+              onChange={(e) =>
+                setSalesPin(e.target.value.replace(/\D/g, "").slice(0, 4))
+              }
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Sender ID</label>
-            <input type="text" className="form-control" value="GemLuxe" />
-          </div>
-          <div className="form-group">
-            <label className="form-label">SMS Templates</label>
-            <select className="form-control">
-              <option>Default Template</option>
-              <option>Promotional Template</option>
-              <option>Appointment Reminder</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="setting-card">
-          <h3>
-            <FaCreditCard /> Payment Settings
-          </h3>
-          <div className="form-group">
-            <label className="form-label">Payment Gateway</label>
-            <select className="form-control">
-              <option>Moneris</option>
-              <option>Stripe</option>
-              <option>PayPal</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="form-label">API Key</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter API key"
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Transaction Fee (%)</label>
-            <input
-              type="number"
-              onWheel={(e) => e.currentTarget.blur()}
-              step="0.1"
-              className="form-control"
-              value="2.9"
-            />
-          </div>
-        </div>
-
-        <div className="setting-card">
-          <h3>
-            <FaGlobe /> General Settings
-          </h3>
-          <div className="form-group">
-            <label className="form-label">Store Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value="GemLuxe Jewelers"
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Date Format</label>
-            <select className="form-control">
-              <option>MM/DD/YYYY</option>
-              <option>DD/MM/YYYY</option>
-              <option>YYYY-MM-DD</option>
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Time Format</label>
-            <select className="form-control">
-              <option>12-hour</option>
-              <option>24-hour</option>
-            </select>
-          </div>
+          <button
+            className="btn-md btn-gold"
+            onClick={handleSalesPinSave}
+            disabled={savingPin}
+          >
+            <FaSave /> {savingPin ? "Saving..." : "Save PIN"}
+          </button>
         </div>
       </div>
     </div>

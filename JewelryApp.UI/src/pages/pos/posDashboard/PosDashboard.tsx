@@ -10,17 +10,17 @@ import {
 import { GiCardPickup, GiGoldBar } from "react-icons/gi";
 import { Row, Col } from "react-bootstrap";
 import { getRepairs } from "../../../apis/repairs.api/repairs.api";
+import { verifySalesPin } from "../../../apis/securitySettings.api/securitySettings.api";
 import PinPad from "../../../components/PinPad/PinPad";
 import ActionCard from "../../../components/cards/ActionCard/ActionCard";
 import StatCard from "../../../components/StatCard/StatCard";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { RepairStatus, SortDirection } from "../../../types/enums";
+import { checkRequestSucceeded, showError } from "../../../utils";
 import RepairsModal from "./RepairsModal/RepairsModal";
 import { getDueStatus, type Repair } from "./RepairsModal/RepairsModal.utils";
 import RecentTransactions from "./RecentTransactions/RecentTransactions";
 import "./posDashboard.scss";
-
-const SALES_PIN = "1234";
 
 const PosDashboard = () => {
   const { data: repairs, isLoading: repairsLoading } =
@@ -53,7 +53,14 @@ const PosDashboard = () => {
     setPinOpen(false);
     setSalesRevealed(true);
     if (revealTimer.current) clearTimeout(revealTimer.current);
-    revealTimer.current = setTimeout(() => setSalesRevealed(false), 5000);
+    revealTimer.current = setTimeout(() => setSalesRevealed(false), 60000);
+  };
+
+  const handleVerifySalesPin = async (pin: string) => {
+    const response = await verifySalesPin({ pin });
+    if (checkRequestSucceeded(response?.statusCode)) return true;
+    showError(response?.message || "Incorrect PIN");
+    return false;
   };
 
   return (
@@ -173,7 +180,7 @@ const PosDashboard = () => {
 
       <PinPad
         show={pinOpen}
-        correctPin={SALES_PIN}
+        onVerify={handleVerifySalesPin}
         title="View today's sales"
         onSuccess={handleSalesPinSuccess}
         onCancel={closePinOverlay}

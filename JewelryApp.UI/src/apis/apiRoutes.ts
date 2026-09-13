@@ -98,6 +98,11 @@ export const apiRoutes = {
     sendToMelt: "UsedGold/SendToMelt",
     returnToStock: "UsedGold/ReturnToStock",
   },
+  securitySettings: {
+    getSalesPin: "SecuritySettings/GetSalesPin",
+    updateSalesPin: "SecuritySettings/UpdateSalesPin",
+    verifySalesPin: "SecuritySettings/VerifySalesPin",
+  },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",
     claimNextPrintJob: "PrintJobs/ClaimNextPrintJob",

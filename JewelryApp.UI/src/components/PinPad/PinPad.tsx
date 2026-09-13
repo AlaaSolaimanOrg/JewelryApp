@@ -6,7 +6,10 @@ const PIN_PAD_DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 interface PinPadProps {
   show: boolean;
-  correctPin: string;
+  // Local comparison — the pin is known client-side (e.g. a value already fetched for an authorized admin).
+  correctPin?: string;
+  // Server-side verification — the pin is never shipped to the client; resolve true/false based on the API result.
+  onVerify?: (pin: string) => Promise<boolean>;
   title?: string;
   subtitle?: string;
   pinLength?: number;
@@ -17,6 +20,7 @@ interface PinPadProps {
 const PinPad = ({
   show,
   correctPin,
+  onVerify,
   title = "Enter PIN",
   subtitle = "Enter 4-digit PIN",
   pinLength = 4,
@@ -26,11 +30,13 @@ const PinPad = ({
   const [entry, setEntry] = useState("");
   const [error, setError] = useState("");
   const [wrong, setWrong] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   const reset = () => {
     setEntry("");
     setError("");
     setWrong(false);
+    setVerifying(false);
   };
 
   const handleCancel = () => {
@@ -38,12 +44,15 @@ const PinPad = ({
     onCancel();
   };
 
-  const checkPin = (value: string) => {
-    if (value === correctPin) {
+  const checkPin = async (value: string) => {
+    const isCorrect = onVerify ? await onVerify(value) : value === correctPin;
+
+    if (isCorrect) {
       reset();
       onSuccess();
     } else {
       setWrong(true);
+      setVerifying(false);
       setError("Wrong PIN");
       setTimeout(() => {
         setEntry("");
@@ -53,14 +62,18 @@ const PinPad = ({
   };
 
   const handleKey = (digit: string) => {
-    if (entry.length >= pinLength) return;
+    if (entry.length >= pinLength || verifying) return;
     const next = entry + digit;
     setEntry(next);
     setError("");
-    if (next.length === pinLength) setTimeout(() => checkPin(next), 200);
+    if (next.length === pinLength) {
+      setVerifying(true);
+      setTimeout(() => checkPin(next), 200);
+    }
   };
 
   const handleDelete = () => {
+    if (verifying) return;
     setEntry((prev) => prev.slice(0, -1));
     setError("");
   };

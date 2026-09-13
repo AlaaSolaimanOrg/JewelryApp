@@ -170,6 +170,14 @@
         public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";
         public const string Error_UsedGold_StockReturn_InvalidWeight = "Weight must be greater than 0.";
         public const string Error_UsedGold_StockReturn_InsufficientStock = "Weight exceeds what's currently on hand for this karat.";
+
+        // --------------------------------------------------
+        // SECURITY / PIN SETTINGS MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_Security_Pin_Updated = "Sales PIN updated successfully.";
+        public const string Error_Security_Pin_Invalid = "PIN must be exactly 4 digits.";
+        public const string Success_Security_Pin_Verified = "PIN verified.";
+        public const string Error_Security_Pin_Incorrect = "Incorrect PIN.";
     }
 
 

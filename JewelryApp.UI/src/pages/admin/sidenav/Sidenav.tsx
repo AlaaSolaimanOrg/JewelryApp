@@ -2,6 +2,7 @@ import { AiFillHome } from "react-icons/ai";
 import {
   FaBox,
   FaChartLine,
+  FaCog,
   FaTag,
   FaUser,
   FaUsers,
@@ -105,6 +106,11 @@ const SideNav = () => {
       label: "Return Management",
       icon: <FaUndo className="icon" />,
       path: "/admin/returnManagement",
+    },
+    {
+      label: "Settings",
+      icon: <FaCog className="icon" />,
+      path: "/admin/settings",
     },
   ];
 

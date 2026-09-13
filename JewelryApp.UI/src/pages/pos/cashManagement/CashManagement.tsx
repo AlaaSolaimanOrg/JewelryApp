@@ -22,6 +22,7 @@ import {
   transferIncome,
   moveMoney,
 } from "../../../apis/cashManagement.api/cashManagement.api";
+import { verifySalesPin } from "../../../apis/securitySettings.api/securitySettings.api";
 import TransactionLogs from "./TransactionLogs/TransactionLogs";
 import ExpenseModal from "./modals/ExpenseModal/ExpenseModal";
 import MoveMoneyModal, {
@@ -35,8 +36,6 @@ import {
   formatCurrencyShort,
 } from "./CashManagement.utils";
 import "./cashManagement.scss";
-
-const OWNER_PIN = "1234";
 
 interface CashBalances {
   storeBalance: number;
@@ -121,6 +120,13 @@ const CashManagement = () => {
   const handlePinCancel = () => {
     setPinOpen(false);
     setPendingExpense(null);
+  };
+
+  const handleVerifyOwnerPin = async (pin: string) => {
+    const response = await verifySalesPin({ pin });
+    if (checkRequestSucceeded(response?.statusCode)) return true;
+    showError(response?.message || "Incorrect PIN");
+    return false;
   };
 
   const handleMoveSubmit = async (
@@ -326,7 +332,7 @@ const CashManagement = () => {
 
       <PinPad
         show={pinOpen}
-        correctPin={OWNER_PIN}
+        onVerify={handleVerifyOwnerPin}
         title="Owner authorization"
         subtitle="Enter 4-digit PIN to approve withdrawal"
         onSuccess={handlePinSuccess}
