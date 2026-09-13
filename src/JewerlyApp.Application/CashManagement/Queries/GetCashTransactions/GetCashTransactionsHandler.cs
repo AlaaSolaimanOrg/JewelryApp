@@ -7,6 +7,7 @@ using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
         {
             IQueryable<CashTransaction> query = _context.CashTransactions
                 .Include(t => t.Sale)
+                .Include(t => t.UsedGoldPurchase)
                 .Include(t => t.CreatedByUser)
                 .AsNoTracking();
 
@@ -80,15 +82,46 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
             {
                 var s = request.SearchBy.ToLower();
 
+                var matchingTypes = TypeLabels
+                    .Where(kv => kv.Value.Contains(s))
+                    .Select(kv => kv.Key)
+                    .ToList();
+
+                var matchingBoxes = BoxLabels
+                    .Where(kv => kv.Value.Contains(s))
+                    .Select(kv => kv.Key)
+                    .ToList();
+
                 query = query.Where(t =>
                     (t.Category != null && t.Category.ToLower().Contains(s)) ||
                     (t.CustomerName != null && t.CustomerName.ToLower().Contains(s)) ||
                     (t.Destination != null && t.Destination.ToLower().Contains(s)) ||
                     (t.Notes != null && t.Notes.ToLower().Contains(s)) ||
-                    (t.Sale != null && t.Sale.SerialNumber.ToLower().Contains(s)));
+                    (t.Sale != null && t.Sale.SerialNumber.ToLower().Contains(s)) ||
+                    (t.UsedGoldPurchase != null && t.UsedGoldPurchase.SerialNumber.ToLower().Contains(s)) ||
+                    (t.CreatedByUser != null && t.CreatedByUser.UserName.ToLower().Contains(s)) ||
+                    matchingTypes.Contains(t.Type) ||
+                    matchingBoxes.Contains(t.BoxType));
             }
 
             return query;
         }
+
+        private static readonly Dictionary<CashTransactionType, string> TypeLabels = new()
+        {
+            [CashTransactionType.Expense] = "expense",
+            [CashTransactionType.ManualCashIn] = "manual cash in",
+            [CashTransactionType.TransferIncome] = "transfer income",
+            [CashTransactionType.MoveMoneyOut] = "move money out",
+            [CashTransactionType.MoveMoneyIn] = "move money in",
+            [CashTransactionType.SaleCashIn] = "sale cash in",
+            [CashTransactionType.UsedGoldPurchaseOut] = "used gold purchase",
+        };
+
+        private static readonly Dictionary<CashBoxType, string> BoxLabels = new()
+        {
+            [CashBoxType.Store] = "store",
+            [CashBoxType.Transfers] = "transfers",
+        };
     }
 }

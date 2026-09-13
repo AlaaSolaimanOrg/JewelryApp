@@ -26,6 +26,21 @@
     gap: 6px;
     align-items: center;
 
+    .log-box-filter {
+      font-family: var(--pos-font);
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: var(--pos-radius-sm);
+      border: 1px solid var(--pos-border-strong);
+      background: var(--pos-bg-raised);
+      color: var(--pos-text);
+
+      &:focus {
+        outline: none;
+        border-color: var(--pos-gold);
+      }
+    }
+
     .log-search-wrap {
       position: relative;
 
@@ -79,22 +94,23 @@
     letter-spacing: 0.5px;
     color: var(--pos-text-subtle);
     font-weight: 500;
+
+    .log-col-sortable {
+      cursor: pointer;
+      user-select: none;
+
+      &:hover {
+        color: var(--pos-text-muted);
+      }
+
+      .log-sort-arrow {
+        font-size: 8px;
+        margin-left: 2px;
+      }
+    }
   }
 
   .log-body {
-    max-height: 420px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 3px;
-    }
-
     .log-row {
       &:last-child {
         border-bottom: none;
