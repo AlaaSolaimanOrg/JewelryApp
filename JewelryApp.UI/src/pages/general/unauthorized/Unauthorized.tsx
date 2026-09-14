@@ -4,18 +4,15 @@ import "./unauthorized.scss";
 
 const Unauthorized = () => {
   return (
-    <div id="unauthorized">
-      <div className="unauthorized-container">
-        <div
-          className="logo text-decoration-none"
-          style={{ marginBottom: "1.5rem" }}
-        >
-          <img src={logo} alt="Logo" width={36} height={32} />
+    <div className="pos-app unauthorized-page">
+      <div className="unauthorized-card">
+        <div className="unauthorized-brand">
+          <img src={logo} alt="Logo" width={22} height={20} />
           <h1>Adi Jewelry POS</h1>
         </div>
         <h2>Unauthorized Access</h2>
         <p>You do not have permission to view this page.</p>
-        <Link to="/login" className="btn-gold">
+        <Link to="/login" className="unauthorized-login-btn">
           Go to Login
         </Link>
       </div>
