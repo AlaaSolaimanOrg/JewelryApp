@@ -106,6 +106,11 @@ export const apiRoutes = {
   },
   dashboard: {
     getPosDashboardStats: "Dashboard/GetPosDashboardStats",
+    getAdminSalesSummary: "Dashboard/GetAdminSalesSummary",
+    getAdminCashGoldSnapshot: "Dashboard/GetAdminCashGoldSnapshot",
+    getAdminRepairsStats: "Dashboard/GetAdminRepairsStats",
+    getAdminInventorySnapshot: "Dashboard/GetAdminInventorySnapshot",
+    getAdminAttentionItems: "Dashboard/GetAdminAttentionItems",
   },
   printJobs: {
     createReceiptPrintJob: "PrintJobs/CreateReceiptPrintJob",

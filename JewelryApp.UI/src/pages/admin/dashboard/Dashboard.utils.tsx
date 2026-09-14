@@ -1,4 +1,10 @@
-import type { AttentionColor, DashboardData } from "./Dashboard.type";
+import type {
+  AttentionColor,
+  CashGoldSnapshot,
+  InventorySnapshot,
+  RepairsStats,
+  SalesSummary,
+} from "./Dashboard.type";
 
 export const fmtCurrency = (value: number): string =>
   `$${Math.abs(value).toLocaleString("en-US", {
@@ -23,123 +29,45 @@ export const ATTENTION_COLORS: Record<
   blue: { dot: "var(--admin-blue)", bg: "rgba(91, 163, 230, 0.12)" },
 };
 
-export const MOCK_DASHBOARD: DashboardData = {
-  today: {
-    salesRevenue: {
-      amount: 68425.5,
-      transactions: 31,
-      changePercentage: 12,
-      isIncrease: true,
-    },
-    repairsCollected: {
-      amount: 385,
-      payments: 9,
-      repairsTakenIn: 4,
-    },
-    refundsPaidOut: {
-      amount: 3205.3,
-      returns: 2,
-      toStock: 1,
-      toMelt: 1,
-    },
-    usedGoldBought: {
-      amount: 4860,
-      weight: 27.4,
-      purchases: 3,
-    },
-  },
-  now: {
-    storeCash: {
-      amount: 21447.2,
-      cashIn: 5830,
-      cashOut: 8065,
-    },
-    transfersBox: {
-      amount: 6700,
-      todayIn: 1500,
-      pending: 1,
-    },
-    usedGoldOnHand: {
-      weight: 239.9,
-      avgKarat: 19.7,
-      investedValue: 39468,
-    },
-    stockValue: {
-      amount: 3819557,
-      items: 4837,
-      weight: 18939,
-    },
-  },
-  salesTrend: [
-    { label: "May 29", value: 42180 },
-    { label: "30", value: 55320 },
-    { label: "31", value: 38940 },
-    { label: "Jun 1", value: 61200 },
-    { label: "2", value: 47850 },
-    { label: "3", value: 52640 },
-    { label: "4", value: 71300 },
-    { label: "5", value: 44980 },
-    { label: "6", value: 58210 },
-    { label: "7", value: 49370 },
-    { label: "8", value: 63850 },
-    { label: "9", value: 39420 },
-    { label: "10", value: 57960 },
-    { label: "Today", value: 68425 },
-  ],
+export const EMPTY_SALES_SUMMARY: SalesSummary = {
+  salesRevenue: { amount: 0, transactions: 0, changePercentage: 0, isIncrease: true },
+  salesTrend: [],
   payments: {
-    total: 68810,
-    cash: { amount: 46791, percentage: 68 },
-    card: { amount: 22019, percentage: 32 },
-    itemsSold: 38,
-    itemsSoldWeight: 724.6,
-    discounts: 1240,
-    discountedSalesCount: 6,
-    avgSale: 2207,
-    customers: 1394,
-    customersAddedToday: 7,
+    total: 0,
+    cash: { amount: 0, percentage: 0 },
+    card: { amount: 0, percentage: 0 },
+    itemsSold: 0,
+    itemsSoldWeight: 0,
+    discounts: 0,
+    discountedSalesCount: 0,
+    avgSale: 0,
+    customers: 0,
+    customersAddedToday: 0,
   },
+  goldSoldToday: [],
+  topCategory: { name: "—", itemsSold: 0 },
+};
+
+export const EMPTY_CASH_GOLD_SNAPSHOT: CashGoldSnapshot = {
+  storeCash: { amount: 0, cashIn: 0, cashOut: 0 },
+  transfersBox: { amount: 0, todayIn: 0 },
+  usedGoldOnHand: { weight: 0, avgKarat: 0, investedValue: 0 },
+  usedGoldBought: { amount: 0, weight: 0, purchases: 0 },
+};
+
+export const EMPTY_REPAIRS_STATS: RepairsStats = {
+  repairsCollected: { amount: 0, payments: 0, repairsTakenIn: 0 },
   repairs: {
-    inProgress: 6,
-    awaitingCall: 2,
-    dueToday: 3,
-    overdue: 2,
-    unpaidBalance: 215,
-    unpaidCount: 8,
+    inProgress: 0,
+    awaitingCall: 0,
+    dueToday: 0,
+    overdue: 0,
+    unpaidBalance: 0,
+    unpaidCount: 0,
   },
-  goldSoldToday: [
-    { karat: 21, weight: 412.3, percentage: 78 },
-    { karat: 18, weight: 253.8, percentage: 48 },
-    { karat: 22, weight: 41.2, percentage: 8 },
-    { karat: 24, weight: 17.3, percentage: 4 },
-  ],
-  topCategory: { name: "Bracelets", itemsSold: 11 },
-  attention: [
-    {
-      color: "red",
-      text: (
-        <>
-          <b>2 repairs overdue</b> — oldest 5 days (Slot 4)
-        </>
-      ),
-      tag: "Repairs",
-    },
-    {
-      color: "amber",
-      text: (
-        <>
-          <b>2 repairs done</b>, customer not called yet
-        </>
-      ),
-      tag: "Call",
-    },
-    {
-      color: "blue",
-      text: (
-        <>
-          <b>4 returned items</b> need tags printed
-        </>
-      ),
-      tag: "Tags",
-    },
-  ],
+};
+
+export const EMPTY_INVENTORY_SNAPSHOT: InventorySnapshot = {
+  stockValue: { amount: 0, items: 0, weight: 0 },
+  refundsPaidOut: { amount: 0, returns: 0, toStock: 0, toMelt: 0 },
 };

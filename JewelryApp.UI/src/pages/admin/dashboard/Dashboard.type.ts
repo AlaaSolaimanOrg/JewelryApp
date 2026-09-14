@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export interface TrendPoint {
   label: string;
   value: number;
@@ -15,56 +13,16 @@ export type AttentionColor = "red" | "amber" | "blue";
 
 export interface AttentionItem {
   color: AttentionColor;
-  text: ReactNode;
+  text: string;
   tag: string;
 }
 
-export interface DashboardData {
-  today: {
-    salesRevenue: {
-      amount: number;
-      transactions: number;
-      changePercentage: number;
-      isIncrease: boolean;
-    };
-    repairsCollected: {
-      amount: number;
-      payments: number;
-      repairsTakenIn: number;
-    };
-    refundsPaidOut: {
-      amount: number;
-      returns: number;
-      toStock: number;
-      toMelt: number;
-    };
-    usedGoldBought: {
-      amount: number;
-      weight: number;
-      purchases: number;
-    };
-  };
-  now: {
-    storeCash: {
-      amount: number;
-      cashIn: number;
-      cashOut: number;
-    };
-    transfersBox: {
-      amount: number;
-      todayIn: number;
-      pending: number;
-    };
-    usedGoldOnHand: {
-      weight: number;
-      avgKarat: number;
-      investedValue: number;
-    };
-    stockValue: {
-      amount: number;
-      items: number;
-      weight: number;
-    };
+export interface SalesSummary {
+  salesRevenue: {
+    amount: number;
+    transactions: number;
+    changePercentage: number;
+    isIncrease: boolean;
   };
   salesTrend: TrendPoint[];
   payments: {
@@ -79,6 +37,38 @@ export interface DashboardData {
     customers: number;
     customersAddedToday: number;
   };
+  goldSoldToday: GoldByKarat[];
+  topCategory: { name: string; itemsSold: number };
+}
+
+export interface CashGoldSnapshot {
+  storeCash: {
+    amount: number;
+    cashIn: number;
+    cashOut: number;
+  };
+  transfersBox: {
+    amount: number;
+    todayIn: number;
+  };
+  usedGoldOnHand: {
+    weight: number;
+    avgKarat: number;
+    investedValue: number;
+  };
+  usedGoldBought: {
+    amount: number;
+    weight: number;
+    purchases: number;
+  };
+}
+
+export interface RepairsStats {
+  repairsCollected: {
+    amount: number;
+    payments: number;
+    repairsTakenIn: number;
+  };
   repairs: {
     inProgress: number;
     awaitingCall: number;
@@ -87,7 +77,18 @@ export interface DashboardData {
     unpaidBalance: number;
     unpaidCount: number;
   };
-  goldSoldToday: GoldByKarat[];
-  topCategory: { name: string; itemsSold: number };
-  attention: AttentionItem[];
+}
+
+export interface InventorySnapshot {
+  stockValue: {
+    amount: number;
+    items: number;
+    weight: number;
+  };
+  refundsPaidOut: {
+    amount: number;
+    returns: number;
+    toStock: number;
+    toMelt: number;
+  };
 }

@@ -4,20 +4,65 @@ import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatC
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
 import {
+  getAdminAttentionItems,
+  getAdminCashGoldSnapshot,
+  getAdminInventorySnapshot,
+  getAdminRepairsStats,
+  getAdminSalesSummary,
+} from "../../../apis/dashboard.api/dashboard.api";
+import useLocalApi from "../../../hooks/useLocalApi";
+import type {
+  AttentionItem,
+  CashGoldSnapshot,
+  InventorySnapshot,
+  RepairsStats,
+  SalesSummary,
+} from "./Dashboard.type";
+import {
   ATTENTION_COLORS,
+  EMPTY_CASH_GOLD_SNAPSHOT,
+  EMPTY_INVENTORY_SNAPSHOT,
+  EMPTY_REPAIRS_STATS,
+  EMPTY_SALES_SUMMARY,
   fmtCurrency,
   fmtCurrencyRounded,
   fmtNumber,
   fmtWeight,
-  MOCK_DASHBOARD,
 } from "./Dashboard.utils";
 import "./dashboard.scss";
 
 const Dashboard = () => {
-  const data = MOCK_DASHBOARD;
-  const { today, now, salesTrend, payments, repairs, goldSoldToday, topCategory, attention } = data;
+  const { data: sales } = useLocalApi({
+    apiToCall: () => getAdminSalesSummary(),
+    dataInitalValue: EMPTY_SALES_SUMMARY,
+  }) as { data: SalesSummary };
 
-  const maxTrend = Math.max(...salesTrend.map((d) => d.value));
+  const { data: cashGold } = useLocalApi({
+    apiToCall: () => getAdminCashGoldSnapshot(),
+    dataInitalValue: EMPTY_CASH_GOLD_SNAPSHOT,
+  }) as { data: CashGoldSnapshot };
+
+  const { data: repairsStats } = useLocalApi({
+    apiToCall: () => getAdminRepairsStats(),
+    dataInitalValue: EMPTY_REPAIRS_STATS,
+  }) as { data: RepairsStats };
+
+  const { data: inventory } = useLocalApi({
+    apiToCall: () => getAdminInventorySnapshot(),
+    dataInitalValue: EMPTY_INVENTORY_SNAPSHOT,
+  }) as { data: InventorySnapshot };
+
+  const { data: attention } = useLocalApi({
+    apiToCall: () => getAdminAttentionItems(),
+    dataInitalValue: [],
+  }) as { data: AttentionItem[] };
+
+  const { salesRevenue, salesTrend, payments, goldSoldToday, topCategory } = sales;
+  const { storeCash, transfersBox, usedGoldOnHand, usedGoldBought } = cashGold;
+  const { repairsCollected, repairs } = repairsStats;
+  const { stockValue, refundsPaidOut } = inventory;
+
+  const maxTrend = Math.max(1, ...salesTrend.map((d) => d.value));
 
   return (
     <div id="dashboard" className="page">
@@ -25,36 +70,36 @@ const Dashboard = () => {
       <div className="stats4">
         <ReportStatCard
           label="Sales revenue"
-          value={fmtCurrency(today.salesRevenue.amount)}
+          value={fmtCurrency(salesRevenue.amount)}
           valueColor="var(--admin-green)"
           accentColor="var(--admin-green)"
           sub={
             <>
-              {today.salesRevenue.transactions} transactions ·{" "}
+              {salesRevenue.transactions} transactions ·{" "}
               <span style={{ color: "var(--admin-green)" }}>
-                ▲ {today.salesRevenue.changePercentage}% vs yesterday
+                {salesRevenue.isIncrease ? "▲" : "▼"} {Math.abs(salesRevenue.changePercentage)}% vs yesterday
               </span>
             </>
           }
         />
         <ReportStatCard
           label="Repairs collected"
-          value={fmtCurrency(today.repairsCollected.amount)}
+          value={fmtCurrency(repairsCollected.amount)}
           accentColor="var(--admin-amber)"
-          sub={`${today.repairsCollected.payments} payments · ${today.repairsCollected.repairsTakenIn} repairs taken in today`}
+          sub={`${repairsCollected.payments} payments · ${repairsCollected.repairsTakenIn} repairs taken in today`}
         />
         <ReportStatCard
           label="Refunds paid out"
-          value={`−${fmtCurrency(today.refundsPaidOut.amount)}`}
+          value={`−${fmtCurrency(refundsPaidOut.amount)}`}
           valueColor="var(--admin-red)"
           accentColor="var(--admin-red)"
-          sub={`${today.refundsPaidOut.returns} returns · ${today.refundsPaidOut.toStock} to stock, ${today.refundsPaidOut.toMelt} to melt`}
+          sub={`${refundsPaidOut.returns} returns · ${refundsPaidOut.toStock} to stock, ${refundsPaidOut.toMelt} to melt`}
         />
         <ReportStatCard
           label="Used gold bought"
-          value={fmtCurrency(today.usedGoldBought.amount)}
+          value={fmtCurrency(usedGoldBought.amount)}
           accentColor="var(--admin-gold)"
-          sub={`${fmtWeight(today.usedGoldBought.weight)} across ${today.usedGoldBought.purchases} purchases`}
+          sub={`${fmtWeight(usedGoldBought.weight)} across ${usedGoldBought.purchases} purchases`}
         />
       </div>
 
@@ -62,17 +107,17 @@ const Dashboard = () => {
       <div className="stats4">
         <ReportStatCard
           label="Store cash box"
-          value={fmtCurrency(now.storeCash.amount)}
+          value={fmtCurrency(storeCash.amount)}
           valueColor="var(--admin-blue)"
           accentColor="var(--admin-blue)"
           sub={
             <>
               <span style={{ color: "var(--admin-green)" }}>
-                +{fmtCurrencyRounded(now.storeCash.cashIn)} in
+                +{fmtCurrencyRounded(storeCash.cashIn)} in
               </span>{" "}
               ·{" "}
               <span style={{ color: "var(--admin-red)" }}>
-                −{fmtCurrencyRounded(now.storeCash.cashOut)} out
+                −{fmtCurrencyRounded(storeCash.cashOut)} out
               </span>{" "}
               today
             </>
@@ -80,22 +125,22 @@ const Dashboard = () => {
         />
         <ReportStatCard
           label="Transfers box"
-          value={fmtCurrency(now.transfersBox.amount)}
+          value={fmtCurrency(transfersBox.amount)}
           valueColor="var(--admin-blue)"
           accentColor="var(--admin-blue)"
-          sub={`+${fmtCurrencyRounded(now.transfersBox.todayIn)} today · ${now.transfersBox.pending} transfer pending`}
+          sub={`+${fmtCurrencyRounded(transfersBox.todayIn)} today`}
         />
         <ReportStatCard
           label="Used gold on hand"
-          value={fmtWeight(now.usedGoldOnHand.weight)}
+          value={fmtWeight(usedGoldOnHand.weight)}
           valueColor="var(--admin-gold)"
           accentColor="var(--admin-gold)"
-          sub={`Avg ${now.usedGoldOnHand.avgKarat.toFixed(1)}K · ${fmtCurrencyRounded(now.usedGoldOnHand.investedValue)} invested value`}
+          sub={`Avg ${usedGoldOnHand.avgKarat.toFixed(1)}K · ${fmtCurrencyRounded(usedGoldOnHand.investedValue)} invested value`}
         />
         <ReportStatCard
           label="Stock value"
-          value={fmtCurrencyRounded(now.stockValue.amount)}
-          sub={`${fmtNumber(now.stockValue.items)} items · ${fmtNumber(now.stockValue.weight)}g total`}
+          value={fmtCurrencyRounded(stockValue.amount)}
+          sub={`${fmtNumber(stockValue.items)} items · ${fmtNumber(stockValue.weight)}g total`}
         />
       </div>
 
@@ -207,6 +252,7 @@ const Dashboard = () => {
               <FaExclamationTriangle className="icon" /> Needs attention
             </span>
           </div>
+          {attention.length === 0 && <div className="panel-footnote">Nothing needs attention right now.</div>}
           {attention.map((a, i) => {
             const colors = ATTENTION_COLORS[a.color];
             return (
