@@ -9,6 +9,7 @@ import {
 } from "../../../apis/repairs.api";
 import { PaymentStatus, RepairStatus } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
 import CompletedCard from "./CompletedCard/CompletedCard";
 import DetailModal from "./DetailModal/DetailModal";
 import EditModal from "./EditModal/EditModal";
@@ -34,6 +35,7 @@ const PickUp = () => {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [payId, setPayId] = useState<string | null>(null);
+  const [invoiceId, setInvoiceId] = useState<string | null>(null);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -377,7 +379,9 @@ const PickUp = () => {
       {view === "completed" && (
         <div className="pu-completed-section">
           {repairs.length ? (
-            repairs.map((r) => <CompletedCard key={r.id} repair={r} />)
+            repairs.map((r) => (
+              <CompletedCard key={r.id} repair={r} onViewInvoice={setInvoiceId} />
+            ))
           ) : (
             <div className="pu-empty-col pu-empty-completed">No completed repairs found</div>
           )}
@@ -401,6 +405,13 @@ const PickUp = () => {
         onClose={() => setPayId(null)}
         onConfirm={handleConfirmPayment}
       />
+      {invoiceId && (
+        <RepairInvoiceModal
+          repairId={invoiceId}
+          show={!!invoiceId}
+          onClose={() => setInvoiceId(null)}
+        />
+      )}
     </div>
   );
 };
