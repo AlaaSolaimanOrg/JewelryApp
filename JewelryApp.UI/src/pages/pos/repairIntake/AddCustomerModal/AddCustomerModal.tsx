@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createCustomer,
   getCustomers,
-} from "../../../../apis/customers.api/customers.api";
+} from "../../../../apis/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../../utils";
 import type { Customer } from "../../posSale/types";
 import "./addCustomerModal.scss";

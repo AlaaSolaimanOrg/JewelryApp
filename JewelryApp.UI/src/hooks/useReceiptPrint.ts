@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { flushSync } from "react-dom";
 import type { RefObject } from "react";
-import { createReceiptPrintJob } from "../apis/printJobs.api/printJobs.api";
+import { createReceiptPrintJob } from "../apis/printJobs.api";
 import { serializeReceiptHtml } from "../services/serializeReceiptHtml";
 
 export function useReceiptPrint(

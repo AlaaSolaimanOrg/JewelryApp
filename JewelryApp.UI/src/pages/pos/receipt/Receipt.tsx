@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { FaCheck, FaPrint, FaReceipt } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { getSaleById } from "../../../apis/sales.api/sales.api";
+import { getSaleById } from "../../../apis/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { useReceiptPrint } from "../../../hooks/useReceiptPrint";
 import "./receipt.scss";

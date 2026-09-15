@@ -1,6 +1,6 @@
-import type { KaratType, ProductType } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { KaratType, ProductType } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const getGlobalPricingSettings = async (payload: any) => {
   return requestApi(

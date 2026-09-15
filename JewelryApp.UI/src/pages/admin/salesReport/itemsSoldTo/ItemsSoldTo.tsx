@@ -1,4 +1,4 @@
-import { getSoldItems } from "../../../../apis/sales.api/sales.api";
+import { getSoldItems } from "../../../../apis/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
 import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../../components/tables/CustomTable/CustomTable";

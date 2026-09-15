@@ -1,6 +1,6 @@
-import type { KaratType, SortDirection } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { KaratType, SortDirection } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export interface SaleItemPayload {
   productId: string;

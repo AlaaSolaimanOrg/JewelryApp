@@ -3,12 +3,7 @@ export const apiRoutes = {
     login: "Auth/Login",
     refreshToken: "Auth/RefreshTokens",
   },
-  cart: {
-    addProductToCart: "Cart/AddProductToCart",
-    getCartProducts: "Cart/GetCartProducts",
-    deleteCart: "Cart/DeleteCart",
-    removeProductFromCart: "Cart/RemoveProductFromCart",
-  },
+
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",
@@ -80,6 +75,15 @@ export const apiRoutes = {
     getAnalyticsSummary: "Analytics/GetAnalyticsSummary",
     getPriceOverTime: "Analytics/GetPriceOverTime",
     getCustomerRetention: "Analytics/GetCustomerRetention",
+  },
+  inventoryReports: {
+    getInventoryAging: "Analytics/GetInventoryAging",
+    getInventoryStockSummary: "Analytics/GetInventoryStockSummary",
+    getStockByPurity: "Analytics/GetStockByPurity",
+    getStockByCategory: "Analytics/GetStockByCategory",
+    getInventoryMovement: "Analytics/GetInventoryMovement",
+    getMovementByPurity: "Analytics/GetMovementByPurity",
+    getStaplesSold: "Analytics/GetStaplesSold",
   },
   logs: {
     getLogs: "Logs/GetLogs",

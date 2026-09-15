@@ -1,6 +1,6 @@
 // axiosConfig.js
 import axios from "axios";
-import { callRefreshToken } from "../apis/login.api/login.api";
+import { callRefreshToken } from "../apis/login.api";
 import { checkRequestSucceeded, showError } from "../utils";
 
 export const axiosInstance = axios.create({

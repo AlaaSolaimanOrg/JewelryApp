@@ -1,4 +1,4 @@
-import { searchSales } from "../../../../../apis/sales.api/sales.api";
+import { searchSales } from "../../../../../apis/sales.api";
 import { SortDirection, type ItemCondition, type ReturnOption, type ReturnReason } from "../../../../../types/enums";
 import type {
   ExchangeApplyData,

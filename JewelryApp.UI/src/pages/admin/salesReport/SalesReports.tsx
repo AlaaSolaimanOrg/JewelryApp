@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaChartBar, FaExpand } from "react-icons/fa";
-import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api/analytics.api";
-import { getSalesInsights, getTopCustomers } from "../../../apis/sales.api/sales.api";
+import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api";
+import { getSalesInsights, getTopCustomers } from "../../../apis/sales.api";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";

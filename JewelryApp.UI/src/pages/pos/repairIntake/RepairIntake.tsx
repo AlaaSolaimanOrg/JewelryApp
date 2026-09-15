@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { FaArrowLeft, FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { createRepair, getRepairs } from "../../../apis/repairs.api/repairs.api";
+import { createRepair, getRepairs } from "../../../apis/repairs.api";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { RepairPayMethod, RepairStatus } from "../../../types/enums";

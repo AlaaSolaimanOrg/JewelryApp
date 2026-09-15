@@ -1,5 +1,5 @@
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export interface CreateReceiptPrintJobPayload {
   storeId: string;

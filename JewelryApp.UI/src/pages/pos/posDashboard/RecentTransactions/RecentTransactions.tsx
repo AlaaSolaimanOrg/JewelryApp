@@ -1,7 +1,7 @@
 import dateFormat from "dateformat";
 import { Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getSalesList } from "../../../../apis/sales.api/sales.api";
+import { getSalesList } from "../../../../apis/sales.api";
 import CustomLoader from "../../../../components/loaders/CustomLoader/CustomLoader";
 import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";

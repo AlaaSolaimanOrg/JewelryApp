@@ -1,6 +1,6 @@
-import type { ReportType } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { ReportType } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export interface AnalyticsFilterPayload {
   dateFrom?: string;

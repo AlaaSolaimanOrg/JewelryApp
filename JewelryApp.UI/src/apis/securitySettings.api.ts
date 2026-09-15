@@ -1,5 +1,5 @@
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const getSalesPin = async () => {
   return requestApi("GET", apiRoutes.securitySettings.getSalesPin);

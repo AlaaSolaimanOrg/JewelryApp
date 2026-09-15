@@ -7,7 +7,7 @@ import {
   FaSearch,
   FaTrash,
 } from "react-icons/fa";
-import { deleteLogs, getLogs } from "../../../apis/logs.api/logs.api";
+import { deleteLogs, getLogs } from "../../../apis/logs.api";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import LogDataModal from "../../../components/modals/LogDataModal/LogDataModal";
 import Paginator from "../../../components/Paginator/Paginator";

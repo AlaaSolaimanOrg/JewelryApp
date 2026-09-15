@@ -5,7 +5,7 @@ import {
   createProduct,
   generateSKU,
   getProductsBySkus,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,

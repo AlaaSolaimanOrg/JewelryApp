@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaSun, FaMoon } from "react-icons/fa";
-import { login } from "../../../apis/login.api/login.api";
+import { login } from "../../../apis/login.api";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import { useAuth } from "../../../context/AuthContext";
 import { useTheme } from "../../../context/ThemeContext";

@@ -16,7 +16,7 @@ import {
   getProducts,
   meltProduct,
   upsertProductSpecialPricing,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import { useAuth } from "../../../context/AuthContext";
 
 import MeltModal from "../../../components/modals/MeltModal/MeltModal";

@@ -2,7 +2,7 @@ import type {
   KaratType,
   ProductCategory,
   ProductType,
-} from "../../types/enums";
+} from "../types/enums";
 
 export interface CreateProductPayload {
   name: string;

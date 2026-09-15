@@ -6,7 +6,7 @@ import {
   updateRepair,
   updateRepairPaymentStatus,
   updateRepairStatus,
-} from "../../../apis/repairs.api/repairs.api";
+} from "../../../apis/repairs.api";
 import { PaymentStatus, RepairStatus } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import CompletedCard from "./CompletedCard/CompletedCard";

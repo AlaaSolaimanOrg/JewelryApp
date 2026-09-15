@@ -1,6 +1,6 @@
-import type { KaratType, ProductCategory } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { KaratType, ProductCategory } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const generateSKU = async (payload: {
   karatType: KaratType;

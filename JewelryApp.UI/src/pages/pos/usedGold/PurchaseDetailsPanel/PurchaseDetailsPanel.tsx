@@ -6,7 +6,7 @@ import {
   FaSearch,
   FaTimes,
 } from "react-icons/fa";
-import { getCustomers } from "../../../../apis/customers.api/customers.api";
+import { getCustomers } from "../../../../apis/customers.api";
 import type { GoldRow, PayMethod, Seller } from "../UsedGold.type";
 import { formatCurrency, formatPhone, getInitials } from "../UsedGold.utils";
 import "./purchaseDetailsPanel.scss";

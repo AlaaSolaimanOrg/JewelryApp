@@ -3,8 +3,8 @@ import { FaArrowLeft, FaUndoAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
-import { createReturn } from "../../../apis/returns.api/returns.api";
-import { getSaleById } from "../../../apis/sales.api/sales.api";
+import { createReturn } from "../../../apis/returns.api";
+import { getSaleById } from "../../../apis/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 
 import {

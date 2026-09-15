@@ -1,6 +1,6 @@
-import type { PaymentStatus, RepairStatus } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { PaymentStatus, RepairStatus } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const createRepair = async (payload: {
   customerId: string;

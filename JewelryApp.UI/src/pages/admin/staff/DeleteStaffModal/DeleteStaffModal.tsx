@@ -1,4 +1,4 @@
-import { softDeleteUser } from "../../../../apis/users.api/users.api";
+import { softDeleteUser } from "../../../../apis/users.api";
 import {
   checkRequestSucceeded,
   showError,

@@ -9,7 +9,7 @@ import {
   editProduct,
   generateSKU,
   getProductById,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";

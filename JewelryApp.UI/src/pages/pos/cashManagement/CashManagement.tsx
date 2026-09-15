@@ -21,8 +21,8 @@ import {
   manualCashIn,
   transferIncome,
   moveMoney,
-} from "../../../apis/cashManagement.api/cashManagement.api";
-import { verifySalesPin } from "../../../apis/securitySettings.api/securitySettings.api";
+} from "../../../apis/cashManagement.api";
+import { verifySalesPin } from "../../../apis/securitySettings.api";
 import TransactionLogs from "./TransactionLogs/TransactionLogs";
 import ExpenseModal from "./modals/ExpenseModal/ExpenseModal";
 import MoveMoneyModal, {

@@ -1,6 +1,6 @@
-import type { CashBoxType, SortDirection } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { CashBoxType, SortDirection } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const getCashBalances = async () => {
   return requestApi("GET", apiRoutes.cashManagement.getCashBalances);

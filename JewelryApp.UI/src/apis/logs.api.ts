@@ -1,6 +1,6 @@
-import type { LogLevel, SortDirection } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { LogLevel, SortDirection } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const getLogs = async (payload: {
   pageNumber: number;

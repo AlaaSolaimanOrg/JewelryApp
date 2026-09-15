@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { FaPrint, FaReceipt } from "react-icons/fa";
-import { getSaleById } from "../../../apis/sales.api/sales.api";
+import { getSaleById } from "../../../apis/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { useReceiptPrint } from "../../../hooks/useReceiptPrint";
 import ReceiptContent from "../../ReceiptContent/ReceiptContent";

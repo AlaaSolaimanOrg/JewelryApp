@@ -1,5 +1,5 @@
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const getAllUsers = async (payload) => {
   return requestApi("GET", apiRoutes.users.getAllUsers, payload);

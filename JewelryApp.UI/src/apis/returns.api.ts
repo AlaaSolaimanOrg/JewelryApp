@@ -5,9 +5,9 @@ import type {
   ReturnOption,
   ReturnReason,
   SortDirection,
-} from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+} from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const createReturn = async (payload: {
   saleId: string;

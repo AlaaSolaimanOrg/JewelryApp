@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaPlus, FaSearch, FaUsers } from "react-icons/fa";
-import { getCustomers } from "../../../apis/customers.api/customers.api";
+import { getCustomers } from "../../../apis/customers.api";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import Paginator from "../../../components/Paginator/Paginator";
 

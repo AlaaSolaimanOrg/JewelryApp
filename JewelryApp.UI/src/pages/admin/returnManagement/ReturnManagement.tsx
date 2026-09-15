@@ -17,7 +17,7 @@ import {
   getReturnItems,
   getReturnItemsCounts,
   markReturnItemsPrinted,
-} from "../../../apis/returns.api/returns.api";
+} from "../../../apis/returns.api";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomLoader from "../../../components/loaders/CustomLoader/CustomLoader";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";

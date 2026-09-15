@@ -1,6 +1,6 @@
-import type { SortDirection, UsedGoldPayMethod } from "../../types/enums";
-import { requestApi } from "../../utils";
-import { apiRoutes } from "../apiRoutes";
+import type { SortDirection, UsedGoldPayMethod } from "../types/enums";
+import { requestApi } from "../utils";
+import { apiRoutes } from "./apiRoutes";
 
 export const createUsedGoldPurchase = async (payload: {
   customerId: string;

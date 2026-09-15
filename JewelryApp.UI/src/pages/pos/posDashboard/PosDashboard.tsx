@@ -9,10 +9,10 @@ import {
 } from "react-icons/fa";
 import { GiCardPickup, GiGoldBar } from "react-icons/gi";
 import { Row, Col } from "react-bootstrap";
-import { getRepairs } from "../../../apis/repairs.api/repairs.api";
-import { getPosDashboardStats } from "../../../apis/dashboard.api/dashboard.api";
-import { getTodaySalesSummary } from "../../../apis/sales.api/sales.api";
-import { verifySalesPin } from "../../../apis/securitySettings.api/securitySettings.api";
+import { getRepairs } from "../../../apis/repairs.api";
+import { getPosDashboardStats } from "../../../apis/dashboard.api";
+import { getTodaySalesSummary } from "../../../apis/sales.api";
+import { verifySalesPin } from "../../../apis/securitySettings.api";
 import PinPad from "../../../components/PinPad/PinPad";
 import ActionCard from "../../../components/cards/ActionCard/ActionCard";
 import StatCard from "../../../components/StatCard/StatCard";
