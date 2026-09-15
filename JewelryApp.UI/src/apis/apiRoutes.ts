@@ -44,6 +44,14 @@ export const apiRoutes = {
     updateCustomer: "Customer/UpdateCustomer",
     getCustomerPurhcaseHistory: "Customer/GetCustomerPurhcaseHistory",
   },
+  customersReports: {
+    getCustomerBaseStats: "Customer/GetCustomerBaseStats",
+    getCustomerTiers: "Customer/GetCustomerTiers",
+    getAtRiskCustomers: "Customer/GetAtRiskCustomers",
+    getCustomerActivityStats: "Customer/GetCustomerActivityStats",
+    getNewCustomersChart: "Customer/GetNewCustomersChart",
+    getTopCustomersReport: "Customer/GetTopCustomersReport",
+  },
   sales: {
     createSale: "Sales/CreateSale",
     getSaleById: "Sales/GetSaleById",

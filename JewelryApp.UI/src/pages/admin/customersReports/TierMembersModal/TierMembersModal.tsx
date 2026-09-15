@@ -1,17 +1,19 @@
 import { FaTimes } from "react-icons/fa";
-import { fmtCurrency } from "../CustomersReports.utils";
+import { TIER_STYLES, fmtCurrency } from "../CustomersReports.utils";
 import type { TierMembersModalProps } from "./TierMembersModal.type";
 import "./tierMembersModal.scss";
 
 const TierMembersModal = ({ show, tier, onClose }: TierMembersModalProps) => {
   if (!show || !tier) return null;
 
+  const style = TIER_STYLES[tier.name] ?? TIER_STYLES.REGULAR;
+
   return (
     <div className="tierMembersModal mo" onClick={onClose}>
       <div className="mo-box" onClick={(e) => e.stopPropagation()}>
         <div className="mo-head">
           <span className="mo-title">
-            <span className="mo-tier-badge" style={{ background: tier.bg, color: tier.color }}>
+            <span className="mo-tier-badge" style={{ background: style.bg, color: style.color }}>
               {tier.name}
             </span>
             {tier.minLabel} lifetime

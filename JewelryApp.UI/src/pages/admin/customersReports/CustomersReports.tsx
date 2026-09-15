@@ -1,5 +1,13 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaExclamationTriangle, FaUsers } from "react-icons/fa";
+import {
+  getAtRiskCustomers,
+  getCustomerActivityStats,
+  getCustomerBaseStats,
+  getCustomerTiers,
+  getNewCustomersChart,
+  getTopCustomersReport,
+} from "../../../apis/customersReports.api";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
 import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
@@ -8,17 +16,28 @@ import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
+import useLocalApi from "../../../hooks/useLocalApi";
 import TierMembersModal from "./TierMembersModal/TierMembersModal";
-import type { CustomerTier, DateRange, Period } from "./CustomersReports.type";
+import type {
+  AtRiskCustomer,
+  ChartDataPoint,
+  CustomerActivityStats,
+  CustomerBaseStats,
+  CustomerReportRow,
+  CustomerTier,
+  DateRange,
+  Period,
+} from "./CustomersReports.type";
 import {
-  AT_RISK,
-  BASE_STATS,
-  MOCK_PERIOD_DATA,
   PERIOD_LABELS,
-  TIERS,
-  buildCustomerRows,
-  computeCustomRange,
+  TIER_STYLES,
   fmtCurrency,
+  formatLastPurchase,
+  formatRangeLabel,
+  formatSince,
+  getChartGranularity,
+  getCustomRange,
+  getPeriodRange,
 } from "./CustomersReports.utils";
 import "./customersReports.scss";
 
@@ -43,21 +62,57 @@ const CustomersReports = () => {
     setPeriod("custom");
   };
 
-  const customRange = useMemo(
-    () => (appliedRange ? computeCustomRange(appliedRange) : null),
-    [appliedRange],
-  );
+  const activeRange: DateRange =
+    period === "custom" && appliedRange
+      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
+      : getPeriodRange(period as Exclude<Period, "custom">);
 
-  const periodData =
-    period === "custom" && customRange
-      ? customRange.data
-      : MOCK_PERIOD_DATA[period as Exclude<Period, "custom">];
   const periodLabel =
-    period === "custom" && customRange ? customRange.label : PERIOD_LABELS[period];
+    period === "custom" && appliedRange
+      ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
+      : PERIOD_LABELS[period];
 
-  const maxTierTotal = Math.max(...TIERS.map((t) => t.total));
+  const granularity = getChartGranularity(period, activeRange);
 
-  const riskRows: ReportListRow[] = AT_RISK.map((r) => ({
+  /* ── Customer base (not period-filtered) ─────────────────────── */
+
+  const { data: baseStats } = useLocalApi({
+    apiToCall: () => getCustomerBaseStats(),
+    dataInitalValue: {},
+  }) as { data: Partial<CustomerBaseStats> };
+
+  const { data: tiers } = useLocalApi({
+    apiToCall: () => getCustomerTiers(),
+  }) as { data: CustomerTier[] };
+
+  const { data: atRisk } = useLocalApi({
+    apiToCall: () => getAtRiskCustomers(),
+  }) as { data: AtRiskCustomer[] };
+
+  /* ── Activity (period-filtered) ──────────────────────────────── */
+
+  const { data: activity } = useLocalApi({
+    apiToCall: (data) => getCustomerActivityStats(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, appliedRange],
+  }) as { data: Partial<CustomerActivityStats> };
+
+  const { data: chartData } = useLocalApi({
+    apiToCall: (data) => getNewCustomersChart(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, granularity },
+    effectDependency: [period, appliedRange],
+  }) as { data: ChartDataPoint[] };
+
+  const { data: topCustomers } = useLocalApi({
+    apiToCall: (data) => getTopCustomersReport(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, search },
+    effectDependency: [period, appliedRange, search],
+  }) as { data: CustomerReportRow[] };
+
+  const maxTierTotal = Math.max(...tiers.map((t) => t.total), 1);
+
+  const riskRows: ReportListRow[] = atRisk.map((r) => ({
     key: r.name,
     primary: r.name,
     secondary: `${fmtCurrency(r.lifetime)} lifetime · ${r.purchases} purchases`,
@@ -66,11 +121,14 @@ const CustomersReports = () => {
     valueBg: r.daysSinceLastPurchase >= 120 ? "rgba(230, 91, 91, 0.12)" : "rgba(230, 162, 60, 0.12)",
   }));
 
-  const totalRev = periodData.newRevenue + periodData.returningRevenue;
-  const newPct = totalRev > 0 ? Math.round((periodData.newRevenue / totalRev) * 100) : 0;
+  const revenue = activity.revenue ?? 0;
+  const newRevenue = activity.newRevenue ?? 0;
+  const returningRevenue = activity.returningRevenue ?? 0;
+  const totalRev = newRevenue + returningRevenue;
+  const newPct = totalRev > 0 ? Math.round((newRevenue / totalRev) * 100) : 0;
   const returningPct = 100 - newPct;
 
-  const rows = buildCustomerRows(periodData.customers, search);
+  const rows = topCustomers;
 
   const headers: TableHeader[] = [
     { key: "name", label: "Customer" },
@@ -108,8 +166,8 @@ const CustomersReports = () => {
         {c.avgDiscount.toFixed(1)}%
       </span>
     ),
-    since: c.since,
-    lastPurchase: c.lastPurchase,
+    since: formatSince(c.since),
+    lastPurchase: formatLastPurchase(c.lastPurchase),
   }));
 
   return (
@@ -125,26 +183,26 @@ const CustomersReports = () => {
       <div className="stats">
         <ReportStatCard
           label="Total customers"
-          value={BASE_STATS.totalCustomers.toLocaleString()}
+          value={(baseStats.totalCustomers ?? 0).toLocaleString()}
           accentColor="var(--admin-blue)"
-          sub={`+${BASE_STATS.newThisYear} this year`}
+          sub={`+${baseStats.newThisYear ?? 0} this year`}
         />
         <ReportStatCard
           label="Repeat customers"
-          value={`${BASE_STATS.repeatRate}%`}
+          value={`${baseStats.repeatRate ?? 0}%`}
           valueColor="var(--admin-green)"
           accentColor="var(--admin-green)"
-          sub={`${BASE_STATS.repeatCount} bought more than once`}
+          sub={`${baseStats.repeatCount ?? 0} bought more than once`}
         />
         <ReportStatCard
           label="Avg lifetime value"
-          value={fmtCurrency(BASE_STATS.avgLifetimeValue)}
+          value={fmtCurrency(baseStats.avgLifetimeValue ?? 0)}
           accentColor="var(--admin-gold)"
           sub="per customer, all time"
         />
         <ReportStatCard
           label="Going quiet"
-          value={`${BASE_STATS.goingQuiet}`}
+          value={`${baseStats.goingQuiet ?? 0}`}
           valueColor="var(--admin-red)"
           accentColor="var(--admin-red)"
           sub="big spenders, 90+ days silent"
@@ -157,20 +215,20 @@ const CustomersReports = () => {
             <span className="panel-title">Customer tiers</span>
             <span className="panel-sub">by lifetime spend — tap a tier to see who's in it</span>
           </div>
-          {TIERS.map((t) => (
-            <TierBarRow
-              key={t.name}
-              badgeLabel={t.name}
-              badgeColor={t.color}
-              badgeBg={t.bg}
-              percent={Math.round((t.total / maxTierTotal) * 100)}
-              amountLabel={`${t.count} customers · $${(t.total / 1e6).toFixed(1)}M · ${t.minLabel}`}
-              onClick={() => setOpenTier(t)}
-            />
-          ))}
-          <div className="panel-footnote">
-            Top 134 customers (10%) generate <b style={{ color: "var(--admin-t2)" }}>50% of all revenue</b>
-          </div>
+          {tiers.map((t) => {
+            const style = TIER_STYLES[t.name] ?? TIER_STYLES.REGULAR;
+            return (
+              <TierBarRow
+                key={t.name}
+                badgeLabel={t.name}
+                badgeColor={style.color}
+                badgeBg={style.bg}
+                percent={Math.round((t.total / maxTierTotal) * 100)}
+                amountLabel={`${t.count} customers · $${(t.total / 1e6).toFixed(1)}M · ${t.minLabel}`}
+                onClick={() => setOpenTier(t)}
+              />
+            );
+          })}
         </div>
 
         <ReportListPanel
@@ -223,27 +281,27 @@ const CustomersReports = () => {
       <div className="stats">
         <ReportStatCard
           label="Active customers"
-          value={periodData.active.toLocaleString()}
+          value={(activity.active ?? 0).toLocaleString()}
           valueColor="var(--admin-blue)"
           accentColor="var(--admin-blue)"
           sub={`bought in ${periodLabel.toLowerCase()}`}
         />
         <ReportStatCard
           label="New customers"
-          value={periodData.newCustomers.toLocaleString()}
+          value={(activity.newCustomers ?? 0).toLocaleString()}
           valueColor="var(--admin-green)"
           accentColor="var(--admin-green)"
           sub="first purchase"
         />
         <ReportStatCard
           label="Avg spend per customer"
-          value={fmtCurrency(periodData.revenue / Math.max(1, periodData.active))}
+          value={fmtCurrency(revenue / Math.max(1, activity.active ?? 0))}
           accentColor="var(--admin-gold)"
           sub="in period"
         />
         <ReportStatCard
           label="Avg discount given"
-          value={`${periodData.avgDiscount.toFixed(1)}%`}
+          value={`${(activity.avgDiscount ?? 0).toFixed(1)}%`}
           valueColor="var(--admin-purple)"
           accentColor="var(--admin-purple)"
           sub="across all sales"
@@ -255,11 +313,15 @@ const CustomersReports = () => {
           <div className="panel-head">
             <span className="panel-title">New customers over time</span>
             <span className="panel-sub">
-              {periodData.newCustomers.toLocaleString()} new — {periodLabel.toLowerCase()}
+              {(activity.newCustomers ?? 0).toLocaleString()} new — {periodLabel.toLowerCase()}
             </span>
           </div>
           <div className="chart-container">
-            <RevenueBarChart data={periodData.chart} formatValue={(v) => `${v}`} />
+            {chartData.length > 0 ? (
+              <RevenueBarChart data={chartData} formatValue={(v) => `${v}`} />
+            ) : (
+              <div className="no-data">No data available</div>
+            )}
           </div>
         </div>
 
@@ -272,13 +334,13 @@ const CustomersReports = () => {
             <SplitBarRow
               label="Returning"
               percentage={returningPct}
-              amountLabel={fmtCurrency(periodData.returningRevenue)}
+              amountLabel={fmtCurrency(returningRevenue)}
               color="var(--admin-gold)"
             />
             <SplitBarRow
               label="New"
               percentage={Math.max(3, newPct)}
-              amountLabel={fmtCurrency(periodData.newRevenue)}
+              amountLabel={fmtCurrency(newRevenue)}
               color="var(--admin-green)"
             />
           </div>
