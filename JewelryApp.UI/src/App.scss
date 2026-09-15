@@ -156,7 +156,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 h1,
@@ -189,6 +193,7 @@ body {
   min-height: 100vh;
   background: var(--admin-bg);
   transition: background 0.25s;
+  padding-right: 16px !important; 
 
   h1,
   h2,
