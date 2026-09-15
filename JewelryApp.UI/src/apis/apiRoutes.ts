@@ -68,6 +68,16 @@ export const apiRoutes = {
     updateRepairPaymentStatus: "Repairs/UpdateRepairPaymentStatus",
     updateRepair: "Repairs/UpdateRepair",
   },
+  repairsReports: {
+    getRepairsStats: "Repairs/GetRepairsStats",
+    getRepairHealthMetrics: "Repairs/GetRepairHealthMetrics",
+    getRepairAlerts: "Repairs/GetRepairAlerts",
+    getRepairsRevenueChart: "Repairs/GetRepairsRevenueChart",
+    getRepairsByCustomer: "Repairs/GetRepairsByCustomer",
+    getAvgRepairValueHistory: "Repairs/GetAvgRepairValueHistory",
+    getRepeatCustomers: "Repairs/GetRepeatCustomers",
+    getLongestInShop: "Repairs/GetLongestInShop",
+  },
   analytics: {
     getSalesOverTime: "Analytics/GetSalesOverTime",
     getSalesByCategory: "Analytics/GetSalesByCategory",

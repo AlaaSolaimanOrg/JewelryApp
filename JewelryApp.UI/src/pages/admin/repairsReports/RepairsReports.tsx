@@ -1,24 +1,42 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FaTools } from "react-icons/fa";
+import {
+  getAvgRepairValueHistory,
+  getLongestInShop,
+  getRepairAlerts,
+  getRepairHealthMetrics,
+  getRepairsByCustomer,
+  getRepairsRevenueChart,
+  getRepairsStats,
+  getRepeatCustomers,
+} from "../../../apis/repairsReports.api";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
-import type { DateRange, Period } from "./RepairsReports.type";
+import useLocalApi from "../../../hooks/useLocalApi";
+import type {
+  AvgValueHistoryRow,
+  ChartDataPoint,
+  CustomerRevenueRow,
+  DateRange,
+  LongestInShopRow,
+  Period,
+  RepairAlert,
+  RepairHealthMetrics,
+  RepairsStats,
+  RepeatCustomerRow,
+} from "./RepairsReports.type";
 import {
-  MOCK_REPAIRS,
   MONTHS,
-  computeAlerts,
-  computeAvgHistory,
-  computeChart,
-  computeCustomerRevenue,
-  computeHealth,
-  computeLongestInShop,
-  computeRepeatCustomers,
-  computeStats,
-  filterByPeriod,
   fmtShort,
+  getChartGranularity,
+  getChartTitle,
+  getPeriodLabel,
+  getPeriodRange,
+  getPreviousPeriodLabel,
+  getPreviousPeriodRange,
 } from "./RepairsReports.utils";
 import "./repairsReports.scss";
 
@@ -67,84 +85,100 @@ const RepairsReports = () => {
     setPeriod("custom");
   };
 
-  const data = useMemo(
-    () => filterByPeriod(MOCK_REPAIRS, period, selMonth, selYear, appliedRange),
-    [period, selMonth, selYear, appliedRange],
-  );
-  const completed = useMemo(
-    () => data.filter((r) => r.status === "completed"),
-    [data],
-  );
-  const cancelled = useMemo(
-    () => data.filter((r) => r.status === "cancelled"),
-    [data],
-  );
+  const activeRange: DateRange | null =
+    period === "custom" ? appliedRange : getPeriodRange(period, selMonth, selYear);
+  const prevRange =
+    period === "month" || period === "year" ? getPreviousPeriodRange(period, selMonth, selYear) : null;
 
-  const stats = useMemo(
-    () => computeStats(MOCK_REPAIRS, data, period, selMonth, selYear, appliedRange),
-    [data, period, selMonth, selYear, appliedRange],
-  );
-  const alerts = useMemo(() => computeAlerts(MOCK_REPAIRS), []);
-  const chart = useMemo(
-    () => computeChart(completed, period, selMonth, selYear, appliedRange),
-    [completed, period, selMonth, selYear, appliedRange],
-  );
-  const health = useMemo(
-    () => computeHealth(data, completed, cancelled),
-    [data, completed, cancelled],
-  );
+  const periodLabel = getPeriodLabel(period, selMonth, selYear, appliedRange);
+  const prevLabel = period === "month" || period === "year" ? getPreviousPeriodLabel(period, selMonth, selYear) : "";
+  const granularity = getChartGranularity(period, activeRange);
+  const chartTitle = getChartTitle(period, selMonth, selYear, appliedRange);
 
-  const custRows: ReportListRow[] = useMemo(
-    () =>
-      computeCustomerRevenue(data, custSearch).map((c) => ({
-        key: c.name,
-        primary: c.name,
-        secondary: `${c.count} repair${c.count !== 1 ? "s" : ""}`,
-        value: fmtShort(c.revenue),
-        valueColor: "var(--admin-green)",
-      })),
-    [data, custSearch],
-  );
+  const { data: stats } = useLocalApi({
+    apiToCall: (data) => getRepairsStats(data.payload),
+    payload: { dateFrom: activeRange?.dateFrom, dateTo: activeRange?.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, selMonth, selYear, appliedRange],
+  }) as { data: Partial<RepairsStats> };
 
-  const avgHistoryRows: ReportListRow[] = useMemo(
-    () =>
-      computeAvgHistory(MOCK_REPAIRS).map((h) => ({
-        key: h.label,
-        primary: h.label,
-        secondary: `${h.count} repairs · ${fmtShort(h.total)} total`,
-        value: fmtShort(h.avg),
-        valueColor: "var(--admin-blue)",
-      })),
-    [],
-  );
+  const { data: prevStats } = useLocalApi({
+    apiToCall: (data) => getRepairsStats(data.payload),
+    payload: { dateFrom: prevRange?.dateFrom, dateTo: prevRange?.dateTo },
+    dataInitalValue: {},
+    extraEffectCheck: !!prevRange,
+    effectDependency: [period, selMonth, selYear],
+  }) as { data: Partial<RepairsStats> };
 
-  const repeatRows: ReportListRow[] = useMemo(
-    () =>
-      computeRepeatCustomers(MOCK_REPAIRS).map((c) => ({
-        key: c.name,
-        primary: c.name,
-        value: `${c.count} repair${c.count !== 1 ? "s" : ""}`,
-        valueColor: "var(--admin-blue)",
-      })),
-    [],
-  );
+  const { data: health } = useLocalApi({
+    apiToCall: (data) => getRepairHealthMetrics(data.payload),
+    payload: { dateFrom: activeRange?.dateFrom, dateTo: activeRange?.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, selMonth, selYear, appliedRange],
+  }) as { data: Partial<RepairHealthMetrics> };
 
-  const longestRows: ReportListRow[] = useMemo(
-    () =>
-      computeLongestInShop(MOCK_REPAIRS).map((r) => ({
-        key: r.id,
-        primary: r.customer,
-        secondary: r.id,
-        value: `${r.days} day${r.days !== 1 ? "s" : ""}`,
-        valueColor:
-          r.days >= 7
-            ? "var(--admin-red)"
-            : r.days >= 4
-              ? "var(--admin-amber)"
-              : "var(--admin-t3)",
-      })),
-    [],
-  );
+  const { data: alerts } = useLocalApi({
+    apiToCall: () => getRepairAlerts(),
+  }) as { data: RepairAlert[] };
+
+  const { data: chartData } = useLocalApi({
+    apiToCall: (data) => getRepairsRevenueChart(data.payload),
+    payload: { dateFrom: activeRange?.dateFrom, dateTo: activeRange?.dateTo, granularity },
+    effectDependency: [period, selMonth, selYear, appliedRange],
+  }) as { data: ChartDataPoint[] };
+
+  const { data: custRevenue } = useLocalApi({
+    apiToCall: (data) => getRepairsByCustomer(data.payload),
+    payload: { dateFrom: activeRange?.dateFrom, dateTo: activeRange?.dateTo, search: custSearch },
+    effectDependency: [period, selMonth, selYear, appliedRange, custSearch],
+  }) as { data: CustomerRevenueRow[] };
+
+  const { data: avgHistory } = useLocalApi({
+    apiToCall: () => getAvgRepairValueHistory(),
+  }) as { data: AvgValueHistoryRow[] };
+
+  const { data: repeatCustomers } = useLocalApi({
+    apiToCall: () => getRepeatCustomers(),
+  }) as { data: RepeatCustomerRow[] };
+
+  const { data: longestInShop } = useLocalApi({
+    apiToCall: () => getLongestInShop(),
+  }) as { data: LongestInShopRow[] };
+
+  const prevRepairCount = prevRange ? (prevStats.repairCount ?? null) : null;
+  const prevRevenue = prevRange ? (prevStats.totalRevenue ?? null) : null;
+
+  const custRows: ReportListRow[] = custRevenue.map((c) => ({
+    key: c.name,
+    primary: c.name,
+    secondary: `${c.count} repair${c.count !== 1 ? "s" : ""}`,
+    value: fmtShort(c.revenue),
+    valueColor: "var(--admin-green)",
+  }));
+
+  const avgHistoryRows: ReportListRow[] = avgHistory.map((h) => ({
+    key: h.label,
+    primary: h.label,
+    secondary: `${h.count} repairs · ${fmtShort(h.total)} total`,
+    value: fmtShort(h.avg),
+    valueColor: "var(--admin-blue)",
+  }));
+
+  const repeatRows: ReportListRow[] = repeatCustomers.map((c) => ({
+    key: c.name,
+    primary: c.name,
+    value: `${c.count} repair${c.count !== 1 ? "s" : ""}`,
+    valueColor: "var(--admin-blue)",
+  }));
+
+  const longestRows: ReportListRow[] = longestInShop.map((r) => ({
+    key: r.repairId,
+    primary: r.customer,
+    secondary: r.repairId,
+    value: `${r.days} day${r.days !== 1 ? "s" : ""}`,
+    valueColor:
+      r.days >= 7 ? "var(--admin-red)" : r.days >= 4 ? "var(--admin-amber)" : "var(--admin-t3)",
+  }));
 
   return (
     <div id="repairs-reports" className="page">
@@ -219,25 +253,24 @@ const RepairsReports = () => {
       <div className="stats">
         <ReportStatCard
           label="Total repairs"
-          value={`${stats.repairCount}`}
+          value={`${stats.repairCount ?? 0}`}
           sub={
             <>
-              {stats.periodLabel}
-              {changeBadge(stats.repairCount, stats.prevRepairCount)}
+              {periodLabel}
+              {changeBadge(stats.repairCount ?? 0, prevRepairCount)}
             </>
           }
         />
         <ReportStatCard
           label="Revenue collected"
-          value={fmtShort(stats.totalRevenue)}
+          value={fmtShort(stats.totalRevenue ?? 0)}
           valueColor="var(--admin-green)"
           sub={
             <>
-              {stats.paidCount} paid
-              {stats.prevRevenue !== null && (
+              {stats.paidCount ?? 0} paid
+              {prevRevenue !== null && (
                 <>
-                  {changeBadge(stats.totalRevenue, stats.prevRevenue)} vs{" "}
-                  {stats.prevLabel}
+                  {changeBadge(stats.totalRevenue ?? 0, prevRevenue)} vs {prevLabel}
                 </>
               )}
             </>
@@ -245,24 +278,24 @@ const RepairsReports = () => {
         />
         <ReportStatCard
           label="Expected revenue"
-          value={fmtShort(stats.totalAll)}
+          value={fmtShort(stats.totalAll ?? 0)}
           valueColor="var(--admin-blue)"
           sub="collected + unpaid"
         />
         <ReportStatCard
           label="Unpaid"
-          value={fmtShort(stats.unpaidTotal)}
-          valueColor={stats.unpaidTotal > 0 ? "var(--admin-red)" : undefined}
-          sub={`${stats.unpaidCount} repair${stats.unpaidCount !== 1 ? "s" : ""}`}
+          value={fmtShort(stats.unpaidTotal ?? 0)}
+          valueColor={(stats.unpaidTotal ?? 0) > 0 ? "var(--admin-red)" : undefined}
+          sub={`${stats.unpaidCount ?? 0} repair${(stats.unpaidCount ?? 0) !== 1 ? "s" : ""}`}
         />
         <ReportStatCard
           label="Avg repair value"
-          value={fmtShort(stats.avgVal)}
+          value={fmtShort(stats.avgVal ?? 0)}
           sub="per completed"
         />
         <ReportStatCard
           label="Avg turnaround"
-          value={stats.avgTurn > 0 ? `${stats.avgTurn.toFixed(1)}d` : "—"}
+          value={(stats.avgTurn ?? 0) > 0 ? `${(stats.avgTurn ?? 0).toFixed(1)}d` : "—"}
           sub="order → pickup"
         />
       </div>
@@ -282,32 +315,32 @@ const RepairsReports = () => {
       )}
 
       <div className="section">
-        <div className="section-title">{chart.title}</div>
+        <div className="section-title">{chartTitle}</div>
         <div className="chart-container">
-          <RevenueBarChart data={chart.data} formatValue={fmtShort} />
+          <RevenueBarChart data={chartData} formatValue={fmtShort} />
         </div>
       </div>
 
       <div className="health-row">
         <MiniStatCard
           label="On-time completion"
-          value={`${health.onTimeRate}%`}
+          value={`${health.onTimeRate ?? 0}%`}
           valueColor={
-            health.onTimeRate >= 75
+            (health.onTimeRate ?? 0) >= 75
               ? "var(--admin-green)"
-              : health.onTimeRate >= 50
+              : (health.onTimeRate ?? 0) >= 50
                 ? "var(--admin-amber)"
                 : "var(--admin-red)"
           }
-          sub={`${health.onTimeCount} of ${health.completedCount} on time`}
+          sub={`${health.onTimeCount ?? 0} of ${health.completedCount ?? 0} on time`}
         />
         <MiniStatCard
           label="Collection rate"
-          value={`${health.collectRate}%`}
+          value={`${health.collectRate ?? 0}%`}
           valueColor={
-            health.collectRate >= 80
+            (health.collectRate ?? 0) >= 80
               ? "var(--admin-green)"
-              : health.collectRate >= 60
+              : (health.collectRate ?? 0) >= 60
                 ? "var(--admin-amber)"
                 : "var(--admin-red)"
           }
@@ -315,11 +348,9 @@ const RepairsReports = () => {
         />
         <MiniStatCard
           label="Cancellation rate"
-          value={`${health.cancelRate}%`}
-          valueColor={
-            health.cancelRate <= 10 ? "var(--admin-green)" : "var(--admin-red)"
-          }
-          sub={`${health.cancelCount} of ${health.totalCount} cancelled`}
+          value={`${health.cancelRate ?? 0}%`}
+          valueColor={(health.cancelRate ?? 0) <= 10 ? "var(--admin-green)" : "var(--admin-red)"}
+          sub={`${health.cancelCount ?? 0} of ${health.totalCount ?? 0} cancelled`}
         />
       </div>
 
