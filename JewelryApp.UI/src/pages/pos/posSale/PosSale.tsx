@@ -4,6 +4,7 @@ import { FaArrowLeft, FaBarcode, FaExchangeAlt, FaStickyNote, FaTimes } from "re
 import { GiGoldBar } from "react-icons/gi";
 import { createReturn } from "../../../apis/returns.api";
 import { createSale } from "../../../apis/sales.api";
+import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
 import { DiscountType, RefundMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
@@ -35,6 +36,8 @@ const MainPosPage: React.FC = () => {
   const [cardAmount, setCardAmount] = useState(0);
   const [payMethod, setPayMethod] = useState<PayMethod>("cash");
   const [isLoadingCreateSale, setIsLoadingCreateSale] = useState(false);
+  const [createdSaleId, setCreatedSaleId] = useState<string | null>(null);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   // Trade-in is a UI-only stub — its credit affects the displayed total but is
   // not sent to the backend when the sale is saved.
@@ -230,6 +233,23 @@ const MainPosPage: React.FC = () => {
     });
   };
 
+  const resetSaleForm = () => {
+    setCustomer(null);
+    setCustomerInfoActive(false);
+    setSearchInput("");
+    setProducts([]);
+    setDiscountAmount("0");
+    setDiscountType(DiscountType.FixedAmount);
+    setNotes("");
+    setCashAmount(0);
+    setCardAmount(0);
+    setPayMethod("cash");
+    setTradeInCredit(0);
+    setExchangeCredit(0);
+    setExchangeData(null);
+    setCreatedSaleId(null);
+  };
+
   const handleCreateSale = () => {
     setIsLoadingCreateSale(true);
 
@@ -281,7 +301,8 @@ const MainPosPage: React.FC = () => {
             });
           }
           setTimeout(() => {
-            navigate(`/receipt/${response.data}`);
+            setCreatedSaleId(response.data);
+            setShowReceiptModal(true);
           }, 3000);
         } else {
           showError(response?.message);
@@ -479,6 +500,16 @@ const MainPosPage: React.FC = () => {
         products={products}
         setProducts={setProducts}
       />
+      {createdSaleId && (
+        <ReceiptModal
+          saleId={createdSaleId}
+          show={showReceiptModal}
+          onClose={() => {
+            setShowReceiptModal(false);
+            resetSaleForm();
+          }}
+        />
+      )}
       <LoadingScreen isLoading={isLoadingCreateSale} />
     </div>
   );
