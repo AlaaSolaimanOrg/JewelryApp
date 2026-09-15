@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaChartBar, FaExpand } from "react-icons/fa";
 import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api/analytics.api";
-import { getSalesInsights } from "../../../apis/sales.api/sales.api";
+import { getSalesInsights, getTopCustomers } from "../../../apis/sales.api/sales.api";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
@@ -11,7 +11,6 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
 import type { Period } from "./SalesReports.type";
 import {
-  MOCK_STATIC,
   PERIODS,
   PERIOD_LABELS,
   computePercent,
@@ -21,7 +20,6 @@ import {
   getCustomRange,
   getPeriodRange,
   getReportType,
-  scaleStaticForCustomRange,
 } from "./SalesReports.utils";
 import "./salesReports.scss";
 
@@ -37,18 +35,29 @@ interface SalesInsights {
   cashAmountPaid: number;
   cardAmountPaid: number;
   discountAmount: number;
+  transactionsCount: number;
+  itemsSold: number;
+  avgSale: number;
+  refundAmount: number;
   goldByKarat: GoldByKarat[];
 }
 
 interface SalesOverTimeItem {
   dateLabel: string;
   revenue: number;
+  unitsSold: number;
 }
 
 interface SalesByCategoryItem {
   categoryName: string;
   revenue: number;
   percentage: number;
+}
+
+interface TopCustomerItem {
+  name: string;
+  transactions: number;
+  spent: number;
 }
 
 type ExpandedChart = "revenue" | "units" | "category" | null;
@@ -83,11 +92,6 @@ const SalesReports = () => {
       ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
       : PERIOD_LABELS[period];
 
-  const staticStats =
-    period === "custom" && appliedRange
-      ? scaleStaticForCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
-      : MOCK_STATIC[period as Exclude<Period, "custom">];
-
   const { data: salesInsights } = useLocalApi({
     apiToCall: (data) => getSalesInsights(data.payload),
     payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
@@ -107,12 +111,22 @@ const SalesReports = () => {
     effectDependency: [period, appliedRange],
   }) as { data: SalesByCategoryItem[] };
 
+  const { data: topCustomers } = useLocalApi({
+    apiToCall: (data) => getTopCustomers(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, top: 5 },
+    effectDependency: [period, appliedRange],
+  }) as { data: TopCustomerItem[] };
+
   const revenue = salesInsights.totalSalesAmount ?? 0;
   const cash = salesInsights.cashAmountPaid ?? 0;
   const card = salesInsights.cardAmountPaid ?? 0;
   const discount = salesInsights.discountAmount ?? 0;
+  const transactions = salesInsights.transactionsCount ?? 0;
+  const itemsSold = salesInsights.itemsSold ?? 0;
+  const avgSale = salesInsights.avgSale ?? 0;
+  const refunds = salesInsights.refundAmount ?? 0;
   const cashPct = cash + card > 0 ? Math.round((cash / (cash + card)) * 100) : 0;
-  const netRevenue = revenue - staticStats.refunds;
+  const netRevenue = revenue - refunds;
 
   const goldByKarat = [...(salesInsights.goldByKarat ?? [])].sort((a, b) => b.weight - a.weight);
   const totalWeight = goldByKarat.reduce((sum, k) => sum + k.weight, 0);
@@ -123,8 +137,9 @@ const SalesReports = () => {
   const maxCategoryRevenue = Math.max(...salesByCategory.map((c) => c.revenue), 1);
 
   const revenueChartData = salesOverTime.map((d) => ({ label: d.dateLabel, value: d.revenue }));
+  const unitsChartData = salesOverTime.map((d) => ({ label: d.dateLabel, value: d.unitsSold }));
 
-  const topCustomerRows = staticStats.topCustomers.map((c) => ({
+  const topCustomerRows = topCustomers.map((c) => ({
     key: c.name,
     primary: c.name,
     secondary: `${c.transactions} sales`,
@@ -177,24 +192,24 @@ const SalesReports = () => {
           value={fmtCurrency(revenue)}
           valueColor="var(--admin-green)"
           accentColor="var(--admin-green)"
-          sub={`${staticStats.transactions.toLocaleString()} transactions`}
+          sub={`${transactions.toLocaleString()} transactions`}
         />
         <ReportStatCard
           label="Refunds"
-          value={`-${fmtCurrency(staticStats.refunds)}`}
+          value={`-${fmtCurrency(refunds)}`}
           valueColor="var(--admin-red)"
           accentColor="var(--admin-red)"
           sub={`Net: ${fmtCurrency(netRevenue)}`}
         />
         <ReportStatCard
           label="Items sold"
-          value={staticStats.itemsSold.toLocaleString()}
+          value={itemsSold.toLocaleString()}
           accentColor="var(--admin-gold)"
           sub={`${totalWeight.toLocaleString()}g of gold`}
         />
         <ReportStatCard
           label="Avg sale"
-          value={fmtCurrency(staticStats.avgSale)}
+          value={fmtCurrency(avgSale)}
           accentColor="var(--admin-purple)"
           sub="per transaction"
         />
@@ -260,7 +275,11 @@ const SalesReports = () => {
               <FaExpand />
             </button>
           </div>
-          <RevenueBarChart data={staticStats.unitsChart} formatValue={fmtNumber} color="var(--admin-blue)" />
+          {unitsChartData.length > 0 ? (
+            <RevenueBarChart data={unitsChartData} formatValue={fmtNumber} color="var(--admin-blue)" />
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
 
         <div className="panel">
@@ -336,7 +355,11 @@ const SalesReports = () => {
         subtitle={periodLabel}
         onClose={() => setExpandedChart(null)}
       >
-        <RevenueBarChart data={staticStats.unitsChart} formatValue={fmtNumber} color="var(--admin-blue)" />
+        {unitsChartData.length > 0 ? (
+          <RevenueBarChart data={unitsChartData} formatValue={fmtNumber} color="var(--admin-blue)" />
+        ) : (
+          <div className="no-data">No data available</div>
+        )}
       </ChartExpandModal>
 
       <ChartExpandModal

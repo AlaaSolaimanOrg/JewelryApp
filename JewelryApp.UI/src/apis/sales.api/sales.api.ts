@@ -57,3 +57,11 @@ export const searchSales = async (payload: {
 }) => {
   return requestApi("GET", apiRoutes.sales.searchSales, payload);
 };
+
+export const getTopCustomers = async (payload: {
+  dateFrom: string;
+  dateTo: string;
+  top?: number;
+}) => {
+  return requestApi("GET", apiRoutes.sales.getTopCustomers, payload);
+};

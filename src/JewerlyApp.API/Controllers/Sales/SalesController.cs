@@ -5,6 +5,7 @@ using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using JewerlyApp.Application.Sales.Queries.GetSoldItems;
 using JewerlyApp.Application.Sales.Queries.GetTodaySalesSummary;
+using JewerlyApp.Application.Sales.Queries.GetTopCustomers;
 using JewerlyApp.Application.Sales.Queries.SearchSales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -94,6 +95,18 @@ namespace JewerlyApp.API.Controllers.Sales
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> GetTodaySalesSummary([FromBody] GetTodaySalesSummaryQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// get top customers by spend within a date range
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetTopCustomers([FromQuery] GetTopCustomersQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
