@@ -86,11 +86,15 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     if (!name.trim()) newErrors.name = "Name is required.";
     else if (name.trim().length < 2)
       newErrors.name = "Name must be at least 2 characters.";
+    else if (name.trim().length > 100)
+      newErrors.name = "Name must be at most 100 characters.";
 
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email))
         newErrors.email = "Please enter a valid email address.";
+      else if (email.length > 254)
+        newErrors.email = "Email must be at most 254 characters.";
     }
 
     const digits = (phoneNumber || "").replace(/\D/g, "");
@@ -253,6 +257,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               type="text"
               placeholder="Enter customer name"
               value={name}
+              maxLength={100}
               onChange={(e) => setName(e.target.value)}
               readOnly={isViewMode}
             />
@@ -281,6 +286,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               type="email"
               placeholder="Optional"
               value={email}
+              maxLength={254}
               onChange={(e) => setEmail(e.target.value)}
               readOnly={isViewMode}
             />
@@ -291,6 +297,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             <Form.Control
               type="date"
               value={birthday}
+              max={new Date().toISOString().split("T")[0]}
               onChange={(e) => setBirthday(e.target.value)}
               readOnly={isViewMode}
             />
