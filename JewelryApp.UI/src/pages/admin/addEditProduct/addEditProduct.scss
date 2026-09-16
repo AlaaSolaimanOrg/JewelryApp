@@ -178,6 +178,38 @@
         color: var(--admin-gold);
       }
     }
+
+    .input-with-icon {
+      position: relative;
+
+      input {
+        padding-right: 40px;
+      }
+
+      .copy-icon-btn {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--admin-gold);
+        cursor: pointer;
+
+        &:disabled {
+          color: var(--admin-t4);
+          cursor: not-allowed;
+        }
+
+        &:hover:not(:disabled) {
+          opacity: 0.75;
+        }
+      }
+    }
   }
 
   .span2 {

@@ -217,3 +217,16 @@ export const splitCamelCaseWords = (text: string): string => {
 export const smartRound = (value: number): number => {
   return parseFloat((Math.round(value * 100) / 100).toString());
 };
+
+export const copyToClipboard = async (
+  value: string,
+  onSuccess?: () => void
+): Promise<void> => {
+  if (!value) return;
+  try {
+    await navigator.clipboard.writeText(value);
+    onSuccess?.();
+  } catch {
+    showError("Failed to copy to clipboard");
+  }
+};

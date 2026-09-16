@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
-import { FaArrowLeft, FaPause, FaSave, FaTimes } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCheck,
+  FaPause,
+  FaRegCopy,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,6 +24,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
+  copyToClipboard,
   isPositiveInteger,
   showError,
   showSuccess,
@@ -45,8 +53,15 @@ const AddEditProduct = ({ isEdit }) => {
   const [tagInput, setTagInput] = useState(""); // For new tag input
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [keepFieldsAfterSave, setKeepFieldsAfterSave] = useState(false);
+  const [skuCopied, setSkuCopied] = useState(false);
 
   const { productId } = useParams();
+
+  const handleCopySku = () =>
+    copyToClipboard(productFields.sku, () => {
+      setSkuCopied(true);
+      setTimeout(() => setSkuCopied(false), 2000);
+    });
 
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
@@ -303,15 +318,26 @@ const AddEditProduct = ({ isEdit }) => {
 
           <div className="fg">
             <label>SKU</label>
-            <input
-              key={productFields.sku}
-              type="text"
-              className="disabled-gold"
-              placeholder="Auto generated"
-              value={productFields.sku}
-              disabled
-              required
-            />
+            <div className="input-with-icon">
+              <input
+                key={productFields.sku}
+                type="text"
+                className="disabled-gold"
+                placeholder="Auto generated"
+                value={productFields.sku}
+                disabled
+                required
+              />
+              <button
+                type="button"
+                className="copy-icon-btn"
+                onClick={handleCopySku}
+                disabled={!productFields.sku}
+                data-tip="Copy SKU"
+              >
+                {skuCopied ? <FaCheck /> : <FaRegCopy />}
+              </button>
+            </div>
           </div>
 
           <div className="fg">
