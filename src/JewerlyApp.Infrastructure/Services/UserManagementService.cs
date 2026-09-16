@@ -279,15 +279,17 @@ namespace JewerlyApp.Infrastructure.Services
 
                                     where !query.IsActive.HasValue || u.IsActive == query.IsActive.Value
 
+                                    where string.IsNullOrWhiteSpace(query.SearchBy) ||
+                                          u.FullName!.Contains(query.SearchBy) ||
+                                          u.Email!.Contains(query.SearchBy) ||
+                                          _context.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                              _context.Roles.Any(r => r.Id == ur.RoleId && r.Name!.Contains(query.SearchBy)))
+
                                     join ur in _context.UserRoles on u.Id equals ur.UserId into userRoles
                                     from ur in userRoles.DefaultIfEmpty()
                                     join r in _context.Roles on ur.RoleId equals r.Id into roles
                                     from r in roles.DefaultIfEmpty()
 
-                                    where string.IsNullOrWhiteSpace(query.SearchBy) ||
-                                          u.FullName!.Contains(query.SearchBy) ||
-                                          u.Email!.Contains(query.SearchBy) ||
-                                          (r != null && r.Name!.Contains(query.SearchBy))
                                     group r by u into g
                                     select new UserDto
                                     {
