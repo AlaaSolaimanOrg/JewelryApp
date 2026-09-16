@@ -78,9 +78,24 @@ export const buildCustomerHeaders = (
     sortable: true,
     onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange),
   },
-  { key: "phone", label: "Phone" },
-  { key: "email", label: "Email" },
-  { key: "birthday", label: "Birthday" },
+  {
+    key: "phone",
+    label: renderSortLabel("Phone", "PhoneNumber", sortCriteria),
+    sortable: true,
+    onHeaderClick: () => handleSort("PhoneNumber", sortCriteria, onSortChange),
+  },
+  {
+    key: "email",
+    label: renderSortLabel("Email", "Email", sortCriteria),
+    sortable: true,
+    onHeaderClick: () => handleSort("Email", sortCriteria, onSortChange),
+  },
+  {
+    key: "birthday",
+    label: renderSortLabel("Birthday", "Birthday", sortCriteria),
+    sortable: true,
+    onHeaderClick: () => handleSort("Birthday", sortCriteria, onSortChange),
+  },
   {
     key: "items",
     label: renderSortLabel("Items", "TotalProductsPurchased", sortCriteria),

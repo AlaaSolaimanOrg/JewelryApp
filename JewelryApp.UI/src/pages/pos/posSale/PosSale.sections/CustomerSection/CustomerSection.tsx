@@ -4,13 +4,7 @@ import React, {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import {
-  FaBirthdayCake,
-  FaEnvelope,
-  FaPhone,
-  FaSearch,
-  FaTimes,
-} from "react-icons/fa";
+import { FaBirthdayCake, FaEnvelope, FaSearch, FaTimes } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import { getCustomers } from "../../../../../apis/customers.api";
 import AddCustomerModal from "../../../../../components/modals/AddCustomerModal/AddCustomerModal";
@@ -127,9 +121,7 @@ const CustomerSection: React.FC<Props> = ({
             </div>
 
             {customer.phoneNumber && (
-              <div className="ps-cust-ph">
-                <FaPhone /> {customer.phoneNumber}
-              </div>
+              <div className="ps-cust-ph">{customer.phoneNumber}</div>
             )}
             {customer.email && (
               <div className="ps-cust-detail">
@@ -144,7 +136,8 @@ const CustomerSection: React.FC<Props> = ({
 
             <div className="ps-cust-stats">
               <span className="ps-cust-stat-tag">
-                {customer.totalProductsPurchased ?? 0} items purchased
+                {customer.totalProductsPurchased ?? 0}{" "}
+                {customer.totalProductsPurchased === 1 ? "item" : "items"}
               </span>
               <span className="ps-cust-stat-tag highlight">
                 $

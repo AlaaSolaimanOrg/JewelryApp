@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
-import { FaArrowLeft, FaPause, FaSave, FaTimes } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCheck,
+  FaPause,
+  FaRegCopy,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,6 +24,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
+  copyToClipboard,
   isPositiveInteger,
   showError,
   showSuccess,
@@ -34,7 +42,7 @@ const productFieldsInitialState = {
   description: "",
   quantity: 1,
   tags: [] as string[],
-  specification: "", // ✅ NEW FIELD
+  specification: "",
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -42,11 +50,18 @@ const AddEditProduct = ({ isEdit }) => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
-  const [tagInput, setTagInput] = useState(""); // For new tag input
+  const [tagInput, setTagInput] = useState("");
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [keepFieldsAfterSave, setKeepFieldsAfterSave] = useState(false);
+  const [skuCopied, setSkuCopied] = useState(false);
 
   const { productId } = useParams();
+
+  const handleCopySku = () =>
+    copyToClipboard(productFields.sku, () => {
+      setSkuCopied(true);
+      setTimeout(() => setSkuCopied(false), 2000);
+    });
 
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
@@ -57,7 +72,6 @@ const AddEditProduct = ({ isEdit }) => {
     });
   };
 
-  // Add a new tag
   const handleAddTag = () => {
     if (tagInput.trim() && !productFields.tags.includes(tagInput.trim())) {
       setProductFields((prev) => ({
@@ -68,7 +82,6 @@ const AddEditProduct = ({ isEdit }) => {
     }
   };
 
-  // Remove a tag
   const handleRemoveTag = (tagToRemove: string) => {
     setProductFields((prev) => ({
       ...prev,
@@ -76,7 +89,6 @@ const AddEditProduct = ({ isEdit }) => {
     }));
   };
 
-  // Handle Enter key in tag input
   const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -180,7 +192,6 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Weight", productFields.weight);
     formData.append("quantity", productFields.quantity?.toString());
 
-    // Append tags as JSON array
     if (productFields.tags.length > 0) {
       productFields.tags.forEach((tag) => formData.append("Tags", tag));
     }
@@ -303,15 +314,26 @@ const AddEditProduct = ({ isEdit }) => {
 
           <div className="fg">
             <label>SKU</label>
-            <input
-              key={productFields.sku}
-              type="text"
-              className="disabled-gold"
-              placeholder="Auto generated"
-              value={productFields.sku}
-              disabled
-              required
-            />
+            <div className="input-with-icon">
+              <input
+                key={productFields.sku}
+                type="text"
+                className="disabled-gold"
+                placeholder="Auto generated"
+                value={productFields.sku}
+                disabled
+                required
+              />
+              <button
+                type="button"
+                className="copy-icon-btn"
+                onClick={handleCopySku}
+                disabled={!productFields.sku}
+                data-tip="Copy SKU"
+              >
+                {skuCopied ? <FaCheck /> : <FaRegCopy />}
+              </button>
+            </div>
           </div>
 
           <div className="fg">

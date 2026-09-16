@@ -86,6 +86,7 @@
         public const string Error_Role_Deletion_Failed = "Failed to delete role.";
         public const string Error_Role_Has_Users = "Cannot delete role with assigned users.";
         public const string Error_User_Role_Removal_Failed = "Failed to remove roles from user.";
+        public const string Error_Only_Admin_Can_Assign_Restricted_Role = "Only an Admin can assign or remove the StaffManager role.";
         public const string Error_Password_Reset_Failed = "Failed to reset password.";
         public const string Error_Discount_Result = "Fixed discount results in a negative result.";
         public const string Error_Discount = "Fixed Discount can't be a negative number.";

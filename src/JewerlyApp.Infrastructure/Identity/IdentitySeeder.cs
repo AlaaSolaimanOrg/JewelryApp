@@ -18,6 +18,7 @@ namespace JewerlyApp.Infrastructure.Identity
 
             string adminRoleName = "Admin";
             string terminalRoleName = "TerminalRole";
+            string staffManagerRoleName = "StaffManager";
 
             string adminEmail = "admin@gmail.com";
             string adminPassword = "Admin@123"; // ⚠ Change in production
@@ -28,7 +29,7 @@ namespace JewerlyApp.Infrastructure.Identity
 
             // create admin
             await CreateUserWithRolesAsync(userManager, roleManager,
-                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, terminalRoleName, posRole });
+                adminEmail, adminPassword, "System Administrator", new[] { adminRoleName, terminalRoleName, posRole, staffManagerRoleName });
 
             await CreateUserWithRolesAsync(userManager, roleManager,
                 posEmail, posPassword, "Pos user", new[] { posRole });
