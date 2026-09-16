@@ -34,10 +34,30 @@ namespace JewerlyApp.Infrastructure.Services
             _context = context;
         }
 
+        private const string StaffManagerRoleName = "StaffManager";
+
+        private async Task<bool> CallerCanAssignRestrictedRolesAsync()
+        {
+            var currentUserId = _userService.GetCurrentUserId();
+            if (currentUserId == 0) return false;
+            return await _userService.IsInRoleAsync(currentUserId, "Admin");
+        }
+
         public async Task<GenericResponse<UserDto>> CreateUserAsync(CreateUserRequest request)
         {
             try
             {
+                if (request.Roles != null &&
+                    request.Roles.Contains(StaffManagerRoleName) &&
+                    !await CallerCanAssignRestrictedRolesAsync())
+                {
+                    return new GenericResponse<UserDto>
+                    {
+                        StatusCode = ResponseStatusCode.Forbidden,
+                        Message = Messages.Error_Only_Admin_Can_Assign_Restricted_Role
+                    };
+                }
+
                 var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null)
                 {
@@ -115,6 +135,22 @@ namespace JewerlyApp.Infrastructure.Services
                         StatusCode = ResponseStatusCode.NotFound,
                         Message = Messages.Error_User_Not_Found
                     };
+                }
+
+                if (request.Roles != null)
+                {
+                    var existingRoles = await _userManager.GetRolesAsync(user);
+                    var staffManagerChanged =
+                        existingRoles.Contains(StaffManagerRoleName) != request.Roles.Contains(StaffManagerRoleName);
+
+                    if (staffManagerChanged && !await CallerCanAssignRestrictedRolesAsync())
+                    {
+                        return new GenericResponse<UserDto>
+                        {
+                            StatusCode = ResponseStatusCode.Forbidden,
+                            Message = Messages.Error_Only_Admin_Can_Assign_Restricted_Role
+                        };
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(request.Email))

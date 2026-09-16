@@ -38,6 +38,7 @@ export const getRoleClass = (role: string): string => {
   if (role === "Admin") return "r-admin";
   if (role === "PosRole") return "r-pos";
   if (role === "TerminalRole") return "r-terminal";
+  if (role === "StaffManager") return "r-staff-manager";
   return "r-default";
 };
 
@@ -91,11 +92,12 @@ export type StaffRowActions = {
   onToggleStatus: (user: User) => void;
   onEdit: (userId: number) => void;
   onDelete: (user: User) => void;
+  canDelete?: boolean;
 };
 
 export const buildStaffTableData = (
   users: User[],
-  { onToggleStatus, onEdit, onDelete }: StaffRowActions,
+  { onToggleStatus, onEdit, onDelete, canDelete }: StaffRowActions,
 ) =>
   users?.map((user) => ({
     rowClassName: user.isActive ? "" : "inactive-row",
@@ -142,14 +144,16 @@ export const buildStaffTableData = (
         >
           <FaEdit size={14} />
         </button>
-        <button
-          className="act-ico act-del"
-          data-tip="Remove"
-          onClick={() => onDelete(user)}
-          disabled={!user.isActive}
-        >
-          <FaTrash size={14} />
-        </button>
+        {canDelete && (
+          <button
+            className="act-ico act-del"
+            data-tip="Remove"
+            onClick={() => onDelete(user)}
+            disabled={!user.isActive}
+          >
+            <FaTrash size={14} />
+          </button>
+        )}
       </>
     ),
   }));

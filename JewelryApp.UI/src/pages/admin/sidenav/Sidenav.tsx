@@ -166,7 +166,9 @@ const SideNav = () => {
   const hasAdminRole = userInfo?.roles?.includes("Admin");
   const hasTerminalRole = userInfo?.roles?.includes("TerminalRole");
   const hasPosRole = userInfo?.roles?.includes("PosRole");
+  const hasStaffManagerRole = userInfo?.roles?.includes("StaffManager");
   const isTerminalOnlyUser = hasTerminalRole && !hasAdminRole;
+  const isStaffManagerOnlyUser = hasStaffManagerRole && !hasAdminRole;
 
   const filteredNavItems = isTerminalOnlyUser
     ? navItems
@@ -181,9 +183,15 @@ const SideNav = () => {
           ].includes(item.label),
         )
         .map((item) => item)
-    : navItems;
+    : isStaffManagerOnlyUser
+      ? navItems.filter((item) => item.label === "Staff")
+      : navItems;
 
-  const filteredOperationItems = isTerminalOnlyUser ? [] : operationItems;
+  const filteredOperationItems = isTerminalOnlyUser
+    ? []
+    : isStaffManagerOnlyUser
+      ? operationItems.filter((item) => item.label === "Add Staff")
+      : operationItems;
 
   const handlePosRedirect = () => {
     navigate("/");

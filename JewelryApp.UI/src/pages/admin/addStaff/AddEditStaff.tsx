@@ -9,6 +9,7 @@ import {
   updateUser,
 } from "../../../apis/users.api";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
+import { useAuth } from "../../../context/AuthContext";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { formatPhoneDisplay } from "./AddEditStaff.utils";
@@ -26,6 +27,8 @@ const staffFieldsInitialState = {
 const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { userInfo } = useAuth();
+  const isAdmin = userInfo?.roles?.includes("Admin");
 
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
@@ -38,11 +41,15 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     effectDependency: [userId],
   }) as { data: any };
 
-  const { data: allRoles = [] } = useLocalApi({
+  const { data: allRolesFromApi = [] } = useLocalApi({
     apiToCall: () => getAllRoles(),
     payload: null,
     effectDependency: [],
   }) as { data: string[] };
+
+  const allRoles = isAdmin
+    ? allRolesFromApi
+    : allRolesFromApi.filter((role) => role !== "StaffManager");
 
   useEffect(() => {
     if (isEdit && staff) {

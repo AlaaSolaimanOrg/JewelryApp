@@ -9,6 +9,7 @@ import {
 import { getUserStats } from "../../../apis/userStats.api";
 
 import Paginator from "../../../components/Paginator/Paginator";
+import { useAuth } from "../../../context/AuthContext";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
@@ -27,6 +28,8 @@ import DeleteStaffModal from "./DeleteStaffModal/DeleteStaffModal";
 
 const Staff = () => {
   const navigate = useNavigate();
+  const { userInfo } = useAuth();
+  const isAdmin = userInfo?.roles?.includes("Admin");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
@@ -97,6 +100,7 @@ const Staff = () => {
     onToggleStatus: handleToggleStatus,
     onEdit: handleEditUser,
     onDelete: setDeleteTarget,
+    canDelete: isAdmin,
   });
 
   return (

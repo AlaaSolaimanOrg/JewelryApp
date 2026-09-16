@@ -24,7 +24,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,StaffManager")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
             var response = await _userManagementService.CreateUserAsync(request);
@@ -38,7 +38,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("{userId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,StaffManager")]
         public async Task<IActionResult> UpdateUser(int userId, [FromBody] UpdateUserRequest request)
         {
             var response = await _userManagementService.UpdateUserAsync(userId, request);
@@ -77,7 +77,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("{userId}")]
-        [Authorize(Roles = "Admin,PosRole")]
+        [Authorize(Roles = "Admin,PosRole,StaffManager")]
         public async Task<IActionResult> GetUserById(int userId)
         {
             var response = await _userManagementService.GetUserByIdAsync(userId);
@@ -89,7 +89,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,StaffManager")]
         public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery query)
         {
             var response = await Mediator.Send(query);
@@ -101,7 +101,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,StaffManager")]
         public async Task<IActionResult> GetUserStats()
         {
             var response = await Mediator.Send(new GetUserStatsQuery());
@@ -113,7 +113,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// </summary>
         /// <returns></returns>
         [HttpGet("roles")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,StaffManager")]
         public async Task<IActionResult> GetAllRoles()
         {
             var response = await _userManagementService.GetAllRolesAsync();
@@ -126,7 +126,7 @@ namespace JewerlyApp.API.Controllers.Identity
         /// <param name="userId">User ID</param>
         /// <returns>List of user roles</returns>
         [HttpGet]
-        [Authorize(Roles = "Admin,PosRole,TerminalRole")]
+        [Authorize(Roles = "Admin,PosRole,TerminalRole,StaffManager")]
         public async Task<IActionResult> GetUserInfo()
         {
             var response = await _userManagementService.GetUserInfoAsync();
