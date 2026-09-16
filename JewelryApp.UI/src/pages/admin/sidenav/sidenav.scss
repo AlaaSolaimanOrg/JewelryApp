@@ -291,7 +291,7 @@
 ============================== */
 
 /* Mobile & Tablet */
-@media (max-width: 1599px) {
+@media (max-width: 1024px) {
   .mobile-toggle-btn {
     display: flex;
   }
@@ -313,8 +313,8 @@
   }
 }
 
-/* Desktop (1600px+) */
-@media (min-width: 1600px) {
+/* Desktop / laptop (1025px+) */
+@media (min-width: 1025px) {
   .sidebar {
     transform: translateX(0) !important;
   }

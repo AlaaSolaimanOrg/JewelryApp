@@ -1,5 +1,5 @@
 import { FaSearch } from "react-icons/fa";
-import { getAllRoles } from "../../../../apis/users.api/users.api";
+import { getAllRoles } from "../../../../apis/users.api";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
 import "./staffFilters.scss";
 import type { StaffFiltersProps } from "./StaffFilters.type";

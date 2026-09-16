@@ -4,7 +4,7 @@ import {
   createCustomer,
   getCustomers,
   updateCustomer,
-} from "../../../apis/customers.api/customers.api";
+} from "../../../apis/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { formatPhoneDisplay, getCustomerModalTitle } from "./AddCustomerModal.utils";
 import "./addCustomerModal.scss";

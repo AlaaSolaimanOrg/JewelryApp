@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { searchSales } from "../../../../apis/sales.api/sales.api";
+import { searchSales } from "../../../../apis/sales.api";
 import { SortDirection } from "../../../../types/enums";
 import type { SearchSale, SearchTab } from "../ReturnPage.type";
 import { formatCurrency } from "../ReturnPage.utils";

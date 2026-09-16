@@ -1,6 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
-import { getCashTransactions } from "../../../../apis/cashManagement.api/cashManagement.api";
+import { getCashTransactions } from "../../../../apis/cashManagement.api";
 import CustomLoader from "../../../../components/loaders/CustomLoader/CustomLoader";
 import Paginator from "../../../../components/Paginator/Paginator";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";

@@ -11,7 +11,7 @@ import {
   getUsedGoldHistory,
   sendToMelt,
   returnToStock,
-} from "../../../apis/usedGold.api/usedGold.api";
+} from "../../../apis/usedGold.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { checkRequestSucceeded, handleSort, showError, showSuccess } from "../../../utils";

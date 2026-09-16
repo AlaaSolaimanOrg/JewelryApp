@@ -2,7 +2,7 @@ import { FaSyncAlt, FaTag } from "react-icons/fa";
 import {
   editPricingSettings,
   getPricingSettings,
-} from "../../../apis/pricingSettings.api/pricingSettings.api";
+} from "../../../apis/pricingSettings.api";
 import KaratPriceCard from "../../../components/cards/KaratPriceCard/KaratPriceCard";
 import useLocalApi from "../../../hooks/useLocalApi";
 import "./pricing.scss";

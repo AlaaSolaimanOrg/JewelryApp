@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaPlus, FaSearch, FaTimes } from "react-icons/fa";
-import { getCustomers } from "../../../../apis/customers.api/customers.api";
+import { getCustomers } from "../../../../apis/customers.api";
 import type { Customer } from "../../posSale/types";
 import { formatPhone, getInitials } from "../RepairIntake.utils";
 import "./customerSchedulePanel.scss";

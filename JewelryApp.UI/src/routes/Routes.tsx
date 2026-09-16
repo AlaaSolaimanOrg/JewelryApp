@@ -48,7 +48,6 @@ const PosDashboard = lazy(
   () => import("../pages/pos/posDashboard/PosDashboard"),
 );
 const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
-const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
 const CashManagement = lazy(
   () => import("../pages/pos/cashManagement/CashManagement"),
 );
@@ -114,7 +113,6 @@ const AppRoutes = () => {
             <Route path="/" element={<PosDashboard />} />
             <Route path="/sale" element={<MainPosPage />} />
             <Route path="/cashManagement" element={<CashManagement />} />
-            <Route path="/receipt/:saleId" element={<Receipt />} />
             <Route path="/repair" element={<RepairIntake />} />
             <Route path="/usedgold" element={<UsedGold />} />
             <Route path="/return" element={<ReturnPage />} />

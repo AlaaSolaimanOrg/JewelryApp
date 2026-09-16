@@ -9,7 +9,7 @@ import {
   getAdminInventorySnapshot,
   getAdminRepairsStats,
   getAdminSalesSummary,
-} from "../../../apis/dashboard.api/dashboard.api";
+} from "../../../apis/dashboard.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import type {
   AttentionItem,

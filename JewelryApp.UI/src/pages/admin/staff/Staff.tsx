@@ -5,8 +5,8 @@ import {
   getAllUsers,
   restoreUser,
   softDeleteUser,
-} from "../../../apis/users.api/users.api";
-import { getUserStats } from "../../../apis/userStats.api/userStats.api";
+} from "../../../apis/users.api";
+import { getUserStats } from "../../../apis/userStats.api";
 
 import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApi from "../../../hooks/useLocalApi";

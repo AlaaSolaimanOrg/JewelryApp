@@ -9,7 +9,7 @@ import {
 import {
   getMeltedProducts,
   getMeltedReports,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";

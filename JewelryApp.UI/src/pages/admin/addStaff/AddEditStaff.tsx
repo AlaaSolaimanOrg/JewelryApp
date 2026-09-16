@@ -7,7 +7,7 @@ import {
   getAllRoles,
   getUserById,
   updateUser,
-} from "../../../apis/users.api/users.api";
+} from "../../../apis/users.api";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";

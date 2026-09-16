@@ -7,7 +7,7 @@ import React, {
 import { Button, Modal } from "react-bootstrap";
 import { BiTrash } from "react-icons/bi";
 import { MdError } from "react-icons/md";
-import { getProductsBySkus } from "../../../apis/products.api/products.api";
+import { getProductsBySkus } from "../../../apis/products.api";
 import { renderTooltip } from "../../../utils";
 import "./scanModal.scss";
 

@@ -5,7 +5,7 @@ export interface DateRange {
   dateTo: string;
 }
 
-export interface PeriodChartPoint {
+export interface ChartDataPoint {
   label: string;
   value: number;
 }
@@ -17,19 +17,26 @@ export interface CustomerReportRow {
   items: number;
   spent: number;
   avgDiscount: number;
-  since: string;
-  lastPurchase: string;
+  since: string | null;
+  lastPurchase: string | null;
 }
 
-export interface PeriodData {
+export interface CustomerBaseStats {
+  totalCustomers: number;
+  newThisYear: number;
+  repeatRate: number;
+  repeatCount: number;
+  avgLifetimeValue: number;
+  goingQuiet: number;
+}
+
+export interface CustomerActivityStats {
   active: number;
   newCustomers: number;
   revenue: number;
   newRevenue: number;
   returningRevenue: number;
   avgDiscount: number;
-  chart: PeriodChartPoint[];
-  customers: CustomerReportRow[];
 }
 
 export interface TierMember {
@@ -41,8 +48,6 @@ export interface TierMember {
 export interface CustomerTier {
   name: string;
   minLabel: string;
-  color: string;
-  bg: string;
   count: number;
   total: number;
   members: TierMember[];

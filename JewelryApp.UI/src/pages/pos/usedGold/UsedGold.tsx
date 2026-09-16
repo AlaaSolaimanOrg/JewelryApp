@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
 import { Link } from "react-router-dom";
-import { createUsedGoldPurchase } from "../../../apis/usedGold.api/usedGold.api";
+import { createUsedGoldPurchase } from "../../../apis/usedGold.api";
 import { UsedGoldPayMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import AddKaratModal from "./AddKaratModal/AddKaratModal";

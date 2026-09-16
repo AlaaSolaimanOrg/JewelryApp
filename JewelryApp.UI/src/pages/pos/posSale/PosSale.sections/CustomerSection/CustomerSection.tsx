@@ -12,7 +12,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import AsyncSelect from "react-select/async";
-import { getCustomers } from "../../../../../apis/customers.api/customers.api";
+import { getCustomers } from "../../../../../apis/customers.api";
 import AddCustomerModal from "../../../../../components/modals/AddCustomerModal/AddCustomerModal";
 import type { Customer } from "../../types";
 import { getCustomerTier, getInitials } from "./CustomerSection.utils";

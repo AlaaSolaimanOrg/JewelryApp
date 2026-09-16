@@ -24,7 +24,7 @@ import {
   getSalesByCategory,
   getSalesOverTime,
   getStaffPerformance,
-} from "../../../apis/analytics.api/analytics.api";
+} from "../../../apis/analytics.api";
 import {
   KARAT_LINE_COLORS,
   REPORT_TYPE_OPTIONS,

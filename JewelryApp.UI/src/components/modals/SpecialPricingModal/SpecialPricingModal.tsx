@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Spinner } from "react-bootstrap";
 import { FaDollarSign, FaTimes } from "react-icons/fa";
-import { getProductSpecialPricing } from "../../../apis/products.api/products.api";
+import { getProductSpecialPricing } from "../../../apis/products.api";
 import "./specialPricingModal.scss";
 
 interface ProductMinimal {

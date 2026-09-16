@@ -1,38 +1,49 @@
 import { useState } from "react";
 import { FaClipboardList, FaStore } from "react-icons/fa";
+import {
+  getInventoryAging,
+  getInventoryMovement,
+  getInventoryStockSummary,
+  getMovementByPurity,
+  getStaplesSold,
+  getStockByCategory,
+  getStockByPurity,
+} from "../../../apis/inventoryReports.api";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
-import type { DateRange, Period } from "./InventoryReports.type";
+import useLocalApi from "../../../hooks/useLocalApi";
+import type {
+  DateRange,
+  InventoryAging,
+  InventoryMovement,
+  InventoryStockSummary,
+  Period,
+  PurityMovement,
+  StapleSold,
+  StockByCategoryRow,
+  StockByPurityRow,
+} from "./InventoryReports.type";
 import {
-  AGING_BUCKETS,
-  CATEGORY_STOCK,
-  MOVEMENT_BY_PERIOD,
-  MOVEMENT_BY_PURITY,
   PERIOD_LABELS,
-  PURITY_STOCK,
-  STAPLES,
   computeBarPercent,
+  fmtCurrency,
+  fmtNumber,
+  formatRangeLabel,
+  getCustomRange,
+  getPeriodRange,
 } from "./InventoryReports.utils";
 import "./inventoryReports.scss";
 
-const PERIODS: Period[] = ["today", "week", "month", "year", "all"];
-const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const PERIODS: Exclude<Period, "custom">[] = ["today", "week", "month", "year", "all"];
+
+const AGING_COLORS: Record<string, string | undefined> = {
+  "0-30 days": "var(--admin-green)",
+  "61-90 days": "var(--admin-amber)",
+  "90+ days": "var(--admin-red)",
+};
 
 const InventoryReports = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -40,86 +51,105 @@ const InventoryReports = () => {
     dateTo: "2026-06-11",
   });
   const [period, setPeriod] = useState<Period>("month");
-  const [customScale, setCustomScale] = useState<number | null>(null);
-  const [periodLabel, setPeriodLabel] = useState<string>(PERIOD_LABELS.month);
-  const [isCustomRange, setIsCustomRange] = useState(false);
+  const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
 
-  const scaleInt = (n: number) =>
-    customScale === null ? n : Math.round(n * customScale);
-  const scaleFloat = (n: number) =>
-    customScale === null ? n : Number((n * customScale).toFixed(1));
-
-  const handleSetPeriod = (p: Period) => {
+  const handleSetPeriod = (p: Exclude<Period, "custom">) => {
     setPeriod(p);
-    setCustomScale(null);
-    setPeriodLabel(PERIOD_LABELS[p]);
-    setIsCustomRange(false);
+    setAppliedRange(null);
   };
 
   const handleApplyCustomRange = () => {
     const { dateFrom, dateTo } = dateRange;
     if (!dateFrom || !dateTo) return;
-    let fd = new Date(`${dateFrom}T12:00:00`);
-    let td = new Date(`${dateTo}T12:00:00`);
-    if (td < fd) [fd, td] = [td, fd];
-    const days = Math.round((td.getTime() - fd.getTime()) / 86400000) + 1;
-    setCustomScale(days / 30);
-    setPeriod("month");
-    setPeriodLabel(
-      `${MONTH_LABELS[fd.getMonth()]} ${fd.getDate()} – ${MONTH_LABELS[td.getMonth()]} ${td.getDate()}, ${td.getFullYear()}`,
-    );
-    setIsCustomRange(true);
+    setAppliedRange({ dateFrom, dateTo });
+    setPeriod("custom");
   };
 
-  const maxPurityGrams = Math.max(...PURITY_STOCK.map((p) => p.grams));
-  const totalCategoryValue = CATEGORY_STOCK.reduce((s, c) => s + c.value, 0);
-  const maxCategoryValue = Math.max(...CATEGORY_STOCK.map((c) => c.value));
+  const activeRange =
+    period === "custom" && appliedRange
+      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
+      : getPeriodRange(period as Exclude<Period, "custom">);
 
-  const movement = MOVEMENT_BY_PERIOD[period];
+  const periodLabel =
+    period === "custom" && appliedRange
+      ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
+      : PERIOD_LABELS[period];
 
-  let totalStapleSold = 0;
-  const stapleRows = STAPLES.map((s) => {
-    const sold = scaleInt(s.soldByPeriod[period]);
-    totalStapleSold += sold;
-    const low = s.stock <= s.lowThreshold;
-    return {
-      name: <span className="stpl-name">{s.name}</span>,
-      type: <span className="badge b-type">{s.type}</span>,
-      stock: s.stock,
-      sold: <span className="stpl-sold">{sold}</span>,
-      status: (
-        <span className={`badge ${low ? "b-low" : "b-ok"}`}>
-          {low ? "LOW — reorder" : "OK"}
-        </span>
-      ),
-    };
-  });
+  /* ── Stock right now (not period-filtered) ───────────────────── */
+
+  const { data: stockSummary } = useLocalApi({
+    apiToCall: () => getInventoryStockSummary(),
+    dataInitalValue: {},
+  }) as { data: Partial<InventoryStockSummary> };
+
+  const { data: stockByPurity } = useLocalApi({
+    apiToCall: () => getStockByPurity(),
+  }) as { data: StockByPurityRow[] };
+
+  const { data: stockByCategory } = useLocalApi({
+    apiToCall: () => getStockByCategory(),
+  }) as { data: StockByCategoryRow[] };
+
+  const { data: inventoryAging } = useLocalApi({
+    apiToCall: () => getInventoryAging(),
+    dataInitalValue: {},
+  }) as { data: Partial<InventoryAging> };
+
+  /* ── Movement & bullion (period-filtered) ────────────────────── */
+
+  const { data: movement } = useLocalApi({
+    apiToCall: (data) => getInventoryMovement(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, appliedRange],
+  }) as { data: Partial<InventoryMovement> };
+
+  const { data: purityMovement } = useLocalApi({
+    apiToCall: (data) => getMovementByPurity(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: { added: [], returned: [] },
+    effectDependency: [period, appliedRange],
+  }) as { data: PurityMovement };
+
+  const { data: staplesSold } = useLocalApi({
+    apiToCall: (data) => getStaplesSold(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    effectDependency: [period, appliedRange],
+  }) as { data: StapleSold[] };
+
+  const maxPurityGrams = Math.max(...stockByPurity.map((p) => p.grams), 1);
+  const totalCategoryValue = stockByCategory.reduce((s, c) => s + c.value, 0);
+  const maxCategoryValue = Math.max(...stockByCategory.map((c) => c.value), 1);
+
+  const agingBuckets = inventoryAging.agingBuckets ?? [];
+
+  const totalStapleSold = staplesSold.reduce((sum, s) => sum + s.sold, 0);
+  const stapleRows = staplesSold.map((s) => ({
+    name: <span className="stpl-name">{s.name}</span>,
+    type: <span className="badge b-type">{s.specification ?? "—"}</span>,
+    stock: s.stock,
+    sold: <span className="stpl-sold">{s.sold}</span>,
+    status: (
+      <span className={`badge ${s.isLow ? "b-low" : "b-ok"}`}>
+        {s.isLow ? "LOW — reorder" : "OK"}
+      </span>
+    ),
+  }));
 
   const stapleHeaders: TableHeader[] = [
     { key: "name", label: "Item" },
     { key: "type", label: "Type" },
     { key: "stock", label: "In stock", align: "right" },
-    {
-      key: "sold",
-      label: `Sold (${periodLabel.toLowerCase()})`,
-      align: "right",
-    },
+    { key: "sold", label: `Sold (${periodLabel.toLowerCase()})`, align: "right" },
     { key: "status", label: "Stock status", align: "center" },
   ];
 
-  const purityMovement = MOVEMENT_BY_PURITY[period];
-  const maxAddedGrams =
-    Math.max(...purityMovement.added.map((x) => x.grams)) || 1;
-  const maxReturnedGrams =
-    Math.max(...purityMovement.returned.map((x) => x.grams)) || 1;
-  const totalAdded = purityMovement.added.reduce(
-    (s, x) => s + scaleInt(x.items),
-    0,
-  );
-  const totalReturned = purityMovement.returned.reduce(
-    (s, x) => s + scaleInt(x.items),
-    0,
-  );
+  const addedByPurity = purityMovement.added;
+  const returnedByPurity = purityMovement.returned;
+  const maxAddedGrams = Math.max(...addedByPurity.map((x) => x.grams), 1);
+  const maxReturnedGrams = Math.max(...returnedByPurity.map((x) => x.grams), 1);
+  const totalAdded = addedByPurity.reduce((s, x) => s + x.items, 0);
+  const totalReturned = returnedByPurity.reduce((s, x) => s + x.items, 0);
 
   return (
     <div id="inventory-reports" className="page">
@@ -134,26 +164,26 @@ const InventoryReports = () => {
       <div className="stats4">
         <ReportStatCard
           label="Items in stock"
-          value="4,837"
-          sub="across 7 categories"
+          value={fmtNumber(stockSummary.itemsInStock ?? 0)}
+          sub={`across ${stockSummary.categoriesCount ?? 0} categories`}
           accentColor="var(--admin-gold)"
         />
         <ReportStatCard
           label="Total weight"
-          value="18,939g"
+          value={`${fmtNumber(stockSummary.totalWeight ?? 0)}g`}
           sub="all purities"
           accentColor="var(--admin-gold)"
         />
         <ReportStatCard
           label="Stock value"
-          value="$3,819,557"
+          value={fmtCurrency(stockSummary.stockValue ?? 0)}
           sub="at current sell prices"
           accentColor="var(--admin-green)"
           valueColor="var(--admin-green)"
         />
         <ReportStatCard
           label="Avg item age"
-          value="64 days"
+          value={`${Math.round(inventoryAging.averageDaysInInventory ?? 0)} days`}
           sub="since added to stock"
           accentColor="var(--admin-blue)"
         />
@@ -165,30 +195,38 @@ const InventoryReports = () => {
             <span className="panel-title">Stock by purity</span>
             <span className="panel-sub">weight · value · items</span>
           </div>
-          {PURITY_STOCK.map((p) => (
-            <HorizontalBarRow
-              key={p.karat}
-              label={p.karat}
-              percent={computeBarPercent(p.grams, maxPurityGrams)}
-              color="var(--admin-gold)"
-              amountLabel={`${p.grams.toLocaleString()}g · $${Math.round(p.value).toLocaleString()} · ${p.items.toLocaleString()} items`}
-            />
-          ))}
+          {stockByPurity.length > 0 ? (
+            stockByPurity.map((p) => (
+              <HorizontalBarRow
+                key={p.karatType}
+                label={`${p.karatType}K`}
+                percent={computeBarPercent(p.grams, maxPurityGrams)}
+                color="var(--admin-gold)"
+                amountLabel={`${fmtNumber(p.grams)}g · ${fmtCurrency(p.value)} · ${fmtNumber(p.items)} items`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Stock by category</span>
             <span className="panel-sub">share of value</span>
           </div>
-          {CATEGORY_STOCK.map((c) => (
-            <HorizontalBarRow
-              key={c.name}
-              label={c.name}
-              percent={computeBarPercent(c.value, maxCategoryValue)}
-              color="var(--admin-blue)"
-              amountLabel={`$${Math.round(c.value).toLocaleString()} · ${Math.round((c.value / totalCategoryValue) * 100)}%`}
-            />
-          ))}
+          {stockByCategory.length > 0 ? (
+            stockByCategory.map((c) => (
+              <HorizontalBarRow
+                key={c.categoryName}
+                label={c.categoryName}
+                percent={computeBarPercent(c.value, maxCategoryValue)}
+                color="var(--admin-blue)"
+                amountLabel={`${fmtCurrency(c.value)} · ${totalCategoryValue > 0 ? Math.round((c.value / totalCategoryValue) * 100) : 0}%`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
 
@@ -198,26 +236,30 @@ const InventoryReports = () => {
           <span className="panel-sub">how long items have been sitting</span>
         </div>
         <div className="mini-grid4">
-          {AGING_BUCKETS.map((b) => (
-            <MiniStatCard
-              key={b.label}
-              label={b.label}
-              value={b.count.toLocaleString()}
-              sub={b.sub}
-              valueColor={b.valueColor}
-            />
-          ))}
+          {agingBuckets.length > 0 ? (
+            agingBuckets.map((b) => (
+              <MiniStatCard
+                key={b.label}
+                label={b.label}
+                value={fmtNumber(b.itemCount)}
+                sub={`${fmtCurrency(b.totalEstimatedValue)} · ${b.percentage}%`}
+                valueColor={AGING_COLORS[b.label]}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
 
       <div className="sec-title move-title">
-        Movement & bullion — filtered by period
+        Movement &amp; bullion — filtered by period
       </div>
       <div className="period-bar">
         {PERIODS.map((p) => (
           <button
             key={p}
-            className={`pbtn ${!isCustomRange && period === p ? "active" : ""}`}
+            className={`pbtn ${period === p ? "active" : ""}`}
             onClick={() => handleSetPeriod(p)}
           >
             {PERIOD_LABELS[p]}
@@ -228,18 +270,14 @@ const InventoryReports = () => {
             type="date"
             className="date-input"
             value={dateRange.dateFrom}
-            onChange={(e) =>
-              setDateRange((prev) => ({ ...prev, dateFrom: e.target.value }))
-            }
+            onChange={(e) => setDateRange((prev) => ({ ...prev, dateFrom: e.target.value }))}
           />
           <span className="range-sep">to</span>
           <input
             type="date"
             className="date-input"
             value={dateRange.dateTo}
-            onChange={(e) =>
-              setDateRange((prev) => ({ ...prev, dateTo: e.target.value }))
-            }
+            onChange={(e) => setDateRange((prev) => ({ ...prev, dateTo: e.target.value }))}
           />
           <button className="apply-btn" onClick={handleApplyCustomRange}>
             Apply
@@ -250,27 +288,27 @@ const InventoryReports = () => {
       <div className="stats4">
         <ReportStatCard
           label="Items added"
-          value={scaleInt(movement.addedItems).toLocaleString()}
-          sub={`${scaleFloat(movement.addedGrams).toLocaleString()}g · ${periodLabel}`}
+          value={fmtNumber(movement.addedItems ?? 0)}
+          sub={`${fmtNumber(movement.addedGrams ?? 0)}g · ${periodLabel}`}
           accentColor="var(--admin-green)"
           valueColor="var(--admin-green)"
         />
         <ReportStatCard
           label="Items sold"
-          value={scaleInt(movement.soldItems).toLocaleString()}
-          sub={`${scaleFloat(movement.soldGrams).toLocaleString()}g`}
+          value={fmtNumber(movement.soldItems ?? 0)}
+          sub={`${fmtNumber(movement.soldGrams ?? 0)}g`}
           accentColor="var(--admin-gold)"
         />
         <ReportStatCard
           label="Items returned"
-          value={scaleInt(movement.returnedItems).toLocaleString()}
-          sub={`${scaleFloat(movement.returnedGrams).toLocaleString()}g back to stock`}
+          value={fmtNumber(movement.returnedItems ?? 0)}
+          sub={`${fmtNumber(movement.returnedGrams ?? 0)}g back to stock`}
           accentColor="var(--admin-blue)"
           valueColor="var(--admin-blue)"
         />
         <ReportStatCard
           label="Melted"
-          value={`${scaleFloat(movement.meltedGrams).toLocaleString()}g`}
+          value={`${fmtNumber(movement.meltedGrams ?? 0)}g`}
           sub="sent to dealer"
           accentColor="var(--admin-amber)"
           valueColor="var(--admin-amber)"
@@ -282,47 +320,53 @@ const InventoryReports = () => {
           <span className="panel-title">
             <FaStore className="icon" /> Bullion &amp; staples sold
           </span>
-          <span className="panel-sub">
-            {totalStapleSold.toLocaleString()} staple items sold
-          </span>
+          <span className="panel-sub">{fmtNumber(totalStapleSold)} staple items sold</span>
         </div>
-        <CustomTable headers={stapleHeaders} data={stapleRows} />
+        {stapleRows.length > 0 ? (
+          <CustomTable headers={stapleHeaders} data={stapleRows} />
+        ) : (
+          <div className="no-data">No data available</div>
+        )}
       </div>
 
       <div className="grid2">
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Items added by purity</span>
-            <span className="panel-sub">
-              {totalAdded.toLocaleString()} items
-            </span>
+            <span className="panel-sub">{fmtNumber(totalAdded)} items</span>
           </div>
-          {purityMovement.added.map((x) => (
-            <HorizontalBarRow
-              key={x.karat}
-              label={x.karat}
-              percent={computeBarPercent(x.grams, maxAddedGrams)}
-              color="var(--admin-green)"
-              amountLabel={`${scaleInt(x.items).toLocaleString()} items · ${scaleFloat(x.grams).toLocaleString()}g`}
-            />
-          ))}
+          {addedByPurity.length > 0 ? (
+            addedByPurity.map((x) => (
+              <HorizontalBarRow
+                key={x.karatType}
+                label={`${x.karatType}K`}
+                percent={computeBarPercent(x.grams, maxAddedGrams)}
+                color="var(--admin-green)"
+                amountLabel={`${fmtNumber(x.items)} items · ${fmtNumber(x.grams)}g`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Items returned by purity</span>
-            <span className="panel-sub">
-              {totalReturned.toLocaleString()} items
-            </span>
+            <span className="panel-sub">{fmtNumber(totalReturned)} items</span>
           </div>
-          {purityMovement.returned.map((x) => (
-            <HorizontalBarRow
-              key={x.karat}
-              label={x.karat}
-              percent={computeBarPercent(x.grams, maxReturnedGrams)}
-              color="var(--admin-amber)"
-              amountLabel={`${scaleInt(x.items).toLocaleString()} items · ${scaleFloat(x.grams).toLocaleString()}g`}
-            />
-          ))}
+          {returnedByPurity.length > 0 ? (
+            returnedByPurity.map((x) => (
+              <HorizontalBarRow
+                key={x.karatType}
+                label={`${x.karatType}K`}
+                percent={computeBarPercent(x.grams, maxReturnedGrams)}
+                color="var(--admin-amber)"
+                amountLabel={`${fmtNumber(x.items)} items · ${fmtNumber(x.grams)}g`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
     </div>

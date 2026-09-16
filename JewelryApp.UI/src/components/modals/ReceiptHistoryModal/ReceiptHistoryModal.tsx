@@ -2,7 +2,7 @@ import { FaReceipt, FaTimes } from "react-icons/fa";
 import { useState } from "react";
 import "./receiptHistoryModal.scss";
 
-import { getCustomerPurhcaseHistory } from "../../../apis/customers.api/customers.api";
+import { getCustomerPurhcaseHistory } from "../../../apis/customers.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import ReceiptModal from "../ReceiptModal/ReceiptModal";
 

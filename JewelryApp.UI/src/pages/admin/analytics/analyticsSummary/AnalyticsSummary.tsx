@@ -1,5 +1,5 @@
 import ReportStatCard from "../../../../components/cards/ReportStatCard/ReportStatCard";
-import { getAnalyticsSummary } from "../../../../apis/analytics.api/analytics.api";
+import { getAnalyticsSummary } from "../../../../apis/analytics.api";
 import useLocalApi from "../../../../hooks/useLocalApi";
 import { smartRound } from "../../../../utils";
 import { ReportType } from "../../../../types/enums";

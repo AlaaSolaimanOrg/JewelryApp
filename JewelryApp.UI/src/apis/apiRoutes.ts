@@ -3,12 +3,7 @@ export const apiRoutes = {
     login: "Auth/Login",
     refreshToken: "Auth/RefreshTokens",
   },
-  cart: {
-    addProductToCart: "Cart/AddProductToCart",
-    getCartProducts: "Cart/GetCartProducts",
-    deleteCart: "Cart/DeleteCart",
-    removeProductFromCart: "Cart/RemoveProductFromCart",
-  },
+
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",
@@ -49,6 +44,14 @@ export const apiRoutes = {
     updateCustomer: "Customer/UpdateCustomer",
     getCustomerPurhcaseHistory: "Customer/GetCustomerPurhcaseHistory",
   },
+  customersReports: {
+    getCustomerBaseStats: "Customer/GetCustomerBaseStats",
+    getCustomerTiers: "Customer/GetCustomerTiers",
+    getAtRiskCustomers: "Customer/GetAtRiskCustomers",
+    getCustomerActivityStats: "Customer/GetCustomerActivityStats",
+    getNewCustomersChart: "Customer/GetNewCustomersChart",
+    getTopCustomersReport: "Customer/GetTopCustomersReport",
+  },
   sales: {
     createSale: "Sales/CreateSale",
     getSaleById: "Sales/GetSaleById",
@@ -57,6 +60,7 @@ export const apiRoutes = {
     getSoldItems: "Sales/GetSoldItems",
     getTodaySalesSummary: "Sales/GetTodaySalesSummary",
     searchSales: "Sales/SearchSales",
+    getTopCustomers: "Sales/GetTopCustomers",
   },
   returns: {
     createReturn: "Returns/CreateReturn",
@@ -72,6 +76,16 @@ export const apiRoutes = {
     updateRepairPaymentStatus: "Repairs/UpdateRepairPaymentStatus",
     updateRepair: "Repairs/UpdateRepair",
   },
+  repairsReports: {
+    getRepairsStats: "Repairs/GetRepairsStats",
+    getRepairHealthMetrics: "Repairs/GetRepairHealthMetrics",
+    getRepairAlerts: "Repairs/GetRepairAlerts",
+    getRepairsRevenueChart: "Repairs/GetRepairsRevenueChart",
+    getRepairsByCustomer: "Repairs/GetRepairsByCustomer",
+    getAvgRepairValueHistory: "Repairs/GetAvgRepairValueHistory",
+    getRepeatCustomers: "Repairs/GetRepeatCustomers",
+    getLongestInShop: "Repairs/GetLongestInShop",
+  },
   analytics: {
     getSalesOverTime: "Analytics/GetSalesOverTime",
     getSalesByCategory: "Analytics/GetSalesByCategory",
@@ -79,6 +93,15 @@ export const apiRoutes = {
     getAnalyticsSummary: "Analytics/GetAnalyticsSummary",
     getPriceOverTime: "Analytics/GetPriceOverTime",
     getCustomerRetention: "Analytics/GetCustomerRetention",
+  },
+  inventoryReports: {
+    getInventoryAging: "Analytics/GetInventoryAging",
+    getInventoryStockSummary: "Analytics/GetInventoryStockSummary",
+    getStockByPurity: "Analytics/GetStockByPurity",
+    getStockByCategory: "Analytics/GetStockByCategory",
+    getInventoryMovement: "Analytics/GetInventoryMovement",
+    getMovementByPurity: "Analytics/GetMovementByPurity",
+    getStaplesSold: "Analytics/GetStaplesSold",
   },
   logs: {
     getLogs: "Logs/GetLogs",

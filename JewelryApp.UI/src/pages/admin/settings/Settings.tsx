@@ -3,7 +3,7 @@ import { FaCog, FaSave, FaShieldAlt } from "react-icons/fa";
 import {
   getSalesPin,
   updateSalesPin,
-} from "../../../apis/securitySettings.api/securitySettings.api";
+} from "../../../apis/securitySettings.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./settings.scss";
 

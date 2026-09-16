@@ -24,6 +24,8 @@
 
 .mobile-menu-toggle {
   display: none;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: var(--pos-text);
@@ -38,6 +40,8 @@
   color: var(--pos-text);
 
   h1 {
+    margin: 0;
+    line-height: 1;
     font-family: var(--pos-font);
     font-weight: 600;
     font-size: 17px;
@@ -198,7 +202,7 @@
   }
 
   .mobile-menu-toggle {
-    display: block;
+    display: flex;
   }
 
   .logo {

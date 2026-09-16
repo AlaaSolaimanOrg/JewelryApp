@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createCustomer } from "../../../../apis/customers.api/customers.api";
+import { createCustomer } from "../../../../apis/customers.api";
 import { checkRequestSucceeded, showError } from "../../../../utils";
 import type { Seller } from "../UsedGold.type";
 import "./addSellerModal.scss";

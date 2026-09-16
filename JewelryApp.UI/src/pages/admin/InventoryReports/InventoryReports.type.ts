@@ -1,33 +1,44 @@
-export type Period = "today" | "week" | "month" | "year" | "all";
+export type Period = "today" | "week" | "month" | "year" | "all" | "custom";
 
-export interface PurityStockRow {
-  karat: string;
+export interface DateRange {
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface InventoryStockSummary {
+  itemsInStock: number;
+  categoriesCount: number;
+  totalWeight: number;
+  stockValue: number;
+}
+
+export interface StockByPurityRow {
+  karatType: number;
   grams: number;
   items: number;
   value: number;
 }
 
-export interface CategoryStockRow {
-  name: string;
+export interface StockByCategoryRow {
+  categoryName: string;
   value: number;
+  items: number;
 }
 
-export interface AgingBucket {
+export interface AgingBucketRow {
   label: string;
-  count: number;
-  sub: string;
-  valueColor?: string;
+  itemCount: number;
+  totalEstimatedValue: number;
+  percentage: number;
 }
 
-export interface StapleItem {
-  name: string;
-  type: string;
-  stock: number;
-  lowThreshold: number;
-  soldByPeriod: Record<Period, number>;
+export interface InventoryAging {
+  averageDaysInInventory: number;
+  averageTurnoverDays: number;
+  agingBuckets: AgingBucketRow[];
 }
 
-export interface PeriodMovement {
+export interface InventoryMovement {
   addedItems: number;
   addedGrams: number;
   soldItems: number;
@@ -38,17 +49,20 @@ export interface PeriodMovement {
 }
 
 export interface PurityMovementRow {
-  karat: string;
+  karatType: number;
   items: number;
   grams: number;
 }
 
-export interface PurityMovementByPeriod {
+export interface PurityMovement {
   added: PurityMovementRow[];
   returned: PurityMovementRow[];
 }
 
-export interface DateRange {
-  dateFrom: string;
-  dateTo: string;
+export interface StapleSold {
+  name: string;
+  specification: string | null;
+  stock: number;
+  sold: number;
+  isLow: boolean;
 }
