@@ -114,7 +114,20 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
             // applied toward a different (new) sale instead of leaving the register now,
             // so the original sale's wallets are left untouched.
             if (request.RefundMethod == Domain.Enums.RefundMethod.Cash)
+            {
                 sale.CashAmount = (sale.CashAmount ?? 0) - totalRefund;
+
+                // Cash refunds leave the store cash box, so the box balance must reflect it.
+                _context.CashTransactions.Add(new CashTransaction
+                {
+                    Id = Guid.NewGuid(),
+                    BoxType = CashBoxType.Store,
+                    Type = CashTransactionType.ReturnCashOut,
+                    Amount = totalRefund,
+                    SaleId = sale.Id,
+                    Notes = $"Return {ret.SerialNumber} for sale #{sale.SerialNumber}",
+                });
+            }
             else if (request.RefundMethod == Domain.Enums.RefundMethod.Card)
                 sale.CardAmount = (sale.CardAmount ?? 0) - totalRefund;
 

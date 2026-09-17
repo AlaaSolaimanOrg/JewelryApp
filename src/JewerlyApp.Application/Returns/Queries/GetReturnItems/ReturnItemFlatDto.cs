@@ -6,10 +6,12 @@ namespace JewerlyApp.Application.Returns.Queries.GetReturnItems
     public class ReturnItemFlatDto
     {
         public Guid Id { get; set; }
+        public Guid ProductId { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string? Sku { get; set; }
         public KaratType Karat { get; set; }
         public decimal Weight { get; set; }
+        public string? Specification { get; set; }
         public int QuantityReturned { get; set; }
         public decimal AmountReturned { get; set; }
         public string? ProductImage { get; set; }
