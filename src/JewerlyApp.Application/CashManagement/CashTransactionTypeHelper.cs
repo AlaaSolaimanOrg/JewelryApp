@@ -14,6 +14,7 @@ namespace JewerlyApp.Application.CashManagement
             CashTransactionType.MoveMoneyIn => true,
             CashTransactionType.SaleCashIn => true,
             CashTransactionType.UsedGoldPurchaseOut => false,
+            CashTransactionType.ReturnCashOut => false,
             _ => true
         };
 

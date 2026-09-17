@@ -116,6 +116,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
             [CashTransactionType.MoveMoneyIn] = "move money in",
             [CashTransactionType.SaleCashIn] = "sale cash in",
             [CashTransactionType.UsedGoldPurchaseOut] = "used gold purchase",
+            [CashTransactionType.ReturnCashOut] = "return",
         };
 
         private static readonly Dictionary<CashBoxType, string> BoxLabels = new()

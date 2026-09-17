@@ -136,6 +136,7 @@ export enum CashTransactionType {
   MoveMoneyIn = 5,
   SaleCashIn = 6,
   UsedGoldPurchaseOut = 7,
+  ReturnCashOut = 8,
 }
 
 export enum UsedGoldPayMethod {

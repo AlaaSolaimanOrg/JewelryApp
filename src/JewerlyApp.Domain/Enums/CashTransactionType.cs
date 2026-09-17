@@ -8,6 +8,7 @@ namespace JewerlyApp.Domain.Enums
         MoveMoneyOut = 4,
         MoveMoneyIn = 5,
         SaleCashIn = 6,
-        UsedGoldPurchaseOut = 7
+        UsedGoldPurchaseOut = 7,
+        ReturnCashOut = 8
     }
 }
