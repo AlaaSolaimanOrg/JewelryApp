@@ -29,6 +29,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
   const isAdmin = userInfo?.roles?.includes("Admin");
+  const isEditingSelf = isEdit && String(userInfo?.id) === userId;
 
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
@@ -131,6 +132,8 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     }
 
     if (!staffFields.roles || staffFields.roles.length === 0) return false;
+
+    if (isEditingSelf && !staffFields.isActive) return false;
 
     return true;
   };
@@ -307,6 +310,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                         type="checkbox"
                         value={role}
                         checked={on}
+                        disabled={isEditingSelf}
                         onChange={() => toggleRole(role)}
                       />
                       <span className="rc-box">
@@ -320,6 +324,9 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
             ) : (
               <p>Loading roles...</p>
             )}
+            {isEditingSelf && (
+              <span className="opt">You can't edit your own roles</span>
+            )}
           </div>
 
           <div className="fg span2">
@@ -329,6 +336,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                 <input
                   type="checkbox"
                   checked={staffFields.isActive}
+                  disabled={isEditingSelf}
                   onChange={(e) =>
                     handleFieldChange("isActive", e.target.checked)
                   }
@@ -340,6 +348,9 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                   ? "Active — can log in"
                   : "Inactive — login blocked"}
               </span>
+              {isEditingSelf && (
+                <span className="opt">You can't deactivate your own account</span>
+              )}
             </div>
           </div>
         </form>

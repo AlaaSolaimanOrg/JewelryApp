@@ -275,6 +275,11 @@
           }
         }
       }
+
+      &:has(input:disabled) {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -327,6 +332,11 @@
 
   .toggle input:checked + .toggle-slider::before {
     transform: translateX(20px);
+  }
+
+  .toggle input:disabled + .toggle-slider {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   .active-label {
