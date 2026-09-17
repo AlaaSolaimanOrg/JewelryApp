@@ -11,12 +11,16 @@ interface TagPrintingModalProps {
   show: boolean;
   onClose: () => void;
   product: Product | null;
+  initialTagCount?: number;
+  onPrinted?: () => void;
 }
 
 const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   show,
   onClose,
   product,
+  initialTagCount,
+  onPrinted,
 }) => {
   const [tagCount, setTagCount] = useState(1);
   const [printers, setPrinters] = useState<any[]>([]);
@@ -38,6 +42,13 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       loadPrinters();
     }
   }, [show]);
+
+  useEffect(() => {
+    if (show && product) {
+      setTagCount(initialTagCount || 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, product?.id]);
 
   if (!show || !product) return null;
 
@@ -124,6 +135,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
 
       showSuccess(`Printed ${tagCount} tag(s) successfully.`);
+      onPrinted?.();
     } catch (err) {
       console.error("PRINT ERROR:", err);
       showError("Printing failed. Check console.");

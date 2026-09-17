@@ -69,10 +69,12 @@ namespace JewerlyApp.Application.Returns.Queries.GetReturnItems
             var responseData = data.Select(i => new ReturnItemFlatDto
             {
                 Id = i.Id,
+                ProductId = i.SaleItem.Product.Id,
                 ProductName = i.SaleItem.Product.Name,
                 Sku = i.SaleItem.Product.Sku,
                 Karat = i.SaleItem.Product.KaratType,
                 Weight = i.SaleItem.Product.Weight,
+                Specification = i.SaleItem.Product.Specification,
                 QuantityReturned = i.QuantityReturned,
                 AmountReturned = i.ReturnAmount,
                 ProductImage = i.SaleItem.Product.Images.FirstOrDefault(im => im.IsMain)?.ImageUrl

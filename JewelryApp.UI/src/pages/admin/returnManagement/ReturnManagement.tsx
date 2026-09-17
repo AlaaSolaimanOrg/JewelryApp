@@ -7,6 +7,8 @@ import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSor
 import {
   ItemCondition,
   KaratType,
+  ProductCategory,
+  ProductType,
   ReturnItemsView,
   ReturnOption,
   ReturnReason,
@@ -20,14 +22,18 @@ import {
 } from "../../../apis/returns.api";
 import Paginator from "../../../components/Paginator/Paginator";
 import CustomLoader from "../../../components/loaders/CustomLoader/CustomLoader";
+import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
+import type { Product } from "../inventory/Inventory";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 
 export interface ReturnItemFlat {
   id: string;
+  productId: string;
   productName: string;
   sku?: string;
   karat: KaratType;
   weight: number;
+  specification?: string;
   quantityReturned: number;
   amountReturned: number;
   productImage?: string;
@@ -66,6 +72,22 @@ const CONDITION_LABELS: Record<ItemCondition, string> = {
 const canSelectItem = (item: ReturnItemFlat) =>
   !item.isTagPrinted && item.option === ReturnOption.ReturnToStock;
 
+const toPrintableProduct = (item: ReturnItemFlat): Product => ({
+  id: item.productId,
+  sku: item.sku ?? "",
+  name: item.productName,
+  karatType: item.karat,
+  weight: item.weight,
+  category: ProductCategory.Necklaces,
+  productType: ProductType.Gold,
+  quantity: item.quantityReturned,
+  price: item.amountReturned / (item.quantityReturned || 1),
+  images: item.productImage ? [{ imageUrl: item.productImage }] : [],
+  tags: [],
+  specification: item.specification,
+  isManualEntry: false,
+});
+
 const formatCurrency = (value: number) => `$${Math.abs(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const formatTime = (dateString: string) =>
@@ -92,6 +114,8 @@ const ReturnManagement: React.FC = () => {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [counts, setCounts] = useState({ needsTags: 0, printed: 0, all: 0 });
   const [isPrinting, setIsPrinting] = useState(false);
+  const [printQueue, setPrintQueue] = useState<ReturnItemFlat[]>([]);
+  const [printingItem, setPrintingItem] = useState<ReturnItemFlat | null>(null);
 
   const {
     data: items,
@@ -153,13 +177,12 @@ const ReturnManagement: React.FC = () => {
 
   const clearSelection = () => setSelected({});
 
-  const printTags = async (ids: string[]) => {
+  const markPrinted = async (ids: string[]) => {
     if (!ids.length) return;
     setIsPrinting(true);
     try {
       const response = await markReturnItemsPrinted({ returnItemIds: ids });
       if (checkRequestSucceeded(response.statusCode)) {
-        showSuccess(`Sent ${ids.length} tag${ids.length !== 1 ? "s" : ""} to printer`);
         setSelected((prev) => {
           const next = { ...prev };
           ids.forEach((id) => delete next[id]);
@@ -173,6 +196,32 @@ const ReturnManagement: React.FC = () => {
     } finally {
       setIsPrinting(false);
     }
+  };
+
+  const printTags = (ids: string[]) => {
+    if (!ids.length) return;
+    const queue = (items ?? []).filter((item) => ids.includes(item.id));
+    if (!queue.length) return;
+    setPrintingItem(queue[0]);
+    setPrintQueue(queue.slice(1));
+  };
+
+  const handleTagPrinted = async () => {
+    if (!printingItem) return;
+    await markPrinted([printingItem.id]);
+    showSuccess(`Tag printed for ${printingItem.productName}`);
+
+    if (printQueue.length > 0) {
+      setPrintingItem(printQueue[0]);
+      setPrintQueue((prev) => prev.slice(1));
+    } else {
+      setPrintingItem(null);
+    }
+  };
+
+  const handleClosePrintModal = () => {
+    setPrintingItem(null);
+    setPrintQueue([]);
   };
 
   // group current page's items by day, preserving the backend's sort order
@@ -378,6 +427,14 @@ const ReturnManagement: React.FC = () => {
         pageNumber={pagination.pageNumber}
         pageSize={pagination.pageSize}
         onPaginationChange={onPaginationChange}
+      />
+
+      <TagPrintingModal
+        show={!!printingItem}
+        product={printingItem ? toPrintableProduct(printingItem) : null}
+        initialTagCount={printingItem?.quantityReturned}
+        onClose={handleClosePrintModal}
+        onPrinted={handleTagPrinted}
       />
     </div>
   );
