@@ -27,6 +27,12 @@ const initialFields = {
   quantity: 1,
 };
 
+interface PricingSettingItem {
+  karatType: KaratType;
+  productType: ProductType;
+  pricePerGram: number;
+}
+
 interface AddProductModalProps {
   show: boolean;
   onClose: () => void;
@@ -40,12 +46,24 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
 }) => {
   const [fields, setFields] = useState(initialFields);
   const [isLoading, setIsLoading] = useState(false);
+  const [pricingSettings, setPricingSettings] = useState<
+    PricingSettingItem[] | null
+  >(null);
 
-  // Reset form when modal opens
   useEffect(() => {
-    if (show) {
-      setFields(initialFields);
-    }
+    if (!show) return;
+    setFields(initialFields);
+    setPricingSettings(null);
+    setIsLoading(true);
+    getPricingSettings()
+      .then((res) => {
+        if (checkRequestSucceeded(res?.statusCode)) {
+          setPricingSettings(res?.data ?? []);
+        } else {
+          showError(res?.message);
+        }
+      })
+      .finally(() => setIsLoading(false));
   }, [show]);
 
   const handleField = (name: string, value: any) => {
@@ -66,42 +84,34 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     Number(fields.quantity) <= 0;
 
   const handleConfirm = () => {
-    if (isInvalid || isLoading) return;
-    setIsLoading(true);
+    if (isInvalid || isLoading || !pricingSettings) return;
 
-    getPricingSettings()
-      .then((res) => {
-        if (!checkRequestSucceeded(res?.statusCode)) {
-          showError(res?.message);
-          return;
-        }
-        const setting = (res?.data ?? []).find(
-          (item: any) =>
-            Number(item.karatType) === Number(fields.karat) &&
-            Number(item.productType) === Number(fields.productType),
-        );
-        const pricePerGram = setting?.pricePerGram ?? 0;
-        onProductAdded({
-          id: null,
-          sku: null,
-          name: fields.productName,
-          quantity: Number(fields.quantity),
-          quantityForSale: 1,
-          karatType: Number(fields.karat),
-          weight: fields.weight,
-          category: Number(fields.category),
-          productType: Number(fields.productType),
-          specification: fields.specification,
-          description: "",
-          pricePerGram,
-          originalPricePerGram: pricePerGram,
-          images: [],
-          manual: false,
-          pending: true,
-        });
-        onClose();
-      })
-      .finally(() => setIsLoading(false));
+    const setting = pricingSettings.find(
+      (item) =>
+        Number(item.karatType) === Number(fields.karat) &&
+        Number(item.productType) === Number(fields.productType),
+    );
+    const pricePerGram = setting?.pricePerGram ?? 0;
+
+    onProductAdded({
+      id: null,
+      sku: null,
+      name: fields.productName,
+      quantity: Number(fields.quantity),
+      quantityForSale: 1,
+      karatType: Number(fields.karat),
+      weight: fields.weight,
+      category: Number(fields.category),
+      productType: Number(fields.productType),
+      specification: fields.specification,
+      description: "",
+      pricePerGram,
+      originalPricePerGram: pricePerGram,
+      images: [],
+      manual: false,
+      pending: true,
+    });
+    onClose();
   };
 
   return (
@@ -259,10 +269,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         <button
           className="btn-md btn-gold"
           onClick={handleConfirm}
-          disabled={isInvalid || isLoading}
+          disabled={isInvalid || isLoading || !pricingSettings}
         >
           <FaSave className="icon" />
-          {isLoading ? "Adding..." : "Add to Cart"}
+          {isLoading ? "Loading prices..." : "Add to Cart"}
         </button>
       </Modal.Footer>
     </Modal>
