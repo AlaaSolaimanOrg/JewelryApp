@@ -79,3 +79,7 @@ export const getProductSpecialPricing = async (payload: {
 }) => {
   return requestApi("GET", apiRoutes.product.getSpecialPricing, payload);
 };
+
+export const getBullionProducts = async () => {
+  return requestApi("GET", apiRoutes.product.getBullionProducts);
+};

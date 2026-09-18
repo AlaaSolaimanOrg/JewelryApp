@@ -15,6 +15,7 @@ import type { ExchangeApplyData } from "./PosSale.sections/ExchangeSection/Excha
 import PaymentMethodSection from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection";
 import type { PayMethod } from "./PosSale.sections/PaymentMethodSection/PaymentMethodSection.type";
 import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
+import LiraOunceDropdown from "./PosSale.sections/LiraOunceDropdown/LiraOunceDropdown";
 import ProductsSection from "./PosSale.sections/ProductsSection/ProductsSection";
 import TradeInSection from "./PosSale.sections/TradeInSection/TradeInSection";
 import type { Customer, Product } from "./types";
@@ -233,6 +234,21 @@ const MainPosPage: React.FC = () => {
     });
   };
 
+  const handleBullionSelected = (product: Product) => {
+    setProducts((prev) => {
+      if (prev.some((p) => p.id === product.id)) return prev;
+      return [
+        ...prev,
+        {
+          ...product,
+          originalPricePerGram: product.pricePerGram,
+          quantityForSale: 1,
+          manual: false,
+        },
+      ];
+    });
+  };
+
   const resetSaleForm = () => {
     setCustomer(null);
     setCustomerInfoActive(false);
@@ -272,8 +288,13 @@ const MainPosPage: React.FC = () => {
       cardAmount: parseAmount(cardAmount),
       saleItems: products.map((product) => {
         return {
-          productId: product.id,
+          productId: product.pending ? null : product.id,
           productName: product.name,
+          isNewProduct: !!product.pending,
+          category: product.pending ? product.category : null,
+          productType: product.productType,
+          specification: product.specification,
+          stockQuantity: product.pending ? product.quantity : 0,
           karatType: Number(product.karatType),
           weight: product.weight,
           quantity: product.quantityForSale || 1, // Include quantity here
@@ -353,6 +374,10 @@ const MainPosPage: React.FC = () => {
           >
             <FaStickyNote /> Notes
           </button>
+          <LiraOunceDropdown
+            selectedIds={products.map((p) => p.id)}
+            onProductSelected={handleBullionSelected}
+          />
           <button
             className="ps-btn ps-btn-red"
             onClick={() => setShowExchangeModal(true)}

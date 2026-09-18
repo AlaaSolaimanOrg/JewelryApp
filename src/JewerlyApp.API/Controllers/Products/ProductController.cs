@@ -6,6 +6,7 @@ using JewerlyApp.Application.Products.Commands.UpsertProductSpecialPricing;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
+using JewerlyApp.Application.Products.Queries.GetBullionProducts;
 using JewerlyApp.Application.Products.Queries.GetInventorySummary;
 using JewerlyApp.Application.Products.Queries.GetMeltedProducts;
 using JewerlyApp.Application.Products.Queries.GetMeltedReports;
@@ -89,6 +90,16 @@ namespace JewerlyApp.API.Controllers.Products
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProductsBySkus([FromQuery] GetProductsBySkusQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get in-stock products tagged lira or ounce
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetBullionProducts([FromQuery] GetBullionProductsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

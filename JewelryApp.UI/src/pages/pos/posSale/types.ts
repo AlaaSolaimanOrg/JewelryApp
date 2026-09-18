@@ -17,6 +17,8 @@ export interface Product {
   images: { imageUrl: string }[];
   manual: boolean;
   subtotal?: string | number;
+  specification?: string;
+  pending?: boolean;
 }
 
 export interface Customer {
