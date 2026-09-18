@@ -25,6 +25,7 @@ export const apiRoutes = {
     getMeltedReports: "Product/GetMeltedReports",
     upsertSpecialPricing: "Product/UpsertSpecialPricing",
     getSpecialPricing: "Product/GetSpecialPricing",
+    getBullionProducts: "Product/GetBullionProducts",
   },
   users: {
     getAllUsers: "Users/GetAllUsers",
