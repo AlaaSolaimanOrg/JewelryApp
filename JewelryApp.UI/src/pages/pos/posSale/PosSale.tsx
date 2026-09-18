@@ -272,8 +272,13 @@ const MainPosPage: React.FC = () => {
       cardAmount: parseAmount(cardAmount),
       saleItems: products.map((product) => {
         return {
-          productId: product.id,
+          productId: product.pending ? null : product.id,
           productName: product.name,
+          isNewProduct: !!product.pending,
+          category: product.pending ? product.category : null,
+          productType: product.productType,
+          specification: product.specification,
+          stockQuantity: product.pending ? product.quantity : 0,
           karatType: Number(product.karatType),
           weight: product.weight,
           quantity: product.quantityForSale || 1, // Include quantity here

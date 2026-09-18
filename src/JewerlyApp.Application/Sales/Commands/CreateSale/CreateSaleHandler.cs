@@ -13,11 +13,13 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
     {
         private readonly IApplicationDbContext _context;
         private readonly IUserService _userService;
+        private readonly ISkuService _skuService;
 
-        public CreateSaleHandler(IApplicationDbContext context, IUserService userService)
+        public CreateSaleHandler(IApplicationDbContext context, IUserService userService, ISkuService skuService)
         {
             _context = context;
             _userService = userService;
+            _skuService = skuService;
         }
 
         public async Task<GenericResponse<string>> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
@@ -32,9 +34,9 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                 return validationError;
 
             // -------------------------------
-            // 2. INSERT MANUAL PRODUCTS FIRST
+            // 2. STAGE NEW / MANUAL PRODUCTS (saved together with the sale)
             // -------------------------------
-            await AddManualProductsBatch(request.SaleItems, cancellationToken);
+            var newProducts = await StageNewProductsAsync(request.SaleItems);
 
             // Now ALL sale items have a valid ProductId
             var allProductIds = request.SaleItems
@@ -47,6 +49,9 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             var products = await _context.Products
                 .Where(p => allProductIds.Contains(p.Id))
                 .ToDictionaryAsync(p => p.Id, cancellationToken);
+
+            foreach (var newProduct in newProducts)
+                products[newProduct.Id] = newProduct;
 
             // -------------------------------
             // 4. PREPARE SALE
@@ -166,33 +171,55 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         }
 
 
-        private async Task AddManualProductsBatch(List<SaleItemDto> items, CancellationToken cancellationToken)
+        private async Task<List<Product>> StageNewProductsAsync(List<SaleItemDto> items)
         {
             var newProducts = new List<Product>();
 
-            foreach (var item in items.Where(i => i.IsManualProduct))
+            var newItems = items.Where(i => i.IsManualProduct || i.IsNewProduct).ToList();
+
+            var skus = new Dictionary<SaleItemDto, string>();
+            foreach (var item in newItems.Where(i => i.IsNewProduct))
+            {
+                skus[item] = await _skuService.GenerateSkuAsync(item.Category ?? ProductCategory.Necklaces);
+            }
+
+            foreach (var item in newItems)
             {
                 var newProductId = Guid.NewGuid();
                 item.ProductId = newProductId;
 
-                newProducts.Add(new Product
-                {
-                    Id = newProductId,
-                    Name = item.ProductName,
-                    KaratType = item.KaratType,
-                    Weight = item.Weight,
-                    Type = ProductType.Gold,
-                    Quantity = item.Quantity > 0 ? item.Quantity : 1,
-                    IsManualEntry = true,
-                    CreatedDate = DateTime.UtcNow
-                });
+                newProducts.Add(item.IsNewProduct
+                    ? new Product
+                    {
+                        Id = newProductId,
+                        Name = item.ProductName,
+                        Sku = skus[item],
+                        KaratType = item.KaratType,
+                        Weight = item.Weight,
+                        Category = item.Category,
+                        Specification = item.Specification,
+                        Type = item.ProductType,
+                        Description = string.Empty,
+                        Quantity = item.StockQuantity > 0 ? item.StockQuantity : item.Quantity,
+                        CreatedDate = DateTime.UtcNow
+                    }
+                    : new Product
+                    {
+                        Id = newProductId,
+                        Name = item.ProductName,
+                        KaratType = item.KaratType,
+                        Weight = item.Weight,
+                        Type = ProductType.Gold,
+                        Quantity = item.Quantity > 0 ? item.Quantity : 1,
+                        IsManualEntry = true,
+                        CreatedDate = DateTime.UtcNow
+                    });
             }
 
             if (newProducts.Any())
-            {
-                await _context.Products.AddRangeAsync(newProducts, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
-            }
+                await _context.Products.AddRangeAsync(newProducts);
+
+            return newProducts;
         }
 
 
