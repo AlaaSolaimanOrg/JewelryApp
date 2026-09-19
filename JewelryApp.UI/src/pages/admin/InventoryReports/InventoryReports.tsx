@@ -50,7 +50,7 @@ const InventoryReports = () => {
     dateFrom: "2026-06-01",
     dateTo: "2026-06-11",
   });
-  const [period, setPeriod] = useState<Period>("month");
+  const [period, setPeriod] = useState<Period>("all");
   const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
 
   const handleSetPeriod = (p: Exclude<Period, "custom">) => {

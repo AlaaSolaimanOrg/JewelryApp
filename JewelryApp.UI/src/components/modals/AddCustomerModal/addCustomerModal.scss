@@ -74,6 +74,10 @@
       filter: invert(1);
     }
 
+    &::selection {
+      background: var(--pos-gold-bg);
+    }
+
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus {
@@ -134,5 +138,21 @@
     margin-top: 6px;
     color: var(--pos-red, #e65b5b);
     font-size: 0.875rem;
+  }
+}
+
+.jewleryApp[data-theme="light"] {
+  #customerModal {
+    .modal-header .btn-close {
+      filter: none;
+    }
+
+    .form-control {
+      color-scheme: light;
+
+      &[type="date"]::-webkit-calendar-picker-indicator {
+        filter: none;
+      }
+    }
   }
 }
