@@ -126,7 +126,7 @@ const InventoryReports = () => {
   const totalStapleSold = staplesSold.reduce((sum, s) => sum + s.sold, 0);
   const stapleRows = staplesSold.map((s) => ({
     name: <span className="stpl-name">{s.name}</span>,
-    type: <span className="badge b-type">{s.specification ?? "—"}</span>,
+    type: <span className="badge b-type">{s.type ?? "—"}</span>,
     stock: s.stock,
     sold: <span className="stpl-sold">{s.sold}</span>,
     status: (

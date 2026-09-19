@@ -40,6 +40,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
         DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
         DbSet<SecurityPinSetting> SecurityPinSettings { get; set; }
+        DbSet<InventorySetting> InventorySettings { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
