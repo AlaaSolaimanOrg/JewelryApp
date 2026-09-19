@@ -253,7 +253,7 @@ const InventoryReports = () => {
       </div>
 
       <div className="sec-title move-title">
-        Movement &amp; bullion — filtered by period
+        Inventory Movement — filtered by period
       </div>
       <div className="period-bar">
         {PERIODS.map((p) => (
