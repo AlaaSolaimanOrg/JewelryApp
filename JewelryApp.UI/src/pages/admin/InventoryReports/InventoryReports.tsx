@@ -318,9 +318,9 @@ const InventoryReports = () => {
       <div className="panel">
         <div className="panel-head">
           <span className="panel-title">
-            <FaStore className="icon" /> Bullion &amp; staples sold
+            <FaStore className="icon" /> Bullions sold
           </span>
-          <span className="panel-sub">{fmtNumber(totalStapleSold)} staple items sold</span>
+          <span className="panel-sub">{fmtNumber(totalStapleSold)} bullions sold</span>
         </div>
         {stapleRows.length > 0 ? (
           <CustomTable headers={stapleHeaders} data={stapleRows} />
