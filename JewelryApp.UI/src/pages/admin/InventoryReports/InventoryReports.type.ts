@@ -61,7 +61,7 @@ export interface PurityMovement {
 
 export interface StapleSold {
   name: string;
-  specification: string | null;
+  type: string | null;
   stock: number;
   sold: number;
   isLow: boolean;

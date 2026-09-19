@@ -1,10 +1,13 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.InventorySettings;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,9 +16,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
 {
     public class GetStaplesSoldHandler : IRequestHandler<GetStaplesSoldQuery, GenericResponse<List<StapleSoldVM>>>
     {
-        // No per-item reorder threshold exists in the data model yet; staples at or
-        // below this stock count are flagged as low so buyers know to reorder.
-        private const int LowStockThreshold = 10;
+        private const string LiraTag = "lira";
+        private const string OunceTag = "ounce";
 
         private readonly IApplicationDbContext _context;
 
@@ -24,12 +26,36 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
             _context = context;
         }
 
+        private static string BuildType(KaratType karatType, decimal weight, List<string> tags)
+        {
+            var kind = "bullion";
+            if (tags.Any(t => string.Equals(t, LiraTag, StringComparison.OrdinalIgnoreCase)))
+            {
+                kind = LiraTag;
+            }
+            else if (tags.Any(t => string.Equals(t, OunceTag, StringComparison.OrdinalIgnoreCase)))
+            {
+                kind = OunceTag;
+            }
+
+            return $"{(int)karatType}K {kind} · {weight.ToString("0.##", CultureInfo.InvariantCulture)}g";
+        }
+
         public async Task<GenericResponse<List<StapleSoldVM>>> Handle(GetStaplesSoldQuery request, CancellationToken cancellationToken)
         {
+            var lowStockThreshold = await LowStockThresholdResolver.GetCurrentThresholdAsync(_context, cancellationToken);
+
             var bullionProducts = await _context.Products
                 .AsNoTracking()
                 .Where(p => p.Category == ProductCategory.Bullion)
-                .Select(p => new { p.Name, p.Specification, p.Quantity })
+                .Select(p => new
+                {
+                    p.Name,
+                    p.KaratType,
+                    p.Weight,
+                    p.Quantity,
+                    Tags = p.Tags.Select(t => t.Tag).ToList(),
+                })
                 .ToListAsync(cancellationToken);
 
             var stockByName = bullionProducts
@@ -37,7 +63,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
                 .GroupBy(p => p.Name!)
                 .ToDictionary(
                     g => g.Key,
-                    g => new { Stock = g.Sum(p => p.Quantity ?? 1), Specification = g.FirstOrDefault(p => p.Specification != null)?.Specification });
+                    g => new { Stock = g.Sum(p => p.Quantity ?? 1), Type = BuildType(g.First().KaratType, g.First().Weight, g.First().Tags) });
 
             var soldQuery = _context.SaleItems
                 .AsNoTracking()
@@ -72,10 +98,10 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
                     return new StapleSoldVM
                     {
                         Name = name,
-                        Specification = stockInfo?.Specification,
+                        Type = stockInfo?.Type,
                         Stock = stock,
                         Sold = soldByName.GetValueOrDefault(name),
-                        IsLow = stock <= LowStockThreshold,
+                        IsLow = stock <= lowStockThreshold,
                     };
                 })
                 .OrderByDescending(s => s.Sold)

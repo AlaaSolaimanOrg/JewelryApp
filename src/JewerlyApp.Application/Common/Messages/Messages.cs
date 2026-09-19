@@ -179,6 +179,12 @@
         public const string Error_Security_Pin_Invalid = "PIN must be exactly 4 digits.";
         public const string Success_Security_Pin_Verified = "PIN verified.";
         public const string Error_Security_Pin_Incorrect = "Incorrect PIN.";
+
+        // --------------------------------------------------
+        // INVENTORY SETTINGS MESSAGES
+        // --------------------------------------------------
+        public const string Success_Inventory_LowStockThreshold_Updated = "Low stock threshold updated successfully.";
+        public const string Error_Inventory_LowStockThreshold_Invalid = "Low stock threshold must be a whole number between 0 and 100000.";
     }
 
 

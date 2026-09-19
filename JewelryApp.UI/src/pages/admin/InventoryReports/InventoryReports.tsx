@@ -50,7 +50,7 @@ const InventoryReports = () => {
     dateFrom: "2026-06-01",
     dateTo: "2026-06-11",
   });
-  const [period, setPeriod] = useState<Period>("month");
+  const [period, setPeriod] = useState<Period>("all");
   const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
 
   const handleSetPeriod = (p: Exclude<Period, "custom">) => {
@@ -126,7 +126,7 @@ const InventoryReports = () => {
   const totalStapleSold = staplesSold.reduce((sum, s) => sum + s.sold, 0);
   const stapleRows = staplesSold.map((s) => ({
     name: <span className="stpl-name">{s.name}</span>,
-    type: <span className="badge b-type">{s.specification ?? "—"}</span>,
+    type: <span className="badge b-type">{s.type ?? "—"}</span>,
     stock: s.stock,
     sold: <span className="stpl-sold">{s.sold}</span>,
     status: (
@@ -253,7 +253,7 @@ const InventoryReports = () => {
       </div>
 
       <div className="sec-title move-title">
-        Movement &amp; bullion — filtered by period
+        Inventory Movement — filtered by period
       </div>
       <div className="period-bar">
         {PERIODS.map((p) => (
@@ -318,9 +318,9 @@ const InventoryReports = () => {
       <div className="panel">
         <div className="panel-head">
           <span className="panel-title">
-            <FaStore className="icon" /> Bullion &amp; staples sold
+            <FaStore className="icon" /> Bullions sold
           </span>
-          <span className="panel-sub">{fmtNumber(totalStapleSold)} staple items sold</span>
+          <span className="panel-sub">{fmtNumber(totalStapleSold)} bullions sold</span>
         </div>
         {stapleRows.length > 0 ? (
           <CustomTable headers={stapleHeaders} data={stapleRows} />

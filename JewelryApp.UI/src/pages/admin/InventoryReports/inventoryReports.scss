@@ -265,6 +265,16 @@
       border-bottom: 1px solid var(--admin-bd);
       color: var(--admin-t2);
       vertical-align: middle;
+
+      &:nth-child(3),
+      &:nth-child(4) {
+        text-align: right;
+        font-weight: 600;
+      }
+
+      &:nth-child(5) {
+        text-align: center;
+      }
     }
 
     tr:last-child td {

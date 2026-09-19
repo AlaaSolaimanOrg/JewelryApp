@@ -7,10 +7,11 @@ import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSor
 import { RepairPayMethod, RepairStatus } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import type { Customer } from "../posSale/types";
-import AddCustomerModal from "./AddCustomerModal/AddCustomerModal";
+import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import CustomerSchedulePanel from "./CustomerSchedulePanel/CustomerSchedulePanel";
 import RepairDetailsPanel from "./RepairDetailsPanel/RepairDetailsPanel";
 import {
+  formatAmountInput,
   formatCurrency,
   getNextAvailableSlot,
   payMethodToPaymentStatus,
@@ -51,19 +52,19 @@ const RepairIntake = () => {
 
   const recalcPayFields = (method: RepairPayMethod, costValue: number) => {
     if (method === RepairPayMethod.Cash) {
-      setCashAmount(costValue.toFixed(2));
+      setCashAmount(formatAmountInput(costValue));
       setCardAmount("0");
     } else if (method === RepairPayMethod.Card) {
       setCashAmount("0");
-      setCardAmount(costValue.toFixed(2));
+      setCardAmount(formatAmountInput(costValue));
     } else if (method === RepairPayMethod.Split) {
       if (lastPayEdited.current === "cash") {
         setCardAmount(
-          Math.max(0, costValue - (parseFloat(cashAmount) || 0)).toFixed(2),
+          formatAmountInput(Math.max(0, costValue - (parseFloat(cashAmount) || 0))),
         );
       } else {
         setCashAmount(
-          Math.max(0, costValue - (parseFloat(cardAmount) || 0)).toFixed(2),
+          formatAmountInput(Math.max(0, costValue - (parseFloat(cardAmount) || 0))),
         );
       }
     }
@@ -86,7 +87,7 @@ const RepairIntake = () => {
     lastPayEdited.current = "cash";
     const costValue = parseFloat(cost) || 0;
     const cashValue = parseFloat(value) || 0;
-    setCardAmount(Math.max(0, costValue - cashValue).toFixed(2));
+    setCardAmount(formatAmountInput(Math.max(0, costValue - cashValue)));
   };
 
   const handleCardAmountChange = (value: string) => {
@@ -95,7 +96,7 @@ const RepairIntake = () => {
     lastPayEdited.current = "card";
     const costValue = parseFloat(cost) || 0;
     const cardValue = parseFloat(value) || 0;
-    setCashAmount(Math.max(0, costValue - cardValue).toFixed(2));
+    setCashAmount(formatAmountInput(Math.max(0, costValue - cardValue)));
   };
 
   const resetForm = () => {
@@ -205,7 +206,7 @@ const RepairIntake = () => {
       <AddCustomerModal
         show={showAddCustomerModal}
         onClose={() => setShowAddCustomerModal(false)}
-        onAdded={setCustomer}
+        setCustomer={setCustomer}
       />
 
       {createdRepairId && (

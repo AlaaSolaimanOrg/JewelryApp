@@ -47,6 +47,7 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
         public virtual DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
         public virtual DbSet<SecurityPinSetting> SecurityPinSettings { get; set; }
+        public virtual DbSet<InventorySetting> InventorySettings { get; set; }
 
 
 

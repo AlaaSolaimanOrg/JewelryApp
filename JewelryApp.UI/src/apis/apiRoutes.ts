@@ -128,6 +128,10 @@ export const apiRoutes = {
     updateSalesPin: "SecuritySettings/UpdateSalesPin",
     verifySalesPin: "SecuritySettings/VerifySalesPin",
   },
+  inventorySettings: {
+    getLowStockThreshold: "InventorySettings/GetLowStockThreshold",
+    updateLowStockThreshold: "InventorySettings/UpdateLowStockThreshold",
+  },
   dashboard: {
     getPosDashboardStats: "Dashboard/GetPosDashboardStats",
     getAdminSalesSummary: "Dashboard/GetAdminSalesSummary",

@@ -205,21 +205,20 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   };
 
   const handleSuccess = (customerId) => {
-    if (isCustomersView && !!callGetCustomerDetails) {
-      callGetCustomerDetails();
+    if (isCustomersView) {
+      callGetCustomerDetails?.();
+      return;
     }
-    if (!isCustomersView && !!setSearchInput && !!callGetCustomerDetails) {
-      setCustomer({
-        id: customerId,
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        birthday: birthday,
-      });
-      setCustomerInfoActive(true);
-      setSearchInput?.(name);
-      callGetCustomerDetails();
-    }
+    setCustomer?.({
+      id: customerId,
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+      birthday: birthday,
+    });
+    setCustomerInfoActive?.(true);
+    setSearchInput?.(name);
+    callGetCustomerDetails?.();
   };
 
   const handleSave = () => {
@@ -243,7 +242,11 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       show={show}
       onHide={handleCancel}
       centered
-      container={() => document.querySelector(".pos-app") || document.body}
+      container={() =>
+        document.querySelector(".pos-app") ||
+        document.querySelector(".jewleryApp") ||
+        document.body
+      }
     >
       <Modal.Header closeButton>
         <Modal.Title>{getCustomerModalTitle(mode)}</Modal.Title>

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { FaCog, FaSave, FaShieldAlt } from "react-icons/fa";
+import { FaBoxes, FaCog, FaSave, FaShieldAlt } from "react-icons/fa";
+import {
+  getLowStockThreshold,
+  updateLowStockThreshold,
+} from "../../../apis/inventorySettings.api";
 import {
   getSalesPin,
   updateSalesPin,
@@ -10,6 +14,8 @@ import "./settings.scss";
 const Settings = () => {
   const [salesPin, setSalesPin] = useState("");
   const [savingPin, setSavingPin] = useState(false);
+  const [lowStockThreshold, setLowStockThreshold] = useState("");
+  const [savingThreshold, setSavingThreshold] = useState(false);
 
   useEffect(() => {
     const fetchSalesPin = async () => {
@@ -18,8 +24,37 @@ const Settings = () => {
         setSalesPin(response?.data || "");
       }
     };
+    const fetchLowStockThreshold = async () => {
+      const response = await getLowStockThreshold();
+      if (checkRequestSucceeded(response?.statusCode)) {
+        setLowStockThreshold(String(response?.data ?? ""));
+      }
+    };
     fetchSalesPin();
+    fetchLowStockThreshold();
   }, []);
+
+  const handleLowStockThresholdSave = async () => {
+    if (!/^\d+$/.test(lowStockThreshold)) {
+      showError("Low stock threshold must be a whole number.");
+      return;
+    }
+    setSavingThreshold(true);
+    try {
+      const response = await updateLowStockThreshold({
+        threshold: Number(lowStockThreshold),
+      });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        showSuccess(
+          response?.message || "Low stock threshold updated successfully.",
+        );
+      } else {
+        showError(response?.message || "Failed to update low stock threshold.");
+      }
+    } finally {
+      setSavingThreshold(false);
+    }
+  };
 
   const handleSalesPinSave = async () => {
     if (!/^\d{4}$/.test(salesPin)) {
@@ -72,6 +107,35 @@ const Settings = () => {
             disabled={savingPin}
           >
             <FaSave /> {savingPin ? "Saving..." : "Save PIN"}
+          </button>
+        </div>
+
+        <div className="setting-card">
+          <h3>
+            <FaBoxes /> Inventory Settings
+          </h3>
+          <div className="form-group">
+            <label className="form-label">
+              Low stock threshold (bullion &amp; staples)
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              className="form-control"
+              placeholder="e.g. 10"
+              value={lowStockThreshold}
+              onChange={(e) =>
+                setLowStockThreshold(e.target.value.replace(/\D/g, ""))
+              }
+            />
+          </div>
+          <button
+            className="btn-md btn-gold"
+            onClick={handleLowStockThresholdSave}
+            disabled={savingThreshold}
+          >
+            <FaSave /> {savingThreshold ? "Saving..." : "Save threshold"}
           </button>
         </div>
       </div>
