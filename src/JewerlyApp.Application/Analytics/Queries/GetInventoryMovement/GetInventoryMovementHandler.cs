@@ -54,7 +54,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetInventoryMovement
                 .Select(ri => new { ri.QuantityReturned, Weight = ri.SaleItem.Weight })
                 .ToListAsync(cancellationToken);
 
-            var meltedGrams = await meltedQuery.SumAsync(m => m.Weight ?? 0, cancellationToken);
+            var meltedGrams = await meltedQuery.SumAsync(m => (m.Weight ?? 0) * m.Quantity, cancellationToken);
 
             var vm = new InventoryMovementVM
             {
