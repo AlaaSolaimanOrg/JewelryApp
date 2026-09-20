@@ -171,6 +171,9 @@
         public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";
         public const string Error_UsedGold_StockReturn_InvalidWeight = "Weight must be greater than 0.";
         public const string Error_UsedGold_StockReturn_InsufficientStock = "Weight exceeds what's currently on hand for this karat.";
+        public const string Error_UsedGold_StockReturn_UnsupportedKarat = "Only 18K, 21K, 22K and 24K items can be added to inventory.";
+        public const string Error_UsedGold_StockReturn_NameRequired = "Product name is required.";
+        public const string Error_UsedGold_StockReturn_InvalidCategory = "Product category is required.";
 
         // --------------------------------------------------
         // SECURITY / PIN SETTINGS MESSAGES (NEW)
