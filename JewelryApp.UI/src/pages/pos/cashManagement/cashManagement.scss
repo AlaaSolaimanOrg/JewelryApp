@@ -135,6 +135,11 @@
     &.cash-btn-outline {
       color: var(--pos-text-muted);
     }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 

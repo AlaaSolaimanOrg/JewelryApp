@@ -18,6 +18,7 @@ import { checkRequestSucceeded, handleSort, showError, showSuccess } from "../..
 import { SortDirection } from "../../../types/enums";
 import MeltGoldModal from "./MeltGoldModal/MeltGoldModal";
 import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
+import type { ReturnToStockPayload } from "./ReturnToStockModal/ReturnToStockModal.type";
 import type { GoldPool, Period, UsedGoldHistoryEntry } from "./UsedGold.type";
 import {
   MONTHS,
@@ -230,11 +231,12 @@ const UsedGold = () => {
     }
   };
 
-  const handleStockConfirm = async (karat: number, weight: number, notes: string) => {
-    const response = await returnToStock({ karat, weight, notes: notes || undefined });
+  const handleStockConfirm = async (payload: ReturnToStockPayload) => {
+    const { karat, weight } = payload;
+    const response = await returnToStock(payload);
     if (checkRequestSucceeded(response?.statusCode)) {
       setShowStockModal(false);
-      showSuccess(`${weight.toFixed(2)}g ${karat}K returned to stock`);
+      showSuccess(`${weight.toFixed(2)}g ${karat}K added to inventory (${response?.data})`);
       refresh();
     } else {
       showError(response?.message || "Failed to return gold to stock");

@@ -23,12 +23,19 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
         {
             var query = _context.MeltRecords.AsNoTracking();
 
+            if (request.DateFrom.HasValue && request.DateTo.HasValue)
+            {
+                query = query.Where(m => m.MeltedAt >= request.DateFrom.Value && m.MeltedAt <= request.DateTo.Value);
+            }
+
             if (!string.IsNullOrWhiteSpace(request.SearchBy))
             {
                 var keyword = request.SearchBy.Trim();
                 query = query.Where(m =>
                     (m.Sku != null && m.Sku.Contains(keyword)) ||
-                    (m.ProductName != null && m.ProductName.Contains(keyword)));
+                    (m.ProductName != null && m.ProductName.Contains(keyword)) ||
+                    m.Quantity.ToString().Contains(keyword) ||
+                    (m.Weight != null && m.Weight.Value.ToString().Contains(keyword)));
             }
 
             var total = await query.CountAsync(cancellationToken);

@@ -16,6 +16,7 @@ import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
 import { handleSort, renderLongDescription } from "../../../utils";
+import { renderSortLabel } from "../customers/Customers.utils";
 import "./meltedProducts.scss";
 
 interface MeltedProduct {
@@ -83,6 +84,11 @@ const MeltedProducts = () => {
     sortCriteria,
   } = useLocalApiSearchSortPagination<MeltedProduct>({
     apiToCall: (data) => getMeltedProducts(data.payload),
+    extraPayload: {
+      dateFrom: appliedDateRange.dateFrom,
+      dateTo: appliedDateRange.dateTo,
+    },
+    extraEffectDependency: [appliedDateRange],
     initialSortBy: "MeltedAt",
     initialSortDirection: SortDirection.Descending,
   });
@@ -90,38 +96,38 @@ const MeltedProducts = () => {
   const headers = [
     {
       key: "sku",
-      label: "SKU",
+      label: renderSortLabel("SKU", "Sku", sortCriteria),
       width: "150px",
       onHeaderClick: () => handleSort("Sku", sortCriteria, onSortChange),
     },
     {
       key: "productName",
-      label: "Product Name",
+      label: renderSortLabel("Product Name", "ProductName", sortCriteria),
       width: "200px",
       onHeaderClick: () =>
         handleSort("ProductName", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
-      label: "Quantity",
+      label: renderSortLabel("Quantity", "Quantity", sortCriteria),
       width: "100px",
       onHeaderClick: () => handleSort("Quantity", sortCriteria, onSortChange),
     },
     {
       key: "weight",
-      label: "Weight (g)",
+      label: renderSortLabel("Weight (g)", "Weight", sortCriteria),
       width: "120px",
       onHeaderClick: () => handleSort("Weight", sortCriteria, onSortChange),
     },
     {
       key: "karat",
-      label: "Karat",
+      label: renderSortLabel("Karat", "KaratType", sortCriteria),
       width: "100px",
       onHeaderClick: () => handleSort("KaratType", sortCriteria, onSortChange),
     },
     {
       key: "meltedAt",
-      label: "Melted At",
+      label: renderSortLabel("Melted At", "MeltedAt", sortCriteria),
       width: "200px",
       onHeaderClick: () => handleSort("MeltedAt", sortCriteria, onSortChange),
     },
@@ -219,14 +225,11 @@ const MeltedProducts = () => {
             </div>
             <button
               className="btn-md btn-outline"
-              title={`Sort by Date ${
-                sortCriteria.sortDirection === "Ascending"
-                  ? "Descending"
-                  : "Ascending"
-              }`}
+              title="Sort by Date"
               onClick={() => handleSort("MeltedAt", sortCriteria, onSortChange)}
             >
-              {sortCriteria.sortDirection === "Ascending" ? (
+              {sortCriteria.sortBy === "MeltedAt" &&
+              sortCriteria.sortDirection === SortDirection.Ascending ? (
                 <FaSortAmountUp />
               ) : (
                 <FaSortAmountDown />

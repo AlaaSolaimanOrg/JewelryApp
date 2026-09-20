@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FaFilter, FaRedo } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
+import { FaRedo } from "react-icons/fa";
 import { KaratType, ProductCategory } from "../../../../types/enums";
 import "./inventoryFilter.scss";
 
@@ -13,7 +13,7 @@ export interface InventoryFilters {
   inStock: boolean | null;
 }
 
-const filtersInitialState: InventoryFilters = {
+export const filtersInitialState: InventoryFilters = {
   karatTypes: [
     KaratType.Karat18,
     KaratType.Karat21,
@@ -25,8 +25,10 @@ const filtersInitialState: InventoryFilters = {
   priceFrom: 0,
   priceTo: 999999,
   category: null,
-  inStock: null,
+  inStock: true,
 };
+
+const FILTER_DEBOUNCE_MS = 400;
 
 interface InventoryFilterProps {
   setAppliedFilters: (filters: InventoryFilters) => void;
@@ -53,14 +55,21 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
     });
   };
 
-  const resetFilters = () => {
-    setFilters(filtersInitialState);
-    setAppliedFilters(filtersInitialState);
-  };
+  const isFirstRender = useRef(true);
 
-  const applyFilters = () => {
-    setAppliedFilters(filters);
-  };
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const timeout = setTimeout(
+      () => setAppliedFilters(filters),
+      FILTER_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timeout);
+  }, [filters]);
+
+  const resetFilters = () => setFilters(filtersInitialState);
 
   const karatOptions = [
     { label: "18K", value: KaratType.Karat18 },
@@ -131,8 +140,8 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               )
             }
           >
-            <option value="all">Show all</option>
             <option value="inStock">In stock</option>
+            <option value="all">Show all</option>
             <option value="outOfStock">Out of stock</option>
           </select>
         </div>
@@ -144,13 +153,13 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
               min={0}
-              max={filters.weightTo}
               value={filters.weightFrom || ""}
-              onChange={(e) => {
-                const val = e.target.value === "" ? 0 : Number(e.target.value);
-                if (val <= filters.weightTo)
-                  handleFilterChange("weightFrom", val);
-              }}
+              onChange={(e) =>
+                handleFilterChange(
+                  "weightFrom",
+                  e.target.value === "" ? 0 : Number(e.target.value),
+                )
+              }
               className="f-input"
               placeholder="Min"
             />
@@ -158,14 +167,20 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
             <input
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
-              min={filters.weightFrom}
-              max={9999}
-              value={filters.weightTo || ""}
-              onChange={(e) => {
-                const val = e.target.value === "" ? 0 : Number(e.target.value);
-                if (val >= filters.weightFrom)
-                  handleFilterChange("weightTo", val);
-              }}
+              min={0}
+              value={
+                filters.weightTo === filtersInitialState.weightTo
+                  ? ""
+                  : filters.weightTo
+              }
+              onChange={(e) =>
+                handleFilterChange(
+                  "weightTo",
+                  e.target.value === ""
+                    ? filtersInitialState.weightTo
+                    : Number(e.target.value),
+                )
+              }
               className="f-input"
               placeholder="Max"
             />
@@ -179,13 +194,13 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
               min={0}
-              max={filters.priceTo}
-              value={filters.priceFrom}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                if (val <= filters.priceTo)
-                  handleFilterChange("priceFrom", val);
-              }}
+              value={filters.priceFrom || ""}
+              onChange={(e) =>
+                handleFilterChange(
+                  "priceFrom",
+                  e.target.value === "" ? 0 : Number(e.target.value),
+                )
+              }
               className="f-input"
               placeholder="Min"
             />
@@ -193,14 +208,20 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
             <input
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
-              min={filters.priceFrom}
-              max={999999}
-              value={filters.priceTo}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                if (val >= filters.priceFrom)
-                  handleFilterChange("priceTo", val);
-              }}
+              min={0}
+              value={
+                filters.priceTo === filtersInitialState.priceTo
+                  ? ""
+                  : filters.priceTo
+              }
+              onChange={(e) =>
+                handleFilterChange(
+                  "priceTo",
+                  e.target.value === ""
+                    ? filtersInitialState.priceTo
+                    : Number(e.target.value),
+                )
+              }
               className="f-input"
               placeholder="Max"
             />
@@ -209,14 +230,9 @@ const InventoryFilter = ({ setAppliedFilters }: InventoryFilterProps) => {
 
         <div className="filter-actions-col">
           <span className="f-label">&nbsp;</span>
-          <div className="filter-btns">
-            <button className="btn-md btn-gold" onClick={applyFilters}>
-              <FaFilter /> Apply
-            </button>
-            <button className="btn-md btn-outline" onClick={resetFilters}>
-              <FaRedo /> Reset
-            </button>
-          </div>
+          <button className="btn-md btn-outline" onClick={resetFilters}>
+            <FaRedo /> Reset
+          </button>
         </div>
       </div>
     </div>

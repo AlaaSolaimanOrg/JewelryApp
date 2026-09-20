@@ -33,7 +33,7 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedReports
                 {
                     KaratType = g.Key ?? -1,
                     ItemCount = g.Sum(x => x.Quantity),
-                    TotalWeight = g.Sum(x => x.Weight ?? 0)
+                    TotalWeight = g.Sum(x => (x.Weight ?? 0) * x.Quantity)
                 })
                 .ToListAsync(cancellationToken);
 

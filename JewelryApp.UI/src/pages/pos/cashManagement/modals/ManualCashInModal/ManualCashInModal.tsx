@@ -25,6 +25,8 @@ const ManualCashInModal = ({
     }
   }, [show]);
 
+  const canSubmit = !!source && (parseFloat(amount) || 0) > 0;
+
   return (
     <div className={`cash-mo ${show ? "show" : ""}`}>
       <div className="cash-modal">
@@ -70,6 +72,7 @@ const ManualCashInModal = ({
           <div className="cash-m-btns">
             <button
               className="cash-btn cash-btn-gold"
+              disabled={!canSubmit}
               onClick={() =>
                 onSubmit(source, parseFloat(amount) || 0, notes.trim())
               }

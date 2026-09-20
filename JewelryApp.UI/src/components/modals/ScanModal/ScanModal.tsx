@@ -135,7 +135,11 @@ const ScanModal: React.FC<ScanModalProps> = ({
       onHide={onClose}
       centered
       className="scan-modal"
-      container={() => document.querySelector(".pos-app") || document.body}
+      container={() =>
+        (document.querySelector(".pos-app") ||
+          document.querySelector(".jewleryApp") ||
+          document.body) as HTMLElement
+      }
     >
       <Modal.Header closeButton>
         <Modal.Title>SKU Scan</Modal.Title>
