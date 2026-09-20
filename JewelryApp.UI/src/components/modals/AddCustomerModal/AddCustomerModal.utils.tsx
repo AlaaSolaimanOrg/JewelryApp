@@ -5,13 +5,19 @@ export const formatPhoneDisplay = (digits: string) => {
   return d;
 };
 
-export const getCustomerModalTitle = (mode: "add" | "edit" | "view") => {
+export const getCustomerModalTitle = (
+  mode: "add" | "edit" | "view",
+  label = "customer",
+) => {
   switch (mode) {
     case "edit":
-      return "Edit customer";
+      return `Edit ${label}`;
     case "view":
-      return "View customer";
+      return `View ${label}`;
     default:
-      return "Add new customer";
+      return `Add new ${label}`;
   }
 };
+
+export const capitalize = (text: string) =>
+  text.charAt(0).toUpperCase() + text.slice(1);

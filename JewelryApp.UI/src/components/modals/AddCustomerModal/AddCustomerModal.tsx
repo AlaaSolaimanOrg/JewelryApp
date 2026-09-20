@@ -6,7 +6,11 @@ import {
   updateCustomer,
 } from "../../../apis/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { formatPhoneDisplay, getCustomerModalTitle } from "./AddCustomerModal.utils";
+import {
+  capitalize,
+  formatPhoneDisplay,
+  getCustomerModalTitle,
+} from "./AddCustomerModal.utils";
 import "./addCustomerModal.scss";
 
 interface Customer {
@@ -27,6 +31,7 @@ interface AddCustomerModalProps {
   isCustomersView?: boolean;
   mode?: "add" | "edit" | "view";
   customerData?: Customer | null;
+  entityLabel?: string;
 }
 
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
@@ -39,6 +44,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   isCustomersView = false,
   mode = "add",
   customerData = null,
+  entityLabel = "customer",
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -249,16 +255,16 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       }
     >
       <Modal.Header closeButton>
-        <Modal.Title>{getCustomerModalTitle(mode)}</Modal.Title>
+        <Modal.Title>{getCustomerModalTitle(mode, entityLabel)}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="customerName">
-            <Form.Label>Customer name *</Form.Label>
+            <Form.Label>{capitalize(entityLabel)} name *</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter customer name"
+              placeholder={`Enter ${entityLabel} name`}
               value={name}
               maxLength={100}
               onChange={(e) => setName(e.target.value)}
@@ -320,7 +326,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             id="saveCustomerBtn"
             disabled={isLoading}
           >
-            {mode === "add" ? "Save customer" : "Update customer"}
+            {mode === "add" ? `Save ${entityLabel}` : `Update ${entityLabel}`}
           </Button>
         )}
         <Button

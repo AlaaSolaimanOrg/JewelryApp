@@ -6,7 +6,7 @@ import { createUsedGoldPurchase } from "../../../apis/usedGold.api";
 import { UsedGoldPayMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import AddKaratModal from "./AddKaratModal/AddKaratModal";
-import AddSellerModal from "./AddSellerModal/AddSellerModal";
+import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
 import GoldItemsPanel from "./GoldItemsPanel/GoldItemsPanel";
 import PurchaseDetailsPanel from "./PurchaseDetailsPanel/PurchaseDetailsPanel";
 import type { GoldRow, PayMethod, Seller } from "./UsedGold.type";
@@ -67,8 +67,12 @@ const UsedGold = () => {
     setShowAddKarat(false);
   };
 
-  const handleAddSeller = (newSeller: Seller) => {
-    setSeller(newSeller);
+  const handleAddSeller = (customer: any) => {
+    setSeller({
+      id: customer.id,
+      name: customer.name,
+      phone: customer.phoneNumber,
+    });
     setShowAddSeller(false);
   };
 
@@ -183,10 +187,11 @@ const UsedGold = () => {
         onClose={() => setShowAddKarat(false)}
         onAdd={handleAddKaratRow}
       />
-      <AddSellerModal
+      <AddCustomerModal
         show={showAddSeller}
         onClose={() => setShowAddSeller(false)}
-        onAdd={handleAddSeller}
+        setCustomer={handleAddSeller}
+        entityLabel="seller"
       />
     </div>
   );
