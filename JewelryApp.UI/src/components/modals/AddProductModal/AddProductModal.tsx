@@ -120,7 +120,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
       onHide={onClose}
       centered
       className="add-product-modal"
-      container={() => document.querySelector(".pos-app") || document.body}
+      container={() =>
+        (document.querySelector(".pos-app") ||
+          document.querySelector(".jewleryApp") ||
+          document.body) as HTMLElement
+      }
     >
       <Modal.Header closeButton>
         <Modal.Title>Add Product to Cart</Modal.Title>
@@ -250,7 +254,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                   onChange={(e) => handleField("productType", e.target.value)}
                 >
                   <option value={ProductType.Gold}>Gold</option>
-                  <option value={ProductType.Silver}>Silver</option>
                 </select>
               </div>
             </div>

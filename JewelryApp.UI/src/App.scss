@@ -150,6 +150,12 @@
   transition:
     background 0.25s,
     color 0.25s;
+
+  input,
+  select,
+  textarea {
+    -webkit-text-fill-color: currentColor;
+  }
 }
 
 * {
@@ -193,7 +199,7 @@ body {
   min-height: 100vh;
   background: var(--admin-bg);
   transition: background 0.25s;
-  padding-right: 16px !important; 
+  padding-right: 16px !important;
 
   h1,
   h2,
@@ -531,14 +537,6 @@ select {
   border-radius: 4px;
   -webkit-appearance: none;
   appearance: none;
-}
-
-.pos-app {
-  input,
-  select,
-  textarea {
-    -webkit-text-fill-color: currentColor;
-  }
 }
 
 .fw-100 {

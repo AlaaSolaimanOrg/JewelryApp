@@ -453,7 +453,6 @@ const AddEditProduct = ({ isEdit }) => {
             >
               <option value="">Select type</option>
               <option value={ProductType.Gold}>Gold</option>
-              <option value={ProductType.Silver}>Silver</option>
             </select>
           </div>
 
