@@ -26,6 +26,7 @@ import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPri
 import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
+  filtersInitialState,
   type InventoryFilters,
 } from "./InventoryFilter/InventoryFilter";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
@@ -94,20 +95,8 @@ const Inventory = () => {
 
   const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set());
 
-  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
-    karatTypes: [
-      KaratType.Karat18,
-      KaratType.Karat21,
-      KaratType.Karat22,
-      KaratType.Karat24,
-    ],
-    weightFrom: 0,
-    weightTo: 9999,
-    priceFrom: 0,
-    priceTo: 999999,
-    category: null,
-    inStock: null,
-  });
+  const [appliedFilters, setAppliedFilters] =
+    useState<InventoryFilters>(filtersInitialState);
 
   const {
     data: products,
@@ -294,7 +283,11 @@ const Inventory = () => {
           <span>Inventory management</span>
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-green" onClick={() => handleExport()}>
+          <button
+            className="btn-md btn-green"
+            disabled={!products?.length}
+            onClick={() => handleExport()}
+          >
             <FaFileExcel /> Export to Excel
           </button>
           {!isTerminalRole && (
