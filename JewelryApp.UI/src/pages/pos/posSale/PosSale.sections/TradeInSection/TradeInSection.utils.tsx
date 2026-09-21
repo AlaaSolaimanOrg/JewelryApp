@@ -1,13 +1,9 @@
-import { KaratType } from "../../../../../types/enums";
 import type { TradeInRow } from "./TradeInSection.type";
 
+const DEFAULT_TRADE_IN_KARATS = [24, 22, 21, 18, 14, 10];
+
 export const createDefaultTradeInRows = (): TradeInRow[] =>
-  [
-    KaratType.Karat24,
-    KaratType.Karat22,
-    KaratType.Karat21,
-    KaratType.Karat18,
-  ].map((karat, idx) => ({
+  DEFAULT_TRADE_IN_KARATS.map((karat, idx) => ({
     id: idx + 1,
     karat,
     weight: 0,
@@ -25,6 +21,8 @@ const KARAT_COLORS: Record<number, string> = {
   22: "#C9952A",
   21: "#BF8C30",
   18: "#B28535",
+  14: "#A6793A",
+  10: "#9A6F3E",
 };
 
 export const getKaratColor = (karat: number) => KARAT_COLORS[karat] ?? "#7D6340";

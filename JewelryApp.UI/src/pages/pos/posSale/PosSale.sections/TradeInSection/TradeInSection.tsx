@@ -26,6 +26,7 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
   const [showAddKarat, setShowAddKarat] = useState(false);
   const [newKarat, setNewKarat] = useState("");
   const [newKaratPpg, setNewKaratPpg] = useState("0");
+  const [karatError, setKaratError] = useState("");
 
   const total = getTradeInTotal(rows);
   const activeRows = getActiveTradeInRows(rows);
@@ -47,9 +48,12 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
 
   const handleAddKarat = () => {
     const karat = parseInt(newKarat) || 0;
-    if (karat < 1 || karat > 24) return;
+    if (karat < 1 || karat > 24) {
+      setKaratError("Enter a karat between 1 and 24");
+      return;
+    }
     if (rows.some((r) => r.karat === karat)) {
-      setShowAddKarat(false);
+      setKaratError(`${karat}K already exists in the list`);
       return;
     }
     const ppg = Math.max(0, parseFloat(newKaratPpg) || 0);
@@ -166,7 +170,13 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
             </div>
 
             <div className="ps-ti-add-row">
-              <button className="ps-btn ps-btn-outline" onClick={() => setShowAddKarat(true)}>
+              <button
+                className="ps-btn ps-btn-outline"
+                onClick={() => {
+                  setKaratError("");
+                  setShowAddKarat(true);
+                }}
+              >
                 + Add karat row
               </button>
             </div>
@@ -210,7 +220,7 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
               </button>
             </div>
             <div className="ps-modal-body">
-              <div className="ps-fg">
+              <div className={`ps-fg${karatError ? " has-error" : ""}`}>
                 <label>Karat *</label>
                 <input
                   type="number"
@@ -224,9 +234,13 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
                   }}
                   onWheel={(e) => e.currentTarget.blur()}
                   onChange={(e) => {
-                    if (!e.target.value.includes("-")) setNewKarat(e.target.value);
+                    const value = e.target.value;
+                    if (value.includes("-") || Number(value) > 24) return;
+                    setKaratError("");
+                    setNewKarat(value);
                   }}
                 />
+                {karatError && <div className="ps-fg-error">{karatError}</div>}
               </div>
               <div className="ps-fg">
                 <label>Default $/gram</label>
