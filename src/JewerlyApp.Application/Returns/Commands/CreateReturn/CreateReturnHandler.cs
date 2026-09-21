@@ -1,13 +1,6 @@
-﻿using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
-using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Domain.Entities;
-using JewerlyApp.Domain.Enums;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using System;
-
 
 namespace JewerlyApp.Application.Returns.Commands.CreateReturn
 {
@@ -26,266 +19,22 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
         {
             var loggedInUser = await _userService.GetLoggedInUser();
 
-            //-----------------------------------------------------
-            // 1. VALIDATION
-            //-----------------------------------------------------
-            var validation = await ValidateRequestAsync(request, cancellationToken);
-            if (validation != null)
-                return validation;
+            var (error, sale) = await ReturnProcessor.ValidateAsync(_context, request.SaleId, request.Items, cancellationToken);
+            if (error != null)
+                return error;
 
-            //-----------------------------------------------------
-            // 2. LOAD SALE & ITEMS
-            //-----------------------------------------------------
-            var sale = await _context.Sales
-                .Include(s => s.SaleItems)
-                .FirstOrDefaultAsync(s => s.Id == request.SaleId, cancellationToken);
+            var ret = await ReturnProcessor.CreateAsync(
+                _context,
+                sale!,
+                request.Items,
+                request.RefundMethod,
+                loggedInUser.Id,
+                null,
+                cancellationToken);
 
-            var saleItemsMap = sale!.SaleItems.ToDictionary(x => x.Id);
-
-            //-----------------------------------------------------
-            // 3. PREPARE RETURN HEADER
-            //-----------------------------------------------------
-            var ret = new Return
-            {
-                Id = Guid.NewGuid(),
-                SerialNumber = await GenerateReturnSerialNumber(),
-                SaleId = sale.Id,
-                CreatedBy = loggedInUser.Id,
-                Items = new List<ReturnItem>()
-            };
-
-            decimal totalRefund = 0;
-            decimal oldSaleSubtotal = sale.SubTotal;
-            decimal oldDiscount = sale.Discount ?? 0;
-
-            //-----------------------------------------------------
-            // 4. PROCESS EACH RETURN ITEM
-            //-----------------------------------------------------
-            foreach (var itemDto in request.Items)
-            {
-                var saleItem = saleItemsMap[itemDto.SaleItemId];
-
-                var returnItem = new ReturnItem
-                {
-                    Id = Guid.NewGuid(),
-                    ReturnId = ret.Id,
-                    SaleItemId = saleItem.Id,
-                    QuantityPurchased = saleItem.Quantity,
-                    QuantityReturned = itemDto.QuantityToReturn,
-
-                    // ❗ Provided by frontend
-                    ReturnAmount = itemDto.ReturnAmount,
-                    UnitPrice = saleItem.SubTotal / saleItem.Quantity,
-
-                    Reason = itemDto.Reason,
-                    ReasonNote = itemDto.ReasonNote,
-                    Condition = itemDto.Condition,
-                    Option = itemDto.Option
-                };
-
-            // Update SaleItem SubTotal
-                var ratio = (saleItem.Quantity - itemDto.QuantityToReturn) / (decimal)saleItem.Quantity;
-                saleItem.SubTotal *= ratio;
-                saleItem.Quantity -= itemDto.QuantityToReturn;
-
-
-                ret.Items.Add(returnItem);
-                totalRefund += itemDto.ReturnAmount;
-
-                //-----------------------------------------------------
-                // 5. INVENTORY UPDATE
-                //-----------------------------------------------------
-                await ApplyInventoryAdjustmentAsync(saleItem.ProductId, itemDto);
-            }
-
-            //-----------------------------------------------------
-            // 6. SET RETURN TOTAL AND UPDATE SALE TOTALS
-            //-----------------------------------------------------
-            ret.TotalAmount = totalRefund;
-
-            // Update Sale Totals
-            sale.SubTotal = sale.SaleItems.Sum(i => i.SubTotal);
-            sale.Total -= totalRefund;
-
-            sale.Discount = oldDiscount * (sale.SubTotal / oldSaleSubtotal);
-            sale.DiscountPercentage = sale.Total == 0 ? 0 : sale.Discount / sale.Total * 100;
-
-            // Deduct refund from the correct wallet. StoreCredit means the amount is
-            // applied toward a different (new) sale instead of leaving the register now,
-            // so the original sale's wallets are left untouched.
-            if (request.RefundMethod == Domain.Enums.RefundMethod.Cash)
-            {
-                sale.CashAmount = (sale.CashAmount ?? 0) - totalRefund;
-
-                // Cash refunds leave the store cash box, so the box balance must reflect it.
-                _context.CashTransactions.Add(new CashTransaction
-                {
-                    Id = Guid.NewGuid(),
-                    BoxType = CashBoxType.Store,
-                    Type = CashTransactionType.ReturnCashOut,
-                    Amount = totalRefund,
-                    SaleId = sale.Id,
-                    Notes = $"Return {ret.SerialNumber} for sale #{sale.SerialNumber}",
-                });
-            }
-            else if (request.RefundMethod == Domain.Enums.RefundMethod.Card)
-                sale.CardAmount = (sale.CardAmount ?? 0) - totalRefund;
-
-            //-----------------------------------------------------
-            // 7. SAVE RETURN
-            //-----------------------------------------------------
-            _context.Returns.Add(ret);
             await _context.SaveChangesAsync(cancellationToken);
 
             return GenericResponse<string>.Success(ret.Id.ToString());
         }
-
-
-
-        // =================================================================\====
-        // VALIDATION — UPDATED TO VALIDATE FRONTEND ReturnAmount
-        // =====================================================================
-        private async Task<GenericResponse<string>?> ValidateRequestAsync(
-    CreateReturnCommand request,
-    CancellationToken cancellationToken)
-        {
-            // 1. Must contain items
-            if (request.Items == null || !request.Items.Any())
-                return GenericResponse<string>.Error(
-                    ResponseStatusCode.BadRequest,
-                    Messages.Error_Return_No_Items);
-
-            // 2. Load sale
-            var sale = await _context.Sales
-                .Include(s => s.SaleItems)
-                .FirstOrDefaultAsync(s => s.Id == request.SaleId, cancellationToken);
-
-            if (sale == null)
-                return GenericResponse<string>.Error(
-                    ResponseStatusCode.NotFound,
-                    Messages.Error_Sale_Not_Found);
-
-            var saleItemsMap = sale.SaleItems.ToDictionary(x => x.Id);
-
-            // 3. Load existing returns for these sale items
-            var saleItemIds = request.Items.Select(i => i.SaleItemId).ToList();
-            var existingReturns = await _context.ReturnItems
-                .Where(ri => saleItemIds.Contains(ri.SaleItemId))
-                .GroupBy(ri => ri.SaleItemId)
-                .Select(g => new
-                {
-                    SaleItemId = g.Key,
-                    TotalReturnedQuantity = g.Sum(ri => ri.QuantityReturned)
-                })
-                .ToDictionaryAsync(x => x.SaleItemId, x => x.TotalReturnedQuantity, cancellationToken);
-
-            // 4. Validate each return item
-            foreach (var item in request.Items)
-            {
-                // Invalid sale item
-                if (!saleItemsMap.TryGetValue(item.SaleItemId, out var saleItem))
-                {
-                    return GenericResponse<string>.Error(
-                        ResponseStatusCode.BadRequest,
-                        Messages.Error_Invalid_SaleItemId(item.SaleItemId));
-                }
-
-                // Invalid qty
-                if (item.QuantityToReturn <= 0)
-                {
-                    return GenericResponse<string>.Error(
-                        ResponseStatusCode.BadRequest,
-                        Messages.Error_Invalid_Return_Quantity);
-                }
-
-                // Check if item has been previously returned
-                var previouslyReturned = existingReturns.GetValueOrDefault(item.SaleItemId, 0);
-                var totalQuantityAfterReturn = previouslyReturned + item.QuantityToReturn;
-
-                // If item was fully returned already
-                if (saleItem.Quantity == 0)
-                {
-                    return GenericResponse<string>.Error(
-                        ResponseStatusCode.BadRequest,
-                        Messages.Error_Item_Already_Returned(saleItem.Quantity, previouslyReturned));
-                }
-
-                // Qty exceeds available amount (purchased - previously returned)
-                if (item.QuantityToReturn > saleItem.Quantity)
-                {
-                    var availableToReturn = saleItem.Quantity - previouslyReturned;
-                    return GenericResponse<string>.Error(
-                        ResponseStatusCode.BadRequest,
-                        Messages.Error_Return_Exceeds_Available(
-                            item.QuantityToReturn, availableToReturn, previouslyReturned));
-                }
-
-                // Invalid amount
-                if (item.ReturnAmount <= 0)
-                {
-                    return GenericResponse<string>.Error(
-                        ResponseStatusCode.BadRequest,
-                        Messages.Error_Invalid_Return_Amount);
-                }                             
-            }
-
-            return null;
-        }
-
-
-
-
-        // =====================================================================
-        // INVENTORY UPDATE
-        // =====================================================================
-        private async Task ApplyInventoryAdjustmentAsync(Guid productId, ReturnItemDto itemDto)
-        {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
-            if (product == null)
-                return;
-
-            if (itemDto.Option == ReturnOption.ReturnToStock)
-            {
-                product.Quantity = (product.Quantity ?? 0) + itemDto.QuantityToReturn;
-            }
-            else if (itemDto.Option == ReturnOption.MeltAfterReturn)
-            {
-                // Create a MeltRecord for returned items that should be melted
-                var melt = new MeltRecord
-                {
-                    Id = Guid.NewGuid(),
-                    ProductId = product.Id,
-                    Sku = product.Sku,
-                    ProductName = product.Name,
-                    Quantity = itemDto.QuantityToReturn,
-                    Weight = product.Weight,
-                    KaratType = (int)product.KaratType,
-                    MeltedAt = DateTime.UtcNow
-                };
-
-                _context.MeltRecords.Add(melt);
-            }
-
-            product.LastUpdatedDate = DateTime.UtcNow;
-        }
-
-
-
-        // =====================================================================
-        // SERIAL GENERATOR
-        // =====================================================================
-        private async Task<string> GenerateReturnSerialNumber()
-        {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
-            string prefix = "RTN";
-
-            int countToday = await _context.Returns
-                .CountAsync(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
-
-            return $"{prefix}-{today}-{(countToday + 1).ToString("D4")}";
-        }
     }
-
-
-
 }

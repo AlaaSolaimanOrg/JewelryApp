@@ -123,6 +123,17 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.HasIndex(x => new { x.StoreId, x.Code }).IsUnique();
             });
 
+            builder.Entity<Return>()
+            .HasOne(r => r.Sale)
+            .WithMany(s => s.Returns)
+            .HasForeignKey(r => r.SaleId);
+
+            builder.Entity<Return>()
+            .HasOne(r => r.ExchangeSale)
+            .WithMany(s => s.ExchangeReturns)
+            .HasForeignKey(r => r.ExchangeSaleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<ReturnItem>()
             .HasOne(r => r.SaleItem)
             .WithMany(s => s.ReturnItems)

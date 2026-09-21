@@ -20,6 +20,20 @@ export interface Sale {
   discount: number;
   saleItems: SaleItem[];
   totalReturnAmount?: string;
+  exchangeCredit?: number;
+  exchangeReturnedItems?: ExchangeReturnedItem[];
+}
+
+export interface ExchangeReturnedItem {
+  id: string;
+  returnSerialNumber: string;
+  originalSaleSerialNumber: string;
+  productName: string;
+  sku?: string;
+  karat: KaratType;
+  weight: number;
+  quantityReturned: number;
+  amountReturned: number;
 }
 
 export interface SaleItem {
@@ -59,6 +73,8 @@ const ReceiptContent = ({
   const hasAnyReturns = saleDetails.saleItems?.some(
     (it) => (it.quantityReturned ?? 0) > 0 || (it.amountReturned ?? 0) > 0,
   );
+
+  const hasExchangeItems = (saleDetails.exchangeReturnedItems?.length ?? 0) > 0;
 
   const containerClass = [
     "receipt-container",
@@ -195,6 +211,31 @@ const ReceiptContent = ({
         </table>
       </div>
 
+      {hasExchangeItems && (
+        <div className="exchange-returned">
+          <h4>Items Returned in Exchange</h4>
+          {saleDetails.exchangeReturnedItems?.map((item) => (
+            <div className="exchange-returned-row" key={item.id}>
+              <div className="exchange-returned-info">
+                <div className="exchange-returned-name">
+                  {item.productName}
+                  {item.quantityReturned > 1 ? ` (×${item.quantityReturned})` : ""}
+                </div>
+                <div className="exchange-returned-meta">
+                  {item.sku ? `${item.sku} · ` : ""}
+                  {item.karat}K · {item.weight}g · {item.originalSaleSerialNumber}
+                </div>
+              </div>
+              {!isGiftReceipt && (
+                <span className="exchange-returned-amount">
+                  −${item.amountReturned.toFixed(2)}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {(saleDetails.discount ?? 0) > 0 && !isGiftReceipt && (
         <div className="receipt-discount">
           <div className="summary-item">
@@ -222,6 +263,12 @@ const ReceiptContent = ({
             <div className="summary-item">
               <span>Card Payment:</span>
               <span>${saleDetails.cardAmount}</span>
+            </div>
+          )}
+          {(saleDetails.exchangeCredit ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Exchange Credit:</span>
+              <span>−${saleDetails.exchangeCredit?.toFixed(2)}</span>
             </div>
           )}
           {saleDetails.totalReturnAmount &&

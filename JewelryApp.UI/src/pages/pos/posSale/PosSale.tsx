@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaBarcode, FaExchangeAlt, FaStickyNote, FaTimes } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
-import { createReturn } from "../../../apis/returns.api";
 import { createSale } from "../../../apis/sales.api";
 import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import { DiscountType, RefundMethod } from "../../../types/enums";
+import { DiscountType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
@@ -303,24 +302,15 @@ const MainPosPage: React.FC = () => {
           originalPricePerGram: product.originalPricePerGram,
         };
       }),
+      exchange: exchangeData
+        ? { saleId: exchangeData.saleId, items: exchangeData.items }
+        : null,
     };
 
     createSale(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          if (exchangeData) {
-            createReturn({
-              saleId: exchangeData.saleId,
-              refundMethod: RefundMethod.StoreCredit,
-              items: exchangeData.items,
-            }).catch((e) => {
-              console.error(e);
-              showError(
-                `Sale saved, but the exchange return for ${exchangeData.saleSerialNumber} could not be processed. Please process it manually from Returns.`,
-              );
-            });
-          }
           setTimeout(() => {
             setCreatedSaleId(response.data);
             setShowReceiptModal(true);

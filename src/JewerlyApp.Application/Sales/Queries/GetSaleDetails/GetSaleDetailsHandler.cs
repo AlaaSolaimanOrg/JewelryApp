@@ -59,6 +59,27 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     CardAmount = x.CardAmount,
                     Discount = x.Discount,
                     TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
+                    ExchangeCredit = x.ExchangeReturns.Sum(r => r.TotalAmount),
+                    ExchangeReturnedItems = x.ExchangeReturns
+                        .SelectMany(r => r.Items)
+                        .Select(ri => new ExchangeReturnedItemVM
+                        {
+                            Id = ri.Id,
+                            ReturnId = ri.ReturnId,
+                            ReturnSerialNumber = ri.Return.SerialNumber,
+                            OriginalSaleId = ri.Return.SaleId,
+                            OriginalSaleSerialNumber = ri.Return.Sale.SerialNumber,
+                            ProductName = ri.SaleItem.Product!.Name!,
+                            Sku = ri.SaleItem.Product.Sku,
+                            Karat = ri.SaleItem.KaratType,
+                            Weight = ri.SaleItem.Weight,
+                            QuantityReturned = ri.QuantityReturned,
+                            AmountReturned = ri.ReturnAmount,
+                            Reason = ri.Reason,
+                            ReasonNote = ri.ReasonNote,
+                            Condition = ri.Condition,
+                            Option = ri.Option,
+                        }).ToList(),
                     SaleItems = x.SaleItems.Select(i => new SaleItemVM
                     {   Id = i.Id,
                         ProductName = i.Product!.Name!,
