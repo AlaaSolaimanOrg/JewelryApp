@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaBarcode, FaExchangeAlt, FaStickyNote, FaTimes } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
-import { createReturn } from "../../../apis/returns.api";
 import { createSale } from "../../../apis/sales.api";
 import ReceiptModal from "../../../components/modals/ReceiptModal/ReceiptModal";
 import ScanModal from "../../../components/modals/ScanModal/ScanModal";
-import { DiscountType, RefundMethod } from "../../../types/enums";
+import { DiscountType } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import "./posSale.scss";
 import CustomerSection from "./PosSale.sections/CustomerSection/CustomerSection";
@@ -40,8 +39,8 @@ const MainPosPage: React.FC = () => {
   const [createdSaleId, setCreatedSaleId] = useState<string | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
-  // Trade-in is a UI-only stub — its credit affects the displayed total but is
-  // not sent to the backend when the sale is saved.
+  // Trade-in credit is sent to the backend only as an amount that reduces the
+  // sale total; the traded-in gold itself is not recorded.
   const [showTradeInModal, setShowTradeInModal] = useState(false);
   const [tradeInCredit, setTradeInCredit] = useState(0);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
@@ -86,10 +85,13 @@ const MainPosPage: React.FC = () => {
   const checkPaymentEqualTotal =
     Math.abs(total - (cashAmount + cardAmount)) < 0.001;
 
+  const hasCredit = tradeInCredit > 0 || exchangeCredit > 0;
+  const requiresPayment = rawTotal > 0;
+
   const canSaveSale =
     !!customer?.id &&
     !!products.length &&
-    (cardAmount > 0 || cashAmount > 0) &&
+    (requiresPayment ? cardAmount > 0 || cashAmount > 0 : hasCredit) &&
     !anyProductWithUnfilledField &&
     !isLoadingCreateSale &&
     checkPaymentEqualTotal &&
@@ -303,24 +305,16 @@ const MainPosPage: React.FC = () => {
           originalPricePerGram: product.originalPricePerGram,
         };
       }),
+      tradeInCredit,
+      exchange: exchangeData
+        ? { saleId: exchangeData.saleId, items: exchangeData.items }
+        : null,
     };
 
     createSale(payload)
       .then((response) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          if (exchangeData) {
-            createReturn({
-              saleId: exchangeData.saleId,
-              refundMethod: RefundMethod.StoreCredit,
-              items: exchangeData.items,
-            }).catch((e) => {
-              console.error(e);
-              showError(
-                `Sale saved, but the exchange return for ${exchangeData.saleSerialNumber} could not be processed. Please process it manually from Returns.`,
-              );
-            });
-          }
           setTimeout(() => {
             setCreatedSaleId(response.data);
             setShowReceiptModal(true);
@@ -463,17 +457,19 @@ const MainPosPage: React.FC = () => {
             </div>
           </section>
 
-          <PaymentMethodSection
-            payMethod={payMethod}
-            onPayMethodChange={setPayMethod}
-            cashAmount={cashAmount}
-            cardAmount={cardAmount}
-            total={total}
-            setCashAmount={setCashAmount}
-            setCardAmount={setCardAmount}
-            onCashInputChange={handleCashAmountChange}
-            onCardInputChange={handleCardAmountChange}
-          />
+          {requiresPayment && (
+            <PaymentMethodSection
+              payMethod={payMethod}
+              onPayMethodChange={setPayMethod}
+              cashAmount={cashAmount}
+              cardAmount={cardAmount}
+              total={total}
+              setCashAmount={setCashAmount}
+              setCardAmount={setCardAmount}
+              onCashInputChange={handleCashAmountChange}
+              onCardInputChange={handleCardAmountChange}
+            />
+          )}
 
           <PaymentSummary
             subtotal={subtotal}

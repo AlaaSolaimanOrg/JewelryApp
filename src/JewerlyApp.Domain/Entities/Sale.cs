@@ -22,5 +22,6 @@ namespace JewerlyApp.Domain.Entities
         public Customer? Customer { get; set; }
         public List<SaleItem> SaleItems { get; set; } = new();
         public List<Return> Returns { get; set; } = new();
+        public List<Return> ExchangeReturns { get; set; } = new();
     }
 }

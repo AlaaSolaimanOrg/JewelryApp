@@ -51,25 +51,20 @@ const ExchangeSection: React.FC<Props> = ({
 
   const [selectedSale, setSelectedSale] = useState<ExchangeSearchSale | null>(null);
   const [items, setItems] = useState<SelectedExchangeItem[]>([]);
-  const [reason, setReason] = useState<ReturnReason | "">("");
-  const [reasonNote, setReasonNote] = useState("");
 
   const total = getExchangeTotal(items);
 
   const allHaveDestAndCondition =
-    items.length > 0 && items.every((i) => i.dest && i.condition);
-  const reasonNoteOk = reason !== ReturnReason.Other || !!reasonNote.trim();
-  const canApply = items.length > 0 && !!reason && allHaveDestAndCondition && reasonNoteOk;
+    items.length > 0 && items.every((i) => i.dest && i.condition && i.returnQty > 0);
+  const allHaveReason = items.length > 0 && items.every((i) => !!i.reason);
+  const reasonNotesOk = items.every((i) => i.reason !== ReturnReason.Other || !!i.reasonNote.trim());
+  const canApply = items.length > 0 && allHaveReason && allHaveDestAndCondition && reasonNotesOk;
 
   useEffect(() => {
     onCreditChange(total);
-    onExchangeChange(
-      canApply && selectedSale
-        ? buildExchangeApplyData(selectedSale, items, reason as ReturnReason, reasonNote)
-        : null,
-    );
+    onExchangeChange(canApply && selectedSale ? buildExchangeApplyData(selectedSale, items) : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [total, canApply, items, reason, reasonNote, selectedSale]);
+  }, [total, canApply, items, selectedSale]);
 
   useEffect(() => {
     if (!search.trim()) {
@@ -101,8 +96,6 @@ const ExchangeSection: React.FC<Props> = ({
   const selectTxn = (sale: ExchangeSearchSale) => {
     setSelectedSale(sale);
     setItems([]);
-    setReason("");
-    setReasonNote("");
   };
 
   const backToSearch = () => {
@@ -128,24 +121,62 @@ const ExchangeSection: React.FC<Props> = ({
         unitPrice: item.quantity > 0 ? item.subtotalAfterDiscount / item.quantity : 0,
         purchasedQty: item.quantity,
         alreadyReturnedQty: item.quantityReturned,
-        returnQty: 1,
+        returnQty: item.quantity,
+        returnAmount: item.subtotalAfterDiscount,
+        reason: "",
+        reasonNote: "",
         dest: "",
         condition: "",
       },
     ]);
   };
 
-  const setItemQty = (saleItemId: string, delta: number) => {
+  const setItemQty = (saleItemId: string, value: string) => {
+    setItems((prev) =>
+      prev.map((i) => {
+        if (i.saleItemId !== saleItemId) return i;
+        const qty = value === "" ? 0 : Math.min(Math.max(0, parseInt(value) || 0), i.purchasedQty);
+        return { ...i, returnQty: qty, returnAmount: qty * i.unitPrice };
+      }),
+    );
+  };
+
+  const blurItemQty = (saleItemId: string) => {
+    setItems((prev) =>
+      prev.map((i) => {
+        if (i.saleItemId !== saleItemId || i.returnQty > 0) return i;
+        const qty = Math.min(1, i.purchasedQty);
+        return { ...i, returnQty: qty, returnAmount: qty * i.unitPrice };
+      }),
+    );
+  };
+
+  const setItemAmount = (saleItemId: string, value: string) => {
+    const amount = Math.max(0, parseFloat(value) || 0);
     setItems((prev) =>
       prev.map((i) =>
         i.saleItemId === saleItemId
-          ? { ...i, returnQty: Math.max(1, Math.min(i.purchasedQty, i.returnQty + delta)) }
+          ? { ...i, returnAmount: Math.min(amount, i.returnQty * i.unitPrice) }
           : i,
       ),
     );
   };
 
-  const setItemDest = (saleItemId: string, dest: ReturnOption) => {
+  const setItemReason = (saleItemId: string, reason: ReturnReason | "") => {
+    setItems((prev) =>
+      prev.map((i) =>
+        i.saleItemId === saleItemId
+          ? { ...i, reason, reasonNote: reason === ReturnReason.Other ? i.reasonNote : "" }
+          : i,
+      ),
+    );
+  };
+
+  const setItemReasonNote = (saleItemId: string, reasonNote: string) => {
+    setItems((prev) => prev.map((i) => (i.saleItemId === saleItemId ? { ...i, reasonNote } : i)));
+  };
+
+  const setItemDest =(saleItemId: string, dest: ReturnOption) => {
     setItems((prev) => prev.map((i) => (i.saleItemId === saleItemId ? { ...i, dest } : i)));
   };
 
@@ -157,8 +188,6 @@ const ExchangeSection: React.FC<Props> = ({
     setSelectedSale(null);
     setItems([]);
     setSearch("");
-    setReason("");
-    setReasonNote("");
     onClose();
   };
 
@@ -166,8 +195,8 @@ const ExchangeSection: React.FC<Props> = ({
     if (!items.length) return "Select items to return";
     const missing: string[] = [];
     if (!allHaveDestAndCondition) missing.push("condition & destination for each item");
-    if (!reason) missing.push("reason");
-    else if (!reasonNoteOk) missing.push("reason details");
+    if (!allHaveReason) missing.push("reason for each item");
+    else if (!reasonNotesOk) missing.push("reason details");
     if (missing.length) return `Select ${missing.join(" & ")}`;
     return `Apply credit — ${formatMoney(total)}`;
   };
@@ -188,7 +217,7 @@ const ExchangeSection: React.FC<Props> = ({
                   </span>{" "}
                   {i.sku && <span className="ps-exch-item-sku">{i.sku}</span>}
                 </div>
-                <span className="ps-exch-item-amt">−{formatMoney(i.unitPrice * i.returnQty)}</span>
+                <span className="ps-exch-item-amt">−{formatMoney(i.returnAmount)}</span>
               </div>
             ))}
           </div>
@@ -287,9 +316,7 @@ const ExchangeSection: React.FC<Props> = ({
                       const sel = items.find((i) => i.saleItemId === item.id);
                       const isReturnable = item.quantity > 0;
                       const qtyLabel = item.quantity > 1 ? ` (×${item.quantity} available)` : "";
-                      const unitPrice =
-                        item.quantity > 0 ? item.subtotalAfterDiscount / item.quantity : 0;
-                      const lineTotal = sel ? unitPrice * sel.returnQty : item.subtotalAfterDiscount;
+                      const lineTotal = sel ? sel.returnAmount : item.subtotalAfterDiscount;
                       return (
                         <div
                           className={`ps-exch-item-card${sel ? " selected" : ""}${!isReturnable ? " disabled" : ""}`}
@@ -327,16 +354,56 @@ const ExchangeSection: React.FC<Props> = ({
 
                           {sel && (
                             <div className="ps-exch-item-controls">
-                              {item.quantity > 1 && (
-                                <div className="ps-exch-ctrl-row">
-                                  <span className="ps-exch-ctrl-label">Qty to return</span>
-                                  <div className="ps-exch-qty">
-                                    <button onClick={() => setItemQty(item.id, -1)}>−</button>
-                                    <span>{sel.returnQty}</span>
-                                    <button onClick={() => setItemQty(item.id, 1)}>+</button>
-                                  </div>
-                                  <span className="ps-exch-ctrl-ctx">of {item.quantity}</span>
-                                </div>
+                              <div className="ps-exch-ctrl-row">
+                                <span className="ps-exch-ctrl-label">Qty to return</span>
+                                <input
+                                  type="number"
+                                  className="ps-exch-qty-input"
+                                  value={sel.returnQty}
+                                  min={0}
+                                  max={item.quantity}
+                                  onChange={(e) => setItemQty(item.id, e.target.value)}
+                                  onBlur={() => blurItemQty(item.id)}
+                                  onWheel={(e) => e.currentTarget.blur()}
+                                />
+                                <span className="ps-exch-ctrl-ctx">of {item.quantity} purchased</span>
+                                <input
+                                  type="number"
+                                  className="ps-exch-qty-amt"
+                                  value={sel.returnAmount}
+                                  min={0}
+                                  step="0.01"
+                                  onChange={(e) => setItemAmount(item.id, e.target.value)}
+                                  onWheel={(e) => e.currentTarget.blur()}
+                                />
+                              </div>
+                              <div className="ps-exch-ctrl-row">
+                                <span className="ps-exch-ctrl-label">Reason</span>
+                                <select
+                                  className="ps-exch-reason-select"
+                                  value={sel.reason}
+                                  onChange={(e) =>
+                                    setItemReason(
+                                      item.id,
+                                      e.target.value ? (Number(e.target.value) as ReturnReason) : "",
+                                    )
+                                  }
+                                >
+                                  <option value="">Select reason</option>
+                                  {REASONS.map((r) => (
+                                    <option key={r.value} value={r.value}>
+                                      {r.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              {sel.reason === ReturnReason.Other && (
+                                <textarea
+                                  className="ps-exch-reason-note"
+                                  placeholder="Please specify the reason..."
+                                  value={sel.reasonNote}
+                                  onChange={(e) => setItemReasonNote(item.id, e.target.value)}
+                                />
                               )}
                               <div className="ps-exch-ctrl-row">
                                 <span className="ps-exch-ctrl-label">Condition</span>
@@ -370,31 +437,6 @@ const ExchangeSection: React.FC<Props> = ({
                         </div>
                       );
                     })}
-                  </div>
-
-                  <div className="ps-exch-reason">
-                    <label>Return reason</label>
-                    <select
-                      value={reason}
-                      onChange={(e) =>
-                        setReason(e.target.value ? (Number(e.target.value) as ReturnReason) : "")
-                      }
-                    >
-                      <option value="">Select reason</option>
-                      {REASONS.map((r) => (
-                        <option key={r.value} value={r.value}>
-                          {r.label}
-                        </option>
-                      ))}
-                    </select>
-                    {reason === ReturnReason.Other && (
-                      <textarea
-                        className="ps-exch-reason-note"
-                        placeholder="Please specify the reason..."
-                        value={reasonNote}
-                        onChange={(e) => setReasonNote(e.target.value)}
-                      />
-                    )}
                   </div>
                 </div>
               )}

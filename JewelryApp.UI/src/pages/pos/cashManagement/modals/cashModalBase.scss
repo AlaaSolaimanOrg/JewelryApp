@@ -86,6 +86,12 @@
           color: var(--pos-text);
           width: 100%;
 
+          &::placeholder {
+            color: var(--pos-text-muted);
+            -webkit-text-fill-color: var(--pos-text-muted);
+            opacity: 1;
+          }
+
           &:focus {
             outline: none;
             border-color: var(--pos-blue);

@@ -1,5 +1,10 @@
 import { searchSales } from "../../../../../apis/sales.api";
-import { SortDirection, type ItemCondition, type ReturnOption, type ReturnReason } from "../../../../../types/enums";
+import {
+  ReturnReason,
+  SortDirection,
+  type ItemCondition,
+  type ReturnOption,
+} from "../../../../../types/enums";
 import type {
   ExchangeApplyData,
   ExchangeSearchSale,
@@ -7,7 +12,11 @@ import type {
 } from "./ExchangeSection.type";
 
 export const formatMoney = (n: number) =>
-  "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  "$" +
+  Math.abs(n).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
 const SEARCH_PAGE = {
   pageSize: 20,
@@ -16,12 +25,16 @@ const SEARCH_PAGE = {
   sortDirection: SortDirection.Descending,
 };
 
-export const searchPastTransactions = async (query: string): Promise<ExchangeSearchSale[]> => {
+export const searchPastTransactions = async (
+  query: string,
+): Promise<ExchangeSearchSale[]> => {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
   const digits = trimmed.replace(/\D/g, "");
-  const isPhoneLike = digits.length >= 4 && digits.length >= trimmed.replace(/[\s()+-]/g, "").length;
+  const isPhoneLike =
+    digits.length >= 4 &&
+    digits.length >= trimmed.replace(/[\s()+-]/g, "").length;
   const isSerialLike = !isPhoneLike && /-/.test(trimmed) && /\d/.test(trimmed);
 
   const payload = {
@@ -36,22 +49,20 @@ export const searchPastTransactions = async (query: string): Promise<ExchangeSea
 };
 
 export const getExchangeTotal = (items: SelectedExchangeItem[]) =>
-  items.reduce((sum, i) => sum + i.unitPrice * i.returnQty, 0);
+  items.reduce((sum, i) => sum + i.returnAmount, 0);
 
 export const buildExchangeApplyData = (
   sale: ExchangeSearchSale,
   items: SelectedExchangeItem[],
-  reason: ReturnReason,
-  reasonNote: string,
 ): ExchangeApplyData => ({
   saleId: sale.id,
   saleSerialNumber: sale.serialNumber,
   items: items.map((i) => ({
     saleItemId: i.saleItemId,
     quantityToReturn: i.returnQty,
-    reason,
-    reasonNote,
-    returnAmount: i.unitPrice * i.returnQty,
+    reason: i.reason as ReturnReason,
+    reasonNote: i.reason === ReturnReason.Other ? i.reasonNote : undefined,
+    returnAmount: i.returnAmount,
     condition: i.condition as ItemCondition,
     option: i.dest as ReturnOption,
   })),

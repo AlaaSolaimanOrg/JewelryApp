@@ -118,6 +118,7 @@ const ProductsSection: React.FC<Props> = ({
               <input
                 type="text"
                 className="ps-cr-input"
+                placeholder="0.00"
                 value={product.weight as any}
                 onChange={(e) =>
                   handleManualProductChange(idx, "weight", e.target.value)
@@ -129,6 +130,7 @@ const ProductsSection: React.FC<Props> = ({
                 <input
                   type="text"
                   className="ps-cr-input"
+                  placeholder="0.00"
                   value={product.pricePerGram as any}
                   onChange={(e) =>
                     handleManualProductChange(idx, "pricePerGram", e.target.value)

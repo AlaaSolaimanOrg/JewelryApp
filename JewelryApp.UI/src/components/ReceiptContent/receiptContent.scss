@@ -89,6 +89,44 @@
     }
   }
 
+  .exchange-returned {
+    margin-bottom: 30px;
+    padding: 12px 15px;
+    border: 1px solid #fecaca;
+    border-radius: var(--border-radius);
+    background: #fef2f2;
+
+    h4 {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #991b1b;
+    }
+
+    .exchange-returned-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 6px 0;
+
+      .exchange-returned-name {
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .exchange-returned-meta {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .exchange-returned-amount {
+        font-weight: 600;
+        color: #b91c1c;
+        white-space: nowrap;
+      }
+    }
+  }
+
   .table-wrapper {
     margin-bottom: 30px;
     border: 1px solid #eee;

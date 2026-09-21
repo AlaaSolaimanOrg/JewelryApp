@@ -2,6 +2,7 @@
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Application.Returns.Commands.CreateReturn;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
@@ -32,6 +33,19 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             var validationError = await ValidateRequestAsync(request, cancellationToken);
             if (validationError != null)
                 return validationError;
+
+            Sale? exchangeSourceSale = null;
+            decimal exchangeCredit = 0;
+            if (request.Exchange != null)
+            {
+                var (exchangeError, sourceSale) = await ReturnProcessor.ValidateAsync(
+                    _context, request.Exchange.SaleId, request.Exchange.Items, cancellationToken);
+                if (exchangeError != null)
+                    return exchangeError;
+
+                exchangeSourceSale = sourceSale;
+                exchangeCredit = request.Exchange.Items.Sum(i => i.ReturnAmount);
+            }
 
             // -------------------------------
             // 2. STAGE NEW / MANUAL PRODUCTS (saved together with the sale)
@@ -99,7 +113,8 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // 6. CALCULATE TOTALS
             // -------------------------------
             sale.SubTotal = subTotal;
-            sale.Total = CalculateFinalTotal(sale);
+            var tradeInCredit = Math.Max(0, request.TradeInCredit ?? 0);
+            sale.Total = Math.Max(0, CalculateFinalTotal(sale) - exchangeCredit - tradeInCredit);
 
             if (!ValidatePaymentAmounts(sale))
             {
@@ -109,6 +124,18 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     StatusCode = ResponseStatusCode.BadRequest,
                     Message = Messages.Error_Payments_Dont_Match,
                 };
+            }
+
+            if (exchangeSourceSale != null)
+            {
+                await ReturnProcessor.CreateAsync(
+                    _context,
+                    exchangeSourceSale,
+                    request.Exchange!.Items,
+                    RefundMethod.StoreCredit,
+                    loggedInUser.Id,
+                    sale.Id,
+                    cancellationToken);
             }
 
             // -------------------------------
