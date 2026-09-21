@@ -56,7 +56,7 @@ const PaymentSummary: React.FC<Props> = ({
           <span className="ps-sum-disc">−${formatAmount(discount)}</span>
         </div>
         <div className="ps-sum-total">
-          <span>{rawTotal < 0 ? "Total" : "Customer pays"}</span>
+          <span>{rawTotal > 0 ? "Customer pays" : "Total"}</span>
           <span className="ps-sum-total-price">${formatAmount(total)}</span>
         </div>
         {rawTotal < 0 && (
@@ -75,7 +75,13 @@ const PaymentSummary: React.FC<Props> = ({
         disabled={!canSaveSale}
         onClick={handleCreateSale}
       >
-        {canSaveSale ? `Save sale — $${formatAmount(total)}` : "Save Sale"}
+        {!canSaveSale
+          ? "Save Sale"
+          : rawTotal > 0
+            ? `Save sale — $${formatAmount(total)}`
+            : rawTotal < 0
+              ? `Save sale — pay customer $${formatAmount(rawTotal)}`
+              : "Save sale — even exchange"}
       </button>
       <div className="ps-cancel-link" onClick={() => navigate("/")}>
         Cancel

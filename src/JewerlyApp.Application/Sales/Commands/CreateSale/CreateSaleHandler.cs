@@ -113,7 +113,8 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // 6. CALCULATE TOTALS
             // -------------------------------
             sale.SubTotal = subTotal;
-            sale.Total = Math.Max(0, CalculateFinalTotal(sale) - exchangeCredit);
+            var tradeInCredit = Math.Max(0, request.TradeInCredit ?? 0);
+            sale.Total = Math.Max(0, CalculateFinalTotal(sale) - exchangeCredit - tradeInCredit);
 
             if (!ValidatePaymentAmounts(sale))
             {

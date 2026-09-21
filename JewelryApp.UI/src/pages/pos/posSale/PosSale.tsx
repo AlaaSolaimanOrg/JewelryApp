@@ -39,8 +39,8 @@ const MainPosPage: React.FC = () => {
   const [createdSaleId, setCreatedSaleId] = useState<string | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
-  // Trade-in is a UI-only stub — its credit affects the displayed total but is
-  // not sent to the backend when the sale is saved.
+  // Trade-in credit is sent to the backend only as an amount that reduces the
+  // sale total; the traded-in gold itself is not recorded.
   const [showTradeInModal, setShowTradeInModal] = useState(false);
   const [tradeInCredit, setTradeInCredit] = useState(0);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
@@ -85,10 +85,13 @@ const MainPosPage: React.FC = () => {
   const checkPaymentEqualTotal =
     Math.abs(total - (cashAmount + cardAmount)) < 0.001;
 
+  const hasCredit = tradeInCredit > 0 || exchangeCredit > 0;
+  const requiresPayment = rawTotal > 0;
+
   const canSaveSale =
     !!customer?.id &&
     !!products.length &&
-    (cardAmount > 0 || cashAmount > 0) &&
+    (requiresPayment ? cardAmount > 0 || cashAmount > 0 : hasCredit) &&
     !anyProductWithUnfilledField &&
     !isLoadingCreateSale &&
     checkPaymentEqualTotal &&
@@ -302,6 +305,7 @@ const MainPosPage: React.FC = () => {
           originalPricePerGram: product.originalPricePerGram,
         };
       }),
+      tradeInCredit,
       exchange: exchangeData
         ? { saleId: exchangeData.saleId, items: exchangeData.items }
         : null,
@@ -453,17 +457,19 @@ const MainPosPage: React.FC = () => {
             </div>
           </section>
 
-          <PaymentMethodSection
-            payMethod={payMethod}
-            onPayMethodChange={setPayMethod}
-            cashAmount={cashAmount}
-            cardAmount={cardAmount}
-            total={total}
-            setCashAmount={setCashAmount}
-            setCardAmount={setCardAmount}
-            onCashInputChange={handleCashAmountChange}
-            onCardInputChange={handleCardAmountChange}
-          />
+          {requiresPayment && (
+            <PaymentMethodSection
+              payMethod={payMethod}
+              onPayMethodChange={setPayMethod}
+              cashAmount={cashAmount}
+              cardAmount={cardAmount}
+              total={total}
+              setCashAmount={setCashAmount}
+              setCardAmount={setCardAmount}
+              onCashInputChange={handleCashAmountChange}
+              onCardInputChange={handleCardAmountChange}
+            />
+          )}
 
           <PaymentSummary
             subtotal={subtotal}
