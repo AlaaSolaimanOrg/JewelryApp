@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
+import preventSignOnKeyDown from "../../../../../utils";
 import "./tradeInSection.scss";
 import type { TradeInRow } from "./TradeInSection.type";
 import {
@@ -51,7 +52,7 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
       setShowAddKarat(false);
       return;
     }
-    const ppg = parseFloat(newKaratPpg) || 0;
+    const ppg = Math.max(0, parseFloat(newKaratPpg) || 0);
     setRows((prev) =>
       [...prev, { id: Date.now(), karat, weight: 0, pricePerGram: ppg }].sort(
         (a, b) => Number(b.karat) - Number(a.karat),
@@ -181,7 +182,11 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
             </div>
 
             <div className="ps-ti-actions">
-              <button className="ps-btn ps-btn-gold" onClick={onClose}>
+              <button
+                className="ps-btn ps-btn-gold"
+                disabled={activeRows.length === 0}
+                onClick={onClose}
+              >
                 Apply credit
               </button>
               <button className="ps-btn ps-btn-outline" onClick={clearTradeIn}>
@@ -213,7 +218,14 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
                   max={24}
                   placeholder="e.g. 9, 12, 19"
                   value={newKarat}
-                  onChange={(e) => setNewKarat(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === ".") e.preventDefault();
+                    preventSignOnKeyDown(e);
+                  }}
+                  onWheel={(e) => e.currentTarget.blur()}
+                  onChange={(e) => {
+                    if (!e.target.value.includes("-")) setNewKarat(e.target.value);
+                  }}
                 />
               </div>
               <div className="ps-fg">
@@ -223,7 +235,11 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
                   min={0}
                   step="any"
                   value={newKaratPpg}
-                  onChange={(e) => setNewKaratPpg(e.target.value)}
+                  onKeyDown={preventSignOnKeyDown}
+                  onWheel={(e) => e.currentTarget.blur()}
+                  onChange={(e) => {
+                    if (!e.target.value.includes("-")) setNewKaratPpg(e.target.value);
+                  }}
                 />
               </div>
               <div className="ps-modal-btns">

@@ -153,9 +153,16 @@
     border: 1px solid var(--pos-border-strong);
     background: var(--pos-bg-raised);
     color: var(--pos-text);
+    -webkit-text-fill-color: var(--pos-text);
     flex: 1;
     width: 0;
     min-width: 0;
+
+    &::placeholder {
+      color: var(--pos-text-muted);
+      -webkit-text-fill-color: var(--pos-text-muted);
+      opacity: 1;
+    }
 
     &:focus {
       outline: none;

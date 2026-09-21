@@ -97,8 +97,15 @@
     border: 1px solid var(--pos-border-strong);
     background: var(--pos-bg-raised);
     color: var(--pos-text);
+    -webkit-text-fill-color: var(--pos-text);
     text-align: center;
     width: 100%;
+
+    &::placeholder {
+      color: var(--pos-text-muted);
+      -webkit-text-fill-color: var(--pos-text-muted);
+      opacity: 1;
+    }
 
     &:focus {
       outline: none;

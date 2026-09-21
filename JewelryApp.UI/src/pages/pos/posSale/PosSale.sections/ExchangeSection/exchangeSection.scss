@@ -24,7 +24,9 @@
       color: var(--pos-text);
 
       &::placeholder {
-        color: var(--pos-text-subtle);
+        color: var(--pos-text-muted);
+        -webkit-text-fill-color: var(--pos-text-muted);
+        opacity: 1;
       }
 
       &:focus {

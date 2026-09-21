@@ -64,7 +64,9 @@ const CustomTable: React.FC<CustomTableProps> = ({
                 }
               >
                 {headers.map((header, colIndex) => (
-                  <td key={colIndex}>{row[header.key] ?? null}</td>
+                  <td key={colIndex} style={{ textAlign: header.align }}>
+                    {row[header.key] ?? null}
+                  </td>
                 ))}
               </tr>
             ))

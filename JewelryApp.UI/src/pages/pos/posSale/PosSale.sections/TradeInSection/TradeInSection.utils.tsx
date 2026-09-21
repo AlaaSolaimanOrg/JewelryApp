@@ -1,13 +1,6 @@
 import { KaratType } from "../../../../../types/enums";
 import type { TradeInRow } from "./TradeInSection.type";
 
-export const DEFAULT_BUY_PRICES: Record<number, number> = {
-  [KaratType.Karat24]: 90,
-  [KaratType.Karat22]: 82,
-  [KaratType.Karat21]: 75,
-  [KaratType.Karat18]: 60,
-};
-
 export const createDefaultTradeInRows = (): TradeInRow[] =>
   [
     KaratType.Karat24,
@@ -18,7 +11,7 @@ export const createDefaultTradeInRows = (): TradeInRow[] =>
     id: idx + 1,
     karat,
     weight: 0,
-    pricePerGram: DEFAULT_BUY_PRICES[karat] ?? 0,
+    pricePerGram: 0,
   }));
 
 export const getTradeInTotal = (rows: TradeInRow[]) =>
