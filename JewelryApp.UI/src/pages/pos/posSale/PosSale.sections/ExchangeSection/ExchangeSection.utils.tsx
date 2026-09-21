@@ -1,5 +1,10 @@
 import { searchSales } from "../../../../../apis/sales.api";
-import { SortDirection, type ItemCondition, type ReturnOption, type ReturnReason } from "../../../../../types/enums";
+import {
+  ReturnReason,
+  SortDirection,
+  type ItemCondition,
+  type ReturnOption,
+} from "../../../../../types/enums";
 import type {
   ExchangeApplyData,
   ExchangeSearchSale,
@@ -36,22 +41,20 @@ export const searchPastTransactions = async (query: string): Promise<ExchangeSea
 };
 
 export const getExchangeTotal = (items: SelectedExchangeItem[]) =>
-  items.reduce((sum, i) => sum + i.unitPrice * i.returnQty, 0);
+  items.reduce((sum, i) => sum + i.returnAmount, 0);
 
 export const buildExchangeApplyData = (
   sale: ExchangeSearchSale,
   items: SelectedExchangeItem[],
-  reason: ReturnReason,
-  reasonNote: string,
 ): ExchangeApplyData => ({
   saleId: sale.id,
   saleSerialNumber: sale.serialNumber,
   items: items.map((i) => ({
     saleItemId: i.saleItemId,
     quantityToReturn: i.returnQty,
-    reason,
-    reasonNote,
-    returnAmount: i.unitPrice * i.returnQty,
+    reason: i.reason as ReturnReason,
+    reasonNote: i.reason === ReturnReason.Other ? i.reasonNote : undefined,
+    returnAmount: i.returnAmount,
     condition: i.condition as ItemCondition,
     option: i.dest as ReturnOption,
   })),

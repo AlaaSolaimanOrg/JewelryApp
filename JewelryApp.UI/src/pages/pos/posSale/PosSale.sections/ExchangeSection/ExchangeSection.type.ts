@@ -31,6 +31,9 @@ export interface SelectedExchangeItem {
   purchasedQty: number;
   alreadyReturnedQty: number;
   returnQty: number;
+  returnAmount: number;
+  reason: ReturnReason | "";
+  reasonNote: string;
   dest: ReturnOption | "";
   condition: ItemCondition | "";
 }
