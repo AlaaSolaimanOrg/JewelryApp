@@ -12,7 +12,11 @@ import type {
 } from "./ExchangeSection.type";
 
 export const formatMoney = (n: number) =>
-  "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  "$" +
+  Math.abs(n).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
 const SEARCH_PAGE = {
   pageSize: 20,
@@ -21,12 +25,16 @@ const SEARCH_PAGE = {
   sortDirection: SortDirection.Descending,
 };
 
-export const searchPastTransactions = async (query: string): Promise<ExchangeSearchSale[]> => {
+export const searchPastTransactions = async (
+  query: string,
+): Promise<ExchangeSearchSale[]> => {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
   const digits = trimmed.replace(/\D/g, "");
-  const isPhoneLike = digits.length >= 4 && digits.length >= trimmed.replace(/[\s()+-]/g, "").length;
+  const isPhoneLike =
+    digits.length >= 4 &&
+    digits.length >= trimmed.replace(/[\s()+-]/g, "").length;
   const isSerialLike = !isPhoneLike && /-/.test(trimmed) && /\d/.test(trimmed);
 
   const payload = {
