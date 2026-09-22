@@ -47,6 +47,15 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 };
             }
 
+            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_DueDate_In_Past
+                };
+            }
+
             var slotNumber = await RepairSlotHelper.GetNextAvailableSlotAsync(_context, _repairSettings.MaxSlots, cancellationToken);
             if (slotNumber == null)
             {
