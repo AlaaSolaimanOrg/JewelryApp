@@ -45,10 +45,12 @@ const AGING_COLORS: Record<string, string | undefined> = {
   "90+ days": "var(--admin-red)",
 };
 
+const todayStr = new Date().toISOString().slice(0, 10);
+
 const InventoryReports = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
-    dateFrom: "2026-06-01",
-    dateTo: "2026-06-11",
+    dateFrom: todayStr,
+    dateTo: todayStr,
   });
   const [period, setPeriod] = useState<Period>("all");
   const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);

@@ -14,7 +14,7 @@ import {
 } from "../../../apis/usedGold.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import { checkRequestSucceeded, handleSort, showError, showSuccess } from "../../../utils";
+import { checkRequestSucceeded, getYearsSince, handleSort, showError, showSuccess } from "../../../utils";
 import { SortDirection } from "../../../types/enums";
 import MeltGoldModal from "./MeltGoldModal/MeltGoldModal";
 import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
@@ -35,7 +35,7 @@ import {
 } from "./UsedGold.utils";
 import "./usedGold.scss";
 
-const YEARS = [2026, 2025];
+const YEARS = getYearsSince(2025);
 
 const EMPTY_POOL: GoldPool = { weight: 0, cost: 0, totalInvested: 0 };
 

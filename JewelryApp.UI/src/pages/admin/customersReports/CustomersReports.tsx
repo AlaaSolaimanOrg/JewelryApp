@@ -43,10 +43,12 @@ import "./customersReports.scss";
 
 const PERIOD_BUTTONS: Period[] = ["today", "week", "month", "year", "all"];
 
+const todayStr = new Date().toISOString().slice(0, 10);
+
 const CustomersReports = () => {
   const [period, setPeriod] = useState<Period>("month");
-  const [dateFrom, setDateFrom] = useState("2026-06-01");
-  const [dateTo, setDateTo] = useState("2026-06-11");
+  const [dateFrom, setDateFrom] = useState(todayStr);
+  const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<DateRange | null>(null);
   const [search, setSearch] = useState("");
   const [openTier, setOpenTier] = useState<CustomerTier | null>(null);
