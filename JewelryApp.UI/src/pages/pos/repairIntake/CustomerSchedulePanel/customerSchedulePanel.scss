@@ -43,6 +43,7 @@
 
         &::placeholder {
           color: var(--pos-text-subtle);
+          -webkit-text-fill-color: var(--pos-text-subtle);
         }
 
         &:focus {
