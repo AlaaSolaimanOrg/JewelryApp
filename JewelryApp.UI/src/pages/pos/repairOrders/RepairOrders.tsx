@@ -169,7 +169,13 @@ const RepairOrders = () => {
 
   const handleSaveEdit = async (
     id: string,
-    changes: { notes: string; cost: number; dueDate: string; paid: boolean },
+    changes: {
+      notes: string;
+      cost: number;
+      dueDate: string;
+      paid: boolean;
+      payMethod?: string;
+    },
   ) => {
     const current = repairs.find((r) => r.id === id);
     if (!current) return;
@@ -190,6 +196,7 @@ const RepairOrders = () => {
       const payResponse = await updateRepairPaymentStatus({
         id,
         newPaymentStatus: changes.paid ? PaymentStatus.Paid : PaymentStatus.Unpaid,
+        payMethod: changes.paid ? changes.payMethod : null,
       });
       if (!checkRequestSucceeded(payResponse?.statusCode)) {
         showError(payResponse?.message || "Failed to update payment status");

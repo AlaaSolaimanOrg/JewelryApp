@@ -47,6 +47,7 @@ export const updateRepair = async (payload: {
 export const updateRepairPaymentStatus = async (payload: {
   id: string;
   newPaymentStatus: PaymentStatus;
+  payMethod?: string | null;
 }) => {
   return requestApi(
     "PUT",
