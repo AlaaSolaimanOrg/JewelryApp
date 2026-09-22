@@ -12,6 +12,7 @@ import { Row, Col } from "react-bootstrap";
 import { getRepairs } from "../../../apis/repairs.api";
 import { getPosDashboardStats } from "../../../apis/dashboard.api";
 import { getTodaySalesSummary } from "../../../apis/sales.api";
+import { getUsedGoldSummary } from "../../../apis/usedGold.api";
 import { verifySalesPin } from "../../../apis/securitySettings.api";
 import PinPad from "../../../components/PinPad/PinPad";
 import ActionCard from "../../../components/cards/ActionCard/ActionCard";
@@ -23,22 +24,31 @@ import { checkRequestSucceeded, showError } from "../../../utils";
 import RepairsModal from "./RepairsModal/RepairsModal";
 import { getDueStatus, type Repair } from "./RepairsModal/RepairsModal.utils";
 import RecentTransactions from "./RecentTransactions/RecentTransactions";
-import type { PosDashboardStats, TodaySalesSummary } from "./PosDashboard.type";
+import type {
+  PosDashboardStats,
+  TodaySalesSummary,
+  UsedGoldSummary,
+} from "./PosDashboard.type";
 import { formatCurrency, formatCurrencyShort } from "./PosDashboard.utils";
 import "./posDashboard.scss";
 
 const EMPTY_STATS: PosDashboardStats = {
   storeCashBalance: 0,
   storeCashTodayDelta: 0,
-  usedGoldWeight: 0,
-  usedGoldAverageKarat: 0,
-  usedGoldValue: 0,
 };
 
 const EMPTY_SALES_SUMMARY: TodaySalesSummary = {
   todaySalesTotal: 0,
   todaySalesCount: 0,
 };
+
+const EMPTY_GOLD_SUMMARY: UsedGoldSummary = {
+  usedGoldWeight: 0,
+  usedGoldAverageKarat: 0,
+  usedGoldValue: 0,
+};
+
+type PendingReveal = "sales" | "gold" | null;
 
 const PosDashboard = () => {
   const { data: repairs, isLoading: repairsLoading } =
@@ -56,22 +66,33 @@ const PosDashboard = () => {
   }) as { data: PosDashboardStats };
 
   const [repairsModalOpen, setRepairsModalOpen] = useState(false);
-  const [pinOpen, setPinOpen] = useState(false);
+  const [pendingReveal, setPendingReveal] = useState<PendingReveal>(null);
+
   const [salesRevealed, setSalesRevealed] = useState(false);
   const [salesSummary, setSalesSummary] =
     useState<TodaySalesSummary>(EMPTY_SALES_SUMMARY);
-  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const salesRevealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [goldRevealed, setGoldRevealed] = useState(false);
+  const [goldSummary, setGoldSummary] =
+    useState<UsedGoldSummary>(EMPTY_GOLD_SUMMARY);
+  const goldRevealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const overdueCount =
     repairs?.filter((r) => getDueStatus(r.dueDate) === "overdue").length ?? 0;
 
   const openSalesReveal = () => {
     if (salesRevealed) return;
-    setPinOpen(true);
+    setPendingReveal("sales");
+  };
+
+  const openGoldReveal = () => {
+    if (goldRevealed) return;
+    setPendingReveal("gold");
   };
 
   const closePinOverlay = () => {
-    setPinOpen(false);
+    setPendingReveal(null);
   };
 
   const hideSales = () => {
@@ -79,21 +100,39 @@ const PosDashboard = () => {
     setSalesSummary(EMPTY_SALES_SUMMARY);
   };
 
-  const handleSalesPinSuccess = async (pin: string) => {
-    setPinOpen(false);
+  const hideGold = () => {
+    setGoldRevealed(false);
+    setGoldSummary(EMPTY_GOLD_SUMMARY);
+  };
 
-    const response = await getTodaySalesSummary({ pin });
-    if (checkRequestSucceeded(response?.statusCode)) {
-      setSalesSummary(response.data);
-      setSalesRevealed(true);
-      if (revealTimer.current) clearTimeout(revealTimer.current);
-      revealTimer.current = setTimeout(hideSales, 60000);
-    } else {
-      showError(response?.message || "Failed to load sales");
+  const handlePinSuccess = async (pin: string) => {
+    const reveal = pendingReveal;
+    setPendingReveal(null);
+
+    if (reveal === "sales") {
+      const response = await getTodaySalesSummary({ pin });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        setSalesSummary(response.data);
+        setSalesRevealed(true);
+        if (salesRevealTimer.current) clearTimeout(salesRevealTimer.current);
+        salesRevealTimer.current = setTimeout(hideSales, 60000);
+      } else {
+        showError(response?.message || "Failed to load sales");
+      }
+    } else if (reveal === "gold") {
+      const response = await getUsedGoldSummary({ pin });
+      if (checkRequestSucceeded(response?.statusCode)) {
+        setGoldSummary(response.data);
+        setGoldRevealed(true);
+        if (goldRevealTimer.current) clearTimeout(goldRevealTimer.current);
+        goldRevealTimer.current = setTimeout(hideGold, 60000);
+      } else {
+        showError(response?.message || "Failed to load used gold summary");
+      }
     }
   };
 
-  const handleVerifySalesPin = async (pin: string) => {
+  const handleVerifyPin = async (pin: string) => {
     const response = await verifySalesPin({ pin });
     if (checkRequestSucceeded(response?.statusCode)) return true;
     showError(response?.message || "Incorrect PIN");
@@ -199,13 +238,18 @@ const PosDashboard = () => {
         <Col xs={6} md={3}>
           <StatCard
             label="Used gold on hand"
-            value={`${stats.usedGoldWeight.toLocaleString("en-US", {
+            value={`${goldSummary.usedGoldWeight.toLocaleString("en-US", {
               maximumFractionDigits: 1,
             })}g`}
             valueColor="var(--pos-gold)"
-            sub={`Avg ${stats.usedGoldAverageKarat.toLocaleString("en-US", {
+            sub={`Avg ${goldSummary.usedGoldAverageKarat.toLocaleString("en-US", {
               maximumFractionDigits: 1,
-            })}K · ${formatCurrency(stats.usedGoldValue)} value`}
+            })}K · ${formatCurrency(goldSummary.usedGoldValue)} value`}
+            clickable
+            blurred
+            revealed={goldRevealed}
+            lockIcon={goldRevealed ? <FaLockOpen /> : <FaLock />}
+            onClick={openGoldReveal}
           />
         </Col>
       </Row>
@@ -220,10 +264,14 @@ const PosDashboard = () => {
       />
 
       <PinPad
-        show={pinOpen}
-        onVerify={handleVerifySalesPin}
-        title="View today's sales"
-        onSuccess={handleSalesPinSuccess}
+        show={pendingReveal !== null}
+        onVerify={handleVerifyPin}
+        title={
+          pendingReveal === "gold"
+            ? "View used gold on hand"
+            : "View today's sales"
+        }
+        onSuccess={handlePinSuccess}
         onCancel={closePinOverlay}
       />
     </div>

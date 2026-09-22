@@ -122,6 +122,7 @@ export const apiRoutes = {
     getHistory: "UsedGold/GetHistory",
     sendToMelt: "UsedGold/SendToMelt",
     returnToStock: "UsedGold/ReturnToStock",
+    getSummary: "UsedGold/GetSummary",
   },
   securitySettings: {
     getSalesPin: "SecuritySettings/GetSalesPin",
