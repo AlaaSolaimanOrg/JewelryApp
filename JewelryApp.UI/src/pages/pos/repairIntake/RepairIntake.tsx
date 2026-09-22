@@ -59,13 +59,13 @@ const RepairIntake = () => {
       setCardAmount(formatAmountInput(costValue));
     } else if (method === RepairPayMethod.Split) {
       if (lastPayEdited.current === "cash") {
-        setCardAmount(
-          formatAmountInput(Math.max(0, costValue - (parseFloat(cashAmount) || 0))),
-        );
+        const cashValue = Math.min(parseFloat(cashAmount) || 0, costValue);
+        setCashAmount(formatAmountInput(cashValue));
+        setCardAmount(formatAmountInput(costValue - cashValue));
       } else {
-        setCashAmount(
-          formatAmountInput(Math.max(0, costValue - (parseFloat(cardAmount) || 0))),
-        );
+        const cardValue = Math.min(parseFloat(cardAmount) || 0, costValue);
+        setCardAmount(formatAmountInput(cardValue));
+        setCashAmount(formatAmountInput(costValue - cardValue));
       }
     }
   };
@@ -82,21 +82,37 @@ const RepairIntake = () => {
   };
 
   const handleCashAmountChange = (value: string) => {
-    setCashAmount(value);
-    if (payMethod !== RepairPayMethod.Split) return;
+    if (payMethod !== RepairPayMethod.Split) {
+      setCashAmount(value);
+      return;
+    }
     lastPayEdited.current = "cash";
     const costValue = parseFloat(cost) || 0;
     const cashValue = parseFloat(value) || 0;
-    setCardAmount(formatAmountInput(Math.max(0, costValue - cashValue)));
+    if (cashValue > costValue) {
+      setCashAmount(formatAmountInput(costValue));
+      setCardAmount("0");
+    } else {
+      setCashAmount(value);
+      setCardAmount(formatAmountInput(costValue - cashValue));
+    }
   };
 
   const handleCardAmountChange = (value: string) => {
-    setCardAmount(value);
-    if (payMethod !== RepairPayMethod.Split) return;
+    if (payMethod !== RepairPayMethod.Split) {
+      setCardAmount(value);
+      return;
+    }
     lastPayEdited.current = "card";
     const costValue = parseFloat(cost) || 0;
     const cardValue = parseFloat(value) || 0;
-    setCashAmount(formatAmountInput(Math.max(0, costValue - cardValue)));
+    if (cardValue > costValue) {
+      setCardAmount(formatAmountInput(costValue));
+      setCashAmount("0");
+    } else {
+      setCardAmount(value);
+      setCashAmount(formatAmountInput(costValue - cardValue));
+    }
   };
 
   const resetForm = () => {

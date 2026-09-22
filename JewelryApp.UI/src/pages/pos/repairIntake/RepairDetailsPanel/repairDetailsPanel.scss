@@ -165,9 +165,10 @@
             border-color: var(--pos-green);
           }
 
-          &:disabled {
-            opacity: 0.25;
-            cursor: not-allowed;
+          &:read-only {
+            cursor: default;
+            color: var(--pos-text);
+            -webkit-text-fill-color: var(--pos-text);
           }
         }
       }

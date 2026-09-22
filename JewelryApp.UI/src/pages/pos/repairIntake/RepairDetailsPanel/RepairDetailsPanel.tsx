@@ -146,7 +146,8 @@ const RepairDetailsPanel = ({
                 step="any"
                 inputMode="decimal"
                 value={cashAmount}
-                disabled={payMethod === RepairPayMethod.Card}
+                readOnly={payMethod !== RepairPayMethod.Split}
+                onWheel={(e) => e.currentTarget.blur()}
                 onChange={(e) => onCashAmountChange(e.target.value)}
               />
             </div>
@@ -158,7 +159,8 @@ const RepairDetailsPanel = ({
                 step="any"
                 inputMode="decimal"
                 value={cardAmount}
-                disabled={payMethod === RepairPayMethod.Cash}
+                readOnly={payMethod !== RepairPayMethod.Split}
+                onWheel={(e) => e.currentTarget.blur()}
                 onChange={(e) => onCardAmountChange(e.target.value)}
               />
             </div>
