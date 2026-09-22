@@ -1,5 +1,5 @@
 import { PaymentStatus, RepairStatus } from "../../../types/enums";
-import type { Repair, RepairBoardStatus } from "./PickUp.type";
+import type { Repair, RepairBoardStatus } from "./RepairOrders.type";
 
 const STATUS_MAP: Record<RepairStatus, RepairBoardStatus> = {
   [RepairStatus.InProgress]: "progress",

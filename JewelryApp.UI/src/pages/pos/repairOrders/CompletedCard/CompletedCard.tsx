@@ -1,6 +1,6 @@
 import { FaReceipt } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
-import { formatCurrency, formatDate, formatPhone } from "../PickUp.utils";
+import type { Repair } from "../RepairOrders.type";
+import { formatCurrency, formatDate, formatPhone } from "../RepairOrders.utils";
 import "./completedCard.scss";
 
 interface CompletedCardProps {

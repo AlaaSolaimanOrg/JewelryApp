@@ -1,11 +1,11 @@
 import { FaBell, FaCheck, FaCheckCircle, FaEdit, FaEye } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
+import type { Repair } from "../RepairOrders.type";
 import {
   daysBetween,
   formatCurrency,
   formatPhone,
   getDueBadge,
-} from "../PickUp.utils";
+} from "../RepairOrders.utils";
 import "./repairCard.scss";
 
 interface RepairCardProps {

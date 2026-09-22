@@ -7,7 +7,9 @@ const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
 const InventoryReports = lazy(
   () => import("../pages/admin/InventoryReports/InventoryReports"),
 );
-const PickUp = lazy(() => import("../pages/pos/pickup/PickUp"));
+const RepairOrders = lazy(
+  () => import("../pages/pos/repairOrders/RepairOrders"),
+);
 const Login = lazy(() => import("../pages/general/login/Login"));
 const Unauthorized = lazy(
   () => import("../pages/general/unauthorized/Unauthorized"),
@@ -114,7 +116,7 @@ const AppRoutes = () => {
             <Route path="/repair" element={<RepairIntake />} />
             <Route path="/usedgold" element={<UsedGold />} />
             <Route path="/return" element={<ReturnPage />} />
-            <Route path="pickUp" element={<PickUp />} />
+            <Route path="/repairOrders" element={<RepairOrders />} />
           </Route>
 
           <Route

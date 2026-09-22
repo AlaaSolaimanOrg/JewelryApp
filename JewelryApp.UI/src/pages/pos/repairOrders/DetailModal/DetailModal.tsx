@@ -1,5 +1,5 @@
 import { FaTimes } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
+import type { Repair } from "../RepairOrders.type";
 import {
   daysBetween,
   formatCurrency,
@@ -7,7 +7,7 @@ import {
   formatPhone,
   getStatusColor,
   getStatusLabel,
-} from "../PickUp.utils";
+} from "../RepairOrders.utils";
 import "./detailModal.scss";
 
 interface DetailModalProps {

@@ -1,6 +1,6 @@
 import { FaCheckCircle, FaHourglassHalf, FaTimes } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
-import { formatPhone } from "../PickUp.utils";
+import type { Repair } from "../RepairOrders.type";
+import { formatPhone } from "../RepairOrders.utils";
 import "./notifyModal.scss";
 
 interface NotifyModalProps {

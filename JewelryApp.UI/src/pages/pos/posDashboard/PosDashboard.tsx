@@ -168,9 +168,9 @@ const PosDashboard = () => {
         </Col>
         <Col xs={6} md={4}>
           <ActionCard
-            to="/pickup"
+            to="/repairOrders"
             icon={<GiCardPickup />}
-            label="Repair pickup"
+            label="Repair orders"
             sub="Manage and complete repairs"
           />
         </Col>

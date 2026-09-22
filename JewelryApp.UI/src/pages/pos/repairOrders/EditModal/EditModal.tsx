@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
-import { formatPhone } from "../PickUp.utils";
+import type { Repair } from "../RepairOrders.type";
+import { formatPhone } from "../RepairOrders.utils";
 import "./editModal.scss";
 
 interface EditModalProps {
