@@ -45,6 +45,12 @@ const DetailModal = ({ repair, onClose }: DetailModalProps) => {
               <div className="pu-detail-label">Phone</div>
               <div className="pu-detail-value">{formatPhone(repair.customerPhone)}</div>
             </div>
+            {repair.receiverName && repair.receiverName !== repair.customerName && (
+              <div>
+                <div className="pu-detail-label">Receiver</div>
+                <div className="pu-detail-value">{repair.receiverName}</div>
+              </div>
+            )}
             <div>
               <div className="pu-detail-label">Repair code</div>
               <div className="pu-detail-value">{repair.repairCode}</div>

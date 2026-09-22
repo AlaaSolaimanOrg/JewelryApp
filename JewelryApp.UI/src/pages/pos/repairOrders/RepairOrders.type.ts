@@ -7,6 +7,7 @@ export interface Repair {
   customerId: string;
   customerName: string;
   customerPhone: string;
+  receiverName: string | null;
   notes: string;
   cost: number;
   paid: boolean;
