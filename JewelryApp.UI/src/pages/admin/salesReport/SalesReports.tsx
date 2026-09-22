@@ -62,10 +62,12 @@ interface TopCustomerItem {
 
 type ExpandedChart = "revenue" | "units" | "category" | null;
 
+const todayStr = new Date().toISOString().slice(0, 10);
+
 const SalesReports = () => {
   const [period, setPeriod] = useState<Period>("month");
-  const [dateFrom, setDateFrom] = useState("2026-06-01");
-  const [dateTo, setDateTo] = useState("2026-06-11");
+  const [dateFrom, setDateFrom] = useState(todayStr);
+  const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
   const [expandedChart, setExpandedChart] = useState<ExpandedChart>(null);
 

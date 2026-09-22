@@ -159,6 +159,10 @@ const CustomerSchedulePanel = ({
             value={dueDate}
             min={new Date().toISOString().split("T")[0]}
             onChange={(e) => onDueDateChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key !== "Tab") e.preventDefault();
+            }}
+            onPaste={(e) => e.preventDefault()}
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-.pickup-page {
+.repair-orders-page {
   font-family: var(--pos-font);
   max-width: 1100px;
   margin: 0 auto;
@@ -95,9 +95,11 @@
         border: 1px solid var(--pos-border-strong);
         background: var(--pos-bg-raised);
         color: var(--pos-text);
+        -webkit-text-fill-color: var(--pos-text);
 
         &::placeholder {
           color: var(--pos-text-subtle);
+          -webkit-text-fill-color: var(--pos-text-subtle);
         }
 
         &:focus {
@@ -289,6 +291,10 @@
       max-width: 400px;
     }
 
+    &.pu-modal-lg {
+      max-width: 660px;
+    }
+
     .pu-modal-head {
       padding: 16px 20px;
       border-bottom: 1px solid var(--pos-border);
@@ -342,6 +348,16 @@
   }
 }
 
+.pu-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+
+  .pu-form-group-full {
+    grid-column: 1 / -1;
+  }
+}
+
 .pu-form-label {
   font-size: 11px;
   text-transform: uppercase;
@@ -371,7 +387,7 @@
 
 .pu-form-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 60px;
   line-height: 1.6;
 }
 

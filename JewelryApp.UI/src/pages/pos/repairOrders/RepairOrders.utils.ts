@@ -1,5 +1,5 @@
 import { PaymentStatus, RepairStatus } from "../../../types/enums";
-import type { Repair, RepairBoardStatus } from "./PickUp.type";
+import type { Repair, RepairBoardStatus } from "./RepairOrders.type";
 
 const STATUS_MAP: Record<RepairStatus, RepairBoardStatus> = {
   [RepairStatus.InProgress]: "progress",
@@ -15,6 +15,7 @@ export const mapRepairDtoToRepair = (dto: any): Repair => ({
   customerId: dto.customerId,
   customerName: dto.customerName,
   customerPhone: dto.customerPhone,
+  receiverName: dto.receiverName ?? null,
   notes: dto.notes ?? "",
   cost: dto.cost ?? 0,
   paid: dto.paymentStatus === PaymentStatus.Paid,

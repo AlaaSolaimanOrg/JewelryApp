@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaCreditCard, FaExchangeAlt, FaMoneyBillWave, FaTimes } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
-import { formatCurrency } from "../PickUp.utils";
+import type { Repair } from "../RepairOrders.type";
+import { formatCurrency } from "../RepairOrders.utils";
 import "./paymentModal.scss";
 
 type PayMethod = "" | "Cash" | "Card" | "Split";

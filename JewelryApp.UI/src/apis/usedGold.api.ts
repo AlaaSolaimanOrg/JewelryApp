@@ -51,3 +51,7 @@ export const returnToStock = async (payload: {
 }) => {
   return requestApi("POST", apiRoutes.usedGold.returnToStock, payload);
 };
+
+export const getUsedGoldSummary = async (payload: { pin: string }) => {
+  return requestApi("POST", apiRoutes.usedGold.getSummary, payload);
+};

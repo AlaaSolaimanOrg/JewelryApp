@@ -1,5 +1,5 @@
 import { FaTimes } from "react-icons/fa";
-import type { Repair } from "../PickUp.type";
+import type { Repair } from "../RepairOrders.type";
 import {
   daysBetween,
   formatCurrency,
@@ -7,7 +7,7 @@ import {
   formatPhone,
   getStatusColor,
   getStatusLabel,
-} from "../PickUp.utils";
+} from "../RepairOrders.utils";
 import "./detailModal.scss";
 
 interface DetailModalProps {
@@ -45,6 +45,12 @@ const DetailModal = ({ repair, onClose }: DetailModalProps) => {
               <div className="pu-detail-label">Phone</div>
               <div className="pu-detail-value">{formatPhone(repair.customerPhone)}</div>
             </div>
+            {repair.receiverName && repair.receiverName !== repair.customerName && (
+              <div>
+                <div className="pu-detail-label">Receiver</div>
+                <div className="pu-detail-value">{repair.receiverName}</div>
+              </div>
+            )}
             <div>
               <div className="pu-detail-label">Repair code</div>
               <div className="pu-detail-value">{repair.repairCode}</div>

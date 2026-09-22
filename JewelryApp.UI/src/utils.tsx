@@ -218,6 +218,14 @@ export const smartRound = (value: number): number => {
   return parseFloat((Math.round(value * 100) / 100).toString());
 };
 
+export const getYearsSince = (startYear: number): number[] => {
+  const currentYear = new Date().getFullYear();
+  return Array.from(
+    { length: currentYear - startYear + 1 },
+    (_, i) => currentYear - i
+  );
+};
+
 export const copyToClipboard = async (
   value: string,
   onSuccess?: () => void

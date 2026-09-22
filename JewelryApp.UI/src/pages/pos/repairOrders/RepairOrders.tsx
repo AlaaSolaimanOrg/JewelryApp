@@ -15,15 +15,15 @@ import DetailModal from "./DetailModal/DetailModal";
 import EditModal from "./EditModal/EditModal";
 import NotifyModal from "./NotifyModal/NotifyModal";
 import PaymentModal from "./PaymentModal/PaymentModal";
-import type { ActiveViewFilter, BoardView, Repair } from "./PickUp.type";
-import { formatCurrency, mapRepairDtoToRepair } from "./PickUp.utils";
+import type { ActiveViewFilter, BoardView, Repair } from "./RepairOrders.type";
+import { formatCurrency, mapRepairDtoToRepair } from "./RepairOrders.utils";
 import RepairCard from "./RepairCard/RepairCard";
-import "./pickUp.scss";
+import "./repairOrders.scss";
 
 const ACTIVE_STATUSES = [RepairStatus.InProgress, RepairStatus.Completed];
 const COMPLETED_STATUSES = [RepairStatus.PickedUp, RepairStatus.Cancelled];
 
-const PickUp = () => {
+const RepairOrders = () => {
   const [repairs, setRepairs] = useState<Repair[]>([]);
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState<BoardView>("active");
@@ -169,7 +169,13 @@ const PickUp = () => {
 
   const handleSaveEdit = async (
     id: string,
-    changes: { notes: string; cost: number; dueDate: string; paid: boolean },
+    changes: {
+      notes: string;
+      cost: number;
+      dueDate: string;
+      paid: boolean;
+      payMethod?: string;
+    },
   ) => {
     const current = repairs.find((r) => r.id === id);
     if (!current) return;
@@ -190,6 +196,7 @@ const PickUp = () => {
       const payResponse = await updateRepairPaymentStatus({
         id,
         newPaymentStatus: changes.paid ? PaymentStatus.Paid : PaymentStatus.Unpaid,
+        payMethod: changes.paid ? changes.payMethod : null,
       });
       if (!checkRequestSucceeded(payResponse?.statusCode)) {
         showError(payResponse?.message || "Failed to update payment status");
@@ -226,7 +233,7 @@ const PickUp = () => {
   const payRepair = repairs.find((r) => r.id === payId) || null;
 
   return (
-    <div className="pickup-page">
+    <div className="repair-orders-page">
       <div className="pu-top-bar">
         <span className="pu-top-title">
           <FaClipboardList /> Repair orders
@@ -416,4 +423,4 @@ const PickUp = () => {
   );
 };
 
-export default PickUp;
+export default RepairOrders;

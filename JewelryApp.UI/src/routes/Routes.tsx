@@ -7,7 +7,9 @@ const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
 const InventoryReports = lazy(
   () => import("../pages/admin/InventoryReports/InventoryReports"),
 );
-const PickUp = lazy(() => import("../pages/pos/pickup/PickUp"));
+const RepairOrders = lazy(
+  () => import("../pages/pos/repairOrders/RepairOrders"),
+);
 const Login = lazy(() => import("../pages/general/login/Login"));
 const Unauthorized = lazy(
   () => import("../pages/general/unauthorized/Unauthorized"),
@@ -29,14 +31,12 @@ const AdminHeader = lazy(
 );
 const Customers = lazy(() => import("../pages/admin/customers/Customers"));
 const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
-const ExportData = lazy(() => import("../pages/admin/exportData/ExportData"));
 const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
 const MeltedProducts = lazy(
   () => import("../pages/admin/meltedProducts/MeltedProducts"),
 );
 
 const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
-const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
 const SalesReports = lazy(
   () => import("../pages/admin/salesReport/SalesReports"),
 );
@@ -116,7 +116,7 @@ const AppRoutes = () => {
             <Route path="/repair" element={<RepairIntake />} />
             <Route path="/usedgold" element={<UsedGold />} />
             <Route path="/return" element={<ReturnPage />} />
-            <Route path="pickUp" element={<PickUp />} />
+            <Route path="/repairOrders" element={<RepairOrders />} />
           </Route>
 
           <Route
@@ -168,8 +168,6 @@ const AppRoutes = () => {
               element={<CustomersReports />}
             />
             <Route path="admin/settings" element={<Settings />} />
-            <Route path="admin/print-tags" element={<TagPrinting />} />
-            <Route path="admin/export-data" element={<ExportData />} />
             <Route path="admin/logs" element={<Logs />} />
           </Route>
 

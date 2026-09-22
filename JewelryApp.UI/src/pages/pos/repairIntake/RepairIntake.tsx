@@ -1,10 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { createRepair, getRepairs } from "../../../apis/repairs.api";
+import { createRepair, getNextAvailableSlot } from "../../../apis/repairs.api";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import { RepairPayMethod, RepairStatus } from "../../../types/enums";
+import { RepairPayMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import type { Customer } from "../posSale/types";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
@@ -13,7 +12,6 @@ import RepairDetailsPanel from "./RepairDetailsPanel/RepairDetailsPanel";
 import {
   formatAmountInput,
   formatCurrency,
-  getNextAvailableSlot,
   payMethodToPaymentStatus,
 } from "./RepairIntake.utils";
 import "./repairIntake.scss";
@@ -37,18 +35,22 @@ const RepairIntake = () => {
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
 
-  const { data: inProgressRepairs } = useLocalApiSearchSortPagination<{
-    slotNumber: number | null;
-  }>({
-    apiToCall: (data) => getRepairs(data.payload),
-    extraPayload: { status: RepairStatus.InProgress },
-    initialPageSize: 50,
-  });
+  const [nextSlot, setNextSlot] = useState<number>(1);
 
-  const occupiedSlots = (inProgressRepairs ?? [])
-    .map((r) => r.slotNumber)
-    .filter((n): n is number => typeof n === "number");
-  const nextSlot = getNextAvailableSlot(occupiedSlots);
+  const fetchNextSlot = async () => {
+    try {
+      const response = await getNextAvailableSlot();
+      if (checkRequestSucceeded(response.statusCode)) {
+        setNextSlot(response.data ?? nextSlot);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNextSlot();
+  }, []);
 
   const recalcPayFields = (method: RepairPayMethod, costValue: number) => {
     if (method === RepairPayMethod.Cash) {
@@ -59,13 +61,13 @@ const RepairIntake = () => {
       setCardAmount(formatAmountInput(costValue));
     } else if (method === RepairPayMethod.Split) {
       if (lastPayEdited.current === "cash") {
-        setCardAmount(
-          formatAmountInput(Math.max(0, costValue - (parseFloat(cashAmount) || 0))),
-        );
+        const cashValue = Math.min(parseFloat(cashAmount) || 0, costValue);
+        setCashAmount(formatAmountInput(cashValue));
+        setCardAmount(formatAmountInput(costValue - cashValue));
       } else {
-        setCashAmount(
-          formatAmountInput(Math.max(0, costValue - (parseFloat(cardAmount) || 0))),
-        );
+        const cardValue = Math.min(parseFloat(cardAmount) || 0, costValue);
+        setCardAmount(formatAmountInput(cardValue));
+        setCashAmount(formatAmountInput(costValue - cardValue));
       }
     }
   };
@@ -82,21 +84,37 @@ const RepairIntake = () => {
   };
 
   const handleCashAmountChange = (value: string) => {
-    setCashAmount(value);
-    if (payMethod !== RepairPayMethod.Split) return;
+    if (payMethod !== RepairPayMethod.Split) {
+      setCashAmount(value);
+      return;
+    }
     lastPayEdited.current = "cash";
     const costValue = parseFloat(cost) || 0;
     const cashValue = parseFloat(value) || 0;
-    setCardAmount(formatAmountInput(Math.max(0, costValue - cashValue)));
+    if (cashValue > costValue) {
+      setCashAmount(formatAmountInput(costValue));
+      setCardAmount("0");
+    } else {
+      setCashAmount(value);
+      setCardAmount(formatAmountInput(costValue - cashValue));
+    }
   };
 
   const handleCardAmountChange = (value: string) => {
-    setCardAmount(value);
-    if (payMethod !== RepairPayMethod.Split) return;
+    if (payMethod !== RepairPayMethod.Split) {
+      setCardAmount(value);
+      return;
+    }
     lastPayEdited.current = "card";
     const costValue = parseFloat(cost) || 0;
     const cardValue = parseFloat(value) || 0;
-    setCashAmount(formatAmountInput(Math.max(0, costValue - cardValue)));
+    if (cardValue > costValue) {
+      setCardAmount(formatAmountInput(costValue));
+      setCashAmount("0");
+    } else {
+      setCardAmount(value);
+      setCashAmount(formatAmountInput(costValue - cardValue));
+    }
   };
 
   const resetForm = () => {
@@ -152,6 +170,7 @@ const RepairIntake = () => {
         setCreatedRepairId(response.data);
         setShowInvoice(true);
         resetForm();
+        fetchNextSlot();
       } else {
         showError(response.message);
       }

@@ -47,7 +47,16 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 };
             }
 
-            var slotNumber = await AssignSlotNumberAsync(cancellationToken);
+            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_DueDate_In_Past
+                };
+            }
+
+            var slotNumber = await RepairSlotHelper.GetNextAvailableSlotAsync(_context, _repairSettings.MaxSlots, cancellationToken);
             if (slotNumber == null)
             {
                 return new GenericResponse<Guid>
@@ -82,23 +91,6 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 StatusCode = ResponseStatusCode.Created,
                 Message = Messages.Success_Repair_Created
             };
-        }
-
-        private async Task<int?> AssignSlotNumberAsync(CancellationToken cancellationToken)
-        {
-            var occupiedSlots = (await _context.Repairs
-                .Where(r => r.Status != RepairStatus.PickedUp && r.Status != RepairStatus.Cancelled && r.SlotNumber != null)
-                .Select(r => r.SlotNumber!.Value)
-                .ToListAsync(cancellationToken))
-                .ToHashSet();
-
-            for (int slot = 1; slot <= _repairSettings.MaxSlots; slot++)
-            {
-                if (!occupiedSlots.Contains(slot))
-                    return slot;
-            }
-
-            return null;
         }
 
         private async Task<string> GenerateRepairCodeAsync(CancellationToken cancellationToken)

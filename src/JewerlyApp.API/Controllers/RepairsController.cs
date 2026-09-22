@@ -7,6 +7,7 @@ using JewerlyApp.Application.Repairs.Queries.GetLongestInShop;
 using JewerlyApp.Application.Repairs.Queries.GetRepairAlerts;
 using JewerlyApp.Application.Repairs.Queries.GetRepairById;
 using JewerlyApp.Application.Repairs.Queries.GetRepairHealthMetrics;
+using JewerlyApp.Application.Repairs.Queries.GetNextAvailableSlot;
 using JewerlyApp.Application.Repairs.Queries.GetRepairs;
 using JewerlyApp.Application.Repairs.Queries.GetRepairsByCustomer;
 using JewerlyApp.Application.Repairs.Queries.GetRepairsRevenueChart;
@@ -37,6 +38,16 @@ namespace JewerlyApp.API.Controllers
         public async Task<IActionResult> GetRepairById([FromQuery] GetRepairByIdQuery query)
         {
             var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// get the next available repair slot number, without fetching full repair records
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetNextAvailableSlot()
+        {
+            var response = await Mediator.Send(new GetNextAvailableSlotQuery());
             return CreateResponse(response);
         }
 

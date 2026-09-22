@@ -3,6 +3,7 @@ using JewerlyApp.Application.UsedGold.Commands.ReturnToStock;
 using JewerlyApp.Application.UsedGold.Commands.SendToMelt;
 using JewerlyApp.Application.UsedGold.Queries.GetHistory;
 using JewerlyApp.Application.UsedGold.Queries.GetPools;
+using JewerlyApp.Application.UsedGold.Queries.GetSummary;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.API.Controllers.UsedGold
@@ -26,6 +27,18 @@ namespace JewerlyApp.API.Controllers.UsedGold
 
         [HttpGet]
         public async Task<IActionResult> GetHistory([FromQuery] GetHistoryQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// get used gold on hand summary (weight, average karat, value), gated behind the sales PIN
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> GetSummary([FromBody] GetSummaryQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

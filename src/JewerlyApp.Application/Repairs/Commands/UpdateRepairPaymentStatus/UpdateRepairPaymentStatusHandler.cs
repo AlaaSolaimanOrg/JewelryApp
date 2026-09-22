@@ -34,6 +34,18 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairPaymentStatus
 
             repair.PaymentStatus = request.NewPaymentStatus;
 
+            if (request.NewPaymentStatus == PaymentStatus.Paid)
+            {
+                if (!string.IsNullOrWhiteSpace(request.PayMethod))
+                {
+                    repair.PayMethod = request.PayMethod.Trim();
+                }
+            }
+            else
+            {
+                repair.PayMethod = null;
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return new GenericResponse<Unit>

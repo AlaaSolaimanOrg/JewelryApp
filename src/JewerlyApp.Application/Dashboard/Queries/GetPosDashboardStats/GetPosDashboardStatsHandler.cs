@@ -3,7 +3,6 @@ using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Dashboard.Dtos;
 using JewerlyApp.Application.Interfaces;
-using JewerlyApp.Application.UsedGold;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -44,20 +43,10 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetPosDashboardStats
                     && t.CreatedDate.HasValue && t.CreatedDate.Value >= todayStartUtc && t.CreatedDate.Value <= todayEndUtc)
                 .Sum(t => t.Amount);
 
-            var pools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken);
-            var goldWeight = pools.Sum(p => p.Value.Weight);
-            var goldValue = pools.Sum(p => p.Value.Cost);
-            var goldAverageKarat = goldWeight > 0
-                ? pools.Sum(p => p.Key * p.Value.Weight) / goldWeight
-                : 0;
-
             var dto = new PosDashboardStatsDto
             {
                 StoreCashBalance = storeBalance,
                 StoreCashTodayDelta = storeTodayIn - storeTodayOut,
-                UsedGoldWeight = goldWeight,
-                UsedGoldAverageKarat = goldAverageKarat,
-                UsedGoldValue = goldValue,
             };
 
             return GenericResponse<PosDashboardStatsDto>.Success(dto);

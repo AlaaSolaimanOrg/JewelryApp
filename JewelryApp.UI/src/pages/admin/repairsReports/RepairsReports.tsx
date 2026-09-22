@@ -16,6 +16,7 @@ import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueB
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
 import useLocalApi from "../../../hooks/useLocalApi";
+import { getYearsSince } from "../../../utils";
 import type {
   AvgValueHistoryRow,
   ChartDataPoint,
@@ -40,7 +41,7 @@ import {
 } from "./RepairsReports.utils";
 import "./repairsReports.scss";
 
-const YEARS = [2026, 2025];
+const YEARS = getYearsSince(2025);
 
 function changeBadge(cur: number, prev: number | null) {
   if (prev === null) return null;
@@ -61,12 +62,15 @@ function changeBadge(cur: number, prev: number | null) {
   );
 }
 
+const today = new Date();
+const todayStr = today.toISOString().slice(0, 10);
+
 const RepairsReports = () => {
   const [period, setPeriod] = useState<Period>("month");
-  const [selMonth, setSelMonth] = useState(5);
-  const [selYear, setSelYear] = useState(2026);
-  const [dateFrom, setDateFrom] = useState("2026-06-01");
-  const [dateTo, setDateTo] = useState("2026-06-11");
+  const [selMonth, setSelMonth] = useState(today.getMonth());
+  const [selYear, setSelYear] = useState(today.getFullYear());
+  const [dateFrom, setDateFrom] = useState(todayStr);
+  const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<DateRange | null>(null);
   const [custSearch, setCustSearch] = useState("");
 
