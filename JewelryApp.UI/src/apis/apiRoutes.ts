@@ -72,6 +72,7 @@ export const apiRoutes = {
   repairs: {
     createRepair: "Repairs/CreateRepair",
     getRepairs: "Repairs/GetRepairs",
+    getNextAvailableSlot: "Repairs/GetNextAvailableSlot",
     getRepairById: "Repairs/GetRepairById",
     updateRepairStatus: "Repairs/UpdateRepairStatus",
     updateRepairPaymentStatus: "Repairs/UpdateRepairPaymentStatus",

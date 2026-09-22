@@ -1,10 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaTools } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { createRepair, getRepairs } from "../../../apis/repairs.api";
+import { createRepair, getNextAvailableSlot } from "../../../apis/repairs.api";
 import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/RepairInvoiceModal";
-import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
-import { RepairPayMethod, RepairStatus } from "../../../types/enums";
+import { RepairPayMethod } from "../../../types/enums";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import type { Customer } from "../posSale/types";
 import AddCustomerModal from "../../../components/modals/AddCustomerModal/AddCustomerModal";
@@ -13,7 +12,6 @@ import RepairDetailsPanel from "./RepairDetailsPanel/RepairDetailsPanel";
 import {
   formatAmountInput,
   formatCurrency,
-  getNextAvailableSlot,
   payMethodToPaymentStatus,
 } from "./RepairIntake.utils";
 import "./repairIntake.scss";
@@ -37,18 +35,22 @@ const RepairIntake = () => {
   const [showInvoice, setShowInvoice] = useState(false);
   const [createdRepairId, setCreatedRepairId] = useState<string | null>(null);
 
-  const { data: inProgressRepairs } = useLocalApiSearchSortPagination<{
-    slotNumber: number | null;
-  }>({
-    apiToCall: (data) => getRepairs(data.payload),
-    extraPayload: { status: RepairStatus.InProgress },
-    initialPageSize: 50,
-  });
+  const [nextSlot, setNextSlot] = useState<number>(1);
 
-  const occupiedSlots = (inProgressRepairs ?? [])
-    .map((r) => r.slotNumber)
-    .filter((n): n is number => typeof n === "number");
-  const nextSlot = getNextAvailableSlot(occupiedSlots);
+  const fetchNextSlot = async () => {
+    try {
+      const response = await getNextAvailableSlot();
+      if (checkRequestSucceeded(response.statusCode)) {
+        setNextSlot(response.data ?? nextSlot);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNextSlot();
+  }, []);
 
   const recalcPayFields = (method: RepairPayMethod, costValue: number) => {
     if (method === RepairPayMethod.Cash) {
@@ -168,6 +170,7 @@ const RepairIntake = () => {
         setCreatedRepairId(response.data);
         setShowInvoice(true);
         resetForm();
+        fetchNextSlot();
       } else {
         showError(response.message);
       }

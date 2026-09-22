@@ -58,3 +58,7 @@ export const updateRepairPaymentStatus = async (payload: {
 export const getRepairById = async (payload: { id: string }) => {
   return requestApi("GET", apiRoutes.repairs.getRepairById, payload);
 };
+
+export const getNextAvailableSlot = async () => {
+  return requestApi("GET", apiRoutes.repairs.getNextAvailableSlot);
+};

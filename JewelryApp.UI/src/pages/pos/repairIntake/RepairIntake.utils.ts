@@ -1,14 +1,5 @@
 import { PaymentStatus, RepairPayMethod } from "../../../types/enums";
 
-const MAX_SLOT_SCAN = 50;
-
-export const getNextAvailableSlot = (occupiedSlots: number[]): number => {
-  for (let i = 1; i <= MAX_SLOT_SCAN; i++) {
-    if (!occupiedSlots.includes(i)) return i;
-  }
-  return occupiedSlots.length + 1;
-};
-
 export const payMethodToPaymentStatus = (
   method: RepairPayMethod,
 ): PaymentStatus =>
