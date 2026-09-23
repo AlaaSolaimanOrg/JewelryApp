@@ -13,7 +13,7 @@ import RepairInvoiceModal from "../../../components/modals/RepairInvoiceModal/Re
 import CompletedCard from "./CompletedCard/CompletedCard";
 import DetailModal from "./DetailModal/DetailModal";
 import EditModal from "./EditModal/EditModal";
-import NotifyModal from "./NotifyModal/NotifyModal";
+import NotifyModal, { type NotifyMode } from "./NotifyModal/NotifyModal";
 import PaymentModal from "./PaymentModal/PaymentModal";
 import type { ActiveViewFilter, BoardView, Repair } from "./RepairOrders.type";
 import { formatCurrency, mapRepairDtoToRepair } from "./RepairOrders.utils";
@@ -85,7 +85,7 @@ const RepairOrders = () => {
     setDebouncedSearch("");
   };
 
-  const handleFinishReady = async (didNotify: boolean) => {
+  const handleFinishReady = async (mode: NotifyMode) => {
     if (!readyingId) return;
     const repair = repairs.find((r) => r.id === readyingId);
     if (!repair) return;
@@ -93,16 +93,18 @@ const RepairOrders = () => {
     const response = await updateRepairStatus({
       id: readyingId,
       status: RepairStatus.Completed,
-      sendSms: didNotify,
+      sendSms: mode === "sms",
+      markNotified: mode === "called",
     });
 
     if (checkRequestSucceeded(response?.statusCode)) {
-      showSuccess(
-        response?.message ||
-          `${repair.repairCode} — ${repair.customerName}${
-            didNotify ? " done & customer notified" : " done — call customer when possible"
-          }`,
-      );
+      const suffix =
+        mode === "sms"
+          ? " done & customer texted"
+          : mode === "called"
+            ? " done & customer notified"
+            : " done — call customer when possible";
+      showSuccess(response?.message || `${repair.repairCode} — ${repair.customerName}${suffix}`);
       await fetchRepairs();
     } else {
       showError(response?.message || "Failed to update repair");
@@ -117,7 +119,8 @@ const RepairOrders = () => {
     const response = await updateRepairStatus({
       id,
       status: RepairStatus.Completed,
-      sendSms: true,
+      sendSms: false,
+      markNotified: true,
     });
 
     if (checkRequestSucceeded(response?.statusCode)) {
@@ -125,6 +128,24 @@ const RepairOrders = () => {
       await fetchRepairs();
     } else {
       showError(response?.message || "Failed to notify customer");
+    }
+  };
+
+  const handleSendSms = async (id: string) => {
+    const repair = repairs.find((r) => r.id === id);
+    if (!repair) return;
+
+    const response = await updateRepairStatus({
+      id,
+      status: RepairStatus.Completed,
+      sendSms: true,
+    });
+
+    if (checkRequestSucceeded(response?.statusCode)) {
+      showSuccess(response?.message || `${repair.repairCode} — ${repair.customerName} texted`);
+      await fetchRepairs();
+    } else {
+      showError(response?.message || "Failed to text customer");
     }
   };
 
@@ -344,6 +365,7 @@ const RepairOrders = () => {
                       onOpenDetail={setDetailId}
                       onOpenEdit={setEditId}
                       onNotify={handleNotify}
+                      onSendSms={handleSendSms}
                       onPickedUp={handlePickedUp}
                     />
                   ))
@@ -371,6 +393,7 @@ const RepairOrders = () => {
                       onOpenDetail={setDetailId}
                       onOpenEdit={setEditId}
                       onNotify={handleNotify}
+                      onSendSms={handleSendSms}
                       onPickedUp={handlePickedUp}
                     />
                   ))

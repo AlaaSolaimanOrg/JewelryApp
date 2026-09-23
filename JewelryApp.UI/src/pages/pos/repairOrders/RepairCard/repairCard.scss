@@ -194,6 +194,17 @@
     }
   }
 
+  .act-sms {
+    background: var(--pos-blue-bg);
+    color: var(--pos-blue);
+    border: 1px solid var(--pos-blue-border);
+
+    &:active {
+      background: var(--pos-blue);
+      color: var(--white);
+    }
+  }
+
   .act-detail {
     background: transparent;
     color: var(--pos-text-muted);

@@ -60,6 +60,18 @@
       }
     }
 
+    &.pu-notify-opt-sms {
+      border-color: var(--pos-blue-border);
+
+      .pu-notify-opt-icon {
+        color: var(--pos-blue);
+      }
+
+      &:active {
+        background: var(--pos-blue-bg);
+      }
+    }
+
     &.pu-notify-opt-no {
       .pu-notify-opt-icon {
         color: var(--pos-amber);

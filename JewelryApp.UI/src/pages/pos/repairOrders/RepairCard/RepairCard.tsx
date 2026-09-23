@@ -1,4 +1,4 @@
-import { FaBell, FaCheck, FaCheckCircle, FaEdit, FaEye } from "react-icons/fa";
+import { FaBell, FaCheck, FaCheckCircle, FaEdit, FaEye, FaSms } from "react-icons/fa";
 import type { Repair } from "../RepairOrders.type";
 import {
   daysBetween,
@@ -14,6 +14,7 @@ interface RepairCardProps {
   onOpenDetail: (id: string) => void;
   onOpenEdit: (id: string) => void;
   onNotify: (id: string) => void;
+  onSendSms: (id: string) => void;
   onPickedUp: (id: string) => void;
 }
 
@@ -23,6 +24,7 @@ const RepairCard = ({
   onOpenDetail,
   onOpenEdit,
   onNotify,
+  onSendSms,
   onPickedUp,
 }: RepairCardProps) => {
   const due = getDueBadge(repair.dueDate);
@@ -90,12 +92,18 @@ const RepairCard = ({
             <button className="act-secondary" onClick={() => onNotify(repair.id)}>
               <FaBell /> Again
             </button>
+            <button className="act-sms" onClick={() => onSendSms(repair.id)}>
+              <FaSms /> Text
+            </button>
           </>
         )}
         {repair.status === "done" && !repair.notified && (
           <>
             <button className="act-notify" onClick={() => onNotify(repair.id)}>
               <FaBell /> Notified
+            </button>
+            <button className="act-sms" onClick={() => onSendSms(repair.id)}>
+              <FaSms /> Text
             </button>
             <button className="act-success" onClick={() => onPickedUp(repair.id)}>
               <FaCheckCircle /> Picked up

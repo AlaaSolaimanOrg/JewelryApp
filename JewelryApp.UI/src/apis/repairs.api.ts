@@ -30,6 +30,7 @@ export const updateRepairStatus = async (payload: {
   id: string;
   status: RepairStatus;
   sendSms?: boolean;
+  markNotified?: boolean;
   payMethod?: string;
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairStatus, payload);
