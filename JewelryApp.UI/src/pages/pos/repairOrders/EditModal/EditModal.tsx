@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaCreditCard, FaExchangeAlt, FaMoneyBillWave, FaTimes } from "react-icons/fa";
 import type { Repair } from "../RepairOrders.type";
 import { formatCurrency, formatPhone } from "../RepairOrders.utils";
@@ -29,6 +29,7 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
   const [payMethod, setPayMethod] = useState<PayMethod>("");
   const [cashAmount, setCashAmount] = useState("0.00");
   const [cardAmount, setCardAmount] = useState("0.00");
+  const lastSplitEdited = useRef<"cash" | "card">("cash");
 
   useEffect(() => {
     if (!repair) return;
@@ -39,6 +40,7 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
     setPayMethod("");
     setCashAmount(repair.cost.toFixed(2));
     setCardAmount("0.00");
+    lastSplitEdited.current = "cash";
   }, [repair]);
 
   if (!repair) return null;
@@ -49,19 +51,50 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
   const handleSelectMethod = (next: PayMethod) => {
     setPayMethod(next);
     if (next === "Split") {
+      lastSplitEdited.current = "cash";
       setCashAmount(costValue.toFixed(2));
       setCardAmount("0.00");
     }
   };
 
+  const handleCostChange = (value: string) => {
+    setCost(value);
+    if (payMethod !== "Split") return;
+
+    const newCostValue = parseFloat(value) || 0;
+    if (lastSplitEdited.current === "cash") {
+      const cashValue = Math.min(parseFloat(cashAmount) || 0, newCostValue);
+      setCashAmount(cashValue.toFixed(2));
+      setCardAmount((newCostValue - cashValue).toFixed(2));
+    } else {
+      const cardValue = Math.min(parseFloat(cardAmount) || 0, newCostValue);
+      setCardAmount(cardValue.toFixed(2));
+      setCashAmount((newCostValue - cardValue).toFixed(2));
+    }
+  };
+
   const handleCashChange = (value: string) => {
-    setCashAmount(value);
-    setCardAmount(Math.max(0, costValue - (parseFloat(value) || 0)).toFixed(2));
+    lastSplitEdited.current = "cash";
+    const cashValue = parseFloat(value) || 0;
+    if (cashValue > costValue) {
+      setCashAmount(costValue.toFixed(2));
+      setCardAmount("0.00");
+    } else {
+      setCashAmount(value);
+      setCardAmount((costValue - cashValue).toFixed(2));
+    }
   };
 
   const handleCardChange = (value: string) => {
-    setCardAmount(value);
-    setCashAmount(Math.max(0, costValue - (parseFloat(value) || 0)).toFixed(2));
+    lastSplitEdited.current = "card";
+    const cardValue = parseFloat(value) || 0;
+    if (cardValue > costValue) {
+      setCardAmount(costValue.toFixed(2));
+      setCashAmount("0.00");
+    } else {
+      setCardAmount(value);
+      setCashAmount((costValue - cardValue).toFixed(2));
+    }
   };
 
   const splitRemainder =
@@ -123,7 +156,7 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
                 min={0}
                 step="0.01"
                 inputMode="decimal"
-                onChange={(e) => setCost(e.target.value)}
+                onChange={(e) => handleCostChange(e.target.value)}
               />
             </div>
             <div className="pu-form-group">
