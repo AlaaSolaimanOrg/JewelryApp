@@ -72,11 +72,13 @@ const RepairOrders = () => {
   const progressRepairs = repairs.filter((r) => r.status === "progress");
   let doneRepairs = repairs.filter((r) => r.status === "done");
   if (filter === "awaiting") doneRepairs = doneRepairs.filter((r) => !r.notified);
+  if (filter === "notified") doneRepairs = doneRepairs.filter((r) => r.notified);
   const awaitingRepairs = repairs.filter((r) => r.status === "done" && !r.notified);
   const unpaidTotal = repairs.filter((r) => !r.paid).reduce((sum, r) => sum + r.cost, 0);
 
   const showProgressCol = filter === "all" || filter === "progress";
-  const showDoneCol = filter === "all" || filter === "done" || filter === "awaiting";
+  const showDoneCol =
+    filter === "all" || filter === "done" || filter === "awaiting" || filter === "notified";
   const visibleCols = (showProgressCol ? 1 : 0) + (showDoneCol ? 1 : 0);
 
   const handleSetView = (next: BoardView) => {
@@ -295,6 +297,7 @@ const RepairOrders = () => {
             <option value="progress">In progress</option>
             <option value="done">Done</option>
             <option value="awaiting">Awaiting call</option>
+            <option value="notified">Notified</option>
           </select>
         )}
         <button

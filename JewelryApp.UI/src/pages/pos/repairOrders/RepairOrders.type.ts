@@ -21,5 +21,5 @@ export interface Repair {
   cancelledDate: string | null;
 }
 
-export type ActiveViewFilter = "all" | "progress" | "done" | "awaiting";
+export type ActiveViewFilter = "all" | "progress" | "done" | "awaiting" | "notified";
 export type BoardView = "active" | "completed";
