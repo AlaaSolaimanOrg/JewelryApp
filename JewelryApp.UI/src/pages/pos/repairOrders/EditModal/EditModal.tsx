@@ -217,10 +217,11 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
               />
             </div>
             <div className="pu-form-group pu-form-group-full">
-              <div className="pu-form-label">Notes</div>
+              <div className="pu-form-label">Notes ({notes.length}/1000)</div>
               <textarea
                 className="pu-form-textarea"
                 value={notes}
+                maxLength={1000}
                 onChange={(e) => setNotes(e.target.value)}
               />
             </div>

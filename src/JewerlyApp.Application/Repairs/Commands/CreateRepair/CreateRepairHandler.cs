@@ -47,6 +47,15 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 };
             }
 
+            if (request.Notes.Length > 1000)
+            {
+                return new GenericResponse<Guid>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_Notes_Too_Long
+                };
+            }
+
             if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
             {
                 return new GenericResponse<Guid>

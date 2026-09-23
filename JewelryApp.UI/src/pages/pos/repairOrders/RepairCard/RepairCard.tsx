@@ -1,4 +1,4 @@
-import { FaBell, FaCheck, FaCheckCircle, FaEdit, FaEye, FaSms } from "react-icons/fa";
+import { FaBell, FaCheck, FaCheckCircle, FaEdit, FaEye, FaReceipt, FaSms } from "react-icons/fa";
 import type { Repair } from "../RepairOrders.type";
 import {
   daysBetween,
@@ -16,6 +16,7 @@ interface RepairCardProps {
   onNotify: (id: string) => void;
   onSendSms: (id: string) => void;
   onPickedUp: (id: string) => void;
+  onViewInvoice: (id: string) => void;
 }
 
 const RepairCard = ({
@@ -26,6 +27,7 @@ const RepairCard = ({
   onNotify,
   onSendSms,
   onPickedUp,
+  onViewInvoice,
 }: RepairCardProps) => {
   const due = getDueBadge(repair.dueDate);
 
@@ -42,7 +44,18 @@ const RepairCard = ({
     <div className="repair-card">
       <div className="card-top">
         <span className="card-code">{repair.repairCode}</span>
-        <span className="card-slot">Slot {repair.slotNumber}</span>
+        <div className="card-top-right">
+          <span className="card-slot">Slot {repair.slotNumber}</span>
+          <button
+            type="button"
+            className="card-invoice-btn"
+            title="View repair invoice"
+            aria-label="View repair invoice"
+            onClick={() => onViewInvoice(repair.id)}
+          >
+            <FaReceipt />
+          </button>
+        </div>
       </div>
       <div className="card-customer">{repair.customerName}</div>
       <div className="card-phone">{formatPhone(repair.customerPhone)}</div>
@@ -89,11 +102,8 @@ const RepairCard = ({
             <button className="act-success" onClick={() => onPickedUp(repair.id)}>
               <FaCheckCircle /> Picked up
             </button>
-            <button className="act-secondary" onClick={() => onNotify(repair.id)}>
-              <FaBell /> Again
-            </button>
             <button className="act-sms" onClick={() => onSendSms(repair.id)}>
-              <FaSms /> Text
+              <FaSms /> Text again
             </button>
           </>
         )}

@@ -367,6 +367,7 @@ const RepairOrders = () => {
                       onNotify={handleNotify}
                       onSendSms={handleSendSms}
                       onPickedUp={handlePickedUp}
+                      onViewInvoice={setInvoiceId}
                     />
                   ))
                 ) : (
@@ -395,6 +396,7 @@ const RepairOrders = () => {
                       onNotify={handleNotify}
                       onSendSms={handleSendSms}
                       onPickedUp={handlePickedUp}
+                      onViewInvoice={setInvoiceId}
                     />
                   ))
                 ) : (

@@ -33,6 +33,15 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
                 };
             }
 
+            if (request.Notes.Length > 1000)
+            {
+                return new GenericResponse<Unit>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_Notes_Too_Long
+                };
+            }
+
             repair.Cost = request.Cost;
             repair.Notes = request.Notes;
             repair.DueDate = request.DueDate;

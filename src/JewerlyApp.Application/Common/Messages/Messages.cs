@@ -136,6 +136,7 @@
         public const string Error_Repair_Customer_Not_Found = "Customer not found for repair.";
         public const string Error_Repair_No_Slots_Available = "No available repair slots. All slots are currently in use.";
         public const string Error_Repair_DueDate_In_Past = "Due date cannot be in the past.";
+        public const string Error_Repair_Notes_Too_Long = "Notes cannot exceed 1000 characters.";
         public const string Error_RepairItem_Not_Found = "Repair item not found.";
         public const string Error_RepairCantBeCompleted = "Repair can't be completed";
 
