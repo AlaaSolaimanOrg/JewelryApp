@@ -246,7 +246,12 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
                 type="date"
                 className="pu-form-input"
                 value={dueDate}
+                min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => setDueDate(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== "Tab") e.preventDefault();
+                }}
+                onPaste={(e) => e.preventDefault()}
               />
             </div>
             <div className="pu-form-group pu-form-group-full">
