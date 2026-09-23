@@ -48,6 +48,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                 {
                     repair.PayMethod = request.PayMethod.Trim();
                     repair.PaymentStatus = PaymentStatus.Paid;
+                    repair.PaidDate = BusinessTimeZoneHelper.GetEdmontonDate();
                 }
             }
             else
