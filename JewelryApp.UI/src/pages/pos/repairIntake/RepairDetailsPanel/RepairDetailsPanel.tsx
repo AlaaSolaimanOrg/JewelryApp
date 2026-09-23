@@ -75,9 +75,12 @@ const RepairDetailsPanel = ({
             "Ring to size 7 (weight 6.34)\nWeld Bracelet (weight 14.8)\nChain solder + replace spring ring"
           }
           value={notes}
+          maxLength={1000}
           onChange={(e) => onNotesChange(e.target.value)}
         />
-        <div className="ri-notes-hint">Printed directly on the receipt</div>
+        <div className="ri-notes-hint">
+          Printed directly on the receipt · {notes.length}/1000
+        </div>
       </div>
 
       <div className="ri-panel">

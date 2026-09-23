@@ -100,5 +100,30 @@
     border-radius: 8px;
     margin-top: 8px;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-height: 96px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pos-border-strong) transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 8px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--pos-border-strong);
+      border-radius: 999px;
+      border: 2px solid var(--pos-bg-raised);
+
+      &:hover {
+        background: var(--pos-gold);
+      }
+    }
   }
 }

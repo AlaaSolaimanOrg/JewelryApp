@@ -23,6 +23,12 @@
       font-family: "SF Mono", "Fira Code", monospace;
     }
 
+    .card-top-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .card-slot {
       font-size: 11px;
       font-weight: 600;
@@ -30,6 +36,26 @@
       border-radius: 4px;
       background: var(--pos-bg-raised-active);
       color: var(--pos-text-secondary);
+    }
+
+    .card-invoice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--pos-text-muted);
+      cursor: pointer;
+      transition: all 0.12s;
+
+      &:hover {
+        background: var(--pos-gold-bg);
+        color: var(--pos-gold);
+      }
     }
   }
 
@@ -54,6 +80,31 @@
     border-radius: 8px;
     margin-bottom: 10px;
     white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-height: 96px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pos-border-strong) transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 8px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--pos-border-strong);
+      border-radius: 999px;
+      border: 2px solid var(--pos-bg-raised);
+
+      &:hover {
+        background: var(--pos-gold);
+      }
+    }
   }
 
   .card-row {
@@ -191,6 +242,17 @@
     &:active {
       background: var(--pos-amber);
       color: var(--on-gold-text);
+    }
+  }
+
+  .act-sms {
+    background: var(--pos-blue-bg);
+    color: var(--pos-blue);
+    border: 1px solid var(--pos-blue-border);
+
+    &:active {
+      background: var(--pos-blue);
+      color: var(--white);
     }
   }
 

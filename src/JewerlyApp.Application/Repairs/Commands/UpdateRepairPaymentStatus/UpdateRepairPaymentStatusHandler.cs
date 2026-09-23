@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -40,10 +41,12 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairPaymentStatus
                 {
                     repair.PayMethod = request.PayMethod.Trim();
                 }
+                repair.PaidDate = BusinessTimeZoneHelper.GetEdmontonDate();
             }
             else
             {
                 repair.PayMethod = null;
+                repair.PaidDate = null;
             }
 
             await _context.SaveChangesAsync(cancellationToken);

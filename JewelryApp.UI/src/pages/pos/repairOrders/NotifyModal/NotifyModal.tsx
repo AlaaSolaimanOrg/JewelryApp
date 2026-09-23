@@ -1,12 +1,14 @@
-import { FaCheckCircle, FaHourglassHalf, FaTimes } from "react-icons/fa";
+import { FaCheckCircle, FaHourglassHalf, FaSms, FaTimes } from "react-icons/fa";
 import type { Repair } from "../RepairOrders.type";
 import { formatPhone } from "../RepairOrders.utils";
 import "./notifyModal.scss";
 
+export type NotifyMode = "called" | "sms" | "later";
+
 interface NotifyModalProps {
   repair: Repair | null;
   onClose: () => void;
-  onConfirm: (didNotify: boolean) => void;
+  onConfirm: (mode: NotifyMode) => void;
 }
 
 const NotifyModal = ({ repair, onClose, onConfirm }: NotifyModalProps) => {
@@ -33,15 +35,23 @@ const NotifyModal = ({ repair, onClose, onConfirm }: NotifyModalProps) => {
           <div className="pu-notify-options">
             <div
               className="pu-notify-opt pu-notify-opt-yes"
-              onClick={() => onConfirm(true)}
+              onClick={() => onConfirm("called")}
             >
               <FaCheckCircle className="pu-notify-opt-icon" />
               <span className="pu-notify-opt-label">Yes, notified</span>
               <span className="pu-notify-opt-sub">Customer was called</span>
             </div>
             <div
+              className="pu-notify-opt pu-notify-opt-sms"
+              onClick={() => onConfirm("sms")}
+            >
+              <FaSms className="pu-notify-opt-icon" />
+              <span className="pu-notify-opt-label">Text customer</span>
+              <span className="pu-notify-opt-sub">Send SMS now</span>
+            </div>
+            <div
               className="pu-notify-opt pu-notify-opt-no"
-              onClick={() => onConfirm(false)}
+              onClick={() => onConfirm("later")}
             >
               <FaHourglassHalf className="pu-notify-opt-icon" />
               <span className="pu-notify-opt-label">Not yet</span>

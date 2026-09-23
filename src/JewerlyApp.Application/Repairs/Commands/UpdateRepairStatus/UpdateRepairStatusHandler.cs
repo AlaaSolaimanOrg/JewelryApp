@@ -48,6 +48,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                 {
                     repair.PayMethod = request.PayMethod.Trim();
                     repair.PaymentStatus = PaymentStatus.Paid;
+                    repair.PaidDate = BusinessTimeZoneHelper.GetEdmontonDate();
                 }
             }
             else
@@ -65,7 +66,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                 repair.CancelledDate = null;
             }
 
-            if (request.SendSMS && !string.IsNullOrEmpty(repair.Customer.PhoneNumber)  && repair.Status == RepairStatus.Completed)
+            if (request.SendSMS && !string.IsNullOrEmpty(repair.Customer.PhoneNumber) && repair.Status == RepairStatus.Completed)
             {
                 var message =
                  "Adi Jewelry\n" +
@@ -76,6 +77,11 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                     message
                 );
 
+                repair.Notified = true;
+                repair.NotifiedDate = BusinessTimeZoneHelper.GetEdmontonDate();
+            }
+            else if (request.MarkNotified && repair.Status == RepairStatus.Completed)
+            {
                 repair.Notified = true;
                 repair.NotifiedDate = BusinessTimeZoneHelper.GetEdmontonDate();
             }

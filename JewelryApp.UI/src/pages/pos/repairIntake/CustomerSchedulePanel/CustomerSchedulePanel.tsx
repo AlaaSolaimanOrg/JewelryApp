@@ -188,6 +188,7 @@ const CustomerSchedulePanel = ({
               type="text"
               placeholder="Enter receiver name"
               value={receiverName}
+              maxLength={100}
               onChange={(e) => onReceiverNameChange(e.target.value)}
             />
           </div>

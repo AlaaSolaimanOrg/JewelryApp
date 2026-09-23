@@ -23,7 +23,6 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminRepairsStats
         public async Task<GenericResponse<AdminRepairsStatsDto>> Handle(GetAdminRepairsStatsQuery request, CancellationToken cancellationToken)
         {
             var todayDate = BusinessTimeZoneHelper.GetEdmontonDate();
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(todayDate);
 
             var repairs = await _context.Repairs
                 .AsNoTracking()
@@ -35,14 +34,13 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminRepairsStats
                     r.OrderDate,
                     r.DueDate,
                     r.Notified,
-                    r.LastUpdatedDate,
+                    r.PaidDate,
                 })
                 .ToListAsync(cancellationToken);
 
             var repairsPaidToday = repairs
                 .Where(r => r.PaymentStatus == PaymentStatus.Paid
-                    && r.LastUpdatedDate.HasValue
-                    && r.LastUpdatedDate.Value >= todayStartUtc && r.LastUpdatedDate.Value <= todayEndUtc)
+                    && r.PaidDate == todayDate)
                 .ToList();
 
             var repairsCollected = new RepairsCollectedDto
