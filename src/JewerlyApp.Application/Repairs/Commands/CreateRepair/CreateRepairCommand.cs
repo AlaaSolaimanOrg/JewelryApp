@@ -11,6 +11,8 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
         public string Notes { get; set; } = string.Empty;
         public decimal Cost { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
+        public decimal CashAmount { get; set; }
+        public decimal CardAmount { get; set; }
         public DateOnly? DueDate { get; set; }
         public string? ReceiverName { get; set; }
     }
