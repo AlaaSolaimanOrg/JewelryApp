@@ -9,7 +9,12 @@ type PayMethod = "" | "Cash" | "Card" | "Split";
 interface PaymentModalProps {
   repair: Repair | null;
   onClose: () => void;
-  onConfirm: (id: string, payMethod: string) => void;
+  onConfirm: (
+    id: string,
+    payMethod: string,
+    cashAmount: number,
+    cardAmount: number,
+  ) => void;
 }
 
 const PaymentModal = ({ repair, onClose, onConfirm }: PaymentModalProps) => {
@@ -58,7 +63,11 @@ const PaymentModal = ({ repair, onClose, onConfirm }: PaymentModalProps) => {
             parseFloat(cardAmount) || 0,
           )} card)`
         : method;
-    onConfirm(repair.id, label);
+    const cash =
+      method === "Cash" ? cost : method === "Split" ? parseFloat(cashAmount) || 0 : 0;
+    const card =
+      method === "Card" ? cost : method === "Split" ? parseFloat(cardAmount) || 0 : 0;
+    onConfirm(repair.id, label, cash, card);
   };
 
   return (

@@ -13,5 +13,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
         public bool SendSMS { get; set; }
         public bool MarkNotified { get; set; }
         public string? PayMethod { get; set; }
+        public decimal CashAmount { get; set; }
+        public decimal CardAmount { get; set; }
     }
 }

@@ -59,6 +59,11 @@ export const getDescription = (row: CashTransactionRow) => {
         title: `Repair #${row.repairCode}`,
         sub: "Cash payment",
       };
+    case CashTransactionType.RepairCashOut:
+      return {
+        title: `Repair #${row.repairCode} — payment reversed`,
+        sub: row.notes || "Cash reversal",
+      };
     default:
       return { title: row.notes || "", sub: "" };
   }
