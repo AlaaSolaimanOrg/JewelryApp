@@ -16,6 +16,10 @@ namespace JewerlyApp.Domain.Entities
         public decimal TotalAmount { get; set; }
         public string? Notes { get; set; }
 
+        // Set only for a PayMethod.TradeIn purchase created alongside a sale.
+        public Guid? SaleId { get; set; }
+        public Sale? Sale { get; set; }
+
         public Customer Customer { get; set; } = default!;
         public List<UsedGoldPurchaseItem> Items { get; set; } = new();
     }

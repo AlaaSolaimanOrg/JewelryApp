@@ -23,5 +23,7 @@ namespace JewerlyApp.Domain.Entities
         public List<SaleItem> SaleItems { get; set; } = new();
         public List<Return> Returns { get; set; } = new();
         public List<Return> ExchangeReturns { get; set; } = new();
+        // Used-gold purchases created from a trade-in on this sale (PayMethod.TradeIn). Normally 0 or 1.
+        public List<UsedGoldPurchase> TradeInPurchases { get; set; } = new();
     }
 }

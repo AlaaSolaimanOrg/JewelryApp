@@ -11,17 +11,30 @@ import {
   getTradeInTotal,
 } from "./TradeInSection.utils";
 
+export interface TradeInItem {
+  karat: number;
+  weight: number;
+  pricePerGram: number;
+}
+
 interface Props {
   show: boolean;
   onOpen: () => void;
   onClose: () => void;
   onCreditChange: (amount: number) => void;
+  onItemsChange: (items: TradeInItem[]) => void;
 }
 
 const formatMoney = (n: number) =>
   "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange }) => {
+const TradeInSection: React.FC<Props> = ({
+  show,
+  onOpen,
+  onClose,
+  onCreditChange,
+  onItemsChange,
+}) => {
   const [rows, setRows] = useState<TradeInRow[]>(createDefaultTradeInRows);
   const [showAddKarat, setShowAddKarat] = useState(false);
   const [newKarat, setNewKarat] = useState("");
@@ -34,6 +47,13 @@ const TradeInSection: React.FC<Props> = ({ show, onOpen, onClose, onCreditChange
 
   useEffect(() => {
     onCreditChange(total);
+    onItemsChange(
+      activeRows.map((r) => ({
+        karat: Number(r.karat),
+        weight: r.weight,
+        pricePerGram: r.pricePerGram,
+      })),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 

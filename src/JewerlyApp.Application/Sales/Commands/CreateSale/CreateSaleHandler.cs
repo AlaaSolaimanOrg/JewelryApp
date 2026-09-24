@@ -30,9 +30,25 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // -------------------------------
             // 1. VALIDATE REQUEST
             // -------------------------------
-            var validationError = await ValidateRequestAsync(request, cancellationToken);
+            var (validationError, customer) = await ValidateRequestAsync(request, cancellationToken);
             if (validationError != null)
                 return validationError;
+
+            var tradeInItems = (request.TradeInItems ?? new())
+                .Where(i => i.Weight > 0)
+                .ToList();
+
+            foreach (var item in tradeInItems)
+            {
+                if (item.Karat < 1 || item.Karat > 24)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_Invalid_Karat);
+
+                if (item.Weight <= 0)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_Invalid_Weight);
+
+                if (item.PricePerGram <= 0)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_Invalid_Price);
+            }
 
             Sale? exchangeSourceSale = null;
             decimal exchangeCredit = 0;
@@ -113,7 +129,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // 6. CALCULATE TOTALS
             // -------------------------------
             sale.SubTotal = subTotal;
-            var tradeInCredit = Math.Max(0, request.TradeInCredit ?? 0);
+            var tradeInCredit = tradeInItems.Sum(i => i.Weight * i.PricePerGram);
             sale.Total = Math.Max(0, CalculateFinalTotal(sale) - exchangeCredit - tradeInCredit);
 
             if (!ValidatePaymentAmounts(sale))
@@ -143,6 +159,42 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // -------------------------------
             _context.Sales.Add(sale);
 
+            // Trade-in gold goes into the used-gold pool like any other purchase, but with
+            // no cash movement — its value was already deducted from the sale total above.
+            if (tradeInItems.Any())
+            {
+                var tradeInPurchase = new UsedGoldPurchase
+                {
+                    Id = Guid.NewGuid(),
+                    SerialNumber = await GenerateUsedGoldPurchaseSerialNumber(),
+                    CustomerId = sale.CustomerId,
+                    CustomerName = customer!.Name,
+                    CustomerPhone = customer.PhoneNumber,
+                    PayMethod = UsedGoldPayMethod.TradeIn,
+                    SaleId = sale.Id,
+                    Notes = $"Trade-in on sale #{sale.SerialNumber}",
+                };
+
+                foreach (var item in tradeInItems)
+                {
+                    var itemSubtotal = item.Weight * item.PricePerGram;
+                    tradeInPurchase.Items.Add(new UsedGoldPurchaseItem
+                    {
+                        Id = Guid.NewGuid(),
+                        PurchaseId = tradeInPurchase.Id,
+                        Karat = item.Karat,
+                        Weight = item.Weight,
+                        PricePerGram = item.PricePerGram,
+                        Subtotal = itemSubtotal,
+                    });
+                }
+
+                tradeInPurchase.TotalWeight = tradeInPurchase.Items.Sum(i => i.Weight);
+                tradeInPurchase.TotalAmount = tradeInPurchase.Items.Sum(i => i.Subtotal);
+
+                _context.UsedGoldPurchases.Add(tradeInPurchase);
+            }
+
             // Cash portion of the payment goes straight into the store cash box.
             if (sale.CashAmount.HasValue && sale.CashAmount.Value > 0)
             {
@@ -169,32 +221,32 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
 
 
-        private async Task<GenericResponse<string>?> ValidateRequestAsync(CreateSaleCommand request, CancellationToken cancellationToken)
+        private async Task<(GenericResponse<string>? Error, Customer? Customer)> ValidateRequestAsync(CreateSaleCommand request, CancellationToken cancellationToken)
         {
             if (!request.SaleItems.Any())
             {
-                return new GenericResponse<string>
+                return (new GenericResponse<string>
                 {
                     Data = null,
                     StatusCode = ResponseStatusCode.BadRequest,
                     Message = Messages.Error_Sale_MustContain_Items
-                };
+                }, null);
             }
 
-            var customerExists = await _context.Customers
-                .AnyAsync(c => c.Id == request.CustomerId, cancellationToken);
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id == request.CustomerId, cancellationToken);
 
-            if (!customerExists)
+            if (customer == null)
             {
-                return new GenericResponse<string>
+                return (new GenericResponse<string>
                 {
                     Data = null,
                     StatusCode = ResponseStatusCode.BadRequest,
                     Message = Messages.Error_Customer_Not_Found
-                };
+                }, null);
             }
 
-            return null;
+            return (null, customer);
         }
 
 
@@ -317,6 +369,17 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             string prefix = "SALE";
 
             int countToday = await _context.Sales
+                .CountAsync(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
+
+            return $"{prefix}-{today}-{(countToday + 1).ToString("D4")}";
+        }
+
+        private async Task<string> GenerateUsedGoldPurchaseSerialNumber()
+        {
+            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string prefix = "UGP";
+
+            int countToday = await _context.UsedGoldPurchases
                 .CountAsync(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
 
             return $"{prefix}-{today}-{(countToday + 1).ToString("D4")}";
