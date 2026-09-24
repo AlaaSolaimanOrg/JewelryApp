@@ -37,7 +37,10 @@ export const getUsedGoldHistory = async (payload: {
   return requestApi("GET", apiRoutes.usedGold.getHistory, payload);
 };
 
-export const sendToMelt = async (payload: { totalWeight: number; notes?: string }) => {
+export const sendToMelt = async (payload: {
+  items: { karat: number; weight: number }[];
+  notes?: string;
+}) => {
   return requestApi("POST", apiRoutes.usedGold.sendToMelt, payload);
 };
 

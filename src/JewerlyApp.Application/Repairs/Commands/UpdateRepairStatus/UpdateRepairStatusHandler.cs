@@ -2,6 +2,7 @@ using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Entities;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,19 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairStatus
                     repair.PayMethod = request.PayMethod.Trim();
                     repair.PaymentStatus = PaymentStatus.Paid;
                     repair.PaidDate = BusinessTimeZoneHelper.GetEdmontonDate();
+
+                    if (request.CashAmount > 0)
+                    {
+                        _context.CashTransactions.Add(new CashTransaction
+                        {
+                            Id = Guid.NewGuid(),
+                            BoxType = CashBoxType.Store,
+                            Type = CashTransactionType.RepairCashIn,
+                            Amount = request.CashAmount,
+                            RepairId = repair.Id,
+                            Notes = $"Repair #{repair.RepairCode}",
+                        });
+                    }
                 }
             }
             else

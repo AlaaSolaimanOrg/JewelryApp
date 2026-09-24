@@ -211,6 +211,11 @@ namespace JewerlyApp.Infrastructure.Context
                     .WithMany()
                     .HasForeignKey(x => x.UsedGoldPurchaseId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Repair)
+                    .WithMany()
+                    .HasForeignKey(x => x.RepairId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<UsedGoldPurchase>(entity =>
@@ -225,6 +230,11 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.HasOne(x => x.Customer)
                     .WithMany()
                     .HasForeignKey(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Sale)
+                    .WithMany(s => s.TradeInPurchases)
+                    .HasForeignKey(x => x.SaleId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

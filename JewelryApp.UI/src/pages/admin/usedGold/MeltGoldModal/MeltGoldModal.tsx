@@ -5,8 +5,6 @@ import type { GoldPool } from "../UsedGold.type";
 import {
   fmtCurrencyRounded,
   getAllKarats,
-  getCurrentValue,
-  getTotalOnHand,
 } from "../UsedGold.utils";
 import "./meltGoldModal.scss";
 
@@ -14,7 +12,7 @@ interface MeltGoldModalProps {
   show: boolean;
   onClose: () => void;
   pools: Record<number, GoldPool>;
-  onConfirm: (bagWeight: number, notes: string) => void;
+  onConfirm: (items: { karat: number; weight: number }[], notes: string) => void;
 }
 
 const MeltGoldModal: React.FC<MeltGoldModalProps> = ({
@@ -23,26 +21,72 @@ const MeltGoldModal: React.FC<MeltGoldModalProps> = ({
   pools,
   onConfirm,
 }) => {
-  const [bagWeight, setBagWeight] = useState<number | "">("");
+  const [weights, setWeights] = useState<Record<number, number | "">>({});
   const [notes, setNotes] = useState("");
+
+  const karats = getAllKarats(pools).filter((k) => pools[k].weight > 0);
 
   useEffect(() => {
     if (show) {
-      setBagWeight("");
+      const initial: Record<number, number | ""> = {};
+      karats.forEach((k) => {
+        initial[k] = pools[k].weight;
+      });
+      setWeights(initial);
       setNotes("");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
   if (!show) return null;
 
-  const totalWeight = getTotalOnHand(pools);
-  const currentValue = getCurrentValue(pools);
-  const numBagWeight = Number(bagWeight) || 0;
-  const isValid = numBagWeight > 0 && numBagWeight <= totalWeight + 0.5;
+  const handleWeightChange = (karat: number, raw: string) => {
+    const available = pools[karat]?.weight ?? 0;
+    if (raw === "") {
+      setWeights((prev) => ({ ...prev, [karat]: "" }));
+      return;
+    }
+    setWeights((prev) => ({
+      ...prev,
+      [karat]: Math.max(0, Math.min(Number(raw), available)),
+    }));
+  };
+
+  const handleSelectAll = () => {
+    const all: Record<number, number | ""> = {};
+    karats.forEach((k) => {
+      all[k] = pools[k].weight;
+    });
+    setWeights(all);
+  };
+
+  const handleClearAll = () => {
+    const none: Record<number, number | ""> = {};
+    karats.forEach((k) => {
+      none[k] = "";
+    });
+    setWeights(none);
+  };
+
+  const items = karats
+    .map((k) => ({ karat: k, weight: Number(weights[k]) || 0 }))
+    .filter((i) => i.weight > 0);
+
+  const totalWeight = items.reduce((sum, i) => sum + i.weight, 0);
+  const totalCost = items.reduce((sum, i) => {
+    const pool = pools[i.karat];
+    return sum + (pool.weight > 0 ? pool.cost * (i.weight / pool.weight) : 0);
+  }, 0);
+  const avgPurity =
+    totalWeight > 0
+      ? items.reduce((sum, i) => sum + i.karat * i.weight, 0) / totalWeight
+      : 0;
+
+  const isValid = items.length > 0;
 
   const handleConfirm = () => {
     if (!isValid) return;
-    onConfirm(numBagWeight, notes.trim());
+    onConfirm(items, notes.trim());
   };
 
   return (
@@ -59,48 +103,69 @@ const MeltGoldModal: React.FC<MeltGoldModalProps> = ({
 
         <div className="mo-body">
           <div className="mo-hint">
-            Everything in the drawer goes to the dealer as a mixed bag. Enter
-            the bag weight to confirm.
+            Enter how many grams of each karat to send. Leave a karat at 0 to
+            keep it in the drawer.
+          </div>
+
+          <div className="melt-pool-list-head">
+            <button
+              type="button"
+              className="melt-link-btn"
+              onClick={handleSelectAll}
+            >
+              Select all
+            </button>
+            <button
+              type="button"
+              className="melt-link-btn"
+              onClick={handleClearAll}
+            >
+              Clear all
+            </button>
           </div>
 
           <div className="melt-pool-list">
-            {getAllKarats(pools)
-              .filter((k) => pools[k].weight > 0)
-              .map((k) => (
+            {karats.map((k) => {
+              const available = pools[k].weight;
+              const rowWeight = weights[k] ?? "";
+              const rowCost =
+                available > 0 ? pools[k].cost * ((Number(rowWeight) || 0) / available) : 0;
+              return (
                 <div key={k} className="melt-pool-row">
                   <span className="melt-pool-k">{k}K</span>
-                  <span className="melt-pool-w">
-                    {pools[k].weight.toFixed(2)}g
-                  </span>
+                  <div className="melt-pool-input-wrap">
+                    <Form.Control
+                      type="number"
+                      onWheel={(e) => e.currentTarget.blur()}
+                      min={0}
+                      max={available}
+                      step="any"
+                      inputMode="decimal"
+                      value={rowWeight}
+                      onChange={(e) => handleWeightChange(k, e.target.value)}
+                    />
+                    <span className="melt-pool-avail">
+                      / {available.toFixed(2)}g
+                    </span>
+                  </div>
                   <span className="melt-pool-c">
-                    {fmtCurrencyRounded(pools[k].cost)}
+                    {fmtCurrencyRounded(rowCost)}
                   </span>
                 </div>
-              ))}
+              );
+            })}
           </div>
 
           <div className="melt-total-box">
-            <span className="melt-total-label">Total in drawer</span>
-            <span className="melt-total-value">
-              {totalWeight.toFixed(2)}g — {fmtCurrencyRounded(currentValue)}
-            </span>
-          </div>
-
-          <div className="fg2">
-            <label>Bag weight (grams) *</label>
-            <Form.Control
-              type="number"
-              onWheel={(e) => e.currentTarget.blur()}
-              min={0}
-              step="any"
-              inputMode="decimal"
-              placeholder="Weigh the bag and enter here"
-              value={bagWeight}
-              onChange={(e) => {
-                const raw = e.target.value;
-                setBagWeight(raw === "" ? "" : Number(raw));
-              }}
-            />
+            <span className="melt-total-label">Sending to melt</span>
+            <div className="melt-total-values">
+              <span className="melt-total-value">
+                {totalWeight.toFixed(2)}g — {fmtCurrencyRounded(totalCost)}
+              </span>
+              <span className="melt-total-purity">
+                {avgPurity.toFixed(1)}K avg purity
+              </span>
+            </div>
           </div>
 
           <div className="fg2">
@@ -124,11 +189,9 @@ const MeltGoldModal: React.FC<MeltGoldModalProps> = ({
             disabled={!isValid}
           >
             <FaFire />{" "}
-            {numBagWeight > 0
-              ? isValid
-                ? `Confirm melt — ${numBagWeight.toFixed(2)}g`
-                : `Weight exceeds ${totalWeight.toFixed(1)}g on hand`
-              : "Enter bag weight"}
+            {totalWeight > 0
+              ? `Confirm melt — ${totalWeight.toFixed(2)}g`
+              : "Enter weight to melt"}
           </button>
         </div>
       </div>

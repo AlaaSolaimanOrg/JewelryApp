@@ -29,6 +29,7 @@ const KaratPriceCard = ({
           onKeyDown={preventSignOnKeyDown}
           onChange={(event) => {
             const value = event.target.value;
+            if (value.length > 8) return;
             onChange(value ? Number(value) : null);
           }}
         />

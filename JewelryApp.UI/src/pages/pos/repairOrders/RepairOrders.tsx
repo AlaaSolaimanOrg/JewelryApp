@@ -168,7 +168,12 @@ const RepairOrders = () => {
     }
   };
 
-  const handleConfirmPayment = async (id: string, payMethod: string) => {
+  const handleConfirmPayment = async (
+    id: string,
+    payMethod: string,
+    cashAmount: number,
+    cardAmount: number,
+  ) => {
     const repair = repairs.find((r) => r.id === id);
     if (!repair) return;
 
@@ -176,6 +181,8 @@ const RepairOrders = () => {
       id,
       status: RepairStatus.PickedUp,
       payMethod,
+      cashAmount,
+      cardAmount,
     });
 
     if (checkRequestSucceeded(response?.statusCode)) {
@@ -198,6 +205,8 @@ const RepairOrders = () => {
       dueDate: string;
       paid: boolean;
       payMethod?: string;
+      cashAmount?: number;
+      cardAmount?: number;
     },
   ) => {
     const current = repairs.find((r) => r.id === id);
@@ -220,6 +229,8 @@ const RepairOrders = () => {
         id,
         newPaymentStatus: changes.paid ? PaymentStatus.Paid : PaymentStatus.Unpaid,
         payMethod: changes.paid ? changes.payMethod : null,
+        cashAmount: changes.paid ? changes.cashAmount : undefined,
+        cardAmount: changes.paid ? changes.cardAmount : undefined,
       });
       if (!checkRequestSucceeded(payResponse?.statusCode)) {
         showError(payResponse?.message || "Failed to update payment status");

@@ -22,6 +22,9 @@ export interface Sale {
   totalReturnAmount?: string;
   exchangeCredit?: number;
   exchangeReturnedItems?: ExchangeReturnedItem[];
+  tradeInCredit?: number;
+  tradeInItems?: TradeInItem[];
+  changeGiven?: number;
 }
 
 export interface ExchangeReturnedItem {
@@ -34,6 +37,13 @@ export interface ExchangeReturnedItem {
   weight: number;
   quantityReturned: number;
   amountReturned: number;
+}
+
+export interface TradeInItem {
+  karat: number;
+  weight: number;
+  pricePerGram: number;
+  subtotal: number;
 }
 
 export interface SaleItem {
@@ -75,6 +85,7 @@ const ReceiptContent = ({
   );
 
   const hasExchangeItems = (saleDetails.exchangeReturnedItems?.length ?? 0) > 0;
+  const hasTradeInItems = (saleDetails.tradeInItems?.length ?? 0) > 0;
 
   const containerClass = [
     "receipt-container",
@@ -236,6 +247,27 @@ const ReceiptContent = ({
         </div>
       )}
 
+      {hasTradeInItems && (
+        <div className="exchange-returned">
+          <h4>Trade-in Gold</h4>
+          {saleDetails.tradeInItems?.map((item, index) => (
+            <div className="exchange-returned-row" key={index}>
+              <div className="exchange-returned-info">
+                <div className="exchange-returned-name">{item.karat}K gold</div>
+                <div className="exchange-returned-meta">
+                  {item.weight}g × ${item.pricePerGram}/g
+                </div>
+              </div>
+              {!isGiftReceipt && (
+                <span className="exchange-returned-amount">
+                  −${item.subtotal.toFixed(2)}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {(saleDetails.discount ?? 0) > 0 && !isGiftReceipt && (
         <div className="receipt-discount">
           <div className="summary-item">
@@ -271,6 +303,12 @@ const ReceiptContent = ({
               <span>−${saleDetails.exchangeCredit?.toFixed(2)}</span>
             </div>
           )}
+          {(saleDetails.tradeInCredit ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Trade-in Credit:</span>
+              <span>−${saleDetails.tradeInCredit?.toFixed(2)}</span>
+            </div>
+          )}
           {saleDetails.totalReturnAmount &&
             Number(saleDetails.totalReturnAmount) > 0 && (
               <div className="summary-item returned-item">
@@ -290,6 +328,12 @@ const ReceiptContent = ({
             <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
+          {(saleDetails.changeGiven ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Cash paid to customer:</span>
+              <span>${saleDetails.changeGiven?.toFixed(2)}</span>
+            </div>
+          )}
         </div>
       )}
 

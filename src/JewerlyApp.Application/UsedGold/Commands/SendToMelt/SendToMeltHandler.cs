@@ -26,45 +26,56 @@ namespace JewerlyApp.Application.UsedGold.Commands.SendToMelt
 
         public async Task<GenericResponse<string>> Handle(SendToMeltCommand request, CancellationToken cancellationToken)
         {
-            if (request.TotalWeight <= 0)
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Melt_InvalidWeight);
+            var items = (request.Items ?? new())
+                .Where(i => i.Weight > 0)
+                .GroupBy(i => i.Karat)
+                .Select(g => new SendToMeltItemDto { Karat = g.Key, Weight = g.Sum(i => i.Weight) })
+                .ToList();
+
+            if (!items.Any())
+                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Melt_NoItems);
 
             var pools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken);
-            var totalOnHand = pools.Values.Sum(p => p.Weight);
 
-            if (totalOnHand <= 0 || request.TotalWeight > totalOnHand + WeightTolerance)
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Melt_InsufficientStock);
+            foreach (var item in items)
+            {
+                if (!pools.TryGetValue(item.Karat, out var pool) || pool.Weight <= 0)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Melt_InvalidKarat);
 
-            var bagWeight = Math.Min(request.TotalWeight, totalOnHand);
-            var ratio = bagWeight / totalOnHand;
+                if (item.Weight > pool.Weight + WeightTolerance)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Melt_ItemExceedsPool);
+            }
 
             var batch = new UsedGoldMeltBatch
             {
                 Id = Guid.NewGuid(),
                 SerialNumber = await GenerateSerialNumber(),
-                TotalWeight = bagWeight,
                 Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
             };
 
+            decimal totalWeightRemoved = 0;
             decimal totalCostRemoved = 0;
-            foreach (var (karat, pool) in pools)
-            {
-                if (pool.Weight <= 0) continue;
 
-                var weightRemoved = pool.Weight * ratio;
-                var costRemoved = pool.Cost * ratio;
+            foreach (var item in items)
+            {
+                var pool = pools[item.Karat];
+                var weightRemoved = Math.Min(item.Weight, pool.Weight);
+                var costRemoved = pool.Weight > 0 ? pool.Cost * (weightRemoved / pool.Weight) : 0;
+
+                totalWeightRemoved += weightRemoved;
                 totalCostRemoved += costRemoved;
 
                 batch.Items.Add(new UsedGoldMeltBatchItem
                 {
                     Id = Guid.NewGuid(),
                     MeltBatchId = batch.Id,
-                    Karat = karat,
+                    Karat = item.Karat,
                     Weight = weightRemoved,
                     Cost = costRemoved,
                 });
             }
 
+            batch.TotalWeight = totalWeightRemoved;
             batch.TotalCost = totalCostRemoved;
 
             _context.UsedGoldMeltBatches.Add(batch);

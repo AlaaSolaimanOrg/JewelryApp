@@ -17,6 +17,7 @@ import PaymentSummary from "./PosSale.sections/PaymentSummary/PaymentSummary";
 import LiraOunceDropdown from "./PosSale.sections/LiraOunceDropdown/LiraOunceDropdown";
 import ProductsSection from "./PosSale.sections/ProductsSection/ProductsSection";
 import TradeInSection from "./PosSale.sections/TradeInSection/TradeInSection";
+import type { TradeInItem } from "./PosSale.sections/TradeInSection/TradeInSection";
 import type { Customer, Product } from "./types";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 
@@ -39,10 +40,9 @@ const MainPosPage: React.FC = () => {
   const [createdSaleId, setCreatedSaleId] = useState<string | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
-  // Trade-in credit is sent to the backend only as an amount that reduces the
-  // sale total; the traded-in gold itself is not recorded.
   const [showTradeInModal, setShowTradeInModal] = useState(false);
   const [tradeInCredit, setTradeInCredit] = useState(0);
+  const [tradeInItems, setTradeInItems] = useState<TradeInItem[]>([]);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
   const [exchangeCredit, setExchangeCredit] = useState(0);
   const [exchangeData, setExchangeData] = useState<ExchangeApplyData | null>(null);
@@ -263,6 +263,7 @@ const MainPosPage: React.FC = () => {
     setCardAmount(0);
     setPayMethod("cash");
     setTradeInCredit(0);
+    setTradeInItems([]);
     setExchangeCredit(0);
     setExchangeData(null);
     setCreatedSaleId(null);
@@ -305,7 +306,7 @@ const MainPosPage: React.FC = () => {
           originalPricePerGram: product.originalPricePerGram,
         };
       }),
-      tradeInCredit,
+      tradeInItems,
       exchange: exchangeData
         ? { saleId: exchangeData.saleId, items: exchangeData.items }
         : null,
@@ -411,6 +412,7 @@ const MainPosPage: React.FC = () => {
             onOpen={() => setShowTradeInModal(true)}
             onClose={() => setShowTradeInModal(false)}
             onCreditChange={setTradeInCredit}
+            onItemsChange={setTradeInItems}
           />
 
           <ExchangeSection

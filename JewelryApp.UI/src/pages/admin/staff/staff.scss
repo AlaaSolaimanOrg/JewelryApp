@@ -234,6 +234,14 @@
     &:hover {
       border-color: currentColor;
     }
+
+    &.disabled {
+      cursor: not-allowed;
+
+      &:hover {
+        border-color: transparent;
+      }
+    }
   }
 
   .st-active {
@@ -313,6 +321,12 @@
     &:hover {
       background: rgba(230, 91, 91, 0.12);
       color: var(--admin-red);
+    }
+
+    &::after {
+      left: auto;
+      right: 0;
+      transform: none;
     }
   }
 

@@ -99,6 +99,7 @@
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
         public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
         public const string Error_Sale_Not_Found = "Sale not found.";
+        public const string Error_Sale_InsufficientChangeBalance = "Store cash box does not have enough balance to pay the customer the change due on this sale.";
 
         // Dynamic Product Message
         public static string Errror_Product_Not_Found(string productName)
@@ -113,6 +114,7 @@
         public const string Error_Exceeds_Purchased_Quantity = "Cannot return more quantity than purchased.";
         public const string Error_Invalid_Return_Amount = "Return amount must be greater than 0.";
         public const string Error_Invalid_Weight = "Weight must be provided for returned items.";
+        public const string Error_Return_InsufficientCashBalance = "Store cash box does not have enough balance to refund this return in cash.";
 
         public static string Error_Invalid_SaleItemId(Guid id)
             => $"Invalid SaleItemId: {id}";
@@ -169,6 +171,9 @@
         public const string Success_UsedGold_Melt_Created = "Melt batch recorded successfully.";
         public const string Error_UsedGold_Melt_InvalidWeight = "Bag weight must be greater than 0.";
         public const string Error_UsedGold_Melt_InsufficientStock = "Bag weight exceeds the gold currently on hand.";
+        public const string Error_UsedGold_Melt_NoItems = "Select at least one karat and weight to send to melt.";
+        public const string Error_UsedGold_Melt_InvalidKarat = "One of the selected karats is not on hand.";
+        public const string Error_UsedGold_Melt_ItemExceedsPool = "Weight for one of the karats exceeds what's currently on hand.";
 
         public const string Success_UsedGold_StockReturn_Created = "Returned to stock successfully.";
         public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";

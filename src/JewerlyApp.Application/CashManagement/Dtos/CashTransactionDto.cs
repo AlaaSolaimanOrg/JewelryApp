@@ -16,6 +16,8 @@ namespace JewerlyApp.Application.CashManagement.Dtos
         public string? Notes { get; set; }
         public Guid? SaleId { get; set; }
         public string? SaleSerialNumber { get; set; }
+        public Guid? RepairId { get; set; }
+        public string? RepairCode { get; set; }
         public string? CreatedByName { get; set; }
         public DateTime? CreatedDate { get; set; }
     }

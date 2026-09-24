@@ -16,6 +16,8 @@ interface EditModalProps {
       dueDate: string;
       paid: boolean;
       payMethod?: string;
+      cashAmount?: number;
+      cardAmount?: number;
     },
   ) => void;
   onCancelRepair: (id: string) => void;
@@ -111,6 +113,18 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
             parseFloat(cardAmount) || 0,
           )} card)`
         : payMethod;
+    const cash =
+      payMethod === "Cash"
+        ? costValue
+        : payMethod === "Split"
+          ? parseFloat(cashAmount) || 0
+          : 0;
+    const card =
+      payMethod === "Card"
+        ? costValue
+        : payMethod === "Split"
+          ? parseFloat(cardAmount) || 0
+          : 0;
 
     onSave(repair.id, {
       notes,
@@ -118,6 +132,8 @@ const EditModal = ({ repair, onClose, onSave, onCancelRepair }: EditModalProps) 
       dueDate,
       paid,
       payMethod: newlyPaid ? label : undefined,
+      cashAmount: newlyPaid ? cash : undefined,
+      cardAmount: newlyPaid ? card : undefined,
     });
   };
 

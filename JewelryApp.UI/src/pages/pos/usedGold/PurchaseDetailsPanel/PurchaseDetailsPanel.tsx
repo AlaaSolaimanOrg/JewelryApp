@@ -197,7 +197,9 @@ const PurchaseDetailsPanel = ({
           <span className="ug-sum-total-price">{formatCurrency(total)}</span>
         </div>
         <div className="ug-sum-sub-label">
-          {payMethod === "cash" ? "Cash" : "E-Transfer"} out from store box
+          {payMethod === "cash"
+            ? "Cash out from store box"
+            : "E-Transfer out from transfers box"}
         </div>
         <div className="ug-sum-weight">
           <span>Total weight</span>

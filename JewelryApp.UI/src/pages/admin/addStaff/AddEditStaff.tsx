@@ -33,6 +33,9 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
+  const [initialStaffFields, setInitialStaffFields] = useState(
+    staffFieldsInitialState
+  );
   const [showPassword, setShowPassword] = useState(false);
 
   const { data: staff } = useLocalApi({
@@ -54,14 +57,16 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
   useEffect(() => {
     if (isEdit && staff) {
-      setStaffFields({
+      const loadedFields = {
         fullName: staff.fullName || "",
         email: staff.email,
         password: "",
         phoneNumber: (staff.phoneNumber || "").replace(/\D/g, ""),
         roles: staff.roles || [],
         isActive: staff.isActive ?? true,
-      });
+      };
+      setStaffFields(loadedFields);
+      setInitialStaffFields(loadedFields);
     } else if (!isEdit) {
       handleClear();
     }
@@ -101,7 +106,11 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       .then((response: any) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          handleClear();
+          if (isEdit) {
+            navigate("/admin/staff");
+          } else {
+            handleClear();
+          }
         } else {
           showError(response?.message);
         }
@@ -135,7 +144,25 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
     if (isEditingSelf && !staffFields.isActive) return false;
 
+    if (isEdit && !hasChanges()) return false;
+
     return true;
+  };
+
+  const hasChanges = () => {
+    const rolesEqual =
+      staffFields.roles.length === initialStaffFields.roles.length &&
+      staffFields.roles.every((role) =>
+        initialStaffFields.roles.includes(role)
+      );
+
+    return (
+      staffFields.fullName !== initialStaffFields.fullName ||
+      staffFields.email !== initialStaffFields.email ||
+      staffFields.phoneNumber !== initialStaffFields.phoneNumber ||
+      staffFields.isActive !== initialStaffFields.isActive ||
+      !rolesEqual
+    );
   };
 
   const toggleRole = (role: string) => {

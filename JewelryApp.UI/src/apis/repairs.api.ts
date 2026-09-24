@@ -32,6 +32,8 @@ export const updateRepairStatus = async (payload: {
   sendSms?: boolean;
   markNotified?: boolean;
   payMethod?: string;
+  cashAmount?: number;
+  cardAmount?: number;
 }) => {
   return requestApi("PUT", apiRoutes.repairs.updateRepairStatus, payload);
 };
@@ -49,6 +51,8 @@ export const updateRepairPaymentStatus = async (payload: {
   id: string;
   newPaymentStatus: PaymentStatus;
   payMethod?: string | null;
+  cashAmount?: number;
+  cardAmount?: number;
 }) => {
   return requestApi(
     "PUT",

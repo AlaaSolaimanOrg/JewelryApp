@@ -4,6 +4,7 @@ using JewerlyApp.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JewerlyApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924165119_added_repair_to_cashtransaction")]
+    partial class added_repair_to_cashtransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1143,9 +1146,6 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Property<int>("PayMethod")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SaleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("SerialNumber")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -1162,8 +1162,6 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("SaleId");
 
                     b.HasIndex("SerialNumber")
                         .IsUnique();
@@ -1528,14 +1526,7 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("JewerlyApp.Domain.Entities.Sale", "Sale")
-                        .WithMany("TradeInPurchases")
-                        .HasForeignKey("SaleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchaseItem", b =>
@@ -1619,8 +1610,6 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Navigation("Returns");
 
                     b.Navigation("SaleItems");
-
-                    b.Navigation("TradeInPurchases");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.SaleItem", b =>

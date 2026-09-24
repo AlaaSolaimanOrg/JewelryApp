@@ -22,7 +22,10 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
         public decimal? Discount { get; set; }
         public decimal? TotalReturnAmount { get; set; }
         public decimal ExchangeCredit { get; set; }
+        public decimal TradeInCredit { get; set; }
+        public decimal ChangeGiven { get; set; }
         public List<SaleItemVM> SaleItems { get; set; } = new();
         public List<ExchangeReturnedItemVM> ExchangeReturnedItems { get; set; } = new();
+        public List<TradeInReceiptItemVM> TradeInItems { get; set; } = new();
     }
 }

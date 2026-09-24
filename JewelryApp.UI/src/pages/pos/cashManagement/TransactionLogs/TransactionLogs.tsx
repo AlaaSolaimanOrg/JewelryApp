@@ -132,6 +132,9 @@ const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
                 <Col xs={5} md={5}>
                   <div className="log-desc">{desc.title}</div>
                   {desc.sub && <div className="log-desc-sub">{desc.sub}</div>}
+                  {row.createdByName && (
+                    <div className="log-desc-user">by {row.createdByName}</div>
+                  )}
                 </Col>
                 <Col
                   md={2}

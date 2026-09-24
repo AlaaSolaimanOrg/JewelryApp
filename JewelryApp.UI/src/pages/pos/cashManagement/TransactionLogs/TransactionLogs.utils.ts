@@ -12,6 +12,8 @@ export interface CashTransactionRow {
   notes: string | null;
   saleId: string | null;
   saleSerialNumber: string | null;
+  repairId: string | null;
+  repairCode: string | null;
   createdByName: string | null;
   createdDate: string;
 }
@@ -51,6 +53,21 @@ export const getDescription = (row: CashTransactionRow) => {
       return {
         title: `Return — Sale #${row.saleSerialNumber}`,
         sub: row.notes || "Cash refund",
+      };
+    case CashTransactionType.SaleChangeOut:
+      return {
+        title: `Change paid — Sale #${row.saleSerialNumber}`,
+        sub: row.notes || "Trade-in/exchange credit exceeded sale total",
+      };
+    case CashTransactionType.RepairCashIn:
+      return {
+        title: `Repair #${row.repairCode}`,
+        sub: "Cash payment",
+      };
+    case CashTransactionType.RepairCashOut:
+      return {
+        title: `Repair #${row.repairCode} — payment reversed`,
+        sub: row.notes || "Cash reversal",
       };
     default:
       return { title: row.notes || "", sub: "" };

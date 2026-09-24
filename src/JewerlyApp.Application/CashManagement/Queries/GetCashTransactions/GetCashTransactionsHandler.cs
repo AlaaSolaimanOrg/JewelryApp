@@ -28,6 +28,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
             IQueryable<CashTransaction> query = _context.CashTransactions
                 .Include(t => t.Sale)
                 .Include(t => t.UsedGoldPurchase)
+                .Include(t => t.Repair)
                 .Include(t => t.CreatedByUser)
                 .AsNoTracking();
 
@@ -56,7 +57,9 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
                 Notes = t.Notes,
                 SaleId = t.SaleId,
                 SaleSerialNumber = t.Sale?.SerialNumber,
-                CreatedByName = t.CreatedByUser?.UserName,
+                RepairId = t.RepairId,
+                RepairCode = t.Repair?.RepairCode,
+                CreatedByName = t.CreatedByUser?.FullName ?? t.CreatedByUser?.UserName,
                 CreatedDate = t.CreatedDate,
             }).ToList();
 
@@ -99,7 +102,9 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
                     (t.Notes != null && t.Notes.ToLower().Contains(s)) ||
                     (t.Sale != null && t.Sale.SerialNumber.ToLower().Contains(s)) ||
                     (t.UsedGoldPurchase != null && t.UsedGoldPurchase.SerialNumber.ToLower().Contains(s)) ||
+                    (t.Repair != null && t.Repair.RepairCode.ToLower().Contains(s)) ||
                     (t.CreatedByUser != null && t.CreatedByUser.UserName.ToLower().Contains(s)) ||
+                    (t.CreatedByUser != null && t.CreatedByUser.FullName != null && t.CreatedByUser.FullName.ToLower().Contains(s)) ||
                     matchingTypes.Contains(t.Type) ||
                     matchingBoxes.Contains(t.BoxType));
             }
@@ -117,6 +122,9 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
             [CashTransactionType.SaleCashIn] = "sale cash in",
             [CashTransactionType.UsedGoldPurchaseOut] = "used gold purchase",
             [CashTransactionType.ReturnCashOut] = "return",
+            [CashTransactionType.RepairCashIn] = "repair cash in",
+            [CashTransactionType.RepairCashOut] = "repair payment reversed",
+            [CashTransactionType.SaleChangeOut] = "sale change paid",
         };
 
         private static readonly Dictionary<CashBoxType, string> BoxLabels = new()

@@ -60,6 +60,10 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     Discount = x.Discount,
                     TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
                     ExchangeCredit = x.ExchangeReturns.Sum(r => r.TotalAmount),
+                    TradeInCredit = x.TradeInPurchases.Sum(p => p.TotalAmount),
+                    ChangeGiven = _context.CashTransactions
+                        .Where(t => t.SaleId == x.Id && t.Type == CashTransactionType.SaleChangeOut)
+                        .Sum(t => (decimal?)t.Amount) ?? 0,
                     ExchangeReturnedItems = x.ExchangeReturns
                         .SelectMany(r => r.Items)
                         .Select(ri => new ExchangeReturnedItemVM
@@ -95,6 +99,15 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                         QuantityReturned = i.ReturnItems!.Sum(r => r.QuantityReturned),
                         AmountReturned = i.ReturnItems!.Sum(r => r.ReturnAmount)
                     }).ToList(),
+                    TradeInItems = x.TradeInPurchases
+                        .SelectMany(p => p.Items)
+                        .Select(ti => new TradeInReceiptItemVM
+                        {
+                            Karat = ti.Karat,
+                            Weight = ti.Weight,
+                            PricePerGram = ti.PricePerGram,
+                            Subtotal = ti.Subtotal,
+                        }).ToList(),
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

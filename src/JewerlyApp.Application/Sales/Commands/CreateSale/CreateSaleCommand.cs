@@ -19,7 +19,9 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
         public decimal? CashAmount { get; set; }
         public decimal? CardAmount { get; set; }
         public List<SaleItemDto> SaleItems { get; set; } = new();
-        public decimal? TradeInCredit { get; set; }
+        // Trade-in credit is derived server-side from these items (weight × price/gram),
+        // and each item is recorded as a used-gold purchase — see CreateSaleHandler.
+        public List<TradeInItemDto>? TradeInItems { get; set; }
         public ExchangeReturnDto? Exchange { get; set; }
     }
 }

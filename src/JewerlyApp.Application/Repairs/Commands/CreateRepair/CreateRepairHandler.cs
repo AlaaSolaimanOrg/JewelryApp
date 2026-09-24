@@ -101,6 +101,21 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             };
 
             _context.Repairs.Add(repair);
+
+            // Cash portion of the payment goes straight into the store cash box.
+            if (request.CashAmount > 0)
+            {
+                _context.CashTransactions.Add(new CashTransaction
+                {
+                    Id = Guid.NewGuid(),
+                    BoxType = CashBoxType.Store,
+                    Type = CashTransactionType.RepairCashIn,
+                    Amount = request.CashAmount,
+                    RepairId = repair.Id,
+                    Notes = $"Repair #{repair.RepairCode}",
+                });
+            }
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return new GenericResponse<Guid>
