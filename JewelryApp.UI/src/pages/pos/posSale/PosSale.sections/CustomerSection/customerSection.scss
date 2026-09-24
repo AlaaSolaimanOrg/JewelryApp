@@ -40,10 +40,12 @@
     .ps-cust-rs__input-container,
     .ps-cust-rs__single-value {
       color: var(--pos-text);
+      -webkit-text-fill-color: var(--pos-text);
     }
 
     input {
       color: var(--pos-text);
+      -webkit-text-fill-color: var(--pos-text);
     }
 
     .ps-cust-rs__placeholder {

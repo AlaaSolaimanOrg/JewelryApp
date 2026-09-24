@@ -114,6 +114,7 @@
         public const string Error_Exceeds_Purchased_Quantity = "Cannot return more quantity than purchased.";
         public const string Error_Invalid_Return_Amount = "Return amount must be greater than 0.";
         public const string Error_Invalid_Weight = "Weight must be provided for returned items.";
+        public const string Error_Return_InsufficientCashBalance = "Store cash box does not have enough balance to refund this return in cash.";
 
         public static string Error_Invalid_SaleItemId(Guid id)
             => $"Invalid SaleItemId: {id}";
