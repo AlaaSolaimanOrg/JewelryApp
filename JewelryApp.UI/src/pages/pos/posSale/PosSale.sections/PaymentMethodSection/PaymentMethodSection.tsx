@@ -75,7 +75,7 @@ const PaymentMethodSection: React.FC<Props> = ({
             inputMode="decimal"
             placeholder="$0.00"
             value={cashAmount}
-            disabled={payMethod === "card"}
+            disabled={payMethod !== "split"}
             onChange={(e) => onCashInputChange(e.target.value)}
           />
         </div>
@@ -86,7 +86,7 @@ const PaymentMethodSection: React.FC<Props> = ({
             inputMode="decimal"
             placeholder="$0.00"
             value={cardAmount}
-            disabled={payMethod === "cash"}
+            disabled={payMethod !== "split"}
             onChange={(e) => onCardInputChange(e.target.value)}
           />
         </div>
