@@ -226,7 +226,7 @@ const CustomersReports = () => {
                 badgeColor={style.color}
                 badgeBg={style.bg}
                 percent={Math.round((t.total / maxTierTotal) * 100)}
-                amountLabel={`${t.count} customers · $${(t.total / 1e6).toFixed(1)}M · ${t.minLabel}`}
+                amountLabel={`${t.count} customers · ${fmtCurrency(t.total)} · ${t.minLabel}`}
                 onClick={() => setOpenTier(t)}
               />
             );
