@@ -11,6 +11,7 @@ interface TagPrintingModalProps {
   show: boolean;
   onClose: () => void;
   product: Product | null;
+  products?: Product[];
   initialTagCount?: number;
   onPrinted?: () => void;
 }
@@ -19,9 +20,14 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   show,
   onClose,
   product,
+  products,
   initialTagCount,
   onPrinted,
 }) => {
+  const items = products && products.length > 0 ? products : product ? [product] : [];
+  const isBulk = items.length > 1;
+  const itemsKey = items.map((p) => p.id).join(",");
+
   const [tagCount, setTagCount] = useState(1);
   const [printers, setPrinters] = useState<any[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState("");
@@ -44,13 +50,13 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   }, [show]);
 
   useEffect(() => {
-    if (show && product) {
+    if (show && items.length > 0) {
       setTagCount(initialTagCount || 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, product?.id]);
+  }, [show, itemsKey]);
 
-  if (!show || !product) return null;
+  if (!show || items.length === 0) return null;
 
   /* ---------------------------------------------
      Check DYMO Connect status (REST API)
@@ -129,12 +135,17 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       );
       const xml = await response.text();
 
-      const updatedXml = updateLabelXml(xml, product);
+      for (const item of items) {
+        const updatedXml = updateLabelXml(xml, item);
+        await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
+      }
 
-      // Print X copies
-      await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
-
-      showSuccess(`Printed ${tagCount} tag(s) successfully.`);
+      const totalTags = tagCount * items.length;
+      showSuccess(
+        isBulk
+          ? `Printed ${totalTags} tag${totalTags !== 1 ? "s" : ""} (${tagCount} × ${items.length} items) successfully.`
+          : `Printed ${tagCount} tag(s) successfully.`,
+      );
       onPrinted?.();
     } catch (err) {
       console.error("PRINT ERROR:", err);
@@ -153,7 +164,9 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
         <div className="mo-head">
           <span className="mo-title">
             <FaPrint /> Print butterfly tags —{" "}
-            <span className="sku">{product.sku}</span>
+            <span className="sku">
+              {isBulk ? `${items.length} items selected` : items[0].sku}
+            </span>
           </span>
           <button className="mo-x" onClick={onClose}>
             <FaTimes />
@@ -218,20 +231,30 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             />
           </div>
 
-          <div className="item-summary">
-            <span>
-              SKU: <b>{product.sku}</b>
-            </span>
-            <span>
-              Price: <b>${product.price?.toFixed(2)}</b>
-            </span>
-            <span>
-              Weight: <b>{product.weight}g</b>
-            </span>
-            <span>
-              Karat: <b>{product.karatType}K</b>
-            </span>
-          </div>
+          {isBulk ? (
+            <div className="item-summary bulk-summary">
+              {items.map((item) => (
+                <span key={item.id} className="bulk-sku-chip">
+                  {item.sku}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <div className="item-summary">
+              <span>
+                SKU: <b>{items[0].sku}</b>
+              </span>
+              <span>
+                Price: <b>${items[0].price?.toFixed(2)}</b>
+              </span>
+              <span>
+                Weight: <b>{items[0].weight}g</b>
+              </span>
+              <span>
+                Karat: <b>{items[0].karatType}K</b>
+              </span>
+            </div>
+          )}
 
           <button className="svc-link" onClick={testDymoConnection}>
             Test DYMO connection
@@ -251,6 +274,7 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             ) : (
               <>
                 <FaPrint /> Print {tagCount} tag{tagCount !== 1 ? "s" : ""}
+                {isBulk ? ` × ${items.length} items` : ""}
               </>
             )}
           </button>

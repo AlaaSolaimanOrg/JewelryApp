@@ -70,6 +70,8 @@ namespace JewerlyApp.Application.Products.Queries.GetProductsBySku
                     Description = product.Description,
                     PricePerGram = pricePerGram,
                     Price = product.Weight * pricePerGram,
+                    IsManualEntry = product.IsManualEntry,
+                    Specification = product.Specification,
                     Images = product.Images.Select(i => new ProductImageVM
                     {
                         ImageUrl = i.ImageUrl,
