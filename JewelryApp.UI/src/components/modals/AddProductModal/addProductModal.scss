@@ -67,6 +67,7 @@
       border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
       background: var(--pos-bg-raised, #2a2a2a);
       color: var(--pos-text, #fff);
+      -webkit-text-fill-color: var(--pos-text, #fff);
       width: 100%;
 
       &::placeholder {

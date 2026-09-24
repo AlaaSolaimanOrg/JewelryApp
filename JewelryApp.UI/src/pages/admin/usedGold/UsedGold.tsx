@@ -218,12 +218,16 @@ const UsedGold = () => {
     );
   };
 
-  const handleMeltConfirm = async (bagWeight: number, notes: string) => {
-    const response = await sendToMelt({ totalWeight: bagWeight, notes: notes || undefined });
+  const handleMeltConfirm = async (
+    items: { karat: number; weight: number }[],
+    notes: string,
+  ) => {
+    const totalWeight = items.reduce((sum, i) => sum + i.weight, 0);
+    const response = await sendToMelt({ items, notes: notes || undefined });
     if (checkRequestSucceeded(response?.statusCode)) {
       setShowMeltModal(false);
       showSuccess(
-        response?.message || `Sent ${bagWeight.toFixed(2)}g to melt`,
+        response?.message || `Sent ${totalWeight.toFixed(2)}g to melt`,
       );
       refresh();
     } else {

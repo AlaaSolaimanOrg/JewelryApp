@@ -169,6 +169,9 @@
         public const string Success_UsedGold_Melt_Created = "Melt batch recorded successfully.";
         public const string Error_UsedGold_Melt_InvalidWeight = "Bag weight must be greater than 0.";
         public const string Error_UsedGold_Melt_InsufficientStock = "Bag weight exceeds the gold currently on hand.";
+        public const string Error_UsedGold_Melt_NoItems = "Select at least one karat and weight to send to melt.";
+        public const string Error_UsedGold_Melt_InvalidKarat = "One of the selected karats is not on hand.";
+        public const string Error_UsedGold_Melt_ItemExceedsPool = "Weight for one of the karats exceeds what's currently on hand.";
 
         public const string Success_UsedGold_StockReturn_Created = "Returned to stock successfully.";
         public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";
