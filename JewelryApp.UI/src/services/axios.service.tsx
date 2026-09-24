@@ -28,9 +28,10 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const isRefreshEndpoint =
       error.request.responseURL.includes("Auth/RefreshTokens");
+    const isLoginEndpoint = error.request.responseURL.includes("Auth/Login");
 
     // Prevent infinite retry loop
-    if (error.response?.status === 401 && !isRefreshEndpoint) {
+    if (error.response?.status === 401 && !isRefreshEndpoint && !isLoginEndpoint) {
       const refreshToken =
         localStorage.getItem("refreshToken") ||
         sessionStorage.getItem("refreshToken");

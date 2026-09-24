@@ -94,6 +94,7 @@
         border: 1px solid var(--pos-border-strong);
         background: var(--pos-bg-raised);
         color: var(--pos-text);
+        -webkit-text-fill-color: var(--pos-text);
 
         &::placeholder {
           color: var(--pos-text-subtle);
