@@ -54,6 +54,11 @@ export const getDescription = (row: CashTransactionRow) => {
         title: `Return — Sale #${row.saleSerialNumber}`,
         sub: row.notes || "Cash refund",
       };
+    case CashTransactionType.SaleChangeOut:
+      return {
+        title: `Change paid — Sale #${row.saleSerialNumber}`,
+        sub: row.notes || "Trade-in/exchange credit exceeded sale total",
+      };
     case CashTransactionType.RepairCashIn:
       return {
         title: `Repair #${row.repairCode}`,

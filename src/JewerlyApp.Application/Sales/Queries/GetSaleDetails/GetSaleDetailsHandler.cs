@@ -61,6 +61,9 @@ namespace JewerlyApp.Application.Sales.Queries.GetSaleById
                     TotalReturnAmount = x.Returns!.Sum(r => r.TotalAmount),
                     ExchangeCredit = x.ExchangeReturns.Sum(r => r.TotalAmount),
                     TradeInCredit = x.TradeInPurchases.Sum(p => p.TotalAmount),
+                    ChangeGiven = _context.CashTransactions
+                        .Where(t => t.SaleId == x.Id && t.Type == CashTransactionType.SaleChangeOut)
+                        .Sum(t => (decimal?)t.Amount) ?? 0,
                     ExchangeReturnedItems = x.ExchangeReturns
                         .SelectMany(r => r.Items)
                         .Select(ri => new ExchangeReturnedItemVM

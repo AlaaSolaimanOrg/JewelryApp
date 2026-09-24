@@ -124,6 +124,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
             [CashTransactionType.ReturnCashOut] = "return",
             [CashTransactionType.RepairCashIn] = "repair cash in",
             [CashTransactionType.RepairCashOut] = "repair payment reversed",
+            [CashTransactionType.SaleChangeOut] = "sale change paid",
         };
 
         private static readonly Dictionary<CashBoxType, string> BoxLabels = new()

@@ -99,6 +99,7 @@
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
         public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
         public const string Error_Sale_Not_Found = "Sale not found.";
+        public const string Error_Sale_InsufficientChangeBalance = "Store cash box does not have enough balance to pay the customer the change due on this sale.";
 
         // Dynamic Product Message
         public static string Errror_Product_Not_Found(string productName)

@@ -17,6 +17,7 @@ namespace JewerlyApp.Application.CashManagement
             CashTransactionType.ReturnCashOut => false,
             CashTransactionType.RepairCashIn => true,
             CashTransactionType.RepairCashOut => false,
+            CashTransactionType.SaleChangeOut => false,
             _ => true
         };
 

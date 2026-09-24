@@ -1,4 +1,5 @@
-﻿using JewerlyApp.Application.Common.Helpers;
+﻿using JewerlyApp.Application.CashManagement;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -130,7 +131,25 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
             // -------------------------------
             sale.SubTotal = subTotal;
             var tradeInCredit = tradeInItems.Sum(i => i.Weight * i.PricePerGram);
-            sale.Total = Math.Max(0, CalculateFinalTotal(sale) - exchangeCredit - tradeInCredit);
+            var rawTotal = CalculateFinalTotal(sale) - exchangeCredit - tradeInCredit;
+            sale.Total = Math.Max(0, rawTotal);
+
+            // Trade-in/exchange credit exceeded what was bought — the store owes the
+            // customer cash back. Make sure the till actually has it before committing.
+            var changeDue = rawTotal < 0 ? -rawTotal : 0;
+            if (changeDue > 0)
+            {
+                var storeBalance = await CashBalanceCalculator.GetBalanceAsync(_context, CashBoxType.Store, cancellationToken);
+                if (changeDue > storeBalance)
+                {
+                    return new GenericResponse<string>
+                    {
+                        Data = null,
+                        StatusCode = ResponseStatusCode.BadRequest,
+                        Message = Messages.Error_Sale_InsufficientChangeBalance,
+                    };
+                }
+            }
 
             if (!ValidatePaymentAmounts(sale))
             {
@@ -206,6 +225,21 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     Amount = sale.CashAmount.Value,
                     SaleId = sale.Id,
                     Notes = $"Sale #{sale.SerialNumber}",
+                });
+            }
+
+            // Change owed to the customer (trade-in/exchange credit exceeded the sale total)
+            // comes back out of the store cash box.
+            if (changeDue > 0)
+            {
+                _context.CashTransactions.Add(new CashTransaction
+                {
+                    Id = Guid.NewGuid(),
+                    BoxType = CashBoxType.Store,
+                    Type = CashTransactionType.SaleChangeOut,
+                    Amount = changeDue,
+                    SaleId = sale.Id,
+                    Notes = $"Change paid on sale #{sale.SerialNumber}",
                 });
             }
 

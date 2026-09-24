@@ -139,6 +139,7 @@ export enum CashTransactionType {
   ReturnCashOut = 8,
   RepairCashIn = 9,
   RepairCashOut = 10,
+  SaleChangeOut = 11,
 }
 
 export enum UsedGoldPayMethod {

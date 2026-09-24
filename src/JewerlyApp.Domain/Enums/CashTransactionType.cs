@@ -11,6 +11,8 @@ namespace JewerlyApp.Domain.Enums
         UsedGoldPurchaseOut = 7,
         ReturnCashOut = 8,
         RepairCashIn = 9,
-        RepairCashOut = 10
+        RepairCashOut = 10,
+        // Trade-in/exchange credit exceeded the sale total, so the store paid the customer cash back.
+        SaleChangeOut = 11
     }
 }

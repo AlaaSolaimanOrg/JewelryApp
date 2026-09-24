@@ -24,6 +24,7 @@ export interface Sale {
   exchangeReturnedItems?: ExchangeReturnedItem[];
   tradeInCredit?: number;
   tradeInItems?: TradeInItem[];
+  changeGiven?: number;
 }
 
 export interface ExchangeReturnedItem {
@@ -327,6 +328,12 @@ const ReceiptContent = ({
             <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
+          {(saleDetails.changeGiven ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Cash paid to customer:</span>
+              <span>${saleDetails.changeGiven?.toFixed(2)}</span>
+            </div>
+          )}
         </div>
       )}
 
