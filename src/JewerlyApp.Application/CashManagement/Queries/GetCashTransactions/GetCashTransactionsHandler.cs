@@ -59,7 +59,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
                 SaleSerialNumber = t.Sale?.SerialNumber,
                 RepairId = t.RepairId,
                 RepairCode = t.Repair?.RepairCode,
-                CreatedByName = t.CreatedByUser?.UserName,
+                CreatedByName = t.CreatedByUser?.FullName ?? t.CreatedByUser?.UserName,
                 CreatedDate = t.CreatedDate,
             }).ToList();
 
@@ -104,6 +104,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashTransactions
                     (t.UsedGoldPurchase != null && t.UsedGoldPurchase.SerialNumber.ToLower().Contains(s)) ||
                     (t.Repair != null && t.Repair.RepairCode.ToLower().Contains(s)) ||
                     (t.CreatedByUser != null && t.CreatedByUser.UserName.ToLower().Contains(s)) ||
+                    (t.CreatedByUser != null && t.CreatedByUser.FullName != null && t.CreatedByUser.FullName.ToLower().Contains(s)) ||
                     matchingTypes.Contains(t.Type) ||
                     matchingBoxes.Contains(t.BoxType));
             }
