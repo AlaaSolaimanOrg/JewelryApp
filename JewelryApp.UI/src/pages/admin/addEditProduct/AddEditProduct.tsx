@@ -442,9 +442,7 @@ const AddEditProduct = ({ isEdit }) => {
 
           {showSizeField && (
             <div className="fg">
-              <label>
-                Size <span className="req">*</span>
-              </label>
+              <label>Size</label>
               <input
                 type="text"
                 placeholder="e.g. 45"
@@ -548,9 +546,7 @@ const AddEditProduct = ({ isEdit }) => {
           )}
 
           <div className="fg span3">
-            <label>
-              Product images <span className="req">*</span>
-            </label>
+            <label>Product images</label>
             <ImageUpload files={files} setFiles={setFiles} />
           </div>
         </form>

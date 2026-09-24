@@ -1,4 +1,4 @@
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaUserSlash } from "react-icons/fa";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import { SortDirection } from "../../../types/enums";
 import type { SortCriteria } from "../../../types/general";
@@ -93,67 +93,74 @@ export type StaffRowActions = {
   onEdit: (userId: number) => void;
   onDelete: (user: User) => void;
   canDelete?: boolean;
+  currentUserId?: number;
 };
 
 export const buildStaffTableData = (
   users: User[],
-  { onToggleStatus, onEdit, onDelete, canDelete }: StaffRowActions,
+  { onToggleStatus, onEdit, onDelete, canDelete, currentUserId }: StaffRowActions,
 ) =>
-  users?.map((user) => ({
-    rowClassName: user.isActive ? "" : "inactive-row",
-    name: (
-      <div className="staff-name">
-        <div
-          className="staff-av"
-          style={{ background: getAvatarColor(user.id) }}
-        >
-          {getInitials(user.fullName ?? user.userName)}
-        </div>
-        <div>
-          <div className="staff-name-txt">{user.fullName ?? user.userName}</div>
-          <div className="staff-name-sub">{user.email}</div>
-        </div>
-      </div>
-    ),
-    roles: (
-      <>
-        {user.roles?.map((role) => (
-          <span key={role} className={`role-pill ${getRoleClass(role)}`}>
-            {role}
-          </span>
-        ))}
-      </>
-    ),
-    phone: user.phoneNumber || "—",
-    createdAt: new Date(user.createdAt).toLocaleDateString(),
-    status: (
-      <span
-        className={`status-pill ${user.isActive ? "st-active" : "st-inactive"}`}
-        onClick={() => onToggleStatus(user)}
-        title="Click to toggle"
-      >
-        {user.isActive ? "Active" : "Inactive"}
-      </span>
-    ),
-    actions: (
-      <>
-        <button
-          className="act-ico act-edit"
-          data-tip="Edit"
-          onClick={() => onEdit(user.id)}
-        >
-          <FaEdit size={14} />
-        </button>
-        {canDelete && (
-          <button
-            className="act-ico act-del"
-            data-tip="Remove"
-            onClick={() => onDelete(user)}
-            disabled={!user.isActive}
+  users?.map((user) => {
+    const isSelf = user.id === currentUserId;
+
+    return {
+      rowClassName: user.isActive ? "" : "inactive-row",
+      name: (
+        <div className="staff-name">
+          <div
+            className="staff-av"
+            style={{ background: getAvatarColor(user.id) }}
           >
-            <FaTrash size={14} />
+            {getInitials(user.fullName ?? user.userName)}
+          </div>
+          <div>
+            <div className="staff-name-txt">{user.fullName ?? user.userName}</div>
+            <div className="staff-name-sub">{user.email}</div>
+          </div>
+        </div>
+      ),
+      roles: (
+        <>
+          {user.roles?.map((role) => (
+            <span key={role} className={`role-pill ${getRoleClass(role)}`}>
+              {role}
+            </span>
+          ))}
+        </>
+      ),
+      phone: user.phoneNumber || "—",
+      createdAt: new Date(user.createdAt).toLocaleDateString(),
+      status: (
+        <span
+          className={`status-pill ${user.isActive ? "st-active" : "st-inactive"} ${isSelf ? "disabled" : ""}`}
+          onClick={() => !isSelf && onToggleStatus(user)}
+          title={isSelf ? "You can't deactivate your own account" : "Click to toggle"}
+        >
+          {user.isActive ? "Active" : "Inactive"}
+        </span>
+      ),
+      actions: (
+        <>
+          <button
+            className="act-ico act-edit"
+            data-tip="Edit"
+            onClick={() => onEdit(user.id)}
+          >
+            <FaEdit size={14} />
           </button>
-        )}
-      </>
-    ),
-  }));
+          {canDelete && (
+            <button
+              className="act-ico act-del"
+              data-tip={
+                isSelf ? "You can't deactivate your own account" : "Deactivate"
+              }
+              onClick={() => onDelete(user)}
+              disabled={!user.isActive || isSelf}
+            >
+              <FaUserSlash size={14} />
+            </button>
+          )}
+        </>
+      ),
+    };
+  });

@@ -101,6 +101,7 @@ const Staff = () => {
     onEdit: handleEditUser,
     onDelete: setDeleteTarget,
     canDelete: isAdmin,
+    currentUserId: userInfo?.id,
   });
 
   return (
