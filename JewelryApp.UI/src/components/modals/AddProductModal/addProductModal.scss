@@ -97,6 +97,40 @@
     }
   }
 
+  .pricing-missing-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 4px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--pos-red-bg, rgba(230, 91, 91, 0.12));
+    border: 1px solid var(--pos-red-border, rgba(230, 91, 91, 0.35));
+  }
+
+  .pricing-missing-icon {
+    color: var(--pos-red, #e65b5b);
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .pricing-missing-text {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--pos-text-secondary, #ccc);
+
+    a {
+      color: var(--pos-gold, #d4a017);
+      font-weight: 600;
+      text-decoration: underline;
+
+      &:hover {
+        color: var(--pos-gold-hover, #c4930f);
+      }
+    }
+  }
+
   .modal-footer {
     border-top: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
 

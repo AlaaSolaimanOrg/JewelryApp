@@ -7,6 +7,7 @@ using MediatR;
 using System.Threading.Tasks;
 using JewerlyApp.Application.Products.Commands.EditPricingSettings;
 using JewerlyApp.Application.PricingSettings.Queries.GetPricingSettings;
+using JewerlyApp.Application.PricingSettings.Queries.GetPosPricingSettings;
 using Microsoft.AspNetCore.Authorization;
 
 namespace JewerlyApp.API.Controllers.PricingSettings
@@ -37,6 +38,19 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetPricingSettings([FromQuery] GetPricingSettingsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get price-per-gram pricing settings for the POS sale screen. Unlike
+        /// GetPricingSettings, this does not expose stock-on-hand weight — POS-role
+        /// users are not allowed to see that.
+        /// </summary>
+        [HttpGet]
+        [Authorize(Roles = "PosRole")]
+        public async Task<IActionResult> GetPosPricingSettings([FromQuery] GetPosPricingSettingsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);

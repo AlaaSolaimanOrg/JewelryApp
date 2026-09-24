@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { FaSave, FaTimes } from "react-icons/fa";
-import { getPricingSettings } from "../../../apis/pricingSettings.api";
+import { FaExclamationTriangle, FaSave, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { getPosPricingSettings } from "../../../apis/pricingSettings.api";
+import { useAuth } from "../../../context/AuthContext";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
@@ -9,6 +11,10 @@ import preventSignOnKeyDown, {
   showError,
 } from "../../../utils";
 import "./addProductModal.scss";
+
+const PRODUCT_TYPE_LABELS: Record<number, string> = {
+  [ProductType.Gold]: "Gold",
+};
 
 const categoriesRequiringSize = [
   ProductCategory.Necklaces,
@@ -44,6 +50,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   onClose,
   onProductAdded,
 }) => {
+  const { userInfo } = useAuth();
+  const isAdmin = !!userInfo?.roles?.includes("Admin");
   const [fields, setFields] = useState(initialFields);
   const [isLoading, setIsLoading] = useState(false);
   const [pricingSettings, setPricingSettings] = useState<
@@ -55,7 +63,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     setFields(initialFields);
     setPricingSettings(null);
     setIsLoading(true);
-    getPricingSettings()
+    getPosPricingSettings()
       .then((res) => {
         if (checkRequestSucceeded(res?.statusCode)) {
           setPricingSettings(res?.data ?? []);
@@ -83,15 +91,22 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     !fields.weight ||
     Number(fields.quantity) <= 0;
 
-  const handleConfirm = () => {
-    if (isInvalid || isLoading || !pricingSettings) return;
-
-    const setting = pricingSettings.find(
+  const matchedPricingSetting =
+    pricingSettings?.find(
       (item) =>
         Number(item.karatType) === Number(fields.karat) &&
         Number(item.productType) === Number(fields.productType),
-    );
-    const pricePerGram = setting?.pricePerGram ?? 0;
+    ) ?? null;
+
+  const pricingMissing =
+    !isLoading &&
+    pricingSettings !== null &&
+    (!matchedPricingSetting || matchedPricingSetting.pricePerGram <= 0);
+
+  const handleConfirm = () => {
+    if (isInvalid || isLoading || !pricingSettings || pricingMissing) return;
+
+    const pricePerGram = matchedPricingSetting?.pricePerGram ?? 0;
 
     onProductAdded({
       id: null,
@@ -258,6 +273,24 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
               </div>
             </div>
           </div>
+
+          {pricingMissing && (
+            <div className="pricing-missing-warning">
+              <FaExclamationTriangle className="pricing-missing-icon" />
+              <div className="pricing-missing-text">
+                No price per gram is set for {Number(fields.karat)}K{" "}
+                {PRODUCT_TYPE_LABELS[Number(fields.productType)] ?? ""}.{" "}
+                {isAdmin ? (
+                  <>
+                    <Link to="/admin/pricing">Set it in Pricing Settings</Link>{" "}
+                    before adding this product.
+                  </>
+                ) : (
+                  "Contact the admin to adjust the pricing settings."
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </Modal.Body>
 
@@ -272,7 +305,9 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         <button
           className="btn-md btn-gold"
           onClick={handleConfirm}
-          disabled={isInvalid || isLoading || !pricingSettings}
+          disabled={
+            isInvalid || isLoading || !pricingSettings || pricingMissing
+          }
         >
           <FaSave className="icon" />
           {isLoading ? "Loading prices..." : "Add to Cart"}

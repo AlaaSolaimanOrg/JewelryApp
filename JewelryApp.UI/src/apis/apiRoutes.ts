@@ -7,6 +7,7 @@ export const apiRoutes = {
   pricingSettings: {
     getGlobalPricingSettings: "PricingSettings/GetGlobalPricingSettings",
     getPricingSettings: "PricingSettings/GetPricingSettings",
+    getPosPricingSettings: "PricingSettings/GetPosPricingSettings",
     editPricingSettings: "PricingSettings/EditPricingSettings",
   },
   product: {

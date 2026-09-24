@@ -16,6 +16,14 @@ export const getPricingSettings = async () => {
     {}
   );
 };
+// POS-role accessible variant — price per gram only, no stock-on-hand weight.
+export const getPosPricingSettings = async () => {
+  return requestApi(
+    "GET",
+    apiRoutes.pricingSettings.getPosPricingSettings,
+    {}
+  );
+};
 export const editPricingSettings = async (payload: {
   pricingSettings: {
     productType: ProductType;
