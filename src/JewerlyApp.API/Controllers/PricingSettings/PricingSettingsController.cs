@@ -49,7 +49,6 @@ namespace JewerlyApp.API.Controllers.PricingSettings
         /// users are not allowed to see that.
         /// </summary>
         [HttpGet]
-        [Authorize(Roles = "PosRole")]
         public async Task<IActionResult> GetPosPricingSettings([FromQuery] GetPosPricingSettingsQuery query)
         {
             var response = await Mediator.Send(query);

@@ -17,6 +17,7 @@ import {
   generateSKU,
   getProductById,
 } from "../../../apis/products.api";
+import { getPosPricingSettings } from "../../../apis/pricingSettings.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
 import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
@@ -111,6 +112,12 @@ const AddEditProduct = ({ isEdit }) => {
     data: any;
     setData: any;
     fetchData: () => void;
+  };
+
+  const { data: pricingSettings } = useLocalApi({
+    apiToCall: () => getPosPricingSettings(),
+  }) as {
+    data: { karatType: KaratType; productType: ProductType; pricePerGram: number }[];
   };
 
   const { data: product } = useLocalApi({
@@ -253,6 +260,16 @@ const AddEditProduct = ({ isEdit }) => {
   const showSizeField = categoriesRequiringSize.includes(
     Number(productFields.category),
   );
+
+  const matchedPricingSetting = pricingSettings?.find(
+    (item) =>
+      Number(item.karatType) === Number(productFields.karat) &&
+      Number(item.productType) === Number(productFields.productType),
+  );
+
+  const productPrice =
+    (matchedPricingSetting?.pricePerGram ?? 0) *
+    (Number(productFields.weight) || 0);
 
   return (
     <div id="add-product-page" className="page">
@@ -550,7 +567,7 @@ const AddEditProduct = ({ isEdit }) => {
             weight: productFields.weight,
             karatType: productFields.karat,
             specification: productFields.specification,
-            price: 333,
+            price: productPrice,
           } as any
         }
       />
