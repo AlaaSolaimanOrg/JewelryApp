@@ -14,6 +14,7 @@ import {
   exportProductsToExcel,
   getInventorySummary,
   getProducts,
+  getProductsBySkus,
   meltProduct,
   upsertProductSpecialPricing,
 } from "../../../apis/products.api";
@@ -83,6 +84,10 @@ const Inventory = () => {
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [selectedProductForPrinting, setSelectedProductForPrinting] =
     useState<Product | null>(null);
+  const [productsForBulkPrinting, setProductsForBulkPrinting] = useState<
+    Product[]
+  >([]);
+  const [isLoadingBulkPrint, setIsLoadingBulkPrint] = useState(false);
   const [showMeltModal, setShowMeltModal] = useState(false);
   const [selectedProductForMelt, setSelectedProductForMelt] =
     useState<Product | null>(null);
@@ -244,10 +249,25 @@ const Inventory = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  const handleBulkPrint = () => {
-    const n = selectedSkus.size;
-    showSuccess(`${n} tag${n !== 1 ? "s" : ""} sent to printer`);
-    clearSelection();
+  const handleBulkPrint = async () => {
+    if (!selectedSkus.size) return;
+
+    setIsLoadingBulkPrint(true);
+    try {
+      const response = await getProductsBySkus({
+        skus: Array.from(selectedSkus),
+      });
+
+      if (response && checkRequestSucceeded(response.statusCode)) {
+        setProductsForBulkPrinting(response.data ?? []);
+        setShowTagPrintingModal(true);
+      } else {
+        showError(response?.message ?? "Failed to load selected products.");
+      }
+    } catch (err: any) {
+      showError(err?.message ?? "Failed to load selected products.");
+    }
+    setIsLoadingBulkPrint(false);
   };
 
   const headers = buildInventoryHeaders(
@@ -312,8 +332,12 @@ const Inventory = () => {
             selected
           </span>
           <div className="bulk-actions">
-            <button className="btn-md btn-gold" onClick={handleBulkPrint}>
-              <FaPrint /> Print tags
+            <button
+              className="btn-md btn-gold"
+              onClick={handleBulkPrint}
+              disabled={isLoadingBulkPrint}
+            >
+              <FaPrint /> {isLoadingBulkPrint ? "Loading..." : "Print tags"}
             </button>
             <button
               className="btn-md btn-outline"
@@ -406,8 +430,11 @@ const Inventory = () => {
         onClose={() => {
           setShowTagPrintingModal(false);
           setSelectedProductForPrinting(null);
+          if (productsForBulkPrinting.length) clearSelection();
+          setProductsForBulkPrinting([]);
         }}
         product={selectedProductForPrinting}
+        products={productsForBulkPrinting}
       />
       <MeltModal
         show={showMeltModal}

@@ -185,6 +185,24 @@
     }
   }
 
+  .bulk-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 120px;
+    overflow-y: auto;
+
+    .bulk-sku-chip {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 11px;
+      color: var(--admin-t1);
+      background: var(--admin-bg4);
+      border: 1px solid var(--admin-bd2);
+      border-radius: 999px;
+      padding: 3px 9px;
+    }
+  }
+
   .svc-link {
     background: none;
     border: none;
