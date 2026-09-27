@@ -10,12 +10,4 @@ export interface LiraOunceDropdownProps {
   onProductSelected: (product: Product) => void;
 }
 
-export interface BullionGroupProps {
-  title: string;
-  subtitle: string;
-  icon: React.ReactNode;
-  items: Product[];
-  isLoading: boolean;
-  selectedIds: (string | null)[];
-  onSelect: (product: Product) => void;
-}
+export type BullionCategory = keyof BullionProducts;
