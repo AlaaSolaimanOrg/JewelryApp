@@ -257,7 +257,10 @@ const UsedGold = () => {
         <div className="page-actions">
           <button
             className="btn-md btn-green"
-            onClick={() => setShowStockModal(true)}
+            onClick={() =>
+              totalOnHand > 0 ? setShowStockModal(true) : undefined
+            }
+            disabled={totalOnHand <= 0}
           >
             <FaBoxOpen /> Return to stock
           </button>
