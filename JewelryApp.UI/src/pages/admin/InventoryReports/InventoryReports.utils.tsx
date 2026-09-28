@@ -29,6 +29,26 @@ export const fmtNumber = (value: number): string =>
 export const computeBarPercent = (value: number, max: number): number =>
   max > 0 ? Math.max(1, Math.round((value / max) * 100)) : 1;
 
+export const largestRemainderRound = (values: number[], total = 100): number[] => {
+  const sum = values.reduce((a, b) => a + b, 0);
+  if (sum <= 0) return values.map(() => 0);
+
+  const raw = values.map((v) => (v / sum) * total);
+  const floors = raw.map((v) => Math.floor(v));
+  const remainders = raw.map((v, i) => v - floors[i]);
+
+  const remaining = total - floors.reduce((a, b) => a + b, 0);
+  const order = remainders
+    .map((_, i) => i)
+    .sort((a, b) => remainders[b] - remainders[a]);
+
+  const result = [...floors];
+  for (let i = 0; i < remaining; i++) {
+    result[order[i]] += 1;
+  }
+  return result;
+};
+
 const fmtDateTime = (d: Date) => dateFormat(d, "yyyy-mm-dd HH:MM:ss");
 
 export const getPeriodRange = (period: Exclude<Period, "custom">): DateRange => {

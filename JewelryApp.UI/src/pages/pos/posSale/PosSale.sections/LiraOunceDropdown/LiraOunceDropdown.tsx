@@ -1,93 +1,22 @@
-import { useRef, useState } from "react";
-import {
-  FaBoxOpen,
-  FaChevronDown,
-  FaChevronUp,
-  FaCoins,
-} from "react-icons/fa";
+import { useState } from "react";
+import { Dropdown } from "react-bootstrap";
+import { FaChevronLeft } from "react-icons/fa";
 import { GiGoldBar } from "react-icons/gi";
 import { getBullionProducts } from "../../../../../apis/products.api";
 import { showError } from "../../../../../utils";
 import type {
-  BullionGroupProps,
+  BullionCategory,
   BullionProducts,
   LiraOunceDropdownProps,
 } from "./LiraOunceDropdown.type";
 import "./liraOunceDropdown.scss";
-
-const BullionGroup: React.FC<BullionGroupProps> = ({
-  title,
-  subtitle,
-  icon,
-  items,
-  isLoading,
-  selectedIds,
-  onSelect,
-}) => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  return (
-    <div className="lo-group">
-      <div className="lo-group-head" onClick={() => setCollapsed((c) => !c)}>
-        <div className="lo-group-icon">{icon}</div>
-        <div className="lo-group-text">
-          <div className="lo-group-title">{title}</div>
-          <div className="lo-group-sub">{subtitle}</div>
-        </div>
-        <span className="lo-group-count">
-          {items.length} item{items.length !== 1 ? "s" : ""}
-        </span>
-        {collapsed ? <FaChevronDown /> : <FaChevronUp />}
-      </div>
-
-      {!collapsed && (
-        <div className="lo-grid">
-          {items.length === 0 && (
-            <div className="lo-empty">
-              {isLoading ? "Loading..." : "No items in stock"}
-            </div>
-          )}
-          {items.map((product) => {
-            const image = product.images?.[0]?.imageUrl;
-            return (
-              <button
-                key={product.id}
-                type="button"
-                className={`lo-card${
-                  selectedIds.includes(product.id) ? " selected" : ""
-                }`}
-                onClick={() => onSelect(product)}
-              >
-                <div className="lo-card-img">
-                  {image ? (
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}${image}`}
-                      alt={product.name}
-                    />
-                  ) : (
-                    <GiGoldBar />
-                  )}
-                </div>
-                <div className="lo-card-name">{product.name || product.sku}</div>
-                <div className="lo-card-stock">
-                  <FaBoxOpen /> In stock: {product.quantity}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
 
 const LiraOunceDropdown: React.FC<LiraOunceDropdownProps> = ({
   selectedIds,
   onProductSelected,
 }) => {
   const [open, setOpen] = useState(false);
-  const [panelTop, setPanelTop] = useState(64);
-  const toggleRef = useRef<HTMLButtonElement>(null);
+  const [category, setCategory] = useState<BullionCategory | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [bullion, setBullion] = useState<BullionProducts>({
     liras: [],
@@ -110,57 +39,83 @@ const LiraOunceDropdown: React.FC<LiraOunceDropdownProps> = ({
     }
   };
 
-  const toggle = () => {
-    if (!open) {
-      const rect = toggleRef.current?.getBoundingClientRect();
-      setPanelTop((rect?.bottom ?? 64) + 8);
+  const handleToggle = (nextShow: boolean) => {
+    setOpen(nextShow);
+    if (nextShow) {
+      setCategory(null);
       loadProducts();
     }
-    setOpen(!open);
   };
 
-  const handleSelect = (product: BullionGroupProps["items"][number]) => {
+  const handleSelectProduct = (product: BullionProducts["liras"][number]) => {
     onProductSelected(product);
     setOpen(false);
   };
 
-  return (
-    <div className="lira-ounce-dropdown">
-      <button
-        ref={toggleRef}
-        type="button"
-        className="ps-btn ps-btn-gold lo-toggle"
-        onClick={toggle}
-      >
-        <GiGoldBar size={20} /> Bullions {open ? <FaChevronUp /> : <FaChevronDown />}
-      </button>
+  const items = category ? bullion[category] : [];
 
-      {open && (
-        <>
-          <div className="lo-backdrop" onClick={() => setOpen(false)} />
-          <div className="lo-panel" style={{ top: panelTop }}>
-            <BullionGroup
-              title="Liras"
-              subtitle="Gold coins in Lebanese Lira"
-              icon={<FaCoins />}
-              items={bullion.liras}
-              isLoading={isLoading}
-              selectedIds={selectedIds}
-              onSelect={handleSelect}
-            />
-            <BullionGroup
-              title="Ounces"
-              subtitle="Gold bars in ounces"
-              icon={<GiGoldBar />}
-              items={bullion.ounces}
-              isLoading={isLoading}
-              selectedIds={selectedIds}
-              onSelect={handleSelect}
-            />
-          </div>
-        </>
-      )}
-    </div>
+  return (
+    <Dropdown
+      className="lira-ounce-dropdown"
+      show={open}
+      onToggle={handleToggle}
+    >
+      <Dropdown.Toggle as="button" className="ps-btn ps-btn-gold">
+        <GiGoldBar /> Bullions
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu className="lo-menu">
+        {!category && (
+          <>
+            <button
+              type="button"
+              className="dropdown-item"
+              onClick={() => setCategory("liras")}
+            >
+              Liras
+            </button>
+            <button
+              type="button"
+              className="dropdown-item"
+              onClick={() => setCategory("ounces")}
+            >
+              Ounces
+            </button>
+          </>
+        )}
+
+        {category && (
+          <>
+            <button
+              type="button"
+              className="dropdown-item lo-back"
+              onClick={() => setCategory(null)}
+            >
+              <FaChevronLeft /> Back
+            </button>
+            <Dropdown.Divider />
+
+            {items.length === 0 && (
+              <div className="lo-empty">
+                {isLoading ? "Loading..." : "No items in stock"}
+              </div>
+            )}
+            {items.map((product) => (
+              <button
+                key={product.id}
+                type="button"
+                className={`dropdown-item${
+                  selectedIds.includes(product.id) ? " active" : ""
+                }`}
+                onClick={() => handleSelectProduct(product)}
+              >
+                {product.name || product.sku}
+              </button>
+            ))}
+          </>
+        )}
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 

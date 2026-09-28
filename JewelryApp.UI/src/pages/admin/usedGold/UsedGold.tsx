@@ -240,7 +240,7 @@ const UsedGold = () => {
     const response = await returnToStock(payload);
     if (checkRequestSucceeded(response?.statusCode)) {
       setShowStockModal(false);
-      showSuccess(`${weight.toFixed(2)}g ${karat}K added to inventory (${response?.data})`);
+      showSuccess(response?.message || `${weight.toFixed(2)}g ${karat}K returned to stock`);
       refresh();
     } else {
       showError(response?.message || "Failed to return gold to stock");

@@ -32,7 +32,9 @@ export const getDescription = (row: CashTransactionRow) => {
     case CashTransactionType.TransferIncome:
       return {
         title: `Transfer income — ${row.customerName}`,
-        sub: row.destination ? `To ${row.destination}` : row.notes || "",
+        sub:
+          (row.destination ? `Transfer to ${row.destination}` : "Transfer") +
+          (row.notes ? ` — ${row.notes}` : ""),
       };
     case CashTransactionType.MoveMoneyOut:
       return {

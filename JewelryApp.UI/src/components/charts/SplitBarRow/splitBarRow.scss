@@ -1,14 +1,18 @@
 .splitBarRow {
   font-family: var(--admin-font);
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
 
   .sbr-label {
     font-size: 12px;
     color: var(--admin-t3);
-    width: 48px;
-    flex-shrink: 0;
+  }
+
+  .sbr-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .sbr-track {

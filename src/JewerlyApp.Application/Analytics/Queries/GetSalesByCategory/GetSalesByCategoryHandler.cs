@@ -69,12 +69,24 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
 
             var totalRevenue = categorySales.Sum(x => x.Revenue);
 
-            var result = categorySales
-                .Select(x => new SalesByCategoryVM
+            var withRawPercentage = categorySales
+                .Select(x => new
+                {
+                    x.Category,
+                    x.Revenue,
+                    RawPercentage = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                })
+                .ToList();
+
+            var percentageByCategory = ApplyLargestRemainderRounding(
+                withRawPercentage.Select(x => x.RawPercentage).ToList());
+
+            var result = withRawPercentage
+                .Select((x, i) => new SalesByCategoryVM
                 {
                     CategoryName = x.Category.ToString()!,
                     Revenue = x.Revenue,
-                    Percentage = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                    Percentage = percentageByCategory[i]
                 })
                 .OrderByDescending(x => x.Revenue)
                 .ToList();
@@ -85,6 +97,26 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
                 StatusCode = Domain.Enums.ResponseStatusCode.Success,
                 Message = Messages.Success
             };
+        }
+
+        private static List<decimal> ApplyLargestRemainderRounding(List<decimal> rawPercentages)
+        {
+            var floors = rawPercentages.Select(p => Math.Floor(p)).ToList();
+            var remainders = rawPercentages.Select((p, i) => p - floors[i]).ToList();
+
+            var pointsToDistribute = (int)(100 - floors.Sum());
+
+            var order = Enumerable.Range(0, rawPercentages.Count)
+                .OrderByDescending(i => remainders[i])
+                .ToList();
+
+            var rounded = new List<decimal>(floors);
+            for (int i = 0; i < pointsToDistribute && i < order.Count; i++)
+            {
+                rounded[order[i]] += 1;
+            }
+
+            return rounded;
         }
     }
 }

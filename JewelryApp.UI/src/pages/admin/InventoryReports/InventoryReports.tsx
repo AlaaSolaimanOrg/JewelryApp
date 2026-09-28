@@ -34,6 +34,7 @@ import {
   formatRangeLabel,
   getCustomRange,
   getPeriodRange,
+  largestRemainderRound,
 } from "./InventoryReports.utils";
 import "./inventoryReports.scss";
 
@@ -120,8 +121,8 @@ const InventoryReports = () => {
   }) as { data: StapleSold[] };
 
   const maxPurityGrams = Math.max(...stockByPurity.map((p) => p.grams), 1);
-  const totalCategoryValue = stockByCategory.reduce((s, c) => s + c.value, 0);
   const maxCategoryValue = Math.max(...stockByCategory.map((c) => c.value), 1);
+  const categoryPercentages = largestRemainderRound(stockByCategory.map((c) => c.value));
 
   const agingBuckets = inventoryAging.agingBuckets ?? [];
 
@@ -217,13 +218,13 @@ const InventoryReports = () => {
             <span className="panel-sub">share of value</span>
           </div>
           {stockByCategory.length > 0 ? (
-            stockByCategory.map((c) => (
+            stockByCategory.map((c, i) => (
               <HorizontalBarRow
                 key={c.categoryName}
                 label={c.categoryName}
                 percent={computeBarPercent(c.value, maxCategoryValue)}
                 color="var(--admin-blue)"
-                amountLabel={`${fmtCurrency(c.value)} · ${totalCategoryValue > 0 ? Math.round((c.value / totalCategoryValue) * 100) : 0}%`}
+                amountLabel={`${fmtCurrency(c.value)} · ${categoryPercentages[i]}%`}
               />
             ))
           ) : (
