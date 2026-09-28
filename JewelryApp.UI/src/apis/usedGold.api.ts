@@ -48,9 +48,6 @@ export const returnToStock = async (payload: {
   karat: number;
   weight: number;
   notes?: string;
-  name: string;
-  category: number;
-  description?: string;
 }) => {
   return requestApi("POST", apiRoutes.usedGold.returnToStock, payload);
 };

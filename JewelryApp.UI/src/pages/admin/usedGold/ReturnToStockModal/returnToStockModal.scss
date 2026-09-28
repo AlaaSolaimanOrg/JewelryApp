@@ -83,21 +83,6 @@
     margin: -8px 0 14px 2px;
   }
 
-  .fg-row {
-    display: flex;
-    gap: 12px;
-
-    .fg2 {
-      flex: 1;
-      min-width: 0;
-    }
-
-    @media (max-width: 520px) {
-      flex-direction: column;
-      gap: 0;
-    }
-  }
-
   .fg2 {
     margin-bottom: 14px;
 

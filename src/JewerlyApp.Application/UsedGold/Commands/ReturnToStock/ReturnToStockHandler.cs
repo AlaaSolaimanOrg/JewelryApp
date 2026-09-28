@@ -17,12 +17,10 @@ namespace JewerlyApp.Application.UsedGold.Commands.ReturnToStock
         private const decimal WeightTolerance = 0.01m;
 
         private readonly IApplicationDbContext _context;
-        private readonly ISkuService _skuService;
 
-        public ReturnToStockHandler(IApplicationDbContext context, ISkuService skuService)
+        public ReturnToStockHandler(IApplicationDbContext context)
         {
             _context = context;
-            _skuService = skuService;
         }
 
         public async Task<GenericResponse<string>> Handle(ReturnToStockCommand request, CancellationToken cancellationToken)
@@ -32,15 +30,6 @@ namespace JewerlyApp.Application.UsedGold.Commands.ReturnToStock
 
             if (request.Weight <= 0)
                 return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_StockReturn_InvalidWeight);
-
-            if (!Enum.IsDefined(typeof(KaratType), request.Karat))
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_StockReturn_UnsupportedKarat);
-
-            if (string.IsNullOrWhiteSpace(request.Name))
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_StockReturn_NameRequired);
-
-            if (!Enum.IsDefined(typeof(ProductCategory), request.Category))
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_StockReturn_InvalidCategory);
 
             var pools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken);
 
@@ -61,24 +50,10 @@ namespace JewerlyApp.Application.UsedGold.Commands.ReturnToStock
                 Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
             };
 
-            var product = new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = request.Name.Trim(),
-                Sku = await _skuService.GenerateSkuAsync(request.Category),
-                KaratType = (KaratType)request.Karat,
-                Weight = weight,
-                Category = request.Category,
-                Type = ProductType.Gold,
-                Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
-                Quantity = 1,
-            };
-
-            _context.Products.Add(product);
             _context.UsedGoldStockReturns.Add(stockReturn);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return GenericResponse<string>.Created(product.Sku, Messages.Success_UsedGold_StockReturn_Created);
+            return GenericResponse<string>.Created(stockReturn.SerialNumber, Messages.Success_UsedGold_StockReturn_Created);
         }
 
         private async Task<string> GenerateSerialNumber()
