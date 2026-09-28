@@ -111,6 +111,10 @@
         outline: none;
         border-color: var(--admin-gold);
       }
+
+      .jewleryApp[data-theme="light"] & {
+        color-scheme: light;
+      }
     }
   }
 
