@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Form } from "react-bootstrap";
 import {
   FaFire,
   FaList,
@@ -152,30 +153,42 @@ const MeltedProducts = () => {
 
         <div className="page-actions">
           <div className="date-filters">
-            <input
-              type="date"
-              value={dateRange.dateFrom ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateFrom: e.target.value || null,
-                }))
-              }
-            />
-            <input
-              type="date"
-              value={dateRange.dateTo ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateTo: e.target.value || null,
-                }))
-              }
-            />
+            <Form.Group className="date-field">
+              <Form.Label>From</Form.Label>
+              <Form.Control
+                type="date"
+                value={dateRange.dateFrom ?? ""}
+                max={dateRange.dateTo ?? undefined}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    dateFrom: e.target.value || null,
+                  }))
+                }
+              />
+            </Form.Group>
+            <Form.Group className="date-field">
+              <Form.Label>To</Form.Label>
+              <Form.Control
+                type="date"
+                value={dateRange.dateTo ?? ""}
+                min={dateRange.dateFrom ?? undefined}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    dateTo: e.target.value || null,
+                  }))
+                }
+              />
+            </Form.Group>
             <button
               className="btn-md btn-gold"
               onClick={handleApply}
-              disabled={!dateRange.dateFrom || !dateRange.dateTo}
+              disabled={
+                !dateRange.dateFrom ||
+                !dateRange.dateTo ||
+                dateRange.dateFrom > dateRange.dateTo
+              }
             >
               Apply
             </button>
