@@ -239,8 +239,15 @@
     border: 1px solid var(--admin-bd2);
     background: var(--admin-bg4);
     color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
     width: 240px;
     -webkit-appearance: none;
+
+    &::placeholder {
+      color: var(--admin-t3);
+      -webkit-text-fill-color: var(--admin-t3);
+      opacity: 1;
+    }
 
     &:focus {
       outline: none;
