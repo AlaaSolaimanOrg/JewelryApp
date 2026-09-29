@@ -24,8 +24,9 @@ namespace JewerlyApp.Application.Customers.Commands.CreateCustomer
         {
             var existingCustomer = await _context.Customers
                   .FirstOrDefaultAsync(c =>
-        (!string.IsNullOrEmpty(request.Email) && c.Email == request.Email) ||
-        (!string.IsNullOrEmpty(request.PhoneNumber) && c.PhoneNumber == request.PhoneNumber),
+        c.IsActive &&
+        ((!string.IsNullOrEmpty(request.Email) && c.Email == request.Email) ||
+         (!string.IsNullOrEmpty(request.PhoneNumber) && c.PhoneNumber == request.PhoneNumber)),
         cancellationToken);
             if (existingCustomer != null)
             {
