@@ -3,6 +3,7 @@ import type { TableHeader } from "../../../components/tables/CustomTable/CustomT
 import { SortDirection } from "../../../types/enums";
 import type { SortCriteria } from "../../../types/general";
 import { handleSort } from "../../../utils";
+import { ADMIN_ROLE } from "../addStaff/AddEditStaff.utils";
 
 export interface User {
   id: number;
@@ -93,15 +94,31 @@ export type StaffRowActions = {
   onEdit: (userId: number) => void;
   onDelete: (user: User) => void;
   canDelete?: boolean;
+  canEditAdmins?: boolean;
   currentUserId?: number;
+};
+
+const getStatusTooltip = (isSelf: boolean, canToggle: boolean) => {
+  if (isSelf) return "You can't deactivate your own account";
+  if (!canToggle) return "Only an Admin can change account status";
+  return "Click to toggle";
 };
 
 export const buildStaffTableData = (
   users: User[],
-  { onToggleStatus, onEdit, onDelete, canDelete, currentUserId }: StaffRowActions,
+  {
+    onToggleStatus,
+    onEdit,
+    onDelete,
+    canDelete,
+    canEditAdmins,
+    currentUserId,
+  }: StaffRowActions,
 ) =>
   users?.map((user) => {
     const isSelf = user.id === currentUserId;
+    const canToggleStatus = !!canDelete && !isSelf;
+    const canEdit = !!canEditAdmins || !user.roles?.includes(ADMIN_ROLE);
 
     return {
       rowClassName: user.isActive ? "" : "inactive-row",
@@ -132,9 +149,9 @@ export const buildStaffTableData = (
       createdAt: new Date(user.createdAt).toLocaleDateString(),
       status: (
         <span
-          className={`status-pill ${user.isActive ? "st-active" : "st-inactive"} ${isSelf ? "disabled" : ""}`}
-          onClick={() => !isSelf && onToggleStatus(user)}
-          title={isSelf ? "You can't deactivate your own account" : "Click to toggle"}
+          className={`status-pill ${user.isActive ? "st-active" : "st-inactive"} ${canToggleStatus ? "" : "disabled"}`}
+          onClick={() => canToggleStatus && onToggleStatus(user)}
+          title={getStatusTooltip(isSelf, !!canDelete)}
         >
           {user.isActive ? "Active" : "Inactive"}
         </span>
@@ -143,8 +160,9 @@ export const buildStaffTableData = (
         <>
           <button
             className="act-ico act-edit"
-            data-tip="Edit"
+            data-tip={canEdit ? "Edit" : "Only an Admin can edit an Admin account"}
             onClick={() => onEdit(user.id)}
+            disabled={!canEdit}
           >
             <FaEdit size={14} />
           </button>

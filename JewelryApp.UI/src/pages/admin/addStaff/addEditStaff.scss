@@ -96,6 +96,16 @@
       border-color 0.25s;
   }
 
+  .readonly-notice {
+    margin-bottom: 16px;
+    padding: 10px 13px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t2);
+    font-size: 13px;
+  }
+
   /* =============================
      FORM GRID
   ============================== */

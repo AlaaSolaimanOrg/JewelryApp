@@ -12,7 +12,11 @@ import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScre
 import { useAuth } from "../../../context/AuthContext";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
-import { formatPhoneDisplay } from "./AddEditStaff.utils";
+import {
+  ADMIN_ROLE,
+  RESTRICTED_ROLES,
+  formatPhoneDisplay,
+} from "./AddEditStaff.utils";
 import "./addEditStaff.scss";
 
 const staffFieldsInitialState = {
@@ -28,7 +32,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const { userInfo } = useAuth();
-  const isAdmin = userInfo?.roles?.includes("Admin");
+  const isAdmin = userInfo?.roles?.includes(ADMIN_ROLE);
   const isEditingSelf = isEdit && String(userInfo?.id) === userId;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +57,10 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
   const allRoles = isAdmin
     ? allRolesFromApi
-    : allRolesFromApi.filter((role) => role !== "StaffManager");
+    : allRolesFromApi.filter((role) => !RESTRICTED_ROLES.includes(role));
+
+  const isReadOnly =
+    isEdit && !isAdmin && !!staff?.roles?.includes(ADMIN_ROLE);
 
   useEffect(() => {
     if (isEdit && staff) {
@@ -120,6 +127,8 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   const validateFields = () => {
+    if (isReadOnly) return false;
+
     if (!staffFields.fullName?.trim()) return false;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -190,7 +199,11 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
           {isEdit ? <span>Edit staff member</span> : <span>Add new staff</span>}
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-outline" onClick={handleClear}>
+          <button
+            className="btn-md btn-outline"
+            disabled={isReadOnly}
+            onClick={handleClear}
+          >
             <FaTimes className="icon" /> Clear
           </button>
           <button
@@ -210,6 +223,11 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       </div>
 
       <div className="panel">
+        {isReadOnly && (
+          <div className="readonly-notice">
+            This is an Admin account. Only an Admin can edit it.
+          </div>
+        )}
         <form id="staff-form" className="form-grid">
           <div className="fg">
             <label>
@@ -219,6 +237,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
               type="text"
               value={staffFields.fullName}
               maxLength={50}
+              disabled={isReadOnly}
               onChange={(e) => handleFieldChange("fullName", e.target.value)}
               placeholder="Enter full name"
               required
@@ -240,6 +259,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
               type="email"
               value={staffFields.email}
               maxLength={100}
+              disabled={isReadOnly}
               onChange={(e) =>
                 handleFieldChange(
                   "email",
@@ -263,6 +283,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
               inputMode="tel"
               value={formatPhoneDisplay(staffFields.phoneNumber)}
               maxLength={12}
+              disabled={isReadOnly}
               onChange={(e) =>
                 handleFieldChange(
                   "phoneNumber",
@@ -337,7 +358,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                         type="checkbox"
                         value={role}
                         checked={on}
-                        disabled={isEditingSelf}
+                        disabled={isEditingSelf || isReadOnly}
                         onChange={() => toggleRole(role)}
                       />
                       <span className="rc-box">
@@ -363,7 +384,7 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                 <input
                   type="checkbox"
                   checked={staffFields.isActive}
-                  disabled={isEditingSelf}
+                  disabled={isEditingSelf || isReadOnly}
                   onChange={(e) =>
                     handleFieldChange("isActive", e.target.checked)
                   }
