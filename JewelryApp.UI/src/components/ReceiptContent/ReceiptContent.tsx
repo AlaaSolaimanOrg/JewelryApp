@@ -84,9 +84,6 @@ const ReceiptContent = ({
     (it) => (it.quantityReturned ?? 0) > 0 || (it.amountReturned ?? 0) > 0,
   );
 
-  const hasExchangeItems = (saleDetails.exchangeReturnedItems?.length ?? 0) > 0;
-  const hasTradeInItems = (saleDetails.tradeInItems?.length ?? 0) > 0;
-
   const containerClass = [
     "receipt-container",
     showThermalPrint && "thermal-print",
@@ -221,52 +218,6 @@ const ReceiptContent = ({
           </tbody>
         </table>
       </div>
-
-      {hasExchangeItems && (
-        <div className="exchange-returned">
-          <h4>Items Returned in Exchange</h4>
-          {saleDetails.exchangeReturnedItems?.map((item) => (
-            <div className="exchange-returned-row" key={item.id}>
-              <div className="exchange-returned-info">
-                <div className="exchange-returned-name">
-                  {item.productName}
-                  {item.quantityReturned > 1 ? ` (×${item.quantityReturned})` : ""}
-                </div>
-                <div className="exchange-returned-meta">
-                  {item.sku ? `${item.sku} · ` : ""}
-                  {item.karat}K · {item.weight}g · {item.originalSaleSerialNumber}
-                </div>
-              </div>
-              {!isGiftReceipt && (
-                <span className="exchange-returned-amount">
-                  −${item.amountReturned.toFixed(2)}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {hasTradeInItems && (
-        <div className="exchange-returned">
-          <h4>Trade-in Gold</h4>
-          {saleDetails.tradeInItems?.map((item, index) => (
-            <div className="exchange-returned-row" key={index}>
-              <div className="exchange-returned-info">
-                <div className="exchange-returned-name">{item.karat}K gold</div>
-                <div className="exchange-returned-meta">
-                  {item.weight}g × ${item.pricePerGram}/g
-                </div>
-              </div>
-              {!isGiftReceipt && (
-                <span className="exchange-returned-amount">
-                  −${item.subtotal.toFixed(2)}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
 
       {(saleDetails.discount ?? 0) > 0 && !isGiftReceipt && (
         <div className="receipt-discount">
