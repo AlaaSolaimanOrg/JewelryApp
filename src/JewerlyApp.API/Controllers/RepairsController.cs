@@ -13,11 +13,13 @@ using JewerlyApp.Application.Repairs.Queries.GetRepairsByCustomer;
 using JewerlyApp.Application.Repairs.Queries.GetRepairsRevenueChart;
 using JewerlyApp.Application.Repairs.Queries.GetRepairsStats;
 using JewerlyApp.Application.Repairs.Queries.GetRepeatCustomers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Admin,PosRole,TerminalRole")]
     public class RepairsController : MainController
     {
         [HttpPost]

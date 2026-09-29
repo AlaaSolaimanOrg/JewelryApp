@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.API.Controllers.Returns
 {
-    //[Authorize]
+    [Authorize(Roles = "Admin,PosRole,TerminalRole")]
     public class ReturnsController : MainController
     {
         /// <summary>
