@@ -26,6 +26,7 @@ import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
   copyToClipboard,
+  hasMaxDecimals,
   isPositiveInteger,
   showError,
   showSuccess,
@@ -402,15 +403,15 @@ const AddEditProduct = ({ isEdit }) => {
             <input
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
-              step="0.1"
-              placeholder="0.0"
+              step="0.01"
+              placeholder="0.00"
               value={productFields.weight}
               onKeyDown={preventSignOnKeyDown}
               min={0}
               onChange={(e) => {
                 const inputValue = e.target.value;
 
-                if (inputValue.length <= 12) {
+                if (inputValue.length <= 12 && hasMaxDecimals(inputValue, 2)) {
                   handleProductField("weight", inputValue);
                 }
               }}

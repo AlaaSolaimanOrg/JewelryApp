@@ -7,6 +7,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
+  hasMaxDecimals,
   isPositiveInteger,
   showError,
 } from "../../../utils";
@@ -209,14 +210,17 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 <input
                   type="number"
                   onWheel={(e) => e.currentTarget.blur()}
-                  step="0.1"
+                  step="0.01"
                   className="form-control"
-                  placeholder="0.0"
+                  placeholder="0.00"
                   value={fields.weight}
                   onKeyDown={preventSignOnKeyDown}
                   min={0}
                   onChange={(e) => {
-                    if (e.target.value.length <= 12)
+                    if (
+                      e.target.value.length <= 12 &&
+                      hasMaxDecimals(e.target.value, 2)
+                    )
                       handleField("weight", e.target.value);
                   }}
                 />

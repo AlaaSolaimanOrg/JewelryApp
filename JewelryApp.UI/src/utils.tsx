@@ -157,6 +157,9 @@ export const trimLeadingZeros = (value: number | string) => {
   return Number(String(value).replace(/^0+(?=\d)/, ""));
 };
 
+export const hasMaxDecimals = (value: string, maxDecimals: number): boolean =>
+  new RegExp(`^\\d*\\.?\\d{0,${maxDecimals}}$`).test(value);
+
 export const isPositiveInteger = (value: string | number): boolean => {
   if (typeof value === "number") {
     return Number.isInteger(value) && value > 0;
