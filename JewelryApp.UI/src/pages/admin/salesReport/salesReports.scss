@@ -105,37 +105,6 @@
     white-space: nowrap;
   }
 
-  .expand-btn {
-    font-family: var(--admin-font);
-    font-size: 13px;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    line-height: 1;
-    flex-shrink: 0;
-    border-radius: 8px;
-    border: 1px solid var(--admin-bd2);
-    background: transparent;
-    color: var(--admin-t3);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    &:hover {
-      color: var(--admin-t1);
-    }
-
-    &:active {
-      background: var(--admin-bg4);
-    }
-  }
-
   .no-data {
     height: 160px;
     display: flex;

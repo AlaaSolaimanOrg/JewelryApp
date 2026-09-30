@@ -9,6 +9,7 @@ import {
   getStockByCategory,
   getStockByPurity,
 } from "../../../apis/inventoryReports.api";
+import ChartPanel from "../../../components/ChartPanel/ChartPanel";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
@@ -213,11 +214,7 @@ const InventoryReports = () => {
       </div>
 
       <div className="grid2">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Stock by purity</span>
-            <span className="panel-sub">weight · value · items</span>
-          </div>
+        <ChartPanel title="Stock by purity" subtitle="weight · value · items">
           {stockByPurity.length > 0 ? (
             stockByPurity.map((p) => (
               <HorizontalBarRow
@@ -231,12 +228,8 @@ const InventoryReports = () => {
           ) : (
             <div className="no-data">No data available</div>
           )}
-        </div>
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Stock by category</span>
-            <span className="panel-sub">share of value</span>
-          </div>
+        </ChartPanel>
+        <ChartPanel title="Stock by category" subtitle="share of value">
           {stockByCategory.length > 0 ? (
             stockByCategory.map((c, i) => (
               <HorizontalBarRow
@@ -250,7 +243,7 @@ const InventoryReports = () => {
           ) : (
             <div className="no-data">No data available</div>
           )}
-        </div>
+        </ChartPanel>
       </div>
 
       <div className="panel">
@@ -356,11 +349,7 @@ const InventoryReports = () => {
       </div>
 
       <div className="grid2">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Items added by purity</span>
-            <span className="panel-sub">{fmtNumber(totalAdded)} items</span>
-          </div>
+        <ChartPanel title="Items added by purity" subtitle={`${fmtNumber(totalAdded)} items`} modalSubtitle={periodLabel}>
           {addedByPurity.length > 0 ? (
             addedByPurity.map((x) => (
               <HorizontalBarRow
@@ -374,12 +363,8 @@ const InventoryReports = () => {
           ) : (
             <div className="no-data">No data available</div>
           )}
-        </div>
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Items returned by purity</span>
-            <span className="panel-sub">{fmtNumber(totalReturned)} items</span>
-          </div>
+        </ChartPanel>
+        <ChartPanel title="Items returned by purity" subtitle={`${fmtNumber(totalReturned)} items`} modalSubtitle={periodLabel}>
           {returnedByPurity.length > 0 ? (
             returnedByPurity.map((x) => (
               <HorizontalBarRow
@@ -393,7 +378,7 @@ const InventoryReports = () => {
           ) : (
             <div className="no-data">No data available</div>
           )}
-        </div>
+        </ChartPanel>
       </div>
     </div>
   );

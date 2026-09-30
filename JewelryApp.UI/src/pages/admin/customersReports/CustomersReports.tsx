@@ -9,6 +9,7 @@ import {
   getTopCustomersReport,
 } from "../../../apis/customersReports.api";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import ChartPanel from "../../../components/ChartPanel/ChartPanel";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
 import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
 import TierBarRow from "../../../components/charts/TierBarRow/TierBarRow";
@@ -329,13 +330,10 @@ const CustomersReports = () => {
       </div>
 
       <div className="two-col">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">New customers over time</span>
-            <span className="panel-sub">
-              {(activity.newCustomers ?? 0).toLocaleString()} new — {periodLabel.toLowerCase()}
-            </span>
-          </div>
+        <ChartPanel
+          title="New customers over time"
+          subtitle={`${(activity.newCustomers ?? 0).toLocaleString()} new — ${periodLabel.toLowerCase()}`}
+        >
           <div className="chart-container">
             {chartData.length > 0 ? (
               <RevenueBarChart data={chartData} formatValue={(v) => `${v}`} />
@@ -343,7 +341,7 @@ const CustomersReports = () => {
               <div className="no-data">No data available</div>
             )}
           </div>
-        </div>
+        </ChartPanel>
 
         <div className="panel">
           <div className="panel-head">
