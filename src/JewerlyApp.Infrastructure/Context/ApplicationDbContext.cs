@@ -149,6 +149,8 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(e => e.CardAmount).HasPrecision(18, 2);
                 entity.Property(e => e.SubTotal).HasPrecision(18, 2);
                 entity.Property(e => e.Total).HasPrecision(18, 2);
+                entity.HasIndex(e => new { e.CustomerId, e.CreatedDate });
+                entity.HasIndex(e => e.CreatedDate);
             });
 
             builder.Entity<SaleItem>(entity =>

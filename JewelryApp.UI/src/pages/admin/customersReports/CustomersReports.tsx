@@ -350,25 +350,29 @@ const CustomersReports = () => {
             <span className="panel-title">New vs returning revenue</span>
             <span className="panel-sub">{fmtCurrency(totalRev)} total</span>
           </div>
-          <div className="mix-bars">
-            <SplitBarRow
-              label="Returning"
-              percentage={returningPct}
-              amountLabel={fmtCurrency(returningRevenue)}
-              color="var(--admin-gold)"
-            />
-            <SplitBarRow
-              label="New"
-              percentage={Math.max(3, newPct)}
-              amountLabel={fmtCurrency(newRevenue)}
-              color="var(--admin-green)"
-            />
-          </div>
-          <div className="mini-divider mix-note">
-            {period === "all"
-              ? "All-time view counts every customer as new on their first purchase."
-              : `Returning customers drive ${returningPct}% of revenue — repeat business is the core of the store.`}
-          </div>
+          {totalRev > 0 ? (
+            <>
+              <div className="mix-bars">
+                <SplitBarRow
+                  label="Returning"
+                  percentage={returningPct}
+                  amountLabel={fmtCurrency(returningRevenue)}
+                  color="var(--admin-gold)"
+                />
+                <SplitBarRow
+                  label="New"
+                  percentage={newPct}
+                  amountLabel={fmtCurrency(newRevenue)}
+                  color="var(--admin-green)"
+                />
+              </div>
+              <div className="mini-divider mix-note">
+                Returning customers drive {returningPct}% of revenue — repeat business is the core of the store.
+              </div>
+            </>
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
 
