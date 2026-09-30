@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Customers.Queries.GetTopCustomersReport
 {
-    public class GetTopCustomersReportHandler : IRequestHandler<GetTopCustomersReportQuery, GenericResponse<List<CustomerReportRowVM>>>
+    public class GetTopCustomersReportHandler : IRequestHandler<GetTopCustomersReportQuery, PaginatedResponse<CustomerReportRowVM>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -20,7 +21,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetTopCustomersReport
             _context = context;
         }
 
-        public async Task<GenericResponse<List<CustomerReportRowVM>>> Handle(GetTopCustomersReportQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<CustomerReportRowVM>> Handle(GetTopCustomersReportQuery request, CancellationToken cancellationToken)
         {
             var salesQuery = _context.Sales.AsQueryable();
 
@@ -47,11 +48,14 @@ namespace JewerlyApp.Application.Customers.Queries.GetTopCustomersReport
 
             if (salesInRange.Count == 0)
             {
-                return new GenericResponse<List<CustomerReportRowVM>>
+                return new PaginatedResponse<CustomerReportRowVM>
                 {
                     Data = new List<CustomerReportRowVM>(),
                     StatusCode = ResponseStatusCode.Success,
                     Message = Messages.Success,
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    TotalRecords = 0,
                 };
             }
 
@@ -102,22 +106,36 @@ namespace JewerlyApp.Application.Customers.Queries.GetTopCustomersReport
                 };
             });
 
-            if (!string.IsNullOrWhiteSpace(request.Search))
+            if (!string.IsNullOrWhiteSpace(request.SearchBy))
             {
-                var search = request.Search.Trim().ToLowerInvariant();
+                var search = request.SearchBy.Trim().ToLowerInvariant();
                 var searchDigits = new string(search.Where(char.IsDigit).ToArray());
                 rows = rows.Where(r =>
                     r.Name.ToLowerInvariant().Contains(search) ||
                     (searchDigits.Length > 0 && new string(r.Phone.Where(char.IsDigit).ToArray()).Contains(searchDigits)));
             }
 
-            var sorted = rows.OrderByDescending(r => r.Spent).ToList();
+            var sortBy = string.IsNullOrWhiteSpace(request.SortBy) ? nameof(CustomerReportRowVM.Spent) : request.SortBy;
+            var sortDirection = string.IsNullOrWhiteSpace(request.SortBy) ? SortDirection.Descending : request.SortDirection;
 
-            return new GenericResponse<List<CustomerReportRowVM>>
+            var sorted = rows
+                .AsQueryable()
+                .ApplySorting(sortBy, sortDirection)
+                .ToList();
+
+            var paged = sorted
+                .AsQueryable()
+                .ApplyPagination(request.PageNumber, request.PageSize)
+                .ToList();
+
+            return new PaginatedResponse<CustomerReportRowVM>
             {
-                Data = sorted,
+                Data = paged,
                 StatusCode = ResponseStatusCode.Success,
                 Message = Messages.Success,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalRecords = sorted.Count,
             };
         }
     }

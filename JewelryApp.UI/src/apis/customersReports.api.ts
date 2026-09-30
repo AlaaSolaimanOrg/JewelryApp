@@ -31,7 +31,9 @@ export const getNewCustomersChart = async (payload: NewCustomersChartPayload) =>
 };
 
 export interface TopCustomersReportPayload extends DateRangePayload {
-  search?: string;
+  searchBy?: string;
+  pageSize: number;
+  pageNumber: number;
 }
 
 export const getTopCustomersReport = async (payload: TopCustomersReportPayload) => {

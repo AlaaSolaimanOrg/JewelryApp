@@ -16,7 +16,9 @@ import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
+import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import TierMembersModal from "./TierMembersModal/TierMembersModal";
 import type {
   AtRiskCustomer,
@@ -39,6 +41,8 @@ import {
   getCustomRange,
   getPeriodRange,
 } from "./CustomersReports.utils";
+import { SortDirection } from "../../../types/enums";
+import { handleSort } from "../../../utils";
 import "./customersReports.scss";
 
 const PERIOD_BUTTONS: Period[] = ["today", "week", "month", "year", "all"];
@@ -50,18 +54,19 @@ const CustomersReports = () => {
   const [dateFrom, setDateFrom] = useState(todayStr);
   const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<DateRange | null>(null);
-  const [search, setSearch] = useState("");
   const [openTier, setOpenTier] = useState<CustomerTier | null>(null);
 
   const handleSetPeriod = (p: Period) => {
     setPeriod(p);
     setAppliedRange(null);
+    onPaginationChange(1);
   };
 
   const handleApplyRange = () => {
     if (!dateFrom || !dateTo) return;
     setAppliedRange({ dateFrom, dateTo });
     setPeriod("custom");
+    onPaginationChange(1);
   };
 
   const activeRange: DateRange =
@@ -106,11 +111,23 @@ const CustomersReports = () => {
     effectDependency: [period, appliedRange],
   }) as { data: ChartDataPoint[] };
 
-  const { data: topCustomers } = useLocalApi({
+  const {
+    data: topCustomers,
+    onPaginationChange,
+    onPageSizeChange,
+    onSearchChange,
+    onSortChange,
+    sortCriteria,
+    pagination,
+    isLoading: topCustomersLoading,
+  } = useLocalApiSearchSortPagination<CustomerReportRow>({
     apiToCall: (data) => getTopCustomersReport(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, search },
-    effectDependency: [period, appliedRange, search],
-  }) as { data: CustomerReportRow[] };
+    initialPageSize: 10,
+    initialSortBy: "Spent",
+    initialSortDirection: SortDirection.Descending,
+    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraEffectDependency: [period, appliedRange],
+  });
 
   const maxTierTotal = Math.max(...tiers.map((t) => t.total), 1);
 
@@ -133,14 +150,14 @@ const CustomersReports = () => {
   const rows = topCustomers;
 
   const headers: TableHeader[] = [
-    { key: "name", label: "Customer" },
-    { key: "phone", label: "Phone" },
-    { key: "purchases", label: "Purchases", align: "right" },
-    { key: "items", label: "Items", align: "right" },
-    { key: "spent", label: "Spent", align: "right" },
-    { key: "avgDiscount", label: "Avg discount", align: "right" },
-    { key: "since", label: "Customer since" },
-    { key: "lastPurchase", label: "Last purchase" },
+    { key: "name", label: "Customer", onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
+    { key: "phone", label: "Phone", onHeaderClick: () => handleSort("Phone", sortCriteria, onSortChange) },
+    { key: "purchases", label: "Purchases", align: "right", onHeaderClick: () => handleSort("Purchases", sortCriteria, onSortChange) },
+    { key: "items", label: "Items", align: "right", onHeaderClick: () => handleSort("Items", sortCriteria, onSortChange) },
+    { key: "spent", label: "Spent", align: "right", onHeaderClick: () => handleSort("Spent", sortCriteria, onSortChange) },
+    { key: "avgDiscount", label: "Avg discount", align: "right", onHeaderClick: () => handleSort("AvgDiscount", sortCriteria, onSortChange) },
+    { key: "since", label: "Customer since", onHeaderClick: () => handleSort("Since", sortCriteria, onSortChange) },
+    { key: "lastPurchase", label: "Last purchase", onHeaderClick: () => handleSort("LastPurchase", sortCriteria, onSortChange) },
   ];
 
   const tableData = rows.map((c) => ({
@@ -362,15 +379,23 @@ const CustomersReports = () => {
               type="text"
               className="search-input"
               placeholder="Search customer..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={onSearchChange}
             />
-            <span className="panel-sub">{rows.length} shown</span>
+            <span className="panel-sub">
+              {rows.length} of {pagination.totalRecords} shown
+            </span>
           </div>
         </div>
         <div className="tbl-scroll">
-          <CustomTable headers={headers} data={tableData} />
+          <CustomTable headers={headers} data={tableData} isLoading={topCustomersLoading} />
         </div>
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       <TierMembersModal show={!!openTier} tier={openTier} onClose={() => setOpenTier(null)} />
