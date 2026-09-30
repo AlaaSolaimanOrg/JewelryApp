@@ -14,6 +14,7 @@ import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
 import TierBarRow from "../../../components/charts/TierBarRow/TierBarRow";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
+import SortLabel from "../../../components/tables/SortLabel/SortLabel";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import Paginator from "../../../components/Paginator/Paginator";
@@ -150,14 +151,14 @@ const CustomersReports = () => {
   const rows = topCustomers;
 
   const headers: TableHeader[] = [
-    { key: "name", label: "Customer", onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
-    { key: "phone", label: "Phone", onHeaderClick: () => handleSort("Phone", sortCriteria, onSortChange) },
-    { key: "purchases", label: "Purchases", align: "right", onHeaderClick: () => handleSort("Purchases", sortCriteria, onSortChange) },
-    { key: "items", label: "Items", align: "right", onHeaderClick: () => handleSort("Items", sortCriteria, onSortChange) },
-    { key: "spent", label: "Spent", align: "right", onHeaderClick: () => handleSort("Spent", sortCriteria, onSortChange) },
-    { key: "avgDiscount", label: "Avg discount", align: "right", onHeaderClick: () => handleSort("AvgDiscount", sortCriteria, onSortChange) },
-    { key: "since", label: "Customer since", onHeaderClick: () => handleSort("Since", sortCriteria, onSortChange) },
-    { key: "lastPurchase", label: "Last purchase", onHeaderClick: () => handleSort("LastPurchase", sortCriteria, onSortChange) },
+    { key: "name", label: <SortLabel label="Customer" field="Name" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
+    { key: "phone", label: <SortLabel label="Phone" field="Phone" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Phone", sortCriteria, onSortChange) },
+    { key: "purchases", label: <SortLabel label="Purchases" field="Purchases" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Purchases", sortCriteria, onSortChange) },
+    { key: "items", label: <SortLabel label="Items" field="Items" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Items", sortCriteria, onSortChange) },
+    { key: "spent", label: <SortLabel label="Spent" field="Spent" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Spent", sortCriteria, onSortChange) },
+    { key: "avgDiscount", label: <SortLabel label="Avg discount" field="AvgDiscount" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("AvgDiscount", sortCriteria, onSortChange) },
+    { key: "since", label: <SortLabel label="Customer since" field="Since" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Since", sortCriteria, onSortChange) },
+    { key: "lastPurchase", label: <SortLabel label="Last purchase" field="LastPurchase" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("LastPurchase", sortCriteria, onSortChange) },
   ];
 
   const tableData = rows.map((c) => ({
