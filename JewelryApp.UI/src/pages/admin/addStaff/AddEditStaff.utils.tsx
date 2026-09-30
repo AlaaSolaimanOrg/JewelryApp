@@ -1,3 +1,6 @@
+export const ADMIN_ROLE = "Admin";
+export const RESTRICTED_ROLES = [ADMIN_ROLE, "StaffManager"];
+
 export const formatPhoneDisplay = (digits: string) => {
   const d = (digits || "").replace(/\D/g, "").slice(0, 10);
   if (d.length > 6) return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;

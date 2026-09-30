@@ -204,15 +204,16 @@ const MainPosPage: React.FC = () => {
     setProducts((prev) => {
       const updated = [...prev];
       let val = value;
-      // Only allow up to 4 digits after decimal
+      // Weight: up to 2 digits after decimal; price per gram: up to 4
       if (field === "weight" || field === "pricePerGram") {
+        const maxDecimals = field === "weight" ? 2 : 4;
         // Remove non-numeric except dot
         val = val.replace(/[^\d.]/g, "");
         // Limit to one dot
         const parts = val.split(".");
         if (parts.length > 2) val = parts[0] + "." + parts.slice(1).join("");
         // Limit decimal places
-        if (parts[1]) val = parts[0] + "." + parts[1].slice(0, 4);
+        if (parts[1]) val = parts[0] + "." + parts[1].slice(0, maxDecimals);
         // Prevent input if value exceeds max
         if (parseFloat(val) > 9999.9999) return prev;
       }

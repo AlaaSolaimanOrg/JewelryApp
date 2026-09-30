@@ -4,11 +4,13 @@ using JewerlyApp.Application.CashManagement.Commands.MoveMoney;
 using JewerlyApp.Application.CashManagement.Commands.TransferIncome;
 using JewerlyApp.Application.CashManagement.Queries.GetCashBalances;
 using JewerlyApp.Application.CashManagement.Queries.GetCashTransactions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Admin,PosRole,TerminalRole")]
     public class CashManagementController : MainController
     {
         [HttpGet]

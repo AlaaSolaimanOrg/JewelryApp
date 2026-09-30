@@ -34,22 +34,26 @@ namespace JewerlyApp.Infrastructure.Services
             _context = context;
         }
 
-        private const string StaffManagerRoleName = "StaffManager";
+        private const string AdminRoleName = "Admin";
+        private static readonly string[] RestrictedRoleNames = { AdminRoleName, "StaffManager" };
 
-        private async Task<bool> CallerCanAssignRestrictedRolesAsync()
+        private async Task<bool> CallerIsAdminAsync()
         {
             var currentUserId = _userService.GetCurrentUserId();
             if (currentUserId == 0) return false;
-            return await _userService.IsInRoleAsync(currentUserId, "Admin");
+            return await _userService.IsInRoleAsync(currentUserId, AdminRoleName);
         }
+
+        private static bool HasRole(IEnumerable<string> roles, string roleName) =>
+            roles.Any(r => string.Equals(r?.Trim(), roleName, StringComparison.OrdinalIgnoreCase));
 
         public async Task<GenericResponse<UserDto>> CreateUserAsync(CreateUserRequest request)
         {
             try
             {
                 if (request.Roles != null &&
-                    request.Roles.Contains(StaffManagerRoleName) &&
-                    !await CallerCanAssignRestrictedRolesAsync())
+                    RestrictedRoleNames.Any(role => HasRole(request.Roles, role)) &&
+                    !await CallerIsAdminAsync())
                 {
                     return new GenericResponse<UserDto>
                     {
@@ -137,13 +141,24 @@ namespace JewerlyApp.Infrastructure.Services
                     };
                 }
 
+                var callerIsAdmin = await CallerIsAdminAsync();
+                var existingRoles = await _userManager.GetRolesAsync(user);
+
+                if (!callerIsAdmin && HasRole(existingRoles, AdminRoleName))
+                {
+                    return new GenericResponse<UserDto>
+                    {
+                        StatusCode = ResponseStatusCode.Forbidden,
+                        Message = Messages.Error_Only_Admin_Can_Modify_Admin
+                    };
+                }
+
                 if (request.Roles != null)
                 {
-                    var existingRoles = await _userManager.GetRolesAsync(user);
-                    var staffManagerChanged =
-                        existingRoles.Contains(StaffManagerRoleName) != request.Roles.Contains(StaffManagerRoleName);
+                    var restrictedRolesChanged = RestrictedRoleNames.Any(role =>
+                        HasRole(existingRoles, role) != HasRole(request.Roles, role));
 
-                    if (staffManagerChanged && !await CallerCanAssignRestrictedRolesAsync())
+                    if (restrictedRolesChanged && !callerIsAdmin)
                     {
                         return new GenericResponse<UserDto>
                         {

@@ -4,11 +4,13 @@ using JewerlyApp.Application.UsedGold.Commands.SendToMelt;
 using JewerlyApp.Application.UsedGold.Queries.GetHistory;
 using JewerlyApp.Application.UsedGold.Queries.GetPools;
 using JewerlyApp.Application.UsedGold.Queries.GetSummary;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JewerlyApp.API.Controllers.UsedGold
 {
     [ApiController]
+    [Authorize(Roles = "Admin,PosRole,TerminalRole")]
     public class UsedGoldController : MainController
     {
         [HttpPost]
