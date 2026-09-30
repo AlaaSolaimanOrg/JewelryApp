@@ -30,6 +30,11 @@ export const getMovementByPurity = async (payload: DateRangePayload) => {
   return requestApi("GET", apiRoutes.inventoryReports.getMovementByPurity, payload);
 };
 
-export const getStaplesSold = async (payload: DateRangePayload) => {
+export interface StaplesSoldPayload extends DateRangePayload {
+  pageSize: number;
+  pageNumber: number;
+}
+
+export const getStaplesSold = async (payload: StaplesSoldPayload) => {
   return requestApi("GET", apiRoutes.inventoryReports.getStaplesSold, payload);
 };

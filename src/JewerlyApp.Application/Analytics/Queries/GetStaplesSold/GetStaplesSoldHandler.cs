@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
 {
-    public class GetStaplesSoldHandler : IRequestHandler<GetStaplesSoldQuery, GenericResponse<List<StapleSoldVM>>>
+    public class GetStaplesSoldHandler : IRequestHandler<GetStaplesSoldQuery, StaplesSoldResponse>
     {
         private const string LiraTag = "lira";
         private const string OunceTag = "ounce";
@@ -41,7 +42,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
             return $"{(int)karatType}K {kind} · {weight.ToString("0.##", CultureInfo.InvariantCulture)}g";
         }
 
-        public async Task<GenericResponse<List<StapleSoldVM>>> Handle(GetStaplesSoldQuery request, CancellationToken cancellationToken)
+        public async Task<StaplesSoldResponse> Handle(GetStaplesSoldQuery request, CancellationToken cancellationToken)
         {
             var lowStockThreshold = await LowStockThresholdResolver.GetCurrentThresholdAsync(_context, cancellationToken);
 
@@ -104,14 +105,26 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
                         IsLow = stock <= lowStockThreshold,
                     };
                 })
-                .OrderByDescending(s => s.Sold)
                 .ToList();
 
-            return new GenericResponse<List<StapleSoldVM>>
+            var sortBy = string.IsNullOrWhiteSpace(request.SortBy) ? nameof(StapleSoldVM.Sold) : request.SortBy;
+            var sortDirection = string.IsNullOrWhiteSpace(request.SortBy) ? SortDirection.Descending : request.SortDirection;
+
+            var paged = staples
+                .AsQueryable()
+                .ApplySorting(sortBy, sortDirection)
+                .ApplyPagination(request.PageNumber, request.PageSize)
+                .ToList();
+
+            return new StaplesSoldResponse
             {
-                Data = staples,
+                Data = paged,
                 StatusCode = ResponseStatusCode.Success,
                 Message = Messages.Success,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalRecords = staples.Count,
+                TotalSold = staples.Sum(s => s.Sold),
             };
         }
     }

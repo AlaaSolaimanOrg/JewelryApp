@@ -12,9 +12,14 @@ import {
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import Paginator from "../../../components/Paginator/Paginator";
+import SortLabel from "../../../components/tables/SortLabel/SortLabel";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { SortDirection } from "../../../types/enums";
+import { handleSort } from "../../../utils";
 import type {
   DateRange,
   InventoryAging,
@@ -59,6 +64,7 @@ const InventoryReports = () => {
   const handleSetPeriod = (p: Exclude<Period, "custom">) => {
     setPeriod(p);
     setAppliedRange(null);
+    onPaginationChange(1);
   };
 
   const handleApplyCustomRange = () => {
@@ -66,6 +72,7 @@ const InventoryReports = () => {
     if (!dateFrom || !dateTo) return;
     setAppliedRange({ dateFrom, dateTo });
     setPeriod("custom");
+    onPaginationChange(1);
   };
 
   const activeRange =
@@ -114,11 +121,24 @@ const InventoryReports = () => {
     effectDependency: [period, appliedRange],
   }) as { data: PurityMovement };
 
-  const { data: staplesSold } = useLocalApi({
+  const {
+    data: staplesSold,
+    dataExtractedFromResponse: staplesSoldExtra,
+    onPaginationChange,
+    onPageSizeChange,
+    onSortChange,
+    sortCriteria,
+    pagination,
+    isLoading: staplesSoldLoading,
+  } = useLocalApiSearchSortPagination<StapleSold>({
     apiToCall: (data) => getStaplesSold(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
-    effectDependency: [period, appliedRange],
-  }) as { data: StapleSold[] };
+    initialPageSize: 10,
+    initialSortBy: "Sold",
+    initialSortDirection: SortDirection.Descending,
+    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraEffectDependency: [period, appliedRange],
+    extractFromResponse: ["totalSold"],
+  });
 
   const maxPurityGrams = Math.max(...stockByPurity.map((p) => p.grams), 1);
   const maxCategoryValue = Math.max(...stockByCategory.map((c) => c.value), 1);
@@ -126,7 +146,7 @@ const InventoryReports = () => {
 
   const agingBuckets = inventoryAging.agingBuckets ?? [];
 
-  const totalStapleSold = staplesSold.reduce((sum, s) => sum + s.sold, 0);
+  const totalStapleSold = staplesSoldExtra?.totalSold ?? 0;
   const stapleRows = staplesSold.map((s) => ({
     name: <span className="stpl-name">{s.name}</span>,
     type: <span className="badge b-type">{s.type ?? "—"}</span>,
@@ -140,11 +160,11 @@ const InventoryReports = () => {
   }));
 
   const stapleHeaders: TableHeader[] = [
-    { key: "name", label: "Item" },
-    { key: "type", label: "Type" },
-    { key: "stock", label: "In stock", align: "right" },
-    { key: "sold", label: `Sold (${periodLabel.toLowerCase()})`, align: "right" },
-    { key: "status", label: "Stock status", align: "center" },
+    { key: "name", label: <SortLabel label="Item" field="Name" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
+    { key: "type", label: <SortLabel label="Type" field="Type" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Type", sortCriteria, onSortChange) },
+    { key: "stock", label: <SortLabel label="In stock" field="Stock" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Stock", sortCriteria, onSortChange) },
+    { key: "sold", label: <SortLabel label={`Sold (${periodLabel.toLowerCase()})`} field="Sold" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Sold", sortCriteria, onSortChange) },
+    { key: "status", label: <SortLabel label="Stock status" field="IsLow" sortCriteria={sortCriteria} />, align: "center", onHeaderClick: () => handleSort("IsLow", sortCriteria, onSortChange) },
   ];
 
   const addedByPurity = purityMovement.added;
@@ -325,11 +345,14 @@ const InventoryReports = () => {
           </span>
           <span className="panel-sub">{fmtNumber(totalStapleSold)} bullions sold</span>
         </div>
-        {stapleRows.length > 0 ? (
-          <CustomTable headers={stapleHeaders} data={stapleRows} />
-        ) : (
-          <div className="no-data">No data available</div>
-        )}
+        <CustomTable headers={stapleHeaders} data={stapleRows} isLoading={staplesSoldLoading} />
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       <div className="grid2">
