@@ -4,7 +4,6 @@ using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,58 +33,75 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerTiers
 
         public async Task<GenericResponse<List<CustomerTierVM>>> Handle(GetCustomerTiersQuery request, CancellationToken cancellationToken)
         {
-            var customers = await _context.Customers
-                .AsNoTracking()
-                .Where(c => c.IsActive)
-                .Select(c => new { c.Id, c.Name })
-                .ToListAsync(cancellationToken);
+            var vipMin = TierDefs[0].Min;
+            var goldMin = TierDefs[1].Min;
+            var silverMin = TierDefs[2].Min;
+            var bronzeMin = TierDefs[3].Min;
+            var regularIndex = TierDefs.Length - 1;
 
-            var salesByCustomer = await _context.Sales
-                .AsNoTracking()
+            var tierTotals = await _context.Sales
+                .Where(s => s.Customer!.IsActive)
                 .GroupBy(s => s.CustomerId)
-                .Select(g => new { CustomerId = g.Key, Total = g.Sum(s => s.Total), Count = g.Count() })
-                .ToDictionaryAsync(g => g.CustomerId, cancellationToken);
-
-            var enriched = customers.Select(c =>
-            {
-                salesByCustomer.TryGetValue(c.Id, out var sales);
-                return new
+                .Select(g => new { Spent = g.Sum(s => s.Total) })
+                .Select(x => new
                 {
-                    c.Id,
+                    Tier = x.Spent >= vipMin ? 0 : x.Spent >= goldMin ? 1 : x.Spent >= silverMin ? 2 : x.Spent >= bronzeMin ? 3 : 4,
+                    x.Spent,
+                })
+                .GroupBy(x => x.Tier)
+                .Select(g => new { Tier = g.Key, Count = g.Count(), Total = g.Sum(x => x.Spent) })
+                .ToDictionaryAsync(g => g.Tier, cancellationToken);
+
+            var customersWithoutSales = await _context.Customers
+                .CountAsync(c => c.IsActive && !_context.Sales.Any(s => s.CustomerId == c.Id), cancellationToken);
+
+            var spends = _context.Customers
+                .Where(c => c.IsActive)
+                .Select(c => new
+                {
                     c.Name,
-                    Spent = sales?.Total ?? 0m,
-                    Purchases = sales?.Count ?? 0,
-                };
-            }).ToList();
+                    Spent = _context.Sales.Where(s => s.CustomerId == c.Id).Sum(s => (decimal?)s.Total) ?? 0m,
+                    Purchases = _context.Sales.Count(s => s.CustomerId == c.Id),
+                });
 
-            var tiers = TierDefs.Select(def =>
+            var membersQuery = TierDefs
+                .Select((def, index) =>
+                {
+                    var min = def.Min;
+                    var tierSpends = spends.Where(x => x.Spent >= min);
+
+                    if (index > 0)
+                    {
+                        var max = TierDefs[index - 1].Min;
+                        tierSpends = tierSpends.Where(x => x.Spent < max);
+                    }
+
+                    return tierSpends
+                        .OrderByDescending(x => x.Spent)
+                        .Take(MembersPerTier)
+                        .Select(x => new { Tier = index, x.Name, x.Spent, x.Purchases });
+                })
+                .Aggregate((current, next) => current.Concat(next));
+
+            var members = await membersQuery.ToListAsync(cancellationToken);
+
+            var result = TierDefs.Select((def, index) =>
             {
-                var members = enriched.Where(c => c.Spent >= def.Min).ToList();
-                // Each customer belongs to exactly one tier — the highest one they qualify for.
-                return (def, members);
-            }).ToList();
+                tierTotals.TryGetValue(index, out var totals);
 
-            var result = new List<CustomerTierVM>();
-            var claimed = new HashSet<Guid>();
-
-            foreach (var (def, candidateMembers) in tiers)
-            {
-                var members = candidateMembers.Where(m => !claimed.Contains(m.Id)).ToList();
-                foreach (var m in members) claimed.Add(m.Id);
-
-                result.Add(new CustomerTierVM
+                return new CustomerTierVM
                 {
                     Name = def.Name,
                     MinLabel = def.MinLabel,
-                    Count = members.Count,
-                    Total = members.Sum(m => m.Spent),
+                    Count = (totals?.Count ?? 0) + (index == regularIndex ? customersWithoutSales : 0),
+                    Total = totals?.Total ?? 0m,
                     Members = members
+                        .Where(m => m.Tier == index)
                         .OrderByDescending(m => m.Spent)
-                        .Take(MembersPerTier)
                         .Select(m => new TierMemberVM { Name = m.Name, Spent = m.Spent, Purchases = m.Purchases })
                         .ToList(),
-                });
-            }
+                };
+            }).ToList();
 
             return new GenericResponse<List<CustomerTierVM>>
             {
