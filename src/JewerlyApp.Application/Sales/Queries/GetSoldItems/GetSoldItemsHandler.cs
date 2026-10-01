@@ -62,6 +62,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
                     Sku = si.Product!.Sku,
                     ProductName = si.Product!.Name!,
                     CustomerName = si.Sale!.Customer!.Name,
+                    SaleId = si.SaleId,
                     SaleSerialNumber = si.Sale!.SerialNumber,
                     Quantity = si.Quantity,
                     UnitWeight = si.Weight,

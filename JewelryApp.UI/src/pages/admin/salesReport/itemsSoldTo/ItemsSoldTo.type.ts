@@ -7,6 +7,7 @@ export interface SoldItem {
   sku?: string;
   productName: string;
   customerName: string;
+  saleId: string;
   saleSerialNumber: string;
   quantity: number;
   unitWeight: number;

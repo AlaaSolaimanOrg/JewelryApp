@@ -11,6 +11,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
         public string? Sku { get; set; }
         public string ProductName { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
+        public Guid SaleId { get; set; }
         public string SaleSerialNumber { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public decimal UnitWeight { get; set; }
