@@ -144,7 +144,7 @@ const UsedGold = () => {
       width: "90px",
       onHeaderClick: () => handleSort("date", sortCriteria, onSortChange),
     },
-    { key: "desc", label: "Description" },
+    { key: "sellerName", label: "Name" },
     {
       key: "karat",
       label: <>Karat {renderSortArrow("karat")}</>,
@@ -177,9 +177,9 @@ const UsedGold = () => {
 
   const logData = (history || []).map((h) => ({
     date: <span className="lr-date">{fmtDate(h.date)}</span>,
-    desc: (
+    sellerName: (
       <div>
-        <div className="lr-desc">{h.desc}</div>
+        <div className="lr-desc">{h.sellerName}</div>
         <div className="lr-sub">{h.notes}</div>
       </div>
     ),

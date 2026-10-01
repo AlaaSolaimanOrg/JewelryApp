@@ -12,7 +12,7 @@ export interface UsedGoldHistoryEntry {
   id: string;
   date: string;
   type: HistoryType;
-  desc: string;
+  sellerName: string;
   notes: string;
   karat: number | null;
   weight: number;
