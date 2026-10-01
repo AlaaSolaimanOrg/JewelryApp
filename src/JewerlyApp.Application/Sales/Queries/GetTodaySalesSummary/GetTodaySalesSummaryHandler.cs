@@ -28,7 +28,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetTodaySalesSummary
             if (request.Pin?.Trim() != currentPin)
                 return GenericResponse<TodaySalesSummaryDto>.Error(ResponseStatusCode.BadRequest, Messages.Error_Security_Pin_Incorrect);
 
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(BusinessTimeZoneHelper.GetEdmontonDate());
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
 
             var todaysSales = await _context.Sales
                 .AsNoTracking()

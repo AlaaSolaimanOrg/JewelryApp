@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace JewerlyApp.API.Serialization
 {
-    public sealed class EdmontonDateTimeJsonConverter : JsonConverter<DateTime>
+    public sealed class BusinessDateTimeJsonConverter : JsonConverter<DateTime>
     {
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -20,8 +20,8 @@ namespace JewerlyApp.API.Serialization
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            var edmontonTime = BusinessTimeZoneHelper.ConvertUtcToEdmontonOffset(value);
-            writer.WriteStringValue(edmontonTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture));
+            var businessTime = BusinessTimeZoneHelper.ConvertUtcToBusinessOffset(value);
+            writer.WriteStringValue(businessTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture));
         }
     }
 }

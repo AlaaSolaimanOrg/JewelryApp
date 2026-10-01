@@ -24,21 +24,9 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
         {
             var vm = new AnalyticsSummaryVM();
 
-            // Apply Date Range
-            DateTime dateFrom, dateTo;
-            if (request.ReportType.HasValue)
-            {
-                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
-            }
-            else
-            {
-                dateFrom = DateTime.MinValue;
-                dateTo = DateTime.MaxValue;
-            }
-
-            // 2. Override with specific dates if provided
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
+            var range = request.ResolveDateRange();
+            var dateFrom = range.StartUtc ?? DateTime.MinValue;
+            var dateTo = range.EndUtc ?? DateTime.MaxValue;
 
             // 1. Avg Daily Sales
             var salesQuery = _context.Sales.AsNoTracking().AsQueryable();

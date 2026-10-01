@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Application.Common.Extensions;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -21,6 +22,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
 
         public async Task<PaginatedResponse<GetSoldItemsVM>> Handle(GetSoldItemsQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var query = _context.SaleItems
                 .AsNoTracking()
                 .Include(si => si.Product)
@@ -34,11 +37,11 @@ namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
             if (request.KaratFilter != null)
                 query = query.Where(si => si.KaratType == request.KaratFilter);
 
-            if (request.DateFrom.HasValue)
-                query = query.Where(si => si.CreatedDate >= request.DateFrom.Value);
+            if (range.StartUtc.HasValue)
+                query = query.Where(si => si.CreatedDate >= range.StartUtc.Value);
 
-            if (request.DateTo.HasValue)
-                query = query.Where(si => si.CreatedDate <= request.DateTo.Value);
+            if (range.EndUtc.HasValue)
+                query = query.Where(si => si.CreatedDate <= range.EndUtc.Value);
 
             if (!string.IsNullOrWhiteSpace(request.SearchBy))
             {

@@ -10,7 +10,7 @@ import { SortDirection } from "../../../../types/enums";
 import { handleSort } from "../../../../utils";
 import type { ItemsSoldToProps, SoldItem } from "./ItemsSoldTo.type";
 
-const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
+const ItemsSoldTo = ({ range }: ItemsSoldToProps) => {
   const {
     data: soldItems,
     onPaginationChange,
@@ -25,8 +25,8 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
     initialPageSize: 10,
     initialSortBy: "CreatedDate",
     initialSortDirection: SortDirection.Descending,
-    extraPayload: { dateFrom, dateTo },
-    extraEffectDependency: [dateFrom, dateTo],
+    extraPayload: range,
+    extraEffectDependency: [range.reportType, range.dateFrom, range.dateTo],
   });
 
   const tableHeaders: TableHeader[] = [

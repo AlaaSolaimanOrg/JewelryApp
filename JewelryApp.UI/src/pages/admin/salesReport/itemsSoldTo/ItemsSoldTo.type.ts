@@ -1,6 +1,7 @@
+import type { ReportRangePayload } from "../../../../utils";
+
 export interface ItemsSoldToProps {
-  dateFrom: string;
-  dateTo: string;
+  range: ReportRangePayload;
 }
 
 export interface SoldItem {

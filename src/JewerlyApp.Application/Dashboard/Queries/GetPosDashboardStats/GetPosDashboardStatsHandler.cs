@@ -23,7 +23,7 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetPosDashboardStats
 
         public async Task<GenericResponse<PosDashboardStatsDto>> Handle(GetPosDashboardStatsQuery request, CancellationToken cancellationToken)
         {
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(BusinessTimeZoneHelper.GetEdmontonDate());
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
 
             var cashTransactions = await _context.CashTransactions
                 .AsNoTracking()

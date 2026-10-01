@@ -43,17 +43,17 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerBaseStats
                 })
                 .ToListAsync(cancellationToken);
 
-            var today = BusinessTimeZoneHelper.GetEdmontonDate();
+            var today = BusinessTimeZoneHelper.GetBusinessDate();
             var currentYear = today.Year;
 
             var totalRevenueAllTime = salesByCustomer.Sum(s => s.Total);
             var newThisYear = salesByCustomer.Count(s =>
-                s.FirstDate.HasValue && BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.FirstDate.Value).Year == currentYear);
+                s.FirstDate.HasValue && BusinessTimeZoneHelper.ConvertUtcToBusiness(s.FirstDate.Value).Year == currentYear);
             var repeatCount = salesByCustomer.Count(s => s.Count > 1);
             var goingQuiet = salesByCustomer.Count(s =>
                 s.Total >= HighValueThreshold &&
                 s.LastDate.HasValue &&
-                (today.DayNumber - DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.LastDate.Value)).DayNumber) >= QuietDaysThreshold);
+                (today.DayNumber - DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToBusiness(s.LastDate.Value)).DayNumber) >= QuietDaysThreshold);
 
             var vm = new CustomerBaseStatsVM
             {

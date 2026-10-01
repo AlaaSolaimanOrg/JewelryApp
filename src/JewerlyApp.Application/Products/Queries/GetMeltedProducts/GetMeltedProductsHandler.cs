@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -21,11 +22,13 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedProducts
 
         public async Task<PaginatedResponse<MeltedProductVM>> Handle(GetMeltedProductsQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var query = _context.MeltRecords.AsNoTracking();
 
-            if (request.DateFrom.HasValue && request.DateTo.HasValue)
+            if (range.StartUtc.HasValue && range.EndUtc.HasValue)
             {
-                query = query.Where(m => m.MeltedAt >= request.DateFrom.Value && m.MeltedAt <= request.DateTo.Value);
+                query = query.Where(m => m.MeltedAt >= range.StartUtc.Value && m.MeltedAt <= range.EndUtc.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(request.SearchBy))

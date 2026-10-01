@@ -206,7 +206,7 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
 
         private static async Task<string> GenerateReturnSerialNumber(IApplicationDbContext context)
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "RTN";
 
             int countToday = await context.Returns

@@ -86,7 +86,7 @@ namespace JewerlyApp.Application.UsedGold.Commands.SendToMelt
 
         private async Task<string> GenerateSerialNumber()
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "UGM";
 
             int countToday = await _context.UsedGoldMeltBatches
