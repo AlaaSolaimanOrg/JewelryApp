@@ -170,9 +170,9 @@ const SideNav = () => {
   const isTerminalOnlyUser = hasTerminalRole && !hasAdminRole;
   const isStaffManagerOnlyUser = hasStaffManagerRole && !hasAdminRole;
 
-  const filteredNavItems = (
-    isTerminalOnlyUser
-      ? navItems.filter((item) =>
+  const filteredNavItems = isTerminalOnlyUser
+    ? navItems
+        .filter((item) =>
           [
             "Inventory",
             "Pricing",
