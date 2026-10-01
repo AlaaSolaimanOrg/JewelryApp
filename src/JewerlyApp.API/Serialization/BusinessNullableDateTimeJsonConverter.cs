@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace JewerlyApp.API.Serialization
 {
-    public sealed class EdmontonNullableDateTimeJsonConverter : JsonConverter<DateTime?>
+    public sealed class BusinessNullableDateTimeJsonConverter : JsonConverter<DateTime?>
     {
-        private readonly EdmontonDateTimeJsonConverter _inner = new EdmontonDateTimeJsonConverter();
+        private readonly BusinessDateTimeJsonConverter _inner = new BusinessDateTimeJsonConverter();
 
         public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

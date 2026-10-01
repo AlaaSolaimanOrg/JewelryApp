@@ -40,11 +40,9 @@ import {
   formatRangeLabel,
   formatSince,
   getChartGranularity,
-  getCustomRange,
-  getPeriodRange,
 } from "./CustomersReports.utils";
 import { SortDirection } from "../../../types/enums";
-import { handleSort } from "../../../utils";
+import { getReportRangePayload, handleSort } from "../../../utils";
 import "./customersReports.scss";
 
 const PERIOD_BUTTONS: Period[] = ["today", "week", "month", "year", "all"];
@@ -71,17 +69,14 @@ const CustomersReports = () => {
     onPaginationChange(1);
   };
 
-  const activeRange: DateRange =
-    period === "custom" && appliedRange
-      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
-      : getPeriodRange(period as Exclude<Period, "custom">);
+  const rangePayload = getReportRangePayload(period, appliedRange);
 
   const periodLabel =
     period === "custom" && appliedRange
       ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
       : PERIOD_LABELS[period];
 
-  const granularity = getChartGranularity(period, activeRange);
+  const granularity = getChartGranularity(period, appliedRange);
 
   /* ── Customer base (not period-filtered) ─────────────────────── */
 
@@ -102,14 +97,14 @@ const CustomersReports = () => {
 
   const { data: activity } = useLocalApi({
     apiToCall: (data) => getCustomerActivityStats(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    payload: rangePayload,
     dataInitalValue: {},
     effectDependency: [period, appliedRange],
   }) as { data: Partial<CustomerActivityStats> };
 
   const { data: chartData } = useLocalApi({
     apiToCall: (data) => getNewCustomersChart(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, granularity },
+    payload: { ...rangePayload, granularity },
     effectDependency: [period, appliedRange],
   }) as { data: ChartDataPoint[] };
 
@@ -127,7 +122,7 @@ const CustomersReports = () => {
     initialPageSize: 10,
     initialSortBy: "Spent",
     initialSortDirection: SortDirection.Descending,
-    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraPayload: rangePayload,
     extraEffectDependency: [period, appliedRange],
   });
 

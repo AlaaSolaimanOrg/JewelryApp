@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -23,16 +24,18 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerActivityStats
 
         public async Task<GenericResponse<CustomerActivityStatsVM>> Handle(GetCustomerActivityStatsQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var salesQuery = _context.Sales.AsNoTracking();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= request.DateFrom.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate <= request.DateTo.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate <= range.EndUtc.Value);
             }
 
             var firstSales = _context.Sales
@@ -63,14 +66,14 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerActivityStats
 
             var newCustomersQuery = firstSales;
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                newCustomersQuery = newCustomersQuery.Where(f => f.First >= request.DateFrom.Value);
+                newCustomersQuery = newCustomersQuery.Where(f => f.First >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                newCustomersQuery = newCustomersQuery.Where(f => f.First <= request.DateTo.Value);
+                newCustomersQuery = newCustomersQuery.Where(f => f.First <= range.EndUtc.Value);
             }
 
             var newCustomers = await newCustomersQuery.CountAsync(cancellationToken);

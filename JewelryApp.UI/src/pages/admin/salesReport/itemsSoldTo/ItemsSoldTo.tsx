@@ -1,4 +1,6 @@
+import { FaReceipt } from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api";
+import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
 import Paginator from "../../../../components/Paginator/Paginator";
 import SortLabel from "../../../../components/tables/SortLabel/SortLabel";
 import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
@@ -8,7 +10,7 @@ import { SortDirection } from "../../../../types/enums";
 import { handleSort } from "../../../../utils";
 import type { ItemsSoldToProps, SoldItem } from "./ItemsSoldTo.type";
 
-const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
+const ItemsSoldTo = ({ range }: ItemsSoldToProps) => {
   const {
     data: soldItems,
     onPaginationChange,
@@ -23,8 +25,8 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
     initialPageSize: 10,
     initialSortBy: "CreatedDate",
     initialSortDirection: SortDirection.Descending,
-    extraPayload: { dateFrom, dateTo },
-    extraEffectDependency: [dateFrom, dateTo],
+    extraPayload: range,
+    extraEffectDependency: [range.reportType, range.dateFrom, range.dateTo],
   });
 
   const tableHeaders: TableHeader[] = [
@@ -66,6 +68,7 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
       align: "right",
       onHeaderClick: () => handleSort("SubTotal", sortCriteria, onSortChange),
     },
+    { key: "receipt", label: "Receipt", align: "center" },
   ];
 
   const tableData = soldItems.map((item) => ({
@@ -84,6 +87,13 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
           maximumFractionDigits: 2,
         })}
       </span>
+    ),
+    receipt: (
+      <ReceiptModal saleId={item.saleId}>
+        <button className="receipt-btn">
+          <FaReceipt /> View
+        </button>
+      </ReceiptModal>
     ),
   }));
 

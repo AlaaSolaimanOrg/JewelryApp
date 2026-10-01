@@ -112,7 +112,7 @@ namespace JewerlyApp.Application.UsedGold.Commands.CreatePurchase
 
         private async Task<string> GenerateSerialNumber()
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "UGP";
 
             int countToday = await _context.UsedGoldPurchases

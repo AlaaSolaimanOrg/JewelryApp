@@ -90,8 +90,8 @@ const toPrintableProduct = (item: ReturnItemFlat): Product => ({
 
 const formatCurrency = (value: number) => `$${Math.abs(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-const formatTime = (dateString: string) =>
-  new Date(dateString).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+const formatDateTime = (dateString: string) =>
+  new Date(dateString).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
 
 const formatDayLabel = (dateString: string) => {
   const d = new Date(dateString);
@@ -395,7 +395,7 @@ const ReturnManagement: React.FC = () => {
 
                       <div className="rm-item-right">
                         <div className="rm-item-amt">{formatCurrency(item.amountReturned)}</div>
-                        <div className="rm-item-time">{formatTime(item.returnDate)}</div>
+                        <div className="rm-item-time">{formatDateTime(item.returnDate)}</div>
                         {item.isTagPrinted && item.tagPrintedDate && (
                           <div className="rm-item-time">Printed {formatDayLabel(item.tagPrintedDate)}</div>
                         )}

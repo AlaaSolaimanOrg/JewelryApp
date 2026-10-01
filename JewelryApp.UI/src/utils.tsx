@@ -5,7 +5,7 @@ import type React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axiosInstance from "./services/axios.service";
-import { SortDirection } from "./types/enums";
+import { ReportType, SortDirection } from "./types/enums";
 
 const addParamsToObjKeys = (obj: Record<string, any>) => {
   return obj;
@@ -240,4 +240,30 @@ export const copyToClipboard = async (
   } catch {
     showError("Failed to copy to clipboard");
   }
+};
+
+export type ReportPeriod = "today" | "week" | "month" | "year" | "all" | "custom";
+
+export interface ReportRangePayload {
+  reportType?: ReportType;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+const PERIOD_REPORT_TYPE: Record<Exclude<ReportPeriod, "all" | "custom">, ReportType> = {
+  today: ReportType.Daily,
+  week: ReportType.Weekly,
+  month: ReportType.Monthly,
+  year: ReportType.Yearly,
+};
+
+export const getReportRangePayload = (
+  period: ReportPeriod,
+  customRange: { dateFrom: string; dateTo: string } | null,
+): ReportRangePayload => {
+  if (period === "custom") {
+    return customRange ? { dateFrom: customRange.dateFrom, dateTo: customRange.dateTo } : {};
+  }
+  if (period === "all") return {};
+  return { reportType: PERIOD_REPORT_TYPE[period] };
 };

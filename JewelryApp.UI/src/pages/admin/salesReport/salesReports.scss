@@ -242,6 +242,27 @@
     font-weight: 600;
   }
 
+  .receipt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--admin-font);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: transparent;
+    color: var(--admin-t3);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--admin-t1);
+      background: var(--admin-bg4);
+    }
+  }
+
   .customTable {
     border: none;
     border-radius: 0;

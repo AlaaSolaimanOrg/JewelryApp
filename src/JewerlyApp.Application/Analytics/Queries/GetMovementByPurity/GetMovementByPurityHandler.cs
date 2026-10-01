@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -21,19 +22,21 @@ namespace JewerlyApp.Application.Analytics.Queries.GetMovementByPurity
 
         public async Task<GenericResponse<PurityMovementVM>> Handle(GetMovementByPurityQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var addedQuery = _context.Products.AsQueryable();
             var returnedQuery = _context.ReturnItems.AsQueryable();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                addedQuery = addedQuery.Where(p => p.CreatedDate >= request.DateFrom.Value);
-                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate >= request.DateFrom.Value);
+                addedQuery = addedQuery.Where(p => p.CreatedDate >= range.StartUtc.Value);
+                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                addedQuery = addedQuery.Where(p => p.CreatedDate <= request.DateTo.Value);
-                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate <= request.DateTo.Value);
+                addedQuery = addedQuery.Where(p => p.CreatedDate <= range.EndUtc.Value);
+                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate <= range.EndUtc.Value);
             }
 
             var addedProducts = await addedQuery

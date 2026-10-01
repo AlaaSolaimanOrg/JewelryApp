@@ -67,7 +67,7 @@ const MeltedProducts = () => {
   const handleApply = () =>
     setAppliedDateRange({
       dateFrom: dateRange.dateFrom,
-      dateTo: dateRange.dateTo ? `${dateRange.dateTo}T23:59:59` : null,
+      dateTo: dateRange.dateTo,
     });
   const handleAllTime = () => {
     setDateRange({ dateFrom: null, dateTo: null });

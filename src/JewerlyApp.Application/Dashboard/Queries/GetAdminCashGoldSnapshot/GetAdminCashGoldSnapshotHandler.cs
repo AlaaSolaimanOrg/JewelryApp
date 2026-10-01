@@ -24,7 +24,7 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminCashGoldSnapshot
 
         public async Task<GenericResponse<AdminCashGoldSnapshotDto>> Handle(GetAdminCashGoldSnapshotQuery request, CancellationToken cancellationToken)
         {
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(BusinessTimeZoneHelper.GetEdmontonDate());
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
 
             // ---- Cash boxes (right now) ----
             var cashTransactions = await _context.CashTransactions

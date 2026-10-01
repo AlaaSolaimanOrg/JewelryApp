@@ -1,5 +1,5 @@
 import type { KaratType, SortDirection } from "../types/enums";
-import { requestApi } from "../utils";
+import { requestApi, type ReportRangePayload } from "../utils";
 import { apiRoutes } from "./apiRoutes";
 
 export interface SaleItemPayload {
@@ -24,16 +24,11 @@ export const getSalesList = async (payload: { saleId: string }) => {
   return requestApi("GET", apiRoutes.sales.getSalesList, payload);
 };
 
-export const getSalesInsights = async (payload: {
-  dateFrom: string;
-  dateTo: string;
-}) => {
+export const getSalesInsights = async (payload: ReportRangePayload) => {
   return requestApi("GET", apiRoutes.sales.getSalesInsights, payload);
 };
 
-export const getSoldItems = async (payload: {
-  dateFrom: string;
-  dateTo: string;
+export const getSoldItems = async (payload: ReportRangePayload & {
   pageSize: number;
   pageNumber: number;
   sortBy: string;
@@ -58,9 +53,7 @@ export const searchSales = async (payload: {
   return requestApi("GET", apiRoutes.sales.searchSales, payload);
 };
 
-export const getTopCustomers = async (payload: {
-  dateFrom: string;
-  dateTo: string;
+export const getTopCustomers = async (payload: ReportRangePayload & {
   top?: number;
 }) => {
   return requestApi("GET", apiRoutes.sales.getTopCustomers, payload);

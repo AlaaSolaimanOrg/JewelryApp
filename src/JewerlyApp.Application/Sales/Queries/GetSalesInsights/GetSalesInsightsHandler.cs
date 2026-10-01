@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Application.Common.Messages;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
@@ -23,19 +24,21 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
 
         public async Task<GenericResponse<GetSalesInsightsVM>> Handle(GetSalesInsightsQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var salesQuery = _context.Sales
             .Include(s => s.SaleItems)
             .AsQueryable();
 
             // Apply date range filter
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= request.DateFrom.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate <= request.DateTo.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate <= range.EndUtc.Value);
             }
 
             // Get all data in one query with proper grouping
@@ -69,13 +72,13 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
                 : 0;
 
             var refundsQuery = _context.Returns.AsQueryable();
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                refundsQuery = refundsQuery.Where(r => r.CreatedDate >= request.DateFrom.Value);
+                refundsQuery = refundsQuery.Where(r => r.CreatedDate >= range.StartUtc.Value);
             }
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                refundsQuery = refundsQuery.Where(r => r.CreatedDate <= request.DateTo.Value);
+                refundsQuery = refundsQuery.Where(r => r.CreatedDate <= range.EndUtc.Value);
             }
             salesData.RefundAmount = await refundsQuery.SumAsync(r => r.TotalAmount, cancellationToken);
 

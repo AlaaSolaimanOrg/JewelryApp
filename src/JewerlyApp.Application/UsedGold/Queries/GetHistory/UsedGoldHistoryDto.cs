@@ -9,7 +9,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
 
         // "purchase" | "melt" | "stock"
         public string Type { get; set; } = default!;
-        public string Desc { get; set; } = default!;
+        public string SellerName { get; set; } = default!;
         public string? Notes { get; set; }
 
         // null = mixed (melt batches)

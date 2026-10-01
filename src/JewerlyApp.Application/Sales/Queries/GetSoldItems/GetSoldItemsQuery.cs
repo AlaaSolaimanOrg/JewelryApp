@@ -11,12 +11,13 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Queries.GetSoldItems
 {
-    public class GetSoldItemsQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<GetSoldItemsVM>>
+    public class GetSoldItemsQuery : SortedPaginatedQuery, IDateRangeQuery, IRequest<PaginatedResponse<GetSoldItemsVM>>
     {
         public ProductCategory? CategoryFilter { get; set; }
         public KaratType? KaratFilter { get; set; }
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        public DateOnly? DateFrom { get; set; }
+        public DateOnly? DateTo { get; set; }
+        public ReportType? ReportType { get; set; }
         public string? SearchBy { get; set; }
     }
 }

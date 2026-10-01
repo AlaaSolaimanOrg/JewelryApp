@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import StatCard from "../../../components/StatCard/StatCard";
 import PinPad from "../../../components/PinPad/PinPad";
+import { useAuth } from "../../../context/AuthContext";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
 import { CashBoxType } from "../../../types/enums";
@@ -62,6 +63,8 @@ interface PendingExpense {
 }
 
 const CashManagement = () => {
+  const { userInfo } = useAuth();
+  const isAdmin = !!userInfo?.roles?.includes("Admin");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const { data: balances } = useLocalApi({
@@ -281,12 +284,14 @@ const CashManagement = () => {
       </Row>
 
       <div className="cash-actions">
-        <button
-          className="cash-btn cash-btn-red"
-          onClick={() => setExpenseOpen(true)}
-        >
-          <FaMinusCircle /> Add expense
-        </button>
+        {isAdmin && (
+          <button
+            className="cash-btn cash-btn-red"
+            onClick={() => setExpenseOpen(true)}
+          >
+            <FaMinusCircle /> Add expense
+          </button>
+        )}
         <button
           className="cash-btn cash-btn-amber"
           onClick={() => setMoveOpen(true)}
@@ -299,12 +304,14 @@ const CashManagement = () => {
         >
           <FaPaperPlane /> Transfer income
         </button>
-        <button
-          className="cash-btn cash-btn-green"
-          onClick={() => setManualOpen(true)}
-        >
-          <FaPlusCircle /> Manual cash in
-        </button>
+        {isAdmin && (
+          <button
+            className="cash-btn cash-btn-green"
+            onClick={() => setManualOpen(true)}
+          >
+            <FaPlusCircle /> Manual cash in
+          </button>
+        )}
       </div>
 
       <TransactionLogs refreshKey={refreshKey} />

@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -20,16 +21,18 @@ namespace JewerlyApp.Application.Sales.Queries.GetTopCustomers
 
         public async Task<GenericResponse<List<TopCustomerVM>>> Handle(GetTopCustomersQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var salesQuery = _context.Sales.AsQueryable();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= request.DateFrom.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate <= request.DateTo.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate <= range.EndUtc.Value);
             }
 
             var topCustomers = await salesQuery

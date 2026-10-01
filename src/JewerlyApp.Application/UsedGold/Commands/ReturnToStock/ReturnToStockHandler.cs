@@ -58,7 +58,7 @@ namespace JewerlyApp.Application.UsedGold.Commands.ReturnToStock
 
         private async Task<string> GenerateSerialNumber()
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "UGR";
 
             int countToday = await _context.UsedGoldStockReturns

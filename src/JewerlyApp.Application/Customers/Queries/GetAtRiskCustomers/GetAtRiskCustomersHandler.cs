@@ -42,7 +42,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetAtRiskCustomers
                 .Where(g => g.Total >= HighValueThreshold && g.LastDate != null)
                 .ToListAsync(cancellationToken);
 
-            var today = BusinessTimeZoneHelper.GetEdmontonDate();
+            var today = BusinessTimeZoneHelper.GetBusinessDate();
 
             var atRisk = salesByCustomer
                 .Select(s => new
@@ -50,7 +50,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetAtRiskCustomers
                     s.CustomerId,
                     s.Total,
                     s.Count,
-                    DaysSince = today.DayNumber - DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.LastDate!.Value)).DayNumber,
+                    DaysSince = today.DayNumber - DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToBusiness(s.LastDate!.Value)).DayNumber,
                 })
                 .Where(s => s.DaysSince >= QuietDaysThreshold)
                 .ToList();

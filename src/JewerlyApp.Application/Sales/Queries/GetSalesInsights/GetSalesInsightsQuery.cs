@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Application.Common.Queries;
+using JewerlyApp.Domain.Enums;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using MediatR;
@@ -10,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
 {
-    public class GetSalesInsightsQuery : IRequest<GenericResponse<GetSalesInsightsVM>>
+    public class GetSalesInsightsQuery : IDateRangeQuery, IRequest<GenericResponse<GetSalesInsightsVM>>
     {
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        public DateOnly? DateFrom { get; set; }
+        public DateOnly? DateTo { get; set; }
+        public ReportType? ReportType { get; set; }
     }
 }

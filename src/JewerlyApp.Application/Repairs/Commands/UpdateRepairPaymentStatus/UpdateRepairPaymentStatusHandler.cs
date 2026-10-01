@@ -43,7 +43,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairPaymentStatus
                 {
                     repair.PayMethod = request.PayMethod.Trim();
                 }
-                repair.PaidDate = BusinessTimeZoneHelper.GetEdmontonDate();
+                repair.PaidDate = BusinessTimeZoneHelper.GetBusinessDate();
 
                 if (request.CashAmount > 0)
                 {

@@ -23,7 +23,7 @@ namespace JewerlyApp.Application.CashManagement.Queries.GetCashBalances
 
         public async Task<GenericResponse<CashBalancesDto>> Handle(GetCashBalancesQuery request, CancellationToken cancellationToken)
         {
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(BusinessTimeZoneHelper.GetEdmontonDate());
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
 
             var transactions = await _context.CashTransactions
                 .AsNoTracking()
