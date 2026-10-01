@@ -90,6 +90,8 @@
     font-size: 13px;
     background: transparent;
     border: none;
+    padding: 0;
+    flex-shrink: 0;
 
     &:active {
       background: var(--pos-red-bg);
