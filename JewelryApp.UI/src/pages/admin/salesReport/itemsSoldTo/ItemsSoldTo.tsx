@@ -1,5 +1,6 @@
 import { getSoldItems } from "../../../../apis/sales.api";
 import Paginator from "../../../../components/Paginator/Paginator";
+import SortLabel from "../../../../components/tables/SortLabel/SortLabel";
 import CustomTable from "../../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../../components/tables/CustomTable/CustomTable";
 import useLocalApiSearchSortPagination from "../../../../hooks/useLocalApiSearchSortPagination";
@@ -29,31 +30,31 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
   const tableHeaders: TableHeader[] = [
     {
       key: "sku",
-      label: "SKU",
+      label: <SortLabel label="SKU" field="Product.Sku" sortCriteria={sortCriteria} />,
       onHeaderClick: () =>
         handleSort("Product.Sku", sortCriteria, onSortChange),
     },
     {
       key: "productName",
-      label: "Product",
+      label: <SortLabel label="Product" field="Product.Name" sortCriteria={sortCriteria} />,
       onHeaderClick: () =>
         handleSort("Product.Name", sortCriteria, onSortChange),
     },
     {
       key: "customerName",
-      label: "Customer",
+      label: <SortLabel label="Customer" field="Sale.Customer.Name" sortCriteria={sortCriteria} />,
       onHeaderClick: () =>
         handleSort("Sale.Customer.Name", sortCriteria, onSortChange),
     },
     {
       key: "saleSerialNumber",
-      label: "Sale ID",
+      label: <SortLabel label="Sale ID" field="Sale.SerialNumber" sortCriteria={sortCriteria} />,
       onHeaderClick: () =>
         handleSort("Sale.SerialNumber", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
-      label: "Qty",
+      label: <SortLabel label="Qty" field="Quantity" sortCriteria={sortCriteria} />,
       align: "right",
       onHeaderClick: () => handleSort("Quantity", sortCriteria, onSortChange),
     },
@@ -61,7 +62,7 @@ const ItemsSoldTo = ({ dateFrom, dateTo }: ItemsSoldToProps) => {
     { key: "pricePerGram", label: "$/g", align: "right" },
     {
       key: "subtotal",
-      label: "Subtotal",
+      label: <SortLabel label="Subtotal" field="SubTotal" sortCriteria={sortCriteria} />,
       align: "right",
       onHeaderClick: () => handleSort("SubTotal", sortCriteria, onSortChange),
     },

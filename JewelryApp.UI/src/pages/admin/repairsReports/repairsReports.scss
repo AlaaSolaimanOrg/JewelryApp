@@ -187,6 +187,13 @@
     font-weight: 500;
     color: var(--admin-t3);
     margin-bottom: 10px;
+
+    &.chart-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
   }
 
   .chart-container {

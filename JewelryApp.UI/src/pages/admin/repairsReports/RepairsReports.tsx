@@ -13,6 +13,8 @@ import {
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
+import ExpandButton from "../../../components/ExpandButton/ExpandButton";
+import ChartExpandModal from "../../../components/modals/ChartExpandModal/ChartExpandModal";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
 import useLocalApi from "../../../hooks/useLocalApi";
@@ -67,6 +69,7 @@ const todayStr = today.toISOString().slice(0, 10);
 
 const RepairsReports = () => {
   const [period, setPeriod] = useState<Period>("month");
+  const [chartExpanded, setChartExpanded] = useState(false);
   const [selMonth, setSelMonth] = useState(today.getMonth());
   const [selYear, setSelYear] = useState(today.getFullYear());
   const [dateFrom, setDateFrom] = useState(todayStr);
@@ -319,11 +322,18 @@ const RepairsReports = () => {
       )}
 
       <div className="section">
-        <div className="section-title">{chartTitle}</div>
+        <div className="section-title chart-title">
+          {chartTitle}
+          <ExpandButton onClick={() => setChartExpanded(true)} />
+        </div>
         <div className="chart-container">
           <RevenueBarChart data={chartData} formatValue={fmtShort} />
         </div>
       </div>
+
+      <ChartExpandModal show={chartExpanded} title={chartTitle} onClose={() => setChartExpanded(false)}>
+        <RevenueBarChart data={chartData} formatValue={fmtShort} />
+      </ChartExpandModal>
 
       <div className="health-row">
         <MiniStatCard

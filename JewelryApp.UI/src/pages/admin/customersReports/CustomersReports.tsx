@@ -9,14 +9,18 @@ import {
   getTopCustomersReport,
 } from "../../../apis/customersReports.api";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import ChartPanel from "../../../components/ChartPanel/ChartPanel";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
 import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
 import TierBarRow from "../../../components/charts/TierBarRow/TierBarRow";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import type { ReportListRow } from "../../../components/ReportListPanel/ReportListPanel.type";
+import SortLabel from "../../../components/tables/SortLabel/SortLabel";
 import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
+import Paginator from "../../../components/Paginator/Paginator";
 import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import TierMembersModal from "./TierMembersModal/TierMembersModal";
 import type {
   AtRiskCustomer,
@@ -39,6 +43,8 @@ import {
   getCustomRange,
   getPeriodRange,
 } from "./CustomersReports.utils";
+import { SortDirection } from "../../../types/enums";
+import { handleSort } from "../../../utils";
 import "./customersReports.scss";
 
 const PERIOD_BUTTONS: Period[] = ["today", "week", "month", "year", "all"];
@@ -50,18 +56,19 @@ const CustomersReports = () => {
   const [dateFrom, setDateFrom] = useState(todayStr);
   const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<DateRange | null>(null);
-  const [search, setSearch] = useState("");
   const [openTier, setOpenTier] = useState<CustomerTier | null>(null);
 
   const handleSetPeriod = (p: Period) => {
     setPeriod(p);
     setAppliedRange(null);
+    onPaginationChange(1);
   };
 
   const handleApplyRange = () => {
     if (!dateFrom || !dateTo) return;
     setAppliedRange({ dateFrom, dateTo });
     setPeriod("custom");
+    onPaginationChange(1);
   };
 
   const activeRange: DateRange =
@@ -106,11 +113,23 @@ const CustomersReports = () => {
     effectDependency: [period, appliedRange],
   }) as { data: ChartDataPoint[] };
 
-  const { data: topCustomers } = useLocalApi({
+  const {
+    data: topCustomers,
+    onPaginationChange,
+    onPageSizeChange,
+    onSearchChange,
+    onSortChange,
+    sortCriteria,
+    pagination,
+    isLoading: topCustomersLoading,
+  } = useLocalApiSearchSortPagination<CustomerReportRow>({
     apiToCall: (data) => getTopCustomersReport(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, search },
-    effectDependency: [period, appliedRange, search],
-  }) as { data: CustomerReportRow[] };
+    initialPageSize: 10,
+    initialSortBy: "Spent",
+    initialSortDirection: SortDirection.Descending,
+    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraEffectDependency: [period, appliedRange],
+  });
 
   const maxTierTotal = Math.max(...tiers.map((t) => t.total), 1);
 
@@ -133,14 +152,14 @@ const CustomersReports = () => {
   const rows = topCustomers;
 
   const headers: TableHeader[] = [
-    { key: "name", label: "Customer" },
-    { key: "phone", label: "Phone" },
-    { key: "purchases", label: "Purchases", align: "right" },
-    { key: "items", label: "Items", align: "right" },
-    { key: "spent", label: "Spent", align: "right" },
-    { key: "avgDiscount", label: "Avg discount", align: "right" },
-    { key: "since", label: "Customer since" },
-    { key: "lastPurchase", label: "Last purchase" },
+    { key: "name", label: <SortLabel label="Customer" field="Name" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
+    { key: "phone", label: <SortLabel label="Phone" field="Phone" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Phone", sortCriteria, onSortChange) },
+    { key: "purchases", label: <SortLabel label="Purchases" field="Purchases" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Purchases", sortCriteria, onSortChange) },
+    { key: "items", label: <SortLabel label="Items" field="Items" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Items", sortCriteria, onSortChange) },
+    { key: "spent", label: <SortLabel label="Spent" field="Spent" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Spent", sortCriteria, onSortChange) },
+    { key: "avgDiscount", label: <SortLabel label="Avg discount" field="AvgDiscount" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("AvgDiscount", sortCriteria, onSortChange) },
+    { key: "since", label: <SortLabel label="Customer since" field="Since" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Since", sortCriteria, onSortChange) },
+    { key: "lastPurchase", label: <SortLabel label="Last purchase" field="LastPurchase" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("LastPurchase", sortCriteria, onSortChange) },
   ];
 
   const tableData = rows.map((c) => ({
@@ -311,13 +330,10 @@ const CustomersReports = () => {
       </div>
 
       <div className="two-col">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">New customers over time</span>
-            <span className="panel-sub">
-              {(activity.newCustomers ?? 0).toLocaleString()} new — {periodLabel.toLowerCase()}
-            </span>
-          </div>
+        <ChartPanel
+          title="New customers over time"
+          subtitle={`${(activity.newCustomers ?? 0).toLocaleString()} new — ${periodLabel.toLowerCase()}`}
+        >
           <div className="chart-container">
             {chartData.length > 0 ? (
               <RevenueBarChart data={chartData} formatValue={(v) => `${v}`} />
@@ -325,32 +341,36 @@ const CustomersReports = () => {
               <div className="no-data">No data available</div>
             )}
           </div>
-        </div>
+        </ChartPanel>
 
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">New vs returning revenue</span>
             <span className="panel-sub">{fmtCurrency(totalRev)} total</span>
           </div>
-          <div className="mix-bars">
-            <SplitBarRow
-              label="Returning"
-              percentage={returningPct}
-              amountLabel={fmtCurrency(returningRevenue)}
-              color="var(--admin-gold)"
-            />
-            <SplitBarRow
-              label="New"
-              percentage={Math.max(3, newPct)}
-              amountLabel={fmtCurrency(newRevenue)}
-              color="var(--admin-green)"
-            />
-          </div>
-          <div className="mini-divider mix-note">
-            {period === "all"
-              ? "All-time view counts every customer as new on their first purchase."
-              : `Returning customers drive ${returningPct}% of revenue — repeat business is the core of the store.`}
-          </div>
+          {totalRev > 0 ? (
+            <>
+              <div className="mix-bars">
+                <SplitBarRow
+                  label="Returning"
+                  percentage={returningPct}
+                  amountLabel={fmtCurrency(returningRevenue)}
+                  color="var(--admin-gold)"
+                />
+                <SplitBarRow
+                  label="New"
+                  percentage={newPct}
+                  amountLabel={fmtCurrency(newRevenue)}
+                  color="var(--admin-green)"
+                />
+              </div>
+              <div className="mini-divider mix-note">
+                Returning customers drive {returningPct}% of revenue — repeat business is the core of the store.
+              </div>
+            </>
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
 
@@ -362,15 +382,23 @@ const CustomersReports = () => {
               type="text"
               className="search-input"
               placeholder="Search customer..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={onSearchChange}
             />
-            <span className="panel-sub">{rows.length} shown</span>
+            <span className="panel-sub">
+              {rows.length} of {pagination.totalRecords} shown
+            </span>
           </div>
         </div>
         <div className="tbl-scroll">
-          <CustomTable headers={headers} data={tableData} />
+          <CustomTable headers={headers} data={tableData} isLoading={topCustomersLoading} />
         </div>
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       <TierMembersModal show={!!openTier} tier={openTier} onClose={() => setOpenTier(null)} />

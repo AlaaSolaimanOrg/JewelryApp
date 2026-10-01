@@ -23,7 +23,7 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerActivityStats
 
         public async Task<GenericResponse<CustomerActivityStatsVM>> Handle(GetCustomerActivityStatsQuery request, CancellationToken cancellationToken)
         {
-            var salesQuery = _context.Sales.AsQueryable();
+            var salesQuery = _context.Sales.AsNoTracking();
 
             if (request.DateFrom.HasValue)
             {
@@ -35,43 +35,57 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomerActivityStats
                 salesQuery = salesQuery.Where(s => s.CreatedDate <= request.DateTo.Value);
             }
 
-            var salesInRange = await salesQuery
-                .Select(s => new { s.CustomerId, s.Total, s.Discount, s.SubTotal })
-                .ToListAsync(cancellationToken);
-
-            var customerIds = salesInRange.Select(s => s.CustomerId).Distinct().ToList();
-
-            // A customer's global first-ever sale date decides whether their revenue in
-            // this window counts as "new" (first purchase on/after the window start) or
-            // "returning" (they'd already bought before the window began).
-            var firstSaleDates = await _context.Sales
+            var firstSales = _context.Sales
                 .AsNoTracking()
-                .Where(s => customerIds.Contains(s.CustomerId))
                 .GroupBy(s => s.CustomerId)
-                .Select(g => new { CustomerId = g.Key, First = g.Min(s => s.CreatedDate) })
-                .ToDictionaryAsync(g => g.CustomerId, g => g.First, cancellationToken);
+                .Select(g => new { CustomerId = g.Key, First = g.Min(s => s.CreatedDate) });
 
-            bool IsNewCustomer(Guid customerId) =>
-                !request.DateFrom.HasValue ||
-                (firstSaleDates.TryGetValue(customerId, out var first) && first.HasValue && first.Value >= request.DateFrom.Value);
+            var totals = await salesQuery
+                .Join(firstSales, s => s.CustomerId, f => f.CustomerId, (s, f) => new
+                {
+                    s.Total,
+                    NewTotal = s.CreatedDate == f.First ? s.Total : 0m,
+                    DiscountPct = s.SubTotal > 0 ? (s.Discount ?? 0) / s.SubTotal * 100 : 0m,
+                })
+                .GroupBy(_ => 1)
+                .Select(g => new
+                {
+                    Revenue = g.Sum(x => x.Total),
+                    NewRevenue = g.Sum(x => x.NewTotal),
+                    AvgDiscount = g.Average(x => x.DiscountPct),
+                })
+                .FirstOrDefaultAsync(cancellationToken);
 
-            var revenue = salesInRange.Sum(s => s.Total);
-            var newRevenue = salesInRange.Where(s => IsNewCustomer(s.CustomerId)).Sum(s => s.Total);
+            var active = await salesQuery
+                .Select(s => s.CustomerId)
+                .Distinct()
+                .CountAsync(cancellationToken);
 
-            var discounts = salesInRange
-                .Select(s => s.SubTotal > 0 ? (s.Discount ?? 0) / s.SubTotal * 100 : 0)
-                .ToList();
+            var newCustomersQuery = firstSales;
 
-            var newCustomers = customerIds.Count(IsNewCustomer);
+            if (request.DateFrom.HasValue)
+            {
+                newCustomersQuery = newCustomersQuery.Where(f => f.First >= request.DateFrom.Value);
+            }
+
+            if (request.DateTo.HasValue)
+            {
+                newCustomersQuery = newCustomersQuery.Where(f => f.First <= request.DateTo.Value);
+            }
+
+            var newCustomers = await newCustomersQuery.CountAsync(cancellationToken);
+
+            var revenue = totals?.Revenue ?? 0;
+            var newRevenue = totals?.NewRevenue ?? 0;
 
             var vm = new CustomerActivityStatsVM
             {
-                Active = customerIds.Count,
+                Active = active,
                 NewCustomers = newCustomers,
                 Revenue = revenue,
                 NewRevenue = newRevenue,
                 ReturningRevenue = revenue - newRevenue,
-                AvgDiscount = discounts.Count > 0 ? discounts.Average() : 0,
+                AvgDiscount = totals?.AvgDiscount ?? 0,
             };
 
             return new GenericResponse<CustomerActivityStatsVM>

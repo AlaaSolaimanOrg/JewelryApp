@@ -1,11 +1,10 @@
-using JewerlyApp.Application.Common.Responses;
+using JewerlyApp.Application.Common.Queries;
 using MediatR;
 using System;
-using System.Collections.Generic;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
 {
-    public class GetStaplesSoldQuery : IRequest<GenericResponse<List<StapleSoldVM>>>
+    public class GetStaplesSoldQuery : SortedPaginatedQuery, IRequest<StaplesSoldResponse>
     {
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }

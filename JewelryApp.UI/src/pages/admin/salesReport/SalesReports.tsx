@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { FaChartBar, FaExpand } from "react-icons/fa";
+import { FaChartBar } from "react-icons/fa";
 import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api";
 import { getSalesInsights, getTopCustomers } from "../../../apis/sales.api";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
+import ExpandButton from "../../../components/ExpandButton/ExpandButton";
 import ChartExpandModal from "../../../components/modals/ChartExpandModal/ChartExpandModal";
 import useLocalApi from "../../../hooks/useLocalApi";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
@@ -257,9 +258,7 @@ const SalesReports = () => {
           <span className="panel-title">Revenue over time</span>
           <div className="panel-right">
             <span className="panel-sub">{fmtCurrency(revenue)} total</span>
-            <button className="expand-btn" onClick={() => setExpandedChart("revenue")}>
-              <FaExpand />
-            </button>
+            <ExpandButton onClick={() => setExpandedChart("revenue")} />
           </div>
         </div>
         {revenueChartData.length > 0 ? (
@@ -273,9 +272,7 @@ const SalesReports = () => {
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Items sold over time</span>
-            <button className="expand-btn" onClick={() => setExpandedChart("units")}>
-              <FaExpand />
-            </button>
+            <ExpandButton onClick={() => setExpandedChart("units")} />
           </div>
           {unitsChartData.length > 0 ? (
             <RevenueBarChart data={unitsChartData} formatValue={fmtNumber} color="var(--admin-blue)" />
@@ -287,9 +284,7 @@ const SalesReports = () => {
         <div className="panel">
           <div className="panel-head">
             <span className="panel-title">Sales by category</span>
-            <button className="expand-btn" onClick={() => setExpandedChart("category")}>
-              <FaExpand />
-            </button>
+            <ExpandButton onClick={() => setExpandedChart("category")} />
           </div>
           {salesByCategory.length > 0 ? (
             salesByCategory.map((c) => (

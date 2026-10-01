@@ -45,7 +45,7 @@ const Customers = () => {
     pagination,
   } = useLocalApiSearchSortPagination<Customer>({
     apiToCall: (data) => getCustomers(data.payload),
-    initialPageSize: 25,
+    initialPageSize: 10,
   });
 
   const openAdd = () => {

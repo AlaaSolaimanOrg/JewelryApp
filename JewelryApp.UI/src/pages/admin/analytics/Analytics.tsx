@@ -15,6 +15,7 @@ import AnalyticsSummary from "./analyticsSummary/AnalyticsSummary";
 import { ReportType } from "../../../types/enums";
 import { useTheme } from "../../../context/ThemeContext";
 import useLocalApi from "../../../hooks/useLocalApi";
+import ChartPanel from "../../../components/ChartPanel/ChartPanel";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
 import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueBarChart";
 import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
@@ -270,11 +271,7 @@ const Analytics = () => {
       <AnalyticsSummary appliedFilters={appliedFilters} refreshKey={refreshKey} />
 
       <div className="grid2">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Revenue over time</span>
-            <span className="panel-sub">{salesOverTime.length} data points</span>
-          </div>
+        <ChartPanel title="Revenue over time" subtitle={`${salesOverTime.length} data points`}>
           <div className="chart-container">
             {salesOverTime.length > 0 ? (
               <RevenueBarChart
@@ -285,12 +282,9 @@ const Analytics = () => {
               <div className="no-data">No data available</div>
             )}
           </div>
-        </div>
+        </ChartPanel>
 
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Units sold over time</span>
-          </div>
+        <ChartPanel title="Units sold over time">
           <div className="chart-container">
             {salesOverTime.length > 0 ? (
               <RevenueBarChart
@@ -301,15 +295,11 @@ const Analytics = () => {
               <div className="no-data">No data available</div>
             )}
           </div>
-        </div>
+        </ChartPanel>
       </div>
 
       <div className="grid2">
-        <div className="panel">
-          <div className="panel-head">
-            <span className="panel-title">Sales by category</span>
-            <span className="panel-sub">share of revenue</span>
-          </div>
+        <ChartPanel title="Sales by category" subtitle="share of revenue">
           {salesByCategory.length > 0 ? (
             salesByCategory.map((c) => (
               <HorizontalBarRow
@@ -323,7 +313,7 @@ const Analytics = () => {
           ) : (
             <div className="no-data">No data available</div>
           )}
-        </div>
+        </ChartPanel>
 
         <div className="panel">
           <div className="panel-head">
@@ -348,13 +338,14 @@ const Analytics = () => {
         </div>
       </div>
 
-      <div className="panel">
-        <div className="panel-head">
-          <span className="panel-title">
+      <ChartPanel
+        title={
+          <>
             <FaUser className="icon" /> Staff performance
-          </span>
-          <span className="panel-sub">sales · commission</span>
-        </div>
+          </>
+        }
+        subtitle="sales · commission"
+      >
         {staffPerformance.length > 0 ? (
           staffPerformance.map((s) => (
             <HorizontalBarRow
@@ -368,15 +359,16 @@ const Analytics = () => {
         ) : (
           <div className="no-data">No data available</div>
         )}
-      </div>
+      </ChartPanel>
 
-      <div className="panel">
-        <div className="panel-head">
-          <span className="panel-title">
+      <ChartPanel
+        title={
+          <>
             <FaChartLine className="icon" /> Gold price over time
-          </span>
-          <span className="panel-sub">by karat</span>
-        </div>
+          </>
+        }
+        subtitle="by karat"
+      >
         <div className="chart-container tall">
           {priceOverTimeAnalytics.length > 0 ? (
             <Line data={priceOverTimeData} options={priceOverTimeOptions} />
@@ -384,7 +376,7 @@ const Analytics = () => {
             <div className="no-data">No data available</div>
           )}
         </div>
-      </div>
+      </ChartPanel>
     </div>
   );
 };

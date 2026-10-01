@@ -23,6 +23,7 @@ import {
   showError,
   showSuccess,
 } from "../../../utils";
+import SortLabel from "../../../components/tables/SortLabel/SortLabel";
 import "./logs.scss";
 
 interface LogItem {
@@ -89,13 +90,13 @@ const Logs = () => {
     },
     {
       key: "createdAt",
-      label: "Timestamp",
+      label: <SortLabel label="Timestamp" field="createdAt" sortCriteria={sortCriteria} />,
       width: "200px",
       onHeaderClick: () => handleSort("createdAt", sortCriteria, onSortChange),
     },
     {
       key: "level",
-      label: "Level",
+      label: <SortLabel label="Level" field="level" sortCriteria={sortCriteria} />,
       width: "120px",
       onHeaderClick: () => handleSort("level", sortCriteria, onSortChange),
     },
