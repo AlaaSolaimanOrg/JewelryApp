@@ -23,7 +23,7 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairAlerts
 
         public async Task<GenericResponse<List<RepairAlertVM>>> Handle(GetRepairAlertsQuery request, CancellationToken cancellationToken)
         {
-            var today = BusinessTimeZoneHelper.GetEdmontonDate();
+            var today = BusinessTimeZoneHelper.GetBusinessDate();
 
             var active = await _context.Repairs
                 .AsNoTracking()

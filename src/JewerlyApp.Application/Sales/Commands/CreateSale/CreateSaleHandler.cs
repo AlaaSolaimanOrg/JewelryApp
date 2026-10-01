@@ -399,7 +399,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
         private async Task<string> GenerateSaleSerialNumber()
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "SALE";
 
             int countToday = await _context.Sales
@@ -410,7 +410,7 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
 
         private async Task<string> GenerateUsedGoldPurchaseSerialNumber()
         {
-            string today = BusinessTimeZoneHelper.GetEdmontonDate().ToString("yyyyMMdd");
+            string today = BusinessTimeZoneHelper.GetBusinessDate().ToString("yyyyMMdd");
             string prefix = "UGP";
 
             int countToday = await _context.UsedGoldPurchases

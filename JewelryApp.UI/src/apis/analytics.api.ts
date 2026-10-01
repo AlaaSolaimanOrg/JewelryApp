@@ -5,7 +5,7 @@ import { apiRoutes } from "./apiRoutes";
 export interface AnalyticsFilterPayload {
   dateFrom?: string;
   dateTo?: string;
-  reportType: ReportType;
+  reportType?: ReportType | null;
 }
 
 export const getSalesOverTime = async (payload: AnalyticsFilterPayload) => {

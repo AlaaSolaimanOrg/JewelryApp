@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Enums;
@@ -20,11 +21,13 @@ namespace JewerlyApp.Application.Products.Queries.GetMeltedReports
 
         public async Task<GenericResponse<MeltedReportsVM>> Handle(GetMeltedReportsQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var query = _context.MeltRecords.AsNoTracking();
 
-            if (request.DateFrom.HasValue && request.DateTo.HasValue)
+            if (range.StartUtc.HasValue && range.EndUtc.HasValue)
             {
-                query = query.Where(m => m.MeltedAt >= request.DateFrom.Value && m.MeltedAt <= request.DateTo.Value);
+                query = query.Where(m => m.MeltedAt >= range.StartUtc.Value && m.MeltedAt <= range.EndUtc.Value);
             }
 
             var grouped = await query

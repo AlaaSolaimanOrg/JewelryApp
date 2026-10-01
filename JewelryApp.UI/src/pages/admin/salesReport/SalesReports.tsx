@@ -9,6 +9,7 @@ import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueB
 import ExpandButton from "../../../components/ExpandButton/ExpandButton";
 import ChartExpandModal from "../../../components/modals/ChartExpandModal/ChartExpandModal";
 import useLocalApi from "../../../hooks/useLocalApi";
+import { getReportRangePayload } from "../../../utils";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
 import type { Period } from "./SalesReports.type";
 import {
@@ -18,9 +19,6 @@ import {
   fmtCurrency,
   fmtNumber,
   formatRangeLabel,
-  getCustomRange,
-  getPeriodRange,
-  getReportType,
 } from "./SalesReports.utils";
 import "./salesReports.scss";
 
@@ -83,12 +81,7 @@ const SalesReports = () => {
     setPeriod("custom");
   };
 
-  const activeRange =
-    period === "custom" && appliedRange
-      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
-      : getPeriodRange(period as Exclude<Period, "custom">);
-
-  const reportType = getReportType(period);
+  const rangePayload = getReportRangePayload(period, appliedRange);
 
   const periodLabel =
     period === "custom" && appliedRange
@@ -97,26 +90,26 @@ const SalesReports = () => {
 
   const { data: salesInsights } = useLocalApi({
     apiToCall: (data) => getSalesInsights(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    payload: rangePayload,
     dataInitalValue: {},
     effectDependency: [period, appliedRange],
   }) as { data: Partial<SalesInsights> };
 
   const { data: salesOverTime } = useLocalApi({
     apiToCall: (data) => getSalesOverTime(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, reportType },
+    payload: rangePayload,
     effectDependency: [period, appliedRange],
   }) as { data: SalesOverTimeItem[] };
 
   const { data: salesByCategory } = useLocalApi({
     apiToCall: (data) => getSalesByCategory(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, reportType },
+    payload: rangePayload,
     effectDependency: [period, appliedRange],
   }) as { data: SalesByCategoryItem[] };
 
   const { data: topCustomers } = useLocalApi({
     apiToCall: (data) => getTopCustomers(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo, top: 5 },
+    payload: { ...rangePayload, top: 5 },
     effectDependency: [period, appliedRange],
   }) as { data: TopCustomerItem[] };
 
@@ -331,7 +324,7 @@ const SalesReports = () => {
         />
       </div>
 
-      <ItemsSoldTo dateFrom={activeRange.dateFrom} dateTo={activeRange.dateTo} />
+      <ItemsSoldTo range={rangePayload} />
 
       <ChartExpandModal
         show={expandedChart === "revenue"}

@@ -23,32 +23,21 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaffPerformance
 
         public async Task<GenericResponse<List<StaffPerformanceVM>>> Handle(GetStaffPerformanceQuery request, CancellationToken cancellationToken)
         {
-            // Determine date range / filtering strategy
-            var hasExplicitDates = request.DateFrom.HasValue || request.DateTo.HasValue;
-            var hasReportType = request.ReportType.HasValue;
-            var noDateFilter = !hasExplicitDates && !hasReportType; // when true, treat as "all time"
-
-            DateTime dateFrom = DateTime.MinValue;
-            DateTime dateTo = DateTime.MaxValue;
-
-            if (hasReportType)
-            {
-                var (rFrom, rTo) = DateRangeHelper.GetDateRange(request.ReportType!.Value);
-                dateFrom = rFrom;
-                dateTo = rTo;
-            }
-
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
+            var range = request.ResolveDateRange();
 
             var salesQuery = _context.Sales
                 .AsNoTracking()
                 .Include(s => s.CreatedByUser)
                 .AsQueryable();
 
-            if (!noDateFilter)
+            if (range.StartUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= range.StartUtc.Value);
+            }
+
+            if (range.EndUtc.HasValue)
+            {
+                salesQuery = salesQuery.Where(s => s.CreatedDate <= range.EndUtc.Value);
             }
 
             var staffPerformance = await salesQuery

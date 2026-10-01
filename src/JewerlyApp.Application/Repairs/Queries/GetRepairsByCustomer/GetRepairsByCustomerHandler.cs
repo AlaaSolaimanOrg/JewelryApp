@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -27,15 +28,17 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairsByCustomer
                 .AsNoTracking()
                 .Where(r => r.Status != RepairStatus.Cancelled);
 
-            if (request.DateFrom.HasValue)
+            var range = request.ResolveDateRange();
+
+            if (range.From.HasValue)
             {
-                var from = DateOnly.FromDateTime(request.DateFrom.Value);
+                var from = range.From.Value;
                 query = query.Where(r => r.OrderDate >= from);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.To.HasValue)
             {
-                var to = DateOnly.FromDateTime(request.DateTo.Value);
+                var to = range.To.Value;
                 query = query.Where(r => r.OrderDate <= to);
             }
 

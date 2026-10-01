@@ -22,13 +22,13 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminSalesSummary
 
         public async Task<GenericResponse<AdminSalesSummaryDto>> Handle(GetAdminSalesSummaryQuery request, CancellationToken cancellationToken)
         {
-            var todayDate = BusinessTimeZoneHelper.GetEdmontonDate();
+            var todayDate = BusinessTimeZoneHelper.GetBusinessDate();
             var yesterdayDate = todayDate.AddDays(-1);
             var trendStartDate = todayDate.AddDays(-13);
 
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(todayDate);
-            var (yesterdayStartUtc, yesterdayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(yesterdayDate);
-            var (trendStartUtc, _) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(trendStartDate);
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(todayDate);
+            var (yesterdayStartUtc, yesterdayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(yesterdayDate);
+            var (trendStartUtc, _) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(trendStartDate);
 
             var salesInRange = await _context.Sales
                 .AsNoTracking()
@@ -80,7 +80,7 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminSalesSummary
 
             // ---- Sales trend (last 14 days) ----
             var revenueByDate = salesInRange
-                .GroupBy(s => DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.CreatedDate!.Value)))
+                .GroupBy(s => DateOnly.FromDateTime(BusinessTimeZoneHelper.ConvertUtcToBusiness(s.CreatedDate!.Value)))
                 .ToDictionary(g => g.Key, g => g.Sum(s => s.Total));
 
             var salesTrend = Enumerable.Range(0, 14)

@@ -20,7 +20,7 @@ import type { TableHeader } from "../../../components/tables/CustomTable/CustomT
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
-import { handleSort } from "../../../utils";
+import { getReportRangePayload, handleSort } from "../../../utils";
 import type {
   DateRange,
   InventoryAging,
@@ -38,8 +38,6 @@ import {
   fmtCurrency,
   fmtNumber,
   formatRangeLabel,
-  getCustomRange,
-  getPeriodRange,
   largestRemainderRound,
 } from "./InventoryReports.utils";
 import "./inventoryReports.scss";
@@ -76,10 +74,7 @@ const InventoryReports = () => {
     onPaginationChange(1);
   };
 
-  const activeRange =
-    period === "custom" && appliedRange
-      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
-      : getPeriodRange(period as Exclude<Period, "custom">);
+  const rangePayload = getReportRangePayload(period, appliedRange);
 
   const periodLabel =
     period === "custom" && appliedRange
@@ -110,14 +105,14 @@ const InventoryReports = () => {
 
   const { data: movement } = useLocalApi({
     apiToCall: (data) => getInventoryMovement(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    payload: rangePayload,
     dataInitalValue: {},
     effectDependency: [period, appliedRange],
   }) as { data: Partial<InventoryMovement> };
 
   const { data: purityMovement } = useLocalApi({
     apiToCall: (data) => getMovementByPurity(data.payload),
-    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    payload: rangePayload,
     dataInitalValue: { added: [], returned: [] },
     effectDependency: [period, appliedRange],
   }) as { data: PurityMovement };
@@ -136,7 +131,7 @@ const InventoryReports = () => {
     initialPageSize: 10,
     initialSortBy: "Sold",
     initialSortDirection: SortDirection.Descending,
-    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraPayload: rangePayload,
     extraEffectDependency: [period, appliedRange],
     extractFromResponse: ["totalSold"],
   });

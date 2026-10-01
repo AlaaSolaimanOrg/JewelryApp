@@ -27,21 +27,9 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
         {
             var query = _context.Sales.AsNoTracking().AsQueryable();
 
-            // Apply Date Range
-            DateTime dateFrom, dateTo;
-            if (request.ReportType.HasValue)
-            {
-                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
-            }
-            else
-            {
-                dateFrom = DateTime.MinValue;
-                dateTo = DateTime.MaxValue;
-            }
-
-            // 2. Override with specific dates if provided
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
+            var range = request.ResolveDateRange();
+            var dateFrom = range.StartUtc ?? DateTime.MinValue;
+            var dateTo = range.EndUtc ?? DateTime.MaxValue;
 
             query = query.Where(s => s.CreatedDate >= dateFrom && s.CreatedDate <= dateTo);
 
@@ -56,14 +44,14 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
                 .ToListAsync(cancellationToken);
 
             // Group by business local time, not UTC storage time.
-            var salesDataInEdmonton = salesData.Select(s => new
+            var salesDataInBusinessTime = salesData.Select(s => new
             {
-                CreatedDate = BusinessTimeZoneHelper.ConvertUtcToEdmonton(s.CreatedDate),
+                CreatedDate = BusinessTimeZoneHelper.ConvertUtcToBusiness(s.CreatedDate),
                 s.Total,
                 s.ItemsCount
             }).ToList();
 
-            if (salesDataInEdmonton.Count == 0)
+            if (salesDataInBusinessTime.Count == 0)
             {
                 return new GenericResponse<List<SalesOverTimeVM>>
                 {
@@ -73,8 +61,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
                 };
             }
 
-            var rangeStart = dateFrom == DateTime.MinValue ? salesDataInEdmonton.Min(s => s.CreatedDate) : dateFrom;
-            var rangeEnd = dateTo == DateTime.MaxValue ? salesDataInEdmonton.Max(s => s.CreatedDate) : dateTo;
+            var rangeStart = dateFrom == DateTime.MinValue ? salesDataInBusinessTime.Min(s => s.CreatedDate) : dateFrom;
+            var rangeEnd = dateTo == DateTime.MaxValue ? salesDataInBusinessTime.Max(s => s.CreatedDate) : dateTo;
             var spanDays = (rangeEnd - rangeStart).TotalDays;
 
             Func<DateTime, DateTime> bucketOf;
@@ -111,7 +99,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesOverTime
                 labelFormat = "yyyy";
             }
 
-            var result = salesDataInEdmonton
+            var result = salesDataInBusinessTime
                 .GroupBy(s => bucketOf(s.CreatedDate))
                 .Select(g => new SalesOverTimeVM
                 {

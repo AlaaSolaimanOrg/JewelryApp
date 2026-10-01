@@ -22,7 +22,7 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminRepairsStats
 
         public async Task<GenericResponse<AdminRepairsStatsDto>> Handle(GetAdminRepairsStatsQuery request, CancellationToken cancellationToken)
         {
-            var todayDate = BusinessTimeZoneHelper.GetEdmontonDate();
+            var todayDate = BusinessTimeZoneHelper.GetBusinessDate();
 
             var repairs = await _context.Repairs
                 .AsNoTracking()

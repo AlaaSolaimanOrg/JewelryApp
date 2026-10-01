@@ -37,7 +37,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
                         Id = i.Id,
                         Date = i.CreatedDate ?? DateTime.UtcNow,
                         Type = "purchase",
-                        Desc = i.Purchase.CustomerName,
+                        SellerName = i.Purchase.CustomerName,
                         Notes = i.Purchase.Notes,
                         Karat = i.Karat,
                         Weight = i.Weight,
@@ -56,7 +56,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
                         Id = b.Id,
                         Date = b.CreatedDate ?? DateTime.UtcNow,
                         Type = "melt",
-                        Desc = "Melt batch",
+                        SellerName = "Melt batch",
                         Notes = b.Notes,
                         Karat = null,
                         Weight = b.TotalWeight,
@@ -75,7 +75,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
                         Id = r.Id,
                         Date = r.CreatedDate ?? DateTime.UtcNow,
                         Type = "stock",
-                        Desc = "Return to stock",
+                        SellerName = "Return to stock",
                         Notes = r.Notes,
                         Karat = r.Karat,
                         Weight = r.Weight,
@@ -89,7 +89,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
             {
                 var s = request.SearchBy.ToLower();
                 entries = entries.Where(e =>
-                    e.Desc.ToLower().Contains(s) ||
+                    e.SellerName.ToLower().Contains(s) ||
                     (e.Notes != null && e.Notes.ToLower().Contains(s))).ToList();
             }
 

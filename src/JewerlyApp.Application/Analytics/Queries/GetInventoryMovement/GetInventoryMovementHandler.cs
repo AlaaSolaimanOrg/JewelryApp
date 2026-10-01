@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -21,25 +22,27 @@ namespace JewerlyApp.Application.Analytics.Queries.GetInventoryMovement
 
         public async Task<GenericResponse<InventoryMovementVM>> Handle(GetInventoryMovementQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var addedQuery = _context.Products.AsQueryable();
             var soldQuery = _context.SaleItems.AsQueryable();
             var returnedQuery = _context.ReturnItems.AsQueryable();
             var meltedQuery = _context.MeltRecords.AsQueryable();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                addedQuery = addedQuery.Where(p => p.CreatedDate >= request.DateFrom.Value);
-                soldQuery = soldQuery.Where(si => si.CreatedDate >= request.DateFrom.Value);
-                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate >= request.DateFrom.Value);
-                meltedQuery = meltedQuery.Where(m => m.MeltedAt >= request.DateFrom.Value);
+                addedQuery = addedQuery.Where(p => p.CreatedDate >= range.StartUtc.Value);
+                soldQuery = soldQuery.Where(si => si.CreatedDate >= range.StartUtc.Value);
+                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate >= range.StartUtc.Value);
+                meltedQuery = meltedQuery.Where(m => m.MeltedAt >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                addedQuery = addedQuery.Where(p => p.CreatedDate <= request.DateTo.Value);
-                soldQuery = soldQuery.Where(si => si.CreatedDate <= request.DateTo.Value);
-                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate <= request.DateTo.Value);
-                meltedQuery = meltedQuery.Where(m => m.MeltedAt <= request.DateTo.Value);
+                addedQuery = addedQuery.Where(p => p.CreatedDate <= range.EndUtc.Value);
+                soldQuery = soldQuery.Where(si => si.CreatedDate <= range.EndUtc.Value);
+                returnedQuery = returnedQuery.Where(ri => ri.CreatedDate <= range.EndUtc.Value);
+                meltedQuery = meltedQuery.Where(m => m.MeltedAt <= range.EndUtc.Value);
             }
 
             var addedProducts = await addedQuery

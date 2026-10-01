@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -30,8 +31,9 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairsRevenueChart
                 .AsNoTracking()
                 .Where(r => r.Status == RepairStatus.PickedUp && r.PickedUpDate.HasValue);
 
-            var from = request.DateFrom.HasValue ? DateOnly.FromDateTime(request.DateFrom.Value) : (DateOnly?)null;
-            var to = request.DateTo.HasValue ? DateOnly.FromDateTime(request.DateTo.Value) : (DateOnly?)null;
+            var range = request.ResolveDateRange();
+            var from = range.From;
+            var to = range.To;
 
             if (from.HasValue)
             {

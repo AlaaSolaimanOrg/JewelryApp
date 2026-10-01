@@ -1,6 +1,7 @@
 using JewerlyApp.API.Middleware;
 using JewerlyApp.API.Serialization;
 using JewerlyApp.Application;
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Interfaces;
 using JewerlyApp.Domain.Entities;
 using JewerlyApp.Infrastructure;
@@ -22,6 +23,10 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
+
+BusinessTimeZoneHelper.Configure(
+    configuration["BusinessSettings:TimeZoneId"]
+    ?? throw new InvalidOperationException("BusinessSettings:TimeZoneId is not configured."));
 
 var basePath = configuration["BasePath"] ?? "/api";
 
@@ -65,8 +70,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.Converters.Add(new EdmontonDateTimeJsonConverter());
-    options.JsonSerializerOptions.Converters.Add(new EdmontonNullableDateTimeJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new BusinessDateTimeJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new BusinessNullableDateTimeJsonConverter());
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

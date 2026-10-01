@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
@@ -22,28 +23,30 @@ namespace JewerlyApp.Application.Customers.Queries.GetTopCustomersReport
 
         public async Task<PaginatedResponse<CustomerReportRowVM>> Handle(GetTopCustomersReportQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var salesQuery = _context.Sales.AsQueryable();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate >= request.DateFrom.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                salesQuery = salesQuery.Where(s => s.CreatedDate <= request.DateTo.Value);
+                salesQuery = salesQuery.Where(s => s.CreatedDate <= range.EndUtc.Value);
             }
 
             var itemsQuery = _context.SaleItems.AsQueryable();
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                itemsQuery = itemsQuery.Where(si => si.Sale!.CreatedDate >= request.DateFrom.Value);
+                itemsQuery = itemsQuery.Where(si => si.Sale!.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                itemsQuery = itemsQuery.Where(si => si.Sale!.CreatedDate <= request.DateTo.Value);
+                itemsQuery = itemsQuery.Where(si => si.Sale!.CreatedDate <= range.EndUtc.Value);
             }
 
             var grouped = salesQuery

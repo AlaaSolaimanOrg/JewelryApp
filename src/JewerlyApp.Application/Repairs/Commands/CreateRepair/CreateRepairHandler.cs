@@ -65,7 +65,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
                 };
             }
 
-            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
+            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetBusinessDate())
             {
                 return new GenericResponse<Guid>
                 {
@@ -90,7 +90,7 @@ namespace JewerlyApp.Application.Repairs.Commands.CreateRepair
             {
                 RepairCode = nextRepairCode,
                 CustomerId = request.CustomerId,
-                OrderDate = BusinessTimeZoneHelper.GetEdmontonDate(),
+                OrderDate = BusinessTimeZoneHelper.GetBusinessDate(),
                 Status = RepairStatus.InProgress,
                 Notes = request.Notes,
                 Cost = request.Cost,

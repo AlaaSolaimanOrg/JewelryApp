@@ -23,20 +23,9 @@ namespace JewerlyApp.Application.Analytics.Queries.GetCustomerRetention
 
         public async Task<GenericResponse<List<CustomerRetentionVM>>> Handle(GetCustomerRetentionQuery request, CancellationToken cancellationToken)
         {
-            // Apply Date Range
-            DateTime dateFrom, dateTo;
-            if (request.ReportType.HasValue)
-            {
-                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
-            }
-            else
-            {
-                dateFrom = DateTime.MinValue;
-                dateTo = DateTime.MaxValue;
-            }
-
-            if (request.DateFrom.HasValue) dateFrom = request.DateFrom.Value;
-            if (request.DateTo.HasValue) dateTo = request.DateTo.Value;
+            var range = request.ResolveDateRange();
+            var dateFrom = range.StartUtc ?? DateTime.MinValue;
+            var dateTo = range.EndUtc ?? DateTime.MaxValue;
 
             // Group sales by customer and count purchases per customer
             var customerPurchaseCounts = await _context.Sales

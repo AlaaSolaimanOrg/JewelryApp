@@ -26,14 +26,9 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
             CancellationToken cancellationToken)
         {
             // 1️⃣ Resolve date range
-            DateTime dateFrom = request.DateFrom ?? DateTime.MinValue;
-            DateTime dateTo = request.DateTo ?? DateTime.MaxValue;
-
-            // Only auto-calc range if user did NOT provide dates
-            if (request.ReportType.HasValue && !request.DateFrom.HasValue && !request.DateTo.HasValue)
-            {
-                (dateFrom, dateTo) = DateRangeHelper.GetDateRange(request.ReportType.Value);
-            }
+            var range = request.ResolveDateRange();
+            var dateFrom = range.StartUtc ?? DateTime.MinValue;
+            var dateTo = range.EndUtc ?? DateTime.MaxValue;
 
             // 2️⃣ Load pricing logs
             var logs = await _context.PricingSettingLogs
@@ -46,12 +41,12 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
                 .OrderBy(x => x.CreatedDate)
                 .ToListAsync(cancellationToken);
 
-            var logsInEdmonton = logs
+            var logsInBusinessTime = logs
                 .Where(x => x.CreatedDate.HasValue)
                 .Select(x => new
                 {
                     Log = x,
-                    LocalCreatedDate = BusinessTimeZoneHelper.ConvertUtcToEdmonton(x.CreatedDate!.Value)
+                    LocalCreatedDate = BusinessTimeZoneHelper.ConvertUtcToBusiness(x.CreatedDate!.Value)
                 })
                 .ToList();
 
@@ -89,7 +84,7 @@ namespace JewerlyApp.Application.Analytics.Queries.GetGoldPriceOverTime
             };
 
             // 4️⃣ Group & project
-            var result = logsInEdmonton
+            var result = logsInBusinessTime
                 .GroupBy(x => groupKey(x.LocalCreatedDate))
                 .Select(g => new PriceOverTimeChartVM
                 {

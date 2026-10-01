@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Queries;
 using System;
 using System.Collections.Generic;
 using MediatR;
@@ -6,10 +7,10 @@ using JewerlyApp.Domain.Enums;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
 {
-    public class GetSalesByCategoryQuery : IRequest<GenericResponse<List<SalesByCategoryVM>>>
+    public class GetSalesByCategoryQuery : IDateRangeQuery, IRequest<GenericResponse<List<SalesByCategoryVM>>>
     {
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        public DateOnly? DateFrom { get; set; }
+        public DateOnly? DateTo { get; set; }
         public ReportType? ReportType { get; set; } = null;
     }
 }

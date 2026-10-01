@@ -43,7 +43,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
                 };
             }
 
-            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
+            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetBusinessDate())
             {
                 return new GenericResponse<Unit>
                 {

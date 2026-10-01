@@ -22,7 +22,7 @@ namespace JewerlyApp.Application.Dashboard.Queries.GetAdminInventorySnapshot
 
         public async Task<GenericResponse<AdminInventorySnapshotDto>> Handle(GetAdminInventorySnapshotQuery request, CancellationToken cancellationToken)
         {
-            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForEdmontonDate(BusinessTimeZoneHelper.GetEdmontonDate());
+            var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
 
             // ---- Stock value ----
             var products = await _context.Products

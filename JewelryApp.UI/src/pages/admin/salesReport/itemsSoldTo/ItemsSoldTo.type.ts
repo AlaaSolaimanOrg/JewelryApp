@@ -1,12 +1,14 @@
+import type { ReportRangePayload } from "../../../../utils";
+
 export interface ItemsSoldToProps {
-  dateFrom: string;
-  dateTo: string;
+  range: ReportRangePayload;
 }
 
 export interface SoldItem {
   sku?: string;
   productName: string;
   customerName: string;
+  saleId: string;
   saleSerialNumber: string;
   quantity: number;
   unitWeight: number;

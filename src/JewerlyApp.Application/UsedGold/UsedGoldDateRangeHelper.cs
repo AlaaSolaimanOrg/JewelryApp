@@ -14,13 +14,13 @@ namespace JewerlyApp.Application.UsedGold
             {
                 var startLocal = new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
                 var endLocal = startLocal.AddYears(1).AddTicks(-1);
-                return (BusinessTimeZoneHelper.ConvertEdmontonToUtc(startLocal), BusinessTimeZoneHelper.ConvertEdmontonToUtc(endLocal));
+                return (BusinessTimeZoneHelper.ConvertBusinessToUtc(startLocal), BusinessTimeZoneHelper.ConvertBusinessToUtc(endLocal));
             }
 
             // month (0-based)
             var monthStartLocal = new DateTime(year, month + 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
             var monthEndLocal = monthStartLocal.AddMonths(1).AddTicks(-1);
-            return (BusinessTimeZoneHelper.ConvertEdmontonToUtc(monthStartLocal), BusinessTimeZoneHelper.ConvertEdmontonToUtc(monthEndLocal));
+            return (BusinessTimeZoneHelper.ConvertBusinessToUtc(monthStartLocal), BusinessTimeZoneHelper.ConvertBusinessToUtc(monthEndLocal));
         }
     }
 }

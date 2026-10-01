@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Extensions;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
@@ -44,6 +45,8 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
 
         public async Task<StaplesSoldResponse> Handle(GetStaplesSoldQuery request, CancellationToken cancellationToken)
         {
+            var range = request.ResolveDateRange();
+
             var lowStockThreshold = await LowStockThresholdResolver.GetCurrentThresholdAsync(_context, cancellationToken);
 
             var bullionProducts = await _context.Products
@@ -70,14 +73,14 @@ namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
                 .AsNoTracking()
                 .Where(si => si.Product != null && si.Product.Category == ProductCategory.Bullion);
 
-            if (request.DateFrom.HasValue)
+            if (range.StartUtc.HasValue)
             {
-                soldQuery = soldQuery.Where(si => si.CreatedDate >= request.DateFrom.Value);
+                soldQuery = soldQuery.Where(si => si.CreatedDate >= range.StartUtc.Value);
             }
 
-            if (request.DateTo.HasValue)
+            if (range.EndUtc.HasValue)
             {
-                soldQuery = soldQuery.Where(si => si.CreatedDate <= request.DateTo.Value);
+                soldQuery = soldQuery.Where(si => si.CreatedDate <= range.EndUtc.Value);
             }
 
             var soldItems = await soldQuery

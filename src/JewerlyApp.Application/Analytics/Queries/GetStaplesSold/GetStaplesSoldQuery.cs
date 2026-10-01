@@ -1,12 +1,14 @@
+using JewerlyApp.Domain.Enums;
 using JewerlyApp.Application.Common.Queries;
 using MediatR;
 using System;
 
 namespace JewerlyApp.Application.Analytics.Queries.GetStaplesSold
 {
-    public class GetStaplesSoldQuery : SortedPaginatedQuery, IRequest<StaplesSoldResponse>
+    public class GetStaplesSoldQuery : SortedPaginatedQuery, IDateRangeQuery, IRequest<StaplesSoldResponse>
     {
-        public DateTime? DateFrom { get; set; }
-        public DateTime? DateTo { get; set; }
+        public DateOnly? DateFrom { get; set; }
+        public DateOnly? DateTo { get; set; }
+        public ReportType? ReportType { get; set; }
     }
 }
