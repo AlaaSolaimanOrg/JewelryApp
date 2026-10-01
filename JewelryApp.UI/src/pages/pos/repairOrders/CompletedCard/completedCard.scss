@@ -1,0 +1,129 @@
+.completed-card {
+  background: var(--pos-bg-surface-hover);
+  border: 1px solid var(--pos-border);
+  border-radius: var(--pos-radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .card-top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-code {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--pos-text-muted);
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 12px;
+
+      &.pickedup {
+        background: var(--pos-green-bg);
+        color: var(--pos-green);
+      }
+
+      &.cancelled {
+        background: var(--pos-red-bg);
+        color: var(--pos-red);
+      }
+    }
+
+    .card-invoice-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      padding: 0;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--pos-text-muted);
+      cursor: pointer;
+      transition: all 0.12s;
+
+      &:hover {
+        background: var(--pos-gold-bg);
+        color: var(--pos-gold);
+      }
+    }
+  }
+
+  .card-customer {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .completed-info {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 6px;
+
+    .completed-detail {
+      font-size: 12px;
+      color: var(--pos-text-muted);
+
+      span {
+        color: var(--pos-text-secondary);
+        font-weight: 500;
+      }
+    }
+  }
+
+  .card-notes {
+    font-size: 12px;
+    color: var(--pos-text-secondary);
+    line-height: 1.6;
+    padding: 8px 12px;
+    background: var(--pos-bg-raised);
+    border-radius: 8px;
+    margin-top: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-height: 96px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pos-border-strong) transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      margin: 8px 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--pos-border-strong);
+      border-radius: 999px;
+      border: 2px solid var(--pos-bg-raised);
+
+      &:hover {
+        background: var(--pos-gold);
+      }
+    }
+  }
+}

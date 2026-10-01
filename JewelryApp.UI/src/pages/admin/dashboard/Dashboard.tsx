@@ -1,210 +1,272 @@
-import { getDashboardInsights } from "../../../apis/sales.api/sales.api";
+import { FaExclamationTriangle, FaTools } from "react-icons/fa";
+import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
+import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
+import SplitBarRow from "../../../components/charts/SplitBarRow/SplitBarRow";
+import {
+  getAdminAttentionItems,
+  getAdminCashGoldSnapshot,
+  getAdminInventorySnapshot,
+  getAdminRepairsStats,
+  getAdminSalesSummary,
+} from "../../../apis/dashboard.api";
 import useLocalApi from "../../../hooks/useLocalApi";
+import type {
+  AttentionItem,
+  CashGoldSnapshot,
+  InventorySnapshot,
+  RepairsStats,
+  SalesSummary,
+} from "./Dashboard.type";
+import {
+  ATTENTION_COLORS,
+  EMPTY_CASH_GOLD_SNAPSHOT,
+  EMPTY_INVENTORY_SNAPSHOT,
+  EMPTY_REPAIRS_STATS,
+  EMPTY_SALES_SUMMARY,
+  fmtCurrency,
+  fmtCurrencyRounded,
+  fmtNumber,
+  fmtWeight,
+} from "./Dashboard.utils";
 import "./dashboard.scss";
 
-// Import icons from react-icons/fa
-import { useState } from "react";
-import {
-  FaArrowDown,
-  FaArrowUp,
-  FaGem,
-  FaHome,
-  FaShoppingBag,
-  FaShoppingCart,
-  FaSyncAlt,
-  FaUsers,
-  FaWeightHanging,
-} from "react-icons/fa";
-import { KaratType } from "../../../types/enums";
-import TopSellingCategories from "./TopSellingCategories/TopSellingCategories";
-
-export interface DashboardInsights {
-  salesToday: {
-    amount: number;
-    changePercentage: number;
-    isIncrease: boolean;
-  };
-  stockValue: number;
-  customers: {
-    count: number;
-    changePercentage: number;
-    isIncrease: boolean;
-  };
-  itemsSold: {
-    count: number;
-    changePercentage: number;
-    isIncrease: boolean;
-  };
-  stockWeightByKarat: {
-    karatType: number;
-    weight: number;
-    displayName: string;
-  }[];
-}
-
 const Dashboard = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data: sales } = useLocalApi({
+    apiToCall: () => getAdminSalesSummary(),
+    dataInitalValue: EMPTY_SALES_SUMMARY,
+  }) as { data: SalesSummary };
 
-  const { data: dashboardInsights, fetchData: recallGetDashboardInsights } =
-    useLocalApi({
-      apiToCall: () => getDashboardInsights(),
-    }) as {
-      data: DashboardInsights;
-      fetchData: () => void;
-    };
+  const { data: cashGold } = useLocalApi({
+    apiToCall: () => getAdminCashGoldSnapshot(),
+    dataInitalValue: EMPTY_CASH_GOLD_SNAPSHOT,
+  }) as { data: CashGoldSnapshot };
 
-  const handleRefresh = () => {
-    recallGetDashboardInsights();
-    setIsRefreshing(true);
-  };
+  const { data: repairsStats } = useLocalApi({
+    apiToCall: () => getAdminRepairsStats(),
+    dataInitalValue: EMPTY_REPAIRS_STATS,
+  }) as { data: RepairsStats };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  };
+  const { data: inventory } = useLocalApi({
+    apiToCall: () => getAdminInventorySnapshot(),
+    dataInitalValue: EMPTY_INVENTORY_SNAPSHOT,
+  }) as { data: InventorySnapshot };
 
-  // Format number with commas
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US").format(num);
-  };
+  const { data: attention } = useLocalApi({
+    apiToCall: () => getAdminAttentionItems(),
+    dataInitalValue: [],
+  }) as { data: AttentionItem[] };
 
-  // Loading state
-  if (!dashboardInsights) {
-    return (
-      <div id="dashboard" className="page active">
-        <div className="page-header">
-          <h1 className="page-title">
-            <FaHome className="icon me-2" />
-            <span>Admin Dashboard</span>
-          </h1>
-        </div>
-        <div className="loading">Loading dashboard data...</div>
-      </div>
-    );
-  }
+  const { salesRevenue, salesTrend, payments, goldSoldToday, topCategory } = sales;
+  const { storeCash, transfersBox, usedGoldOnHand, usedGoldBought } = cashGold;
+  const { repairsCollected, repairs } = repairsStats;
+  const { stockValue, refundsPaidOut } = inventory;
 
-  const { salesToday, stockValue, customers, itemsSold, stockWeightByKarat } =
-    dashboardInsights;
+  const maxTrend = Math.max(1, ...salesTrend.map((d) => d.value));
 
   return (
-    <div id="dashboard" className="page active">
-      <div className="page-header">
-        <h1 className="page-title">
-          <FaHome className="icon me-2" />
-          <span>Admin Dashboard</span>
-        </h1>
-        <div className="page-actions">
-          <button className="btn-md btn-gold" onClick={handleRefresh}>
-            <FaSyncAlt className="icon me-1" /> Refresh
-          </button>
-        </div>
+    <div id="dashboard" className="page">
+      <div className="sec-title">Today</div>
+      <div className="stats4">
+        <ReportStatCard
+          label="Sales revenue"
+          value={fmtCurrency(salesRevenue.amount)}
+          valueColor="var(--admin-green)"
+          accentColor="var(--admin-green)"
+          sub={
+            <>
+              {salesRevenue.transactions} transactions ·{" "}
+              <span style={{ color: "var(--admin-green)" }}>
+                {salesRevenue.isIncrease ? "▲" : "▼"} {Math.abs(salesRevenue.changePercentage)}% vs yesterday
+              </span>
+            </>
+          }
+        />
+        <ReportStatCard
+          label="Repairs collected"
+          value={fmtCurrency(repairsCollected.amount)}
+          accentColor="var(--admin-amber)"
+          sub={`${repairsCollected.payments} payments · ${repairsCollected.repairsTakenIn} repairs taken in today`}
+        />
+        <ReportStatCard
+          label="Refunds paid out"
+          value={`−${fmtCurrency(refundsPaidOut.amount)}`}
+          valueColor="var(--admin-red)"
+          accentColor="var(--admin-red)"
+          sub={`${refundsPaidOut.returns} returns · ${refundsPaidOut.toStock} to stock, ${refundsPaidOut.toMelt} to melt`}
+        />
+        <ReportStatCard
+          label="Used gold bought"
+          value={fmtCurrency(usedGoldBought.amount)}
+          accentColor="var(--admin-gold)"
+          sub={`${fmtWeight(usedGoldBought.weight)} across ${usedGoldBought.purchases} purchases`}
+        />
       </div>
 
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Sales Today</div>
-            <div className="kpi-icon">
-              <FaShoppingBag className="icon" />
-            </div>
-          </div>
-          <div className="kpi-value">
-            {formatCurrency(salesToday?.amount ?? 0)}
-          </div>
-          <div className={`kpi-trend ${salesToday?.isIncrease ? "" : "down"}`}>
-            {salesToday?.isIncrease ? (
-              <FaArrowUp className="icon" />
-            ) : (
-              <FaArrowDown className="icon" />
-            )}
-            {Math.abs(salesToday?.changePercentage ?? 0).toFixed(1)}% from
-            yesterday
-          </div>
-        </div>
-
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Stock Value</div>
-            <div className="kpi-icon">
-              <FaGem className="icon" />
-            </div>
-          </div>
-          <div className="kpi-value">{formatCurrency(stockValue ?? 0)}</div>
-        </div>
-
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Customers</div>
-            <div className="kpi-icon">
-              <FaUsers className="icon" />
-            </div>
-          </div>
-          <div className="kpi-value">{formatNumber(customers?.count ?? 0)}</div>
-          <div className={`kpi-trend ${customers?.isIncrease ? "" : "down"}`}>
-            {customers?.isIncrease ? (
-              <FaArrowUp className="icon" />
-            ) : (
-              <FaArrowDown className="icon" />
-            )}
-            {Math.abs(customers?.changePercentage ?? 0).toFixed(1)}% from last
-            week
-          </div>
-        </div>
-
-        <div className="kpi-card">
-          <div className="kpi-header">
-            <div className="kpi-title">Items Sold</div>
-            <div className="kpi-icon">
-              <FaShoppingCart className="icon" />
-            </div>
-          </div>
-          <div className="kpi-value">{formatNumber(itemsSold?.count ?? 0)}</div>
-          <div className={`kpi-trend ${itemsSold?.isIncrease ? "" : "down"}`}>
-            {itemsSold?.isIncrease ? (
-              <FaArrowUp className="icon" />
-            ) : (
-              <FaArrowDown className="icon" />
-            )}
-            {Math.abs(itemsSold?.changePercentage ?? 0).toFixed(1)}% from
-            yesterday
-          </div>
-        </div>
+      <div className="sec-title">Money & stock right now</div>
+      <div className="stats4">
+        <ReportStatCard
+          label="Store cash box"
+          value={fmtCurrency(storeCash.amount)}
+          valueColor="var(--admin-blue)"
+          accentColor="var(--admin-blue)"
+          sub={
+            <>
+              <span style={{ color: "var(--admin-green)" }}>
+                +{fmtCurrencyRounded(storeCash.cashIn)} in
+              </span>{" "}
+              ·{" "}
+              <span style={{ color: "var(--admin-red)" }}>
+                −{fmtCurrencyRounded(storeCash.cashOut)} out
+              </span>{" "}
+              today
+            </>
+          }
+        />
+        <ReportStatCard
+          label="Transfers box"
+          value={fmtCurrency(transfersBox.amount)}
+          valueColor="var(--admin-blue)"
+          accentColor="var(--admin-blue)"
+          sub={`+${fmtCurrencyRounded(transfersBox.todayIn)} today`}
+        />
+        <ReportStatCard
+          label="Used gold on hand"
+          value={fmtWeight(usedGoldOnHand.weight)}
+          valueColor="var(--admin-gold)"
+          accentColor="var(--admin-gold)"
+          sub={`Avg ${usedGoldOnHand.avgKarat.toFixed(1)}K · ${fmtCurrencyRounded(usedGoldOnHand.investedValue)} invested value`}
+        />
+        <ReportStatCard
+          label="Stock value"
+          value={fmtCurrencyRounded(stockValue.amount)}
+          sub={`${fmtNumber(stockValue.items)} items · ${fmtNumber(stockValue.weight)}g total`}
+        />
       </div>
 
-      <div className="stock-weight-section">
-        <h3 className="section-title">Total Stock Weight</h3>
-        <div className="stock-weight-grid">
-          {Object.values(KaratType)
-            ?.filter((v) => typeof v === "number")
-            ?.map((karatType) => {
-              const stockWeight = stockWeightByKarat?.find(
-                (stockWeight) => stockWeight.karatType == karatType
-              );
-
+      <div className="grid2">
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Sales — last 14 days</span>
+            <span className="panel-sub">today highlighted</span>
+          </div>
+          <div className="chart">
+            {salesTrend.map((point, i) => {
+              const isToday = i === salesTrend.length - 1;
+              const showVal = isToday || i % 3 === 0;
+              const height = Math.max(3, Math.round((point.value / maxTrend) * 108));
               return (
-                <div key={karatType} className="weight-card">
-                  <div className="weight-header">
-                    <div className="weight-title">
-                      <span className="mr-2">Total Stock Weight</span>
-                      <span className="karatType">{karatType}K</span>
-                    </div>
-                    <FaWeightHanging className="icon me-2" />
+                <div className="chart-group" key={point.label + i}>
+                  <div className="chart-val" style={{ visibility: showVal ? "visible" : "hidden" }}>
+                    ${Math.round(point.value / 1000)}k
                   </div>
-                  <div className="weight-value">
-                    {formatNumber(stockWeight?.weight ?? 0)} g
-                  </div>
+                  <div className={`chart-bar${isToday ? " today" : ""}`} style={{ height }} />
+                  <div className="chart-lbl">{i % 3 === 0 || isToday ? point.label : ""}</div>
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Today's payments</span>
+            <span className="panel-sub">{fmtCurrencyRounded(payments.total)} collected</span>
+          </div>
+          <div className="pay-split">
+            <SplitBarRow
+              label="Cash"
+              percentage={payments.cash.percentage}
+              amountLabel={fmtCurrencyRounded(payments.cash.amount)}
+              color="var(--admin-green)"
+            />
+            <SplitBarRow
+              label="Card"
+              percentage={payments.card.percentage}
+              amountLabel={fmtCurrencyRounded(payments.card.amount)}
+              color="var(--admin-purple)"
+            />
+          </div>
+          <div className="mini-divider">
+            <div className="mini-grid">
+              <MiniStatCard label="Items sold" value={`${payments.itemsSold}`} sub={`${fmtWeight(payments.itemsSoldWeight)} total`} />
+              <MiniStatCard
+                label="Discounts given"
+                value={fmtCurrencyRounded(payments.discounts)}
+                valueColor="var(--admin-red)"
+                sub={`on ${payments.discountedSalesCount} sales`}
+              />
+              <MiniStatCard label="Avg sale" value={fmtCurrencyRounded(payments.avgSale)} sub="per transaction" />
+              <MiniStatCard
+                label="Customers"
+                value={fmtNumber(payments.customers)}
+                sub={`+${payments.customersAddedToday} added today`}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <TopSellingCategories isRefreshing={isRefreshing} setIsRefreshing={setIsRefreshing} />
+      <div className="grid3">
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">
+              <FaTools className="icon" /> Repairs
+            </span>
+            <span className="panel-sub">live</span>
+          </div>
+          <div className="mini-grid">
+            <MiniStatCard label="In progress" value={`${repairs.inProgress}`} valueColor="var(--admin-amber)" />
+            <MiniStatCard label="Awaiting call" value={`${repairs.awaitingCall}`} valueColor="var(--admin-amber)" />
+            <MiniStatCard label="Due today" value={`${repairs.dueToday}`} />
+            <MiniStatCard label="Overdue" value={`${repairs.overdue}`} valueColor="var(--admin-red)" />
+          </div>
+          <div className="panel-footnote">
+            Unpaid balance: <b style={{ color: "var(--admin-red)" }}>{fmtCurrencyRounded(repairs.unpaidBalance)}</b> across{" "}
+            {repairs.unpaidCount} repairs
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">Gold sold today</span>
+            <span className="panel-sub">by karat</span>
+          </div>
+          {goldSoldToday.map((g) => (
+            <HorizontalBarRow
+              key={g.karat}
+              label={`${g.karat}K`}
+              percent={g.percentage}
+              color="var(--admin-gold)"
+              amountLabel={fmtWeight(g.weight)}
+            />
+          ))}
+          <div className="panel-footnote">
+            Top category today: <b style={{ color: "var(--admin-t2)" }}>{topCategory.name}</b> — {topCategory.itemsSold} items
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-head">
+            <span className="panel-title">
+              <FaExclamationTriangle className="icon" /> Needs attention
+            </span>
+          </div>
+          {attention.length === 0 && <div className="panel-footnote">Nothing needs attention right now.</div>}
+          {attention.map((a, i) => {
+            const colors = ATTENTION_COLORS[a.color];
+            return (
+              <div className="att-item" key={i}>
+                <span className="att-dot" style={{ background: colors.dot }} />
+                <span className="att-text">{a.text}</span>
+                <span className="att-tag" style={{ background: colors.bg, color: colors.dot }}>
+                  {a.tag}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

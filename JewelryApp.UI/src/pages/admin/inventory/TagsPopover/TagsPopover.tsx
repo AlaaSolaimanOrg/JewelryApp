@@ -36,8 +36,8 @@ const TagsPopover = ({ tags }: { tags: string[] }) => {
       overlay={popover}
       rootClose
     >
-      <button className="action-btn" title="View Tags">
-        <FaTags />
+      <button className="act-ico act-tags" data-tip="Tags" title="View Tags">
+        <FaTags size={13} />
       </button>
     </OverlayTrigger>
   );

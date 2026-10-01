@@ -2,18 +2,18 @@ import { AiFillHome } from "react-icons/ai";
 import {
   FaBox,
   FaChartLine,
-  FaGem,
+  FaCog,
   FaTag,
   FaUser,
   FaUsers,
   FaBars,
   FaTimes,
-  FaTools,
   FaUndo,
   FaChevronDown,
 } from "react-icons/fa";
 import { MdOutlineAddShoppingCart, MdOutlinePointOfSale } from "react-icons/md";
 import { TiUserAdd } from "react-icons/ti";
+import { GiGoldBar } from "react-icons/gi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useState, useEffect } from "react";
@@ -58,12 +58,31 @@ const SideNav = () => {
           path: "/admin/inventory/products",
         },
         {
+          label: "Melted Products",
+          path: "/admin/inventory/melted",
+        },
+      ],
+    },
+    {
+      label: "Reports",
+      icon: <FaChartLine className="icon" />,
+      path: "/admin/sales-reports",
+      subItems: [
+        {
+          label: "Sales Reports",
+          path: "/admin/sales-reports",
+        },
+        {
           label: "Inventory Reports",
           path: "/admin/inventory/reports",
         },
         {
-          label: "Melted Products",
-          path: "/admin/inventory/melted",
+          label: "Repairs Reports",
+          path: "/admin/repairs/reports",
+        },
+        {
+          label: "Customers Reports",
+          path: "/admin/customers-reports",
         },
       ],
     },
@@ -73,25 +92,25 @@ const SideNav = () => {
       path: "/admin/pricing",
     },
     {
-      label: "Sales Reports",
-      icon: <FaChartLine className="icon" />,
-      path: "/admin/sales-reports",
-    },
-    {
       label: "Customers",
       icon: <FaUsers className="icon" />,
       path: "/admin/customers",
     },
-    { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
     {
-      label: "Repair Analytics",
-      icon: <FaTools className="icon" />,
-      path: "/admin/repairAnalytics",
+      label: "Used Gold",
+      icon: <GiGoldBar className="icon" />,
+      path: "/admin/usedGold",
     },
+    { label: "Staff", icon: <FaUser className="icon" />, path: "/admin/staff" },
     {
       label: "Return Management",
       icon: <FaUndo className="icon" />,
       path: "/admin/returnManagement",
+    },
+    {
+      label: "Settings",
+      icon: <FaCog className="icon" />,
+      path: "/admin/settings",
     },
   ];
 
@@ -149,6 +168,7 @@ const SideNav = () => {
   const hasPosRole = userInfo?.roles?.includes("PosRole");
   const hasStaffManagerRole = userInfo?.roles?.includes("StaffManager");
   const isTerminalOnlyUser = hasTerminalRole && !hasAdminRole;
+  const isStaffManagerOnlyUser = hasStaffManagerRole && !hasAdminRole;
 
   const filteredNavItems = (
     isTerminalOnlyUser
@@ -157,30 +177,35 @@ const SideNav = () => {
             "Inventory",
             "Pricing",
             "Customers",
-            "Repair Analytics",
+            "Reports",
             "Return Management",
+            "Used Gold",
           ].includes(item.label),
         )
-      : navItems
-  ).filter((item) => item.label !== "Staff" || hasStaffManagerRole);
+        .map((item) => item)
+    : isStaffManagerOnlyUser
+      ? navItems.filter((item) => item.label === "Staff")
+      : navItems;
 
   const filteredOperationItems = isTerminalOnlyUser
     ? []
-    : operationItems.filter(
-        (item) => item.label !== "Add Staff" || hasStaffManagerRole,
-      );
+    : isStaffManagerOnlyUser
+      ? operationItems.filter((item) => item.label === "Add Staff")
+      : operationItems;
 
   const handlePosRedirect = () => {
     navigate("/");
   };
+  
   return (
     <>
       {!isMobileOpen && (
         <button
           className="mobile-toggle-btn"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
+          aria-label="Open menu"
         >
-          <FaBars />
+          <FaBars size={17} />
         </button>
       )}
 
@@ -189,14 +214,11 @@ const SideNav = () => {
       <aside className={`sidebar ${isMobileOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-header">
           <div className="logo">
-            <div className="logo-icon">
-              <FaGem className="icon" />
-            </div>
             <div className="logo-text">
               <h1>
                 Adi<span> Jewelry</span>
               </h1>
-              <small>Inventory System</small>
+              <small>Management System</small>
             </div>
           </div>
           {isMobileOpen && (
@@ -210,7 +232,7 @@ const SideNav = () => {
         </div>
 
         <div className="nav-links">
-          <div className="nav-section">Inventory</div>
+          <div className="nav-section">Main</div>
           {filteredNavItems.map((item) => {
             const hasSubItems = !!item.subItems?.length;
             const expanded = openSections[item.label];
@@ -299,9 +321,8 @@ const SideNav = () => {
           )}
 
           <button
-            className="nav-item no-subItems"
+            className="nav-item no-subItems logout-item"
             onClick={handleLogout}
-            style={{ marginTop: "16px", color: "#d9534f" }}
           >
             <FaUser className="icon" />
             <span>Logout</span>

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { FaPrint, FaReceipt } from "react-icons/fa";
-import { getSaleById } from "../../../apis/sales.api/sales.api";
+import { getSaleById } from "../../../apis/sales.api";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { useReceiptPrint } from "../../../hooks/useReceiptPrint";
 import ReceiptContent from "../../ReceiptContent/ReceiptContent";
@@ -10,11 +10,15 @@ import "./receiptModal.scss";
 
 interface ReceiptModalProps {
   saleId: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  show?: boolean;
+  onClose?: () => void;
 }
 
-const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
-  const [showModal, setShowModal] = useState(false);
+const ReceiptModal = ({ saleId, children, show, onClose }: ReceiptModalProps) => {
+  const isControlled = show !== undefined;
+  const [internalShowModal, setInternalShowModal] = useState(false);
+  const showModal = isControlled ? show : internalShowModal;
   const contentRef = useRef<HTMLDivElement>(null);
 
   const { data: saleDetails } = useLocalApi({
@@ -35,18 +39,25 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
     handleEpsonPrintHTML,
   } = useReceiptPrint(contentRef, saleDetails, false);
 
-  const onClose = () => {
-    setShowModal(false);
+  const closeModal = () => {
+    if (isControlled) {
+      onClose?.();
+    } else {
+      setInternalShowModal(false);
+    }
   };
+
   return (
     <div>
-      <div onClick={() => setShowModal(true)} style={{ cursor: "pointer" }}>
-        {children}
-      </div>
+      {children && (
+        <div onClick={() => setInternalShowModal(true)} style={{ cursor: "pointer" }}>
+          {children}
+        </div>
+      )}
 
       <Modal
         show={showModal}
-        onHide={onClose}
+        onHide={closeModal}
         centered
         size="xl"
         className="receipt-modal"
@@ -91,7 +102,7 @@ const ReceiptModal = ({ saleId, children }: ReceiptModalProps) => {
             <FaPrint /> {epsonBusy ? "Printing..." : "Print"}
           </Button>
 
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={closeModal}>
             Close
           </Button>
         </Modal.Footer>

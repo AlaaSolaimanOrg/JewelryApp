@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../apis/login.api/login.api";
+import { FaEye, FaEyeSlash, FaSun, FaMoon } from "react-icons/fa";
+import { login } from "../../../apis/login.api";
 import logo from "../../../assets/images/jewelary-logo.svg";
 import { useAuth } from "../../../context/AuthContext";
+import { useTheme } from "../../../context/ThemeContext";
 import { checkRequestSucceeded, showError } from "../../../utils";
 import "./login.scss";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const navigate = useNavigate();
   const { userInfo, callGetUserInfo } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -76,16 +78,26 @@ const Login = () => {
   };
 
   return (
-    <div id="login">
-      <div className="login-container">
-        <div className="logo text-decoration-none">
-          <img src={logo} alt="Logo" width={36} height={32} />
-          <h2>Adi Jewelry POS</h2>
+    <div className="pos-app login-page">
+      <button
+        type="button"
+        className="login-theme-toggle"
+        onClick={toggleTheme}
+        title="Light / dark mode"
+        aria-label="Toggle light and dark mode"
+      >
+        {theme === "dark" ? <FaSun size={16} /> : <FaMoon size={16} />}
+      </button>
+
+      <div className="login-card">
+        <div className="login-brand">
+          <img src={logo} alt="Logo" width={22} height={20} />
+          <h1>Adi Jewelry POS</h1>
         </div>
-        <h2>Login</h2>
+        <p className="login-subtitle">Sign in to your account to continue</p>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="login-field">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -98,9 +110,9 @@ const Login = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="login-field">
             <label htmlFor="password">Password</label>
-            <div className="password-input-container">
+            <div className="login-password-wrap">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -112,16 +124,16 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="password-toggle-btn"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
 
-          <div className="form-options">
-            <label className="remember-me">
+          <div className="login-options">
+            <label className="login-remember">
               <input
                 type="checkbox"
                 name="remember"
@@ -132,8 +144,8 @@ const Login = () => {
             </label>
           </div>
 
-          <button type="submit" className="btn btn-secondary loginButton">
-            Submit
+          <button type="submit" className="login-submit-btn" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>

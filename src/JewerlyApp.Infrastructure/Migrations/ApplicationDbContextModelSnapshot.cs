@@ -150,6 +150,75 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.CashTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BoxType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Destination")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RepairId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TransferGroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UsedGoldPurchaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("RepairId");
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("TransferGroupId");
+
+                    b.HasIndex("UsedGoldPurchaseId");
+
+                    b.HasIndex("BoxType", "CreatedDate");
+
+                    b.ToTable("CashTransactions");
+                });
+
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -188,6 +257,32 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.InventorySetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LowStockThreshold")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("InventorySettings");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Log", b =>
@@ -575,6 +670,9 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateOnly?>("CancelledDate")
+                        .HasColumnType("date");
+
                     b.Property<decimal>("Cost")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -601,8 +699,20 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Notified")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly?>("NotifiedDate")
+                        .HasColumnType("date");
+
                     b.Property<DateOnly>("OrderDate")
                         .HasColumnType("date");
+
+                    b.Property<DateOnly?>("PaidDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("PayMethod")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
@@ -642,6 +752,9 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ExchangeSaleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("LastUpdatedBy")
                         .HasColumnType("int");
 
@@ -660,6 +773,8 @@ namespace JewerlyApp.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExchangeSaleId");
 
                     b.HasIndex("SaleId");
 
@@ -680,6 +795,9 @@ namespace JewerlyApp.Infrastructure.Migrations
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsTagPrinted")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("LastUpdatedBy")
                         .HasColumnType("int");
@@ -711,6 +829,9 @@ namespace JewerlyApp.Infrastructure.Migrations
 
                     b.Property<Guid>("SaleItemId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("TagPrintedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
@@ -784,7 +905,9 @@ namespace JewerlyApp.Infrastructure.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("CustomerId", "CreatedDate");
 
                     b.ToTable("Sales");
                 });
@@ -844,6 +967,34 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.ToTable("SaleItems");
                 });
 
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.SecurityPinSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Pin")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityPinSettings");
+                });
+
             modelBuilder.Entity("JewerlyApp.Domain.Entities.SkuSequence", b =>
                 {
                     b.Property<Guid>("Id")
@@ -874,6 +1025,240 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SkuSequences");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldMeltBatch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalWeight")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SerialNumber")
+                        .IsUnique();
+
+                    b.ToTable("UsedGoldMeltBatches");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldMeltBatchItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Cost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Karat")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MeltBatchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeltBatchId");
+
+                    b.ToTable("UsedGoldMeltBatchItems");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("CustomerPhone")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PayMethod")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalWeight")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("SerialNumber")
+                        .IsUnique();
+
+                    b.ToTable("UsedGoldPurchases");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchaseItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Karat")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("PricePerGram")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("PurchaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.ToTable("UsedGoldPurchaseItems");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldStockReturn", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Cost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Karat")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(18, 3)
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SerialNumber")
+                        .IsUnique();
+
+                    b.ToTable("UsedGoldStockReturns");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -979,6 +1364,36 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.CashTransaction", b =>
+                {
+                    b.HasOne("JewerlyApp.Domain.Entities.ApplicationUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy");
+
+                    b.HasOne("JewerlyApp.Domain.Entities.Repair", "Repair")
+                        .WithMany()
+                        .HasForeignKey("RepairId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("JewerlyApp.Domain.Entities.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("JewerlyApp.Domain.Entities.UsedGoldPurchase", "UsedGoldPurchase")
+                        .WithMany()
+                        .HasForeignKey("UsedGoldPurchaseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Repair");
+
+                    b.Navigation("Sale");
+
+                    b.Navigation("UsedGoldPurchase");
+                });
+
             modelBuilder.Entity("JewerlyApp.Domain.Entities.ProductImage", b =>
                 {
                     b.HasOne("JewerlyApp.Domain.Entities.Product", "Product")
@@ -1025,11 +1440,18 @@ namespace JewerlyApp.Infrastructure.Migrations
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Return", b =>
                 {
+                    b.HasOne("JewerlyApp.Domain.Entities.Sale", "ExchangeSale")
+                        .WithMany("ExchangeReturns")
+                        .HasForeignKey("ExchangeSaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("JewerlyApp.Domain.Entities.Sale", "Sale")
                         .WithMany("Returns")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ExchangeSale");
 
                     b.Navigation("Sale");
                 });
@@ -1087,6 +1509,46 @@ namespace JewerlyApp.Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldMeltBatchItem", b =>
+                {
+                    b.HasOne("JewerlyApp.Domain.Entities.UsedGoldMeltBatch", "MeltBatch")
+                        .WithMany("Items")
+                        .HasForeignKey("MeltBatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MeltBatch");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchase", b =>
+                {
+                    b.HasOne("JewerlyApp.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("JewerlyApp.Domain.Entities.Sale", "Sale")
+                        .WithMany("TradeInPurchases")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchaseItem", b =>
+                {
+                    b.HasOne("JewerlyApp.Domain.Entities.UsedGoldPurchase", "Purchase")
+                        .WithMany("Items")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Purchase");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1154,14 +1616,28 @@ namespace JewerlyApp.Infrastructure.Migrations
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.Sale", b =>
                 {
+                    b.Navigation("ExchangeReturns");
+
                     b.Navigation("Returns");
 
                     b.Navigation("SaleItems");
+
+                    b.Navigation("TradeInPurchases");
                 });
 
             modelBuilder.Entity("JewerlyApp.Domain.Entities.SaleItem", b =>
                 {
                     b.Navigation("ReturnItems");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldMeltBatch", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("JewerlyApp.Domain.Entities.UsedGoldPurchase", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

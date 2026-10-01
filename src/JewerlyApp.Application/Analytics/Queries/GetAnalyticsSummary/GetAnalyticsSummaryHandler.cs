@@ -62,12 +62,21 @@ namespace JewerlyApp.Application.Analytics.Queries.GetAnalyticsSummary
 
             categoryQuery = categoryQuery.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale!.CreatedDate <= dateTo);
 
+            // Prorate each item's SubTotal by its sale's Total/SubTotal ratio so category revenue
+            // is on the same post-discount/trade-in/exchange basis as totalSales (Sale.Total sum).
             var bestCategory = await categoryQuery
-                .GroupBy(si => si.Product!.Category)
+                .Select(si => new
+                {
+                    si.Product!.Category,
+                    AdjustedRevenue = si.Sale!.SubTotal > 0
+                        ? si.SubTotal * (si.Sale.Total / si.Sale.SubTotal)
+                        : 0
+                })
+                .GroupBy(x => x.Category)
                 .Select(g => new
                 {
                     Category = g.Key,
-                    Revenue = g.Sum(si => si.SubTotal)
+                    Revenue = g.Sum(x => x.AdjustedRevenue)
                 })
                 .OrderByDescending(x => x.Revenue)
                 .FirstOrDefaultAsync(cancellationToken);

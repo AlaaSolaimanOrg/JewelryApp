@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { Col, Row, Stack } from "react-bootstrap";
 import {
+  FaBarcode,
   FaBox,
-  FaDollarSign,
-  FaEdit,
   FaFileExcel,
-  FaFire,
   FaPlus,
   FaPrint,
   FaSearch,
@@ -15,10 +12,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import {
   exportProductsToExcel,
+  getInventorySummary,
   getProducts,
+  getProductsBySkus,
   meltProduct,
   upsertProductSpecialPricing,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import { useAuth } from "../../../context/AuthContext";
 
 import MeltModal from "../../../components/modals/MeltModal/MeltModal";
@@ -28,26 +27,31 @@ import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPri
 import Paginator from "../../../components/Paginator/Paginator";
 
 import InventoryFilter, {
+  filtersInitialState,
   type InventoryFilters,
-} from "../../../components/InventoryFilter/InventoryFilter";
-import type { TableHeader } from "../../../components/tables/Table/CustomTable";
-import CustomTable from "../../../components/tables/Table/CustomTable";
+} from "./InventoryFilter/InventoryFilter";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
+import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import {
   KaratType,
-  ProductCategory,
   SortDirection,
+  type ProductCategory,
   type ProductType,
 } from "../../../types/enums";
 import {
   checkRequestSucceeded,
   handleSort,
-  renderLongDescription,
   showError,
   showSuccess,
 } from "../../../utils";
 import "./inventory.scss";
-import TagsPopover from "./TagsPopover/TagsPopover";
+import {
+  buildInventoryHeaders,
+  buildInventoryTableData,
+} from "./Inventory.utils";
+import InventorySummary from "./InventorySummary/InventorySummary";
+import type { InventorySummaryData } from "./InventorySummary/InventorySummary.type";
 
 export interface Product {
   id: string;
@@ -65,13 +69,14 @@ export interface Product {
   tags: string[];
   specification?: string;
   isManualEntry: boolean;
+  createdDate?: string;
 }
 
 const Inventory = () => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
   const isTerminalRole =
-    userInfo?.roles?.includes("TerminalRole") &&
+    !!userInfo?.roles?.includes("TerminalRole") &&
     !userInfo?.roles?.includes("Admin");
 
   const [scannedSkus, setScannedSkus] = useState([]);
@@ -79,6 +84,10 @@ const Inventory = () => {
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [selectedProductForPrinting, setSelectedProductForPrinting] =
     useState<Product | null>(null);
+  const [productsForBulkPrinting, setProductsForBulkPrinting] = useState<
+    Product[]
+  >([]);
+  const [isLoadingBulkPrint, setIsLoadingBulkPrint] = useState(false);
   const [showMeltModal, setShowMeltModal] = useState(false);
   const [selectedProductForMelt, setSelectedProductForMelt] =
     useState<Product | null>(null);
@@ -89,20 +98,10 @@ const Inventory = () => {
     setSelectedProductForSpecialPricing,
   ] = useState<Product | null>(null);
 
-  const [appliedFilters, setAppliedFilters] = useState<InventoryFilters>({
-    karatTypes: [
-      KaratType.Karat18,
-      KaratType.Karat21,
-      KaratType.Karat22,
-      KaratType.Karat24,
-    ],
-    weightFrom: 0,
-    weightTo: 9999,
-    priceFrom: 0,
-    priceTo: 999999,
-    category: null,
-    inStock: null,
-  });
+  const [selectedSkus, setSelectedSkus] = useState<Set<string>>(new Set());
+
+  const [appliedFilters, setAppliedFilters] =
+    useState<InventoryFilters>(filtersInitialState);
 
   const {
     data: products,
@@ -131,147 +130,46 @@ const Inventory = () => {
     initialSortDirection: SortDirection.Descending,
   });
 
-  const headers: TableHeader[] = [
-    { key: "image", label: "Image", width: "100px" },
-    {
-      key: "productName",
-      label: "Product Name",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("Name", sortCriteria, onSortChange);
+  const { data: inventorySummary, fetchData: fetchInventorySummary } =
+    useLocalApi({
+      apiToCall: (data) => getInventorySummary(data.payload),
+      payload: {
+        inStock: appliedFilters?.inStock ?? undefined,
+        skus: scannedSkus,
+        karatTypeFilter: appliedFilters?.karatTypes,
+        weightFromFilter: appliedFilters?.weightFrom,
+        weightToFilter: appliedFilters?.weightTo,
+        priceFromFilter: appliedFilters?.priceFrom,
+        priceToFilter: appliedFilters?.priceTo,
+        productCategoryFilter: appliedFilters?.category,
       },
-    },
-    {
-      key: "price",
-      label: "Price",
-      width: "100px",
-      sortable: false,
-    },
-    {
-      key: "quantity",
-      label: "Quantity",
-      width: "100px",
-      onHeaderClick: () => {
-        handleSort("quantity", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "sku",
-      label: "SKU",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("sku", sortCriteria, onSortChange);
-      },
-    },
+      effectDependency: [appliedFilters, scannedSkus],
+      dataInitalValue: null,
+    }) as { data: InventorySummaryData | null; fetchData: () => void };
 
-    {
-      key: "karat",
-      label: "Karat",
-      width: "80px",
-      onHeaderClick: () => {
-        handleSort("KaratType", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "weight",
-      label: "Weight",
-      width: "100px",
-      onHeaderClick: () => {
-        handleSort("weight", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "category",
-      label: "Category",
-      width: "150px",
-      onHeaderClick: () => {
-        handleSort("category", sortCriteria, onSortChange);
-      },
-    },
-    {
-      key: "tags",
-      label: "Tags",
-      width: "80px",
-    },
-    { key: "actions", label: "Actions", width: "150px" },
-  ];
+  const toggleSelect = (sku: string) => {
+    setSelectedSkus((prev) => {
+      const next = new Set(prev);
+      if (next.has(sku)) next.delete(sku);
+      else next.add(sku);
+      return next;
+    });
+  };
 
-  const data = products?.map((product) => ({
-    image: !!product.images[0]?.imageUrl && (
-      <img
-        src={`${import.meta.env.VITE_API_URL}${product.images[0]?.imageUrl}`}
-        alt={product.name ?? ""}
-        style={{
-          width: "70px",
-          height: "70px",
-          objectFit: "cover",
-          borderRadius: "6px",
-        }}
-      />
-    ),
-    quantity: product.quantity,
-    price: product.price,
-    productName: renderLongDescription(product.name, 14),
-    sku: product.sku,
-    karat: `${product.karatType}K`,
-    weight: `${product.weight}g`,
-    category: ProductCategory[product.category],
-    tags: <TagsPopover tags={product.tags} />,
-    actions: (
-      <div className="d-flex justify-content-end">
-        {product.quantity > 0 && (
-          <button
-            className="action-btn"
-            title="Melt"
-            onClick={() => {
-              setSelectedProductForMelt(product);
-              setShowMeltModal(true);
-            }}
-          >
-            <FaFire />
-          </button>
-        )}
-        <button
-          className="action-btn"
-          title="Special Price"
-          onClick={() => {
-            setSelectedProductForSpecialPricing(product);
-            setShowSpecialPricingModal(true);
-          }}
-        >
-          <FaDollarSign />
-        </button>
-        {!product.isManualEntry && (
-          <button
-            className="action-btn"
-            title="Print Tag"
-            onClick={() => {
-              setSelectedProductForPrinting(product);
-              setShowTagPrintingModal(true);
-            }}
-          >
-            <FaPrint />
-          </button>
-        )}
-        {!isTerminalRole && (
-          <button
-            className="action-btn"
-            title="Edit"
-            onClick={() => handleEditProduct(product.id)}
-          >
-            <FaEdit />
-          </button>
-        )}
-        {/* <button
-          className="action-btn danger"
-          title="Delete"
-          onClick={() => handleDeleteProduct(product.id)}
-        >
-          <FaTrash />
-        </button> */}
-      </div>
-    ),
-  }));
+  const toggleAllOnPage = (checked: boolean) => {
+    setSelectedSkus((prev) => {
+      const next = new Set(prev);
+      products?.forEach((p) =>
+        checked ? next.add(p.sku) : next.delete(p.sku),
+      );
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedSkus(new Set());
+
+  const allOnPageSelected =
+    !!products?.length && products.every((p) => selectedSkus.has(p.sku));
 
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/editProduct/${productId}`);
@@ -289,8 +187,8 @@ const Inventory = () => {
         );
         setShowMeltModal(false);
         setSelectedProductForMelt(null);
-        // Refresh list
         if (fetchData) fetchData();
+        fetchInventorySummary();
       } else {
         showError(response?.message ?? "Failed to melt product.");
       }
@@ -313,6 +211,7 @@ const Inventory = () => {
         setShowSpecialPricingModal(false);
         setSelectedProductForSpecialPricing(null);
         if (fetchData) fetchData();
+        fetchInventorySummary();
       } else {
         showError(response?.message ?? "Failed to update special price.");
       }
@@ -321,10 +220,10 @@ const Inventory = () => {
     }
   };
 
-  const handleExport = async () => {
+  const handleExport = async (skusOverride?: string[]) => {
     const payload = {
       inStock: appliedFilters?.inStock ?? undefined,
-      skus: scannedSkus,
+      skus: skusOverride ?? scannedSkus,
       karatTypeFilter: appliedFilters?.karatTypes,
       weightFromFilter: appliedFilters?.weightFrom,
       weightToFilter: appliedFilters?.weightTo,
@@ -334,7 +233,6 @@ const Inventory = () => {
     };
     const response = await exportProductsToExcel(payload);
 
-    // Create file download
     const blob = new Blob([response], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
@@ -351,125 +249,172 @@ const Inventory = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleBulkPrint = async () => {
+    if (!selectedSkus.size) return;
+
+    setIsLoadingBulkPrint(true);
+    try {
+      const response = await getProductsBySkus({
+        skus: Array.from(selectedSkus),
+      });
+
+      if (response && checkRequestSucceeded(response.statusCode)) {
+        setProductsForBulkPrinting(response.data ?? []);
+        setShowTagPrintingModal(true);
+      } else {
+        showError(response?.message ?? "Failed to load selected products.");
+      }
+    } catch (err: any) {
+      showError(err?.message ?? "Failed to load selected products.");
+    }
+    setIsLoadingBulkPrint(false);
+  };
+
+  const headers = buildInventoryHeaders(
+    sortCriteria,
+    onSortChange,
+    allOnPageSelected,
+    toggleAllOnPage,
+  );
+  const data = buildInventoryTableData(products ?? [], {
+    isTerminalRole: !!isTerminalRole,
+    selectedSkus,
+    onToggleSelect: toggleSelect,
+    onMelt: (p) => {
+      setSelectedProductForMelt(p);
+      setShowMeltModal(true);
+    },
+    onSpecialPrice: (p) => {
+      setSelectedProductForSpecialPricing(p);
+      setShowSpecialPricingModal(true);
+    },
+    onPrint: (p) => {
+      setSelectedProductForPrinting(p);
+      setShowTagPrintingModal(true);
+    },
+    onEdit: handleEditProduct,
+  });
+
   return (
     <div id="inventory" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaBox className="icon me-2" />
-          <span>Inventory Management</span>
+          <FaBox className="icon" />
+          <span>Inventory management</span>
         </h1>
         <div className="page-actions">
           <button
-            className="btn-md btn-success me-2"
+            className="btn-md btn-green"
+            disabled={!products?.length}
             onClick={() => handleExport()}
           >
-            <FaFileExcel className="me-1" />
-            Export
+            <FaFileExcel /> Export to Excel
           </button>
           {!isTerminalRole && (
             <button
               className="btn-md btn-gold"
-              onClick={() => {
-                navigate("/admin/addProduct");
-              }}
+              onClick={() => navigate("/admin/addProduct")}
             >
-              <FaPlus className="me-1" /> Add Product
+              <FaPlus /> Add product
             </button>
           )}
         </div>
       </div>
 
-      <div>
-        <Row>
-          {/* Sidebar column - ALWAYS FIRST */}
-          <Col xs={12} className="sidebar-column">
-            <InventoryFilter setAppliedFilters={setAppliedFilters} />
-          </Col>
+      <InventoryFilter setAppliedFilters={setAppliedFilters} />
 
-          {/* Content column - ALWAYS SECOND */}
-          <Col xs={12} className="content-column">
-            <div className="inventory-content">
-              <div className="card">
-                <div className="card-header">
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 w-100">
-                    <h3 className="card-title mb-0">
-                      Inventory Items ({pagination.totalRecords ?? 0})
-                    </h3>
+      <InventorySummary summary={inventorySummary} />
 
-                    <Stack
-                      direction="horizontal"
-                      gap={4}
-                      className="flex-wrap justify-content-end"
-                    >
-                      <div
-                        className="search-bar"
-                        style={{ minWidth: "250px", flex: "1 1 auto" }}
-                      >
-                        <FaSearch className="icon me-1" />
-                        <input
-                          type="text"
-                          placeholder="Search inventory..."
-                          onChange={onSearchChange}
-                        />
-                      </div>
+      {selectedSkus.size > 0 && (
+        <div className="bulk-bar show">
+          <span className="bulk-info">
+            {selectedSkus.size} item{selectedSkus.size !== 1 ? "s" : ""}{" "}
+            selected
+          </span>
+          <div className="bulk-actions">
+            <button
+              className="btn-md btn-gold"
+              onClick={handleBulkPrint}
+              disabled={isLoadingBulkPrint}
+            >
+              <FaPrint /> {isLoadingBulkPrint ? "Loading..." : "Print tags"}
+            </button>
+            <button
+              className="btn-md btn-outline"
+              onClick={() => handleExport(Array.from(selectedSkus))}
+            >
+              Export selected
+            </button>
+            <button className="btn-md btn-outline" onClick={clearSelection}>
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
 
-                      {scannedSkus.length ? (
-                        <button
-                          className="scan-btn flex-shrink-0"
-                          onClick={() => {
-                            setScannedSkus([]);
-                          }}
-                        >
-                          Reset Scanner
-                        </button>
-                      ) : (
-                        <button
-                          className="scan-btn flex-shrink-0"
-                          onClick={() => {
-                            setShowScanModal(true);
-                          }}
-                        >
-                          Scan Product
-                        </button>
-                      )}
-
-                      <button
-                        className="scan-btn flex-shrink-0"
-                        title="Sort by Date Added"
-                        onClick={() =>
-                          handleSort("createdDate", sortCriteria, onSortChange)
-                        }
-                      >
-                        {sortCriteria?.sortBy === "createdDate" &&
-                        sortCriteria?.sortDirection ===
-                          SortDirection.Ascending ? (
-                          <FaSortAmountUp className="me-1" />
-                        ) : (
-                          <FaSortAmountDown className="me-1" />
-                        )}
-                        Date
-                      </button>
-                    </Stack>
-                  </div>
-                </div>
-
-                <CustomTable
-                  data={data}
-                  headers={headers}
-                  isLoading={isLoadingProducts}
-                />
-
-                <Paginator
-                  totalRecords={pagination.totalRecords}
-                  pageNumber={pagination.pageNumber}
-                  pageSize={pagination.pageSize}
-                  onPaginationChange={onPaginationChange}
-                  onPageSizeChange={onPageSizeChange}
-                />
-              </div>
+      <div className="panel">
+        <div className="tbl-head">
+          <span className="tbl-title">
+            Inventory items ({pagination.totalRecords ?? 0})
+          </span>
+          <div className="tbl-tools">
+            <div className="search-wrap">
+              <FaSearch className="search-ico" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search name, SKU, category..."
+                onChange={onSearchChange}
+              />
             </div>
-          </Col>
-        </Row>
+
+            {scannedSkus.length ? (
+              <button
+                className="btn-md btn-outline"
+                onClick={() => setScannedSkus([])}
+              >
+                Reset scanner
+              </button>
+            ) : (
+              <button
+                className="btn-md btn-gold"
+                onClick={() => setShowScanModal(true)}
+              >
+                <FaBarcode /> Scan product
+              </button>
+            )}
+
+            <button
+              className="btn-md btn-outline"
+              title="Sort by Date Added"
+              onClick={() =>
+                handleSort("createdDate", sortCriteria, onSortChange)
+              }
+            >
+              {sortCriteria?.sortBy === "createdDate" &&
+              sortCriteria?.sortDirection === SortDirection.Ascending ? (
+                <FaSortAmountUp />
+              ) : (
+                <FaSortAmountDown />
+              )}
+              Date
+            </button>
+          </div>
+        </div>
+
+        <CustomTable
+          data={data}
+          headers={headers}
+          isLoading={isLoadingProducts}
+        />
+
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       <ScanModal
@@ -485,8 +430,11 @@ const Inventory = () => {
         onClose={() => {
           setShowTagPrintingModal(false);
           setSelectedProductForPrinting(null);
+          if (productsForBulkPrinting.length) clearSelection();
+          setProductsForBulkPrinting([]);
         }}
         product={selectedProductForPrinting}
+        products={productsForBulkPrinting}
       />
       <MeltModal
         show={showMeltModal}

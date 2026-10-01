@@ -40,6 +40,14 @@ namespace JewerlyApp.Infrastructure.Context
         public virtual DbSet<PrintJob> PrintJobs { get; set; }
         public virtual DbSet<Printer> Printers { get; set; }
         public virtual DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
+        public virtual DbSet<CashTransaction> CashTransactions { get; set; }
+        public virtual DbSet<UsedGoldPurchase> UsedGoldPurchases { get; set; }
+        public virtual DbSet<UsedGoldPurchaseItem> UsedGoldPurchaseItems { get; set; }
+        public virtual DbSet<UsedGoldMeltBatch> UsedGoldMeltBatches { get; set; }
+        public virtual DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
+        public virtual DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
+        public virtual DbSet<SecurityPinSetting> SecurityPinSettings { get; set; }
+        public virtual DbSet<InventorySetting> InventorySettings { get; set; }
 
 
 
@@ -115,6 +123,17 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.HasIndex(x => new { x.StoreId, x.Code }).IsUnique();
             });
 
+            builder.Entity<Return>()
+            .HasOne(r => r.Sale)
+            .WithMany(s => s.Returns)
+            .HasForeignKey(r => r.SaleId);
+
+            builder.Entity<Return>()
+            .HasOne(r => r.ExchangeSale)
+            .WithMany(s => s.ExchangeReturns)
+            .HasForeignKey(r => r.ExchangeSaleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<ReturnItem>()
             .HasOne(r => r.SaleItem)
             .WithMany(s => s.ReturnItems)
@@ -130,6 +149,8 @@ namespace JewerlyApp.Infrastructure.Context
                 entity.Property(e => e.CardAmount).HasPrecision(18, 2);
                 entity.Property(e => e.SubTotal).HasPrecision(18, 2);
                 entity.Property(e => e.Total).HasPrecision(18, 2);
+                entity.HasIndex(e => new { e.CustomerId, e.CreatedDate });
+                entity.HasIndex(e => e.CreatedDate);
             });
 
             builder.Entity<SaleItem>(entity =>
@@ -175,6 +196,92 @@ namespace JewerlyApp.Infrastructure.Context
                     .WithMany()
                     .HasForeignKey(x => x.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<CashTransaction>(entity =>
+            {
+                entity.Property(x => x.Amount).HasPrecision(18, 2);
+                entity.HasIndex(x => new { x.BoxType, x.CreatedDate });
+                entity.HasIndex(x => x.TransferGroupId);
+
+                entity.HasOne(x => x.Sale)
+                    .WithMany()
+                    .HasForeignKey(x => x.SaleId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.UsedGoldPurchase)
+                    .WithMany()
+                    .HasForeignKey(x => x.UsedGoldPurchaseId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Repair)
+                    .WithMany()
+                    .HasForeignKey(x => x.RepairId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<UsedGoldPurchase>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.CustomerName).IsRequired().HasMaxLength(128);
+                entity.Property(x => x.CustomerPhone).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.TotalWeight).HasPrecision(18, 3);
+                entity.Property(x => x.TotalAmount).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
+
+                entity.HasOne(x => x.Customer)
+                    .WithMany()
+                    .HasForeignKey(x => x.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Sale)
+                    .WithMany(s => s.TradeInPurchases)
+                    .HasForeignKey(x => x.SaleId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<UsedGoldPurchaseItem>(entity =>
+            {
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.PricePerGram).HasPrecision(18, 2);
+                entity.Property(x => x.Subtotal).HasPrecision(18, 2);
+
+                entity.HasOne(x => x.Purchase)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.PurchaseId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<UsedGoldMeltBatch>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.TotalWeight).HasPrecision(18, 3);
+                entity.Property(x => x.TotalCost).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
+            });
+
+            builder.Entity<UsedGoldMeltBatchItem>(entity =>
+            {
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.Cost).HasPrecision(18, 2);
+
+                entity.HasOne(x => x.MeltBatch)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.MeltBatchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<UsedGoldStockReturn>(entity =>
+            {
+                entity.Property(x => x.SerialNumber).IsRequired().HasMaxLength(32);
+                entity.Property(x => x.Weight).HasPrecision(18, 3);
+                entity.Property(x => x.Cost).HasPrecision(18, 2);
+                entity.HasIndex(x => x.SerialNumber).IsUnique();
+            });
+
+            builder.Entity<SecurityPinSetting>(entity =>
+            {
+                entity.Property(x => x.Pin).IsRequired().HasMaxLength(4);
             });
         }
     }

@@ -1,0 +1,21 @@
+.pos-dashboard {
+  font-family: var(--pos-font);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+  color: var(--pos-text);
+
+  .dash-actions-grid {
+    margin-bottom: 28px;
+  }
+
+  .dash-stats-grid {
+    margin-bottom: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pos-dashboard {
+    padding: 16px 14px 30px;
+  }
+}

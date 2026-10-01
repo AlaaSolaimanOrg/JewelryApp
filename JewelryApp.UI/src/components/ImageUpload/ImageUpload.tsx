@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { Col, Row } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
 import { FaTrash } from "react-icons/fa";
 import { convertHeicToJpeg } from "../../utils";
@@ -61,31 +60,26 @@ const ImageUpload = ({ files, setFiles }) => {
 
   return (
     <div className="imageUpload">
-      <label className="form-label required">Product Images</label>
-
       <div {...getRootProps()}>
         <input {...getInputProps()} />
 
         {files?.length > 0 && !isDragActive ? (
-          <Row>
+          <div className="droppedImages">
             {files.map((file, index) => (
-              <Col key={index} xs={4} className="droppedImageWrapper p-3">
-                <img
-                  src={file.preview}
-                  alt={`Preview ${index}`}
-                  style={{ width: "100%", height: "300px", objectFit: "cover" }}
-                />
-                <FaTrash
-                  className="closeIcon"
-                  onClick={(event) => handleRemoveImage(event, index)}
-                />
-                {/* Debug: Show file name */}
-                <div style={{ fontSize: '12px', marginTop: '5px' }}>
+              <div key={index} className="droppedImageWrapper">
+                <div className="thumb">
+                  <img src={file.preview} alt={`Preview ${index}`} />
+                  <FaTrash
+                    className="closeIcon"
+                    onClick={(event) => handleRemoveImage(event, index)}
+                  />
+                </div>
+                <div className="fileName" title={file.name}>
                   {file.name}
                 </div>
-              </Col>
+              </div>
             ))}
-          </Row>
+          </div>
         ) : (
           <div className={`imageUploadZone ${isDragActive ? "dragZone" : ""}`}>
             {isDragActive ? (

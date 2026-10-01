@@ -14,5 +14,7 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesList
         public decimal  Total { get; set; }
         public bool CardPayment { get; set; }
         public bool CashPayment { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public decimal CashAmount { get; set; }
     }
 }

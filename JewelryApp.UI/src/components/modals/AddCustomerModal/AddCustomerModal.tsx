@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
-import PhoneNumberDigits from "../../PhoneNumberDigits/PhoneNumberDigits";
+import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import {
   createCustomer,
   getCustomers,
   updateCustomer,
-} from "../../../apis/customers.api/customers.api";
+} from "../../../apis/customers.api";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import {
+  capitalize,
+  formatPhoneDisplay,
+  getCustomerModalTitle,
+} from "./AddCustomerModal.utils";
 import "./addCustomerModal.scss";
 
 interface Customer {
@@ -27,6 +31,7 @@ interface AddCustomerModalProps {
   isCustomersView?: boolean;
   mode?: "add" | "edit" | "view";
   customerData?: Customer | null;
+  entityLabel?: string;
 }
 
 const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
@@ -39,6 +44,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   isCustomersView = false,
   mode = "add",
   customerData = null,
+  entityLabel = "customer",
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -58,9 +64,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       if (mode === "edit" || mode === "view") {
         setName(customerData?.name || "");
         setEmail(customerData?.email || "");
-        const raw = (customerData?.phoneNumber || "").replace(/\D/g, "");
-        setPhoneNumber(raw);
-        // phoneNumber is normalized digits-only string
+        setPhoneNumber((customerData?.phoneNumber || "").replace(/\D/g, ""));
         setBirthday(customerData?.birthday || "");
       } else {
         resetForm();
@@ -77,8 +81,6 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     setErrors({});
   };
 
-  // Phone digit handling moved to PhoneNumberDigits component
-
   const validate = () => {
     const newErrors: {
       name?: string;
@@ -90,11 +92,15 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     if (!name.trim()) newErrors.name = "Name is required.";
     else if (name.trim().length < 2)
       newErrors.name = "Name must be at least 2 characters.";
+    else if (name.trim().length > 100)
+      newErrors.name = "Name must be at most 100 characters.";
 
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email))
         newErrors.email = "Please enter a valid email address.";
+      else if (email.length > 254)
+        newErrors.email = "Email must be at most 254 characters.";
     }
 
     const digits = (phoneNumber || "").replace(/\D/g, "");
@@ -191,6 +197,7 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message || "Customer updated successfully");
           handleSuccess(customerData.id);
+          onClose();
         } else {
           showError(response?.message);
         }
@@ -205,21 +212,20 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
   };
 
   const handleSuccess = (customerId) => {
-    if (isCustomersView && !!callGetCustomerDetails) {
-      callGetCustomerDetails();
+    if (isCustomersView) {
+      callGetCustomerDetails?.();
+      return;
     }
-    if (!isCustomersView && !!setSearchInput && !!callGetCustomerDetails) {
-      setCustomer({
-        id: customerId,
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        birthday: birthday,
-      });
-      setCustomerInfoActive(true);
-      setSearchInput?.(name);
-      callGetCustomerDetails();
-    }
+    setCustomer?.({
+      id: customerId,
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+      birthday: birthday,
+    });
+    setCustomerInfoActive?.(true);
+    setSearchInput?.(name);
+    callGetCustomerDetails?.();
   };
 
   const handleSave = () => {
@@ -235,83 +241,73 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     onClose();
   };
 
-  const getModalTitle = () => {
-    switch (mode) {
-      case "add":
-        return "Add New Customer";
-      case "edit":
-        return "Edit Customer";
-      case "view":
-        return "View Customer";
-      default:
-        return "Add New Customer";
-    }
-  };
-
   const isViewMode = mode === "view";
 
   return (
-    <Modal id="customerModal" show={show} onHide={handleCancel} centered>
+    <Modal
+      id="customerModal"
+      show={show}
+      onHide={handleCancel}
+      centered
+      container={() =>
+        document.querySelector(".pos-app") ||
+        document.querySelector(".jewleryApp") ||
+        document.body
+      }
+    >
       <Modal.Header closeButton>
-        <Modal.Title>{getModalTitle()}</Modal.Title>
+        <Modal.Title>{getCustomerModalTitle(mode, entityLabel)}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form>
           <Form.Group className="mb-3" controlId="customerName">
-            <Form.Label>
-              Customer Name <span className="required">*</span>
-            </Form.Label>
+            <Form.Label>{capitalize(entityLabel)} name *</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter customer name"
+              placeholder={`Enter ${entityLabel} name`}
               value={name}
+              maxLength={100}
               onChange={(e) => setName(e.target.value)}
               readOnly={isViewMode}
             />
             {errors.name && <div className="error-text">{errors.name}</div>}
           </Form.Group>
+          <Form.Group className="mb-3" controlId="customerPhone">
+            <Form.Label>Phone number *</Form.Label>
+            <Form.Control
+              type="tel"
+              inputMode="tel"
+              maxLength={12}
+              placeholder="780-123-1234"
+              value={formatPhoneDisplay(phoneNumber)}
+              onChange={(e) =>
+                setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
+              }
+              readOnly={isViewMode}
+            />
+            {errors.phoneNumber && (
+              <div className="error-text">{errors.phoneNumber}</div>
+            )}
+          </Form.Group>
           <Form.Group className="mb-3" controlId="customerEmail">
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Enter email address"
+              placeholder="Optional"
               value={email}
+              maxLength={254}
               onChange={(e) => setEmail(e.target.value)}
               readOnly={isViewMode}
             />
             {errors.email && <div className="error-text">{errors.email}</div>}
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="customerPhone">
-            <Form.Label>
-              Phone Number <span className="required">*</span>
-            </Form.Label>
-            {isViewMode ? (
-              <Form.Control
-                type="text"
-                value={
-                  phoneNumber
-                    ? `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(3, 6)}-${phoneNumber.substring(6, 10)}`
-                    : ""
-                }
-                readOnly
-              />
-            ) : (
-              <PhoneNumberDigits
-                value={phoneNumber}
-                onChange={(v) => setPhoneNumber(v)}
-                error={errors.phoneNumber}
-              />
-            )}
-            {errors.phoneNumber && (
-              <div className="error-text">{errors.phoneNumber}</div>
-            )}
           </Form.Group>
           <Form.Group className="mb-3" controlId="customerBirthday">
             <Form.Label>Birthday</Form.Label>
             <Form.Control
               type="date"
               value={birthday}
+              max={new Date().toISOString().split("T")[0]}
               onChange={(e) => setBirthday(e.target.value)}
               readOnly={isViewMode}
             />
@@ -323,13 +319,6 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button
-          variant="secondary"
-          onClick={handleCancel}
-          className="modal-cancel-btn"
-        >
-          {isViewMode ? "Close" : "Cancel"}
-        </Button>
         {!isViewMode && (
           <Button
             variant="warning"
@@ -338,9 +327,16 @@ const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
             id="saveCustomerBtn"
             disabled={isLoading}
           >
-            {mode === "add" ? "Save" : "Update"}
+            {mode === "add" ? `Save ${entityLabel}` : `Update ${entityLabel}`}
           </Button>
         )}
+        <Button
+          variant="secondary"
+          onClick={handleCancel}
+          className="modal-cancel-btn"
+        >
+          {isViewMode ? "Close" : "Cancel"}
+        </Button>
       </Modal.Footer>
     </Modal>
   );

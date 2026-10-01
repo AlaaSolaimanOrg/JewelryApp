@@ -39,6 +39,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesList
                     Total = x.Total,
                     CardPayment = x.CardAmount != 0,
                     CashPayment = x.CashAmount != 0,
+                    CustomerName = x.Customer!.Name,
+                    CashAmount = x.CashAmount ?? 0,
                 });
 
             if (!string.IsNullOrEmpty(request.SearchBy))

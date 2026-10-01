@@ -1,0 +1,48 @@
+.lira-ounce-dropdown {
+  .dropdown-toggle.ps-btn {
+    font-size: 13px;
+    padding: 9px 14px;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  .lo-menu {
+    min-width: 180px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: var(--pos-bg-surface);
+    border: 1px solid var(--pos-border-strong);
+    padding: 6px 0;
+
+    .dropdown-item {
+      color: var(--pos-text);
+      font-size: 13px;
+
+      &:hover,
+      &.active {
+        background: var(--pos-bg-raised);
+        color: var(--pos-gold);
+      }
+    }
+
+    .lo-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--pos-text-muted);
+    }
+
+    .lo-empty {
+      padding: 6px 16px;
+      font-size: 13px;
+      color: var(--pos-text-muted);
+    }
+
+    .dropdown-divider {
+      border-color: var(--pos-border);
+      margin: 6px 0;
+    }
+  }
+}

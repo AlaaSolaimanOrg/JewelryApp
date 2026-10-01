@@ -1,4 +1,5 @@
 ﻿using JewerlyApp.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<SaleItem> SaleItems { get; set; }
         DbSet<ApplicationUser> Users { get; set; }
         DbSet<ApplicationRole> Roles { get; set; }
+        DbSet<IdentityUserRole<int>> UserRoles { get; set; }
         DbSet<ProductTag> ProductTags { get; set; }
         DbSet<Log> Logs { get; set; }
         DbSet<Return> Returns { get; set; }
@@ -31,6 +33,14 @@ namespace JewerlyApp.Application.Interfaces
         DbSet<PrintJob> PrintJobs { get; set; }
         DbSet<Printer> Printers { get; set; }
         DbSet<ProductSpecialPricing> ProductSpecialPricings { get; set; }
+        DbSet<CashTransaction> CashTransactions { get; set; }
+        DbSet<UsedGoldPurchase> UsedGoldPurchases { get; set; }
+        DbSet<UsedGoldPurchaseItem> UsedGoldPurchaseItems { get; set; }
+        DbSet<UsedGoldMeltBatch> UsedGoldMeltBatches { get; set; }
+        DbSet<UsedGoldMeltBatchItem> UsedGoldMeltBatchItems { get; set; }
+        DbSet<UsedGoldStockReturn> UsedGoldStockReturns { get; set; }
+        DbSet<SecurityPinSetting> SecurityPinSettings { get; set; }
+        DbSet<InventorySetting> InventorySettings { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

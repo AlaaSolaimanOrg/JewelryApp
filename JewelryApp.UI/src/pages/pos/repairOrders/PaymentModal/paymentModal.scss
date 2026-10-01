@@ -1,0 +1,81 @@
+.pu-pay-customer {
+  font-size: 13px;
+  color: var(--pos-text-muted);
+  margin-bottom: 16px;
+}
+
+.pu-pay-total {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.pu-pay-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  .pu-pay-opt {
+    flex: 1;
+    padding: 16px;
+    border-radius: var(--pos-radius-sm);
+    border: 1px solid var(--pos-border-strong);
+    background: var(--pos-bg-raised);
+    cursor: pointer;
+    text-align: center;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+
+    .pu-pay-opt-icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+      color: var(--pos-text-secondary);
+    }
+
+    .pu-pay-opt-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--pos-text);
+    }
+
+    &.selected {
+      border-color: var(--pos-green);
+      background: var(--pos-green-bg);
+      box-shadow: 0 0 0 1px var(--pos-green);
+
+      .pu-pay-opt-icon,
+      .pu-pay-opt-label {
+        color: var(--pos-green);
+      }
+    }
+  }
+}
+
+.pu-split-fields {
+  margin-bottom: 16px;
+
+  .pu-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .pu-split-status {
+    font-size: 12px;
+    margin-top: 8px;
+    text-align: center;
+
+    &.ok {
+      color: var(--pos-green);
+    }
+
+    &.bad {
+      color: var(--pos-red);
+    }
+  }
+}

@@ -1,0 +1,23 @@
+.sum-strip {
+  font-family: var(--admin-font);
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  background: var(--admin-gold-bg);
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  border-radius: var(--admin-radius-sm);
+  margin-bottom: 14px;
+}
+
+.sum-item {
+  font-size: 13px;
+  color: var(--admin-t2);
+
+  b {
+    color: var(--admin-gold);
+    font-weight: 700;
+    font-size: 15px;
+  }
+}

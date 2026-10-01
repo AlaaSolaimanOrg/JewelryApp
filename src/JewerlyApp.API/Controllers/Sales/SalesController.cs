@@ -1,13 +1,12 @@
 ﻿using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Sales.Commands.CreateSale;
-using JewerlyApp.Application.Sales.Queries.GetDashboardInsights;
 using JewerlyApp.Application.Sales.Queries.GetSaleById;
-using JewerlyApp.Application.Sales.Queries.GetSalesCustomers;
 using JewerlyApp.Application.Sales.Queries.GetSalesInsights;
 using JewerlyApp.Application.Sales.Queries.GetSalesList;
 using JewerlyApp.Application.Sales.Queries.GetSoldItems;
+using JewerlyApp.Application.Sales.Queries.GetTodaySalesSummary;
+using JewerlyApp.Application.Sales.Queries.GetTopCustomers;
 using JewerlyApp.Application.Sales.Queries.SearchSales;
-using JewerlyApp.Application.Sales.Queries.GetTopSellingCategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -88,40 +87,28 @@ namespace JewerlyApp.API.Controllers.Sales
             var response = await Mediator.Send(command);
             return CreateResponse(response);
         }
-        
+
         /// <summary>
-        /// get sales customers
+        /// get today's sales total and count, gated behind the sales PIN
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetSalesCustomers([FromQuery] GetSalesCustomersQuery command)
+        [HttpPost]
+        public async Task<IActionResult> GetTodaySalesSummary([FromBody] GetTodaySalesSummaryQuery query)
         {
-            var response = await Mediator.Send(command);
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
 
         /// <summary>
-        /// get Dashboard Insights
+        /// get top customers by spend within a date range
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetDashboardInsights([FromQuery] GetDashboardInsightsQuery command)
+        public async Task<IActionResult> GetTopCustomers([FromQuery] GetTopCustomersQuery query)
         {
-            var response = await Mediator.Send(command);
-            return CreateResponse(response);
-        }
-        
-        /// <summary>
-        /// get top selling categories
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetTopSellingCategories([FromQuery] GetTopSellingCategoriesQuery command)
-        {
-            var response = await Mediator.Send(command);
+            var response = await Mediator.Send(query);
             return CreateResponse(response);
         }
     }

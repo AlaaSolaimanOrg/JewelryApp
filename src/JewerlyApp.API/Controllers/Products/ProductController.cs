@@ -1,5 +1,4 @@
-﻿using JewerlyApp.Application.InventoryReports.Queries;
-using JewerlyApp.Application.Products.Commands.CreateProduct;
+﻿using JewerlyApp.Application.Products.Commands.CreateProduct;
 using JewerlyApp.Application.Products.Commands.DeleteProduct;
 using JewerlyApp.Application.Products.Commands.EditProduct;
 using JewerlyApp.Application.Products.Commands.MeltProduct;
@@ -7,6 +6,8 @@ using JewerlyApp.Application.Products.Commands.UpsertProductSpecialPricing;
 using JewerlyApp.Application.Products.Commands.ValidateProductImages;
 using JewerlyApp.Application.Products.Queries.ExportProductsToExcel;
 using JewerlyApp.Application.Products.Queries.GenerateSku;
+using JewerlyApp.Application.Products.Queries.GetBullionProducts;
+using JewerlyApp.Application.Products.Queries.GetInventorySummary;
 using JewerlyApp.Application.Products.Queries.GetMeltedProducts;
 using JewerlyApp.Application.Products.Queries.GetMeltedReports;
 using JewerlyApp.Application.Products.Queries.GetProductSpecialPricing;
@@ -95,6 +96,28 @@ namespace JewerlyApp.API.Controllers.Products
         }
 
         /// <summary>
+        /// Get in-stock products tagged lira or ounce
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetBullionProducts([FromQuery] GetBullionProductsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
+        /// Get aggregated inventory summary (product count, quantity, weight, value) for the given filters
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetInventorySummary([FromQuery] GetInventorySummaryQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        /// <summary>
         /// Delete product by ID
         /// </summary>
         /// <param name="id"></param>
@@ -131,18 +154,6 @@ namespace JewerlyApp.API.Controllers.Products
                 file.ContentType,
                 file.FileName
             );
-        }
-
-        /// <summary>
-        /// Get product by ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> GetInventoryReports([FromQuery] GetInventoryReportsQuery query)
-        {
-            var response = await Mediator.Send(query);
-            return CreateResponse(response);
         }
 
         /// <summary>

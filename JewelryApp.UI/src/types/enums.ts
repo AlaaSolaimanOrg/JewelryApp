@@ -40,23 +40,10 @@ export enum OrderDiscount {
   FixedAmount = 2,
 }
 
-export enum DatePillFilter {
-  Today = 1,
-  ThisWeek = 2,
-  ThisMonth = 3,
-  ThisYear = 4,
-  All = 5,
-}
-
 export enum DiscountType {
   None = 1,
   FixedAmount = 2,
   Percentage = 3,
-}
-
-export enum CustomerFilter {
-  New = 1,
-  Returning,
 }
 
 export enum ReturnReason {
@@ -78,6 +65,18 @@ export enum ReturnOption {
   MeltAfterReturn = 2,
 }
 
+export enum RefundMethod {
+  Cash = 1,
+  Card = 2,
+  StoreCredit = 3,
+}
+
+export enum ReturnItemsView {
+  NeedsTags = 1,
+  Printed = 2,
+  All = 3,
+}
+
 export enum RepairType {
   Resize,
   Solder,
@@ -95,11 +94,19 @@ export enum RepairStatus {
   InProgress,
   Completed,
   PickedUp,
+  Cancelled,
 }
 
 export enum PaymentStatus {
   Unpaid = 0,
   Paid = 1,
+}
+
+export enum RepairPayMethod {
+  Unpaid,
+  Cash,
+  Card,
+  Split,
 }
 
 export enum ReportType {
@@ -114,4 +121,28 @@ export enum LogLevel {
   Info = 1,
   Warning = 2,
   Error = 3,
+}
+
+export enum CashBoxType {
+  Store = 1,
+  Transfers = 2,
+}
+
+export enum CashTransactionType {
+  Expense = 1,
+  ManualCashIn = 2,
+  TransferIncome = 3,
+  MoveMoneyOut = 4,
+  MoveMoneyIn = 5,
+  SaleCashIn = 6,
+  UsedGoldPurchaseOut = 7,
+  ReturnCashOut = 8,
+  RepairCashIn = 9,
+  RepairCashOut = 10,
+  SaleChangeOut = 11,
+}
+
+export enum UsedGoldPayMethod {
+  Cash = 1,
+  ETransfer = 2,
 }

@@ -86,6 +86,8 @@
         public const string Error_Role_Deletion_Failed = "Failed to delete role.";
         public const string Error_Role_Has_Users = "Cannot delete role with assigned users.";
         public const string Error_User_Role_Removal_Failed = "Failed to remove roles from user.";
+        public const string Error_Only_Admin_Can_Assign_Restricted_Role = "Only an Admin can assign or remove the Admin or StaffManager roles.";
+        public const string Error_Only_Admin_Can_Modify_Admin = "Only an Admin can modify an Admin account.";
         public const string Error_Password_Reset_Failed = "Failed to reset password.";
         public const string Error_Discount_Result = "Fixed discount results in a negative result.";
         public const string Error_Discount = "Fixed Discount can't be a negative number.";
@@ -98,6 +100,7 @@
         public const string Error_Sale_MustContain_Items = "Sale must contain at least one item";
         public const string Error_Payments_Dont_Match = "Payment amounts do not match the total amount.";
         public const string Error_Sale_Not_Found = "Sale not found.";
+        public const string Error_Sale_InsufficientChangeBalance = "Store cash box does not have enough balance to pay the customer the change due on this sale.";
 
         // Dynamic Product Message
         public static string Errror_Product_Not_Found(string productName)
@@ -112,6 +115,7 @@
         public const string Error_Exceeds_Purchased_Quantity = "Cannot return more quantity than purchased.";
         public const string Error_Invalid_Return_Amount = "Return amount must be greater than 0.";
         public const string Error_Invalid_Weight = "Weight must be provided for returned items.";
+        public const string Error_Return_InsufficientCashBalance = "Store cash box does not have enough balance to refund this return in cash.";
 
         public static string Error_Invalid_SaleItemId(Guid id)
             => $"Invalid SaleItemId: {id}";
@@ -134,8 +138,62 @@
         public const string Error_Repair_Not_Found = "Repair order not found.";
         public const string Error_Repair_Customer_Not_Found = "Customer not found for repair.";
         public const string Error_Repair_No_Slots_Available = "No available repair slots. All slots are currently in use.";
+        public const string Error_Repair_DueDate_In_Past = "Due date cannot be in the past.";
+        public const string Error_Repair_Notes_Too_Long = "Notes cannot exceed 1000 characters.";
+        public const string Error_Repair_ReceiverName_Too_Long = "Receiver name cannot exceed 100 characters.";
         public const string Error_RepairItem_Not_Found = "Repair item not found.";
         public const string Error_RepairCantBeCompleted = "Repair can't be completed";
+
+        // --------------------------------------------------
+        // CASH MANAGEMENT MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_Cash_Expense_Added = "Expense added successfully.";
+        public const string Success_Cash_ManualCashIn_Added = "Cash in recorded successfully.";
+        public const string Success_Cash_TransferIncome_Added = "Transfer income recorded successfully.";
+        public const string Success_Cash_MoneyMoved = "Money moved successfully.";
+        public const string Error_Cash_InvalidAmount = "Enter a valid amount greater than zero.";
+        public const string Error_Cash_InsufficientBalance = "This box does not have enough balance for this operation.";
+        public const string Error_Cash_CategoryRequired = "Select a category.";
+        public const string Error_Cash_NotesRequired = "Notes are required.";
+        public const string Error_Cash_SourceRequired = "Select a source.";
+        public const string Error_Cash_CustomerNameRequired = "Enter a customer name.";
+
+        // --------------------------------------------------
+        // USED GOLD PURCHASE MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_UsedGold_Purchase_Created = "Used gold purchase recorded successfully.";
+        public const string Error_UsedGold_Customer_Not_Found = "Seller (customer) not found.";
+        public const string Error_UsedGold_Purchase_No_Items = "Purchase must include at least one gold item.";
+        public const string Error_UsedGold_Purchase_Invalid_Karat = "Karat must be between 1 and 24.";
+        public const string Error_UsedGold_Purchase_Invalid_Weight = "Weight must be greater than 0 for every item.";
+        public const string Error_UsedGold_Purchase_Invalid_Price = "Price per gram must be greater than 0 for every item.";
+        public const string Error_UsedGold_Purchase_InsufficientBalance = "Store cash box does not have enough balance for this purchase.";
+
+        public const string Success_UsedGold_Melt_Created = "Melt batch recorded successfully.";
+        public const string Error_UsedGold_Melt_InvalidWeight = "Bag weight must be greater than 0.";
+        public const string Error_UsedGold_Melt_InsufficientStock = "Bag weight exceeds the gold currently on hand.";
+        public const string Error_UsedGold_Melt_NoItems = "Select at least one karat and weight to send to melt.";
+        public const string Error_UsedGold_Melt_InvalidKarat = "One of the selected karats is not on hand.";
+        public const string Error_UsedGold_Melt_ItemExceedsPool = "Weight for one of the karats exceeds what's currently on hand.";
+
+        public const string Success_UsedGold_StockReturn_Created = "Returned to stock successfully.";
+        public const string Error_UsedGold_StockReturn_InvalidKarat = "Karat must be between 1 and 24.";
+        public const string Error_UsedGold_StockReturn_InvalidWeight = "Weight must be greater than 0.";
+        public const string Error_UsedGold_StockReturn_InsufficientStock = "Weight exceeds what's currently on hand for this karat.";
+
+        // --------------------------------------------------
+        // SECURITY / PIN SETTINGS MESSAGES (NEW)
+        // --------------------------------------------------
+        public const string Success_Security_Pin_Updated = "Sales PIN updated successfully.";
+        public const string Error_Security_Pin_Invalid = "PIN must be exactly 4 digits.";
+        public const string Success_Security_Pin_Verified = "PIN verified.";
+        public const string Error_Security_Pin_Incorrect = "Incorrect PIN.";
+
+        // --------------------------------------------------
+        // INVENTORY SETTINGS MESSAGES
+        // --------------------------------------------------
+        public const string Success_Inventory_LowStockThreshold_Updated = "Low stock threshold updated successfully.";
+        public const string Error_Inventory_LowStockThreshold_Invalid = "Low stock threshold must be a whole number between 0 and 100000.";
     }
 
 

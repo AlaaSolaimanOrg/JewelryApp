@@ -1,146 +1,385 @@
 import { useState } from "react";
-import { Card, Form } from "react-bootstrap";
-import { FaBoxOpen, FaClipboardList, FaUndo } from "react-icons/fa";
-import { getInventoryReports } from "../../../apis/products.api/products.api";
+import { FaClipboardList, FaStore } from "react-icons/fa";
+import {
+  getInventoryAging,
+  getInventoryMovement,
+  getInventoryStockSummary,
+  getMovementByPurity,
+  getStaplesSold,
+  getStockByCategory,
+  getStockByPurity,
+} from "../../../apis/inventoryReports.api";
+import ChartPanel from "../../../components/ChartPanel/ChartPanel";
+import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
+import MiniStatCard from "../../../components/cards/MiniStatCard/MiniStatCard";
+import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
+import Paginator from "../../../components/Paginator/Paginator";
+import SortLabel from "../../../components/tables/SortLabel/SortLabel";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
+import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
+import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
+import { SortDirection } from "../../../types/enums";
+import { handleSort } from "../../../utils";
+import type {
+  DateRange,
+  InventoryAging,
+  InventoryMovement,
+  InventoryStockSummary,
+  Period,
+  PurityMovement,
+  StapleSold,
+  StockByCategoryRow,
+  StockByPurityRow,
+} from "./InventoryReports.type";
+import {
+  PERIOD_LABELS,
+  computeBarPercent,
+  fmtCurrency,
+  fmtNumber,
+  formatRangeLabel,
+  getCustomRange,
+  getPeriodRange,
+  largestRemainderRound,
+} from "./InventoryReports.utils";
 import "./inventoryReports.scss";
 
-interface DateRange {
-  dateFrom: string | null;
-  dateTo: string | null;
-}
+const PERIODS: Exclude<Period, "custom">[] = ["today", "week", "month", "year", "all"];
+
+const AGING_COLORS: Record<string, string | undefined> = {
+  "0-30 days": "var(--admin-green)",
+  "61-90 days": "var(--admin-amber)",
+  "90+ days": "var(--admin-red)",
+};
+
+const todayStr = new Date().toISOString().slice(0, 10);
 
 const InventoryReports = () => {
-  const [appliedDateRange, setAppliedDateRange] = useState<DateRange>({
-    dateFrom: null,
-    dateTo: null,
-  });
   const [dateRange, setDateRange] = useState<DateRange>({
-    dateFrom: null,
-    dateTo: null,
+    dateFrom: todayStr,
+    dateTo: todayStr,
+  });
+  const [period, setPeriod] = useState<Period>("all");
+  const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
+
+  const handleSetPeriod = (p: Exclude<Period, "custom">) => {
+    setPeriod(p);
+    setAppliedRange(null);
+    onPaginationChange(1);
+  };
+
+  const handleApplyCustomRange = () => {
+    const { dateFrom, dateTo } = dateRange;
+    if (!dateFrom || !dateTo) return;
+    setAppliedRange({ dateFrom, dateTo });
+    setPeriod("custom");
+    onPaginationChange(1);
+  };
+
+  const activeRange =
+    period === "custom" && appliedRange
+      ? getCustomRange(appliedRange.dateFrom, appliedRange.dateTo)
+      : getPeriodRange(period as Exclude<Period, "custom">);
+
+  const periodLabel =
+    period === "custom" && appliedRange
+      ? formatRangeLabel(appliedRange.dateFrom, appliedRange.dateTo)
+      : PERIOD_LABELS[period];
+
+  /* ── Stock right now (not period-filtered) ───────────────────── */
+
+  const { data: stockSummary } = useLocalApi({
+    apiToCall: () => getInventoryStockSummary(),
+    dataInitalValue: {},
+  }) as { data: Partial<InventoryStockSummary> };
+
+  const { data: stockByPurity } = useLocalApi({
+    apiToCall: () => getStockByPurity(),
+  }) as { data: StockByPurityRow[] };
+
+  const { data: stockByCategory } = useLocalApi({
+    apiToCall: () => getStockByCategory(),
+  }) as { data: StockByCategoryRow[] };
+
+  const { data: inventoryAging } = useLocalApi({
+    apiToCall: () => getInventoryAging(),
+    dataInitalValue: {},
+  }) as { data: Partial<InventoryAging> };
+
+  /* ── Movement & bullion (period-filtered) ────────────────────── */
+
+  const { data: movement } = useLocalApi({
+    apiToCall: (data) => getInventoryMovement(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: {},
+    effectDependency: [period, appliedRange],
+  }) as { data: Partial<InventoryMovement> };
+
+  const { data: purityMovement } = useLocalApi({
+    apiToCall: (data) => getMovementByPurity(data.payload),
+    payload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    dataInitalValue: { added: [], returned: [] },
+    effectDependency: [period, appliedRange],
+  }) as { data: PurityMovement };
+
+  const {
+    data: staplesSold,
+    dataExtractedFromResponse: staplesSoldExtra,
+    onPaginationChange,
+    onPageSizeChange,
+    onSortChange,
+    sortCriteria,
+    pagination,
+    isLoading: staplesSoldLoading,
+  } = useLocalApiSearchSortPagination<StapleSold>({
+    apiToCall: (data) => getStaplesSold(data.payload),
+    initialPageSize: 10,
+    initialSortBy: "Sold",
+    initialSortDirection: SortDirection.Descending,
+    extraPayload: { dateFrom: activeRange.dateFrom, dateTo: activeRange.dateTo },
+    extraEffectDependency: [period, appliedRange],
+    extractFromResponse: ["totalSold"],
   });
 
-  const { data: inventoryReports } = useLocalApi({
-    apiToCall: (data) => getInventoryReports(data.payload),
-    payload: {
-      dateFrom: appliedDateRange.dateFrom,
-      dateTo: appliedDateRange.dateTo,
-    },
-    effectDependency: [appliedDateRange],
-  }) as {
-    data: {
-      added: any[];
-      returned: any[];
-    };
-    isLoading: boolean;
-  };
+  const maxPurityGrams = Math.max(...stockByPurity.map((p) => p.grams), 1);
+  const maxCategoryValue = Math.max(...stockByCategory.map((c) => c.value), 1);
+  const categoryPercentages = largestRemainderRound(stockByCategory.map((c) => c.value));
 
-  /* ================= HANDLERS ================= */
+  const agingBuckets = inventoryAging.agingBuckets ?? [];
 
-  const handleApply = () => {
-    setAppliedDateRange(dateRange);
-  };
+  const totalStapleSold = staplesSoldExtra?.totalSold ?? 0;
+  const stapleRows = staplesSold.map((s) => ({
+    name: <span className="stpl-name">{s.name}</span>,
+    type: <span className="badge b-type">{s.type ?? "—"}</span>,
+    stock: s.stock,
+    sold: <span className="stpl-sold">{s.sold}</span>,
+    status: (
+      <span className={`badge ${s.isLow ? "b-low" : "b-ok"}`}>
+        {s.isLow ? "LOW — reorder" : "OK"}
+      </span>
+    ),
+  }));
 
-  const handleAllTime = () => {
-    setDateRange({ dateFrom: null, dateTo: null });
-    setAppliedDateRange({ dateFrom: null, dateTo: null });
-  };
+  const stapleHeaders: TableHeader[] = [
+    { key: "name", label: <SortLabel label="Item" field="Name" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Name", sortCriteria, onSortChange) },
+    { key: "type", label: <SortLabel label="Type" field="Type" sortCriteria={sortCriteria} />, onHeaderClick: () => handleSort("Type", sortCriteria, onSortChange) },
+    { key: "stock", label: <SortLabel label="In stock" field="Stock" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Stock", sortCriteria, onSortChange) },
+    { key: "sold", label: <SortLabel label={`Sold (${periodLabel.toLowerCase()})`} field="Sold" sortCriteria={sortCriteria} />, align: "right", onHeaderClick: () => handleSort("Sold", sortCriteria, onSortChange) },
+    { key: "status", label: <SortLabel label="Stock status" field="IsLow" sortCriteria={sortCriteria} />, align: "center", onHeaderClick: () => handleSort("IsLow", sortCriteria, onSortChange) },
+  ];
 
-  /* ================= RENDER ================= */
-
-  const renderCards = (
-    title: string,
-    icon: React.ReactNode,
-    rows: any[],
-    accent?: "gold"
-  ) => (
-    <div className="inventory-report-group">
-      <h4 className="section-subtitle">
-        {icon} {title}
-      </h4>
-
-      <div className="summary-cards">
-        {rows?.map((r) => (
-          <div key={r.karatType} className={`summary-card ${accent ?? ""}`}>
-            <h3>{r.karatType}K Gold</h3>
-            <div className="amount">{r.itemCount} items</div>
-            <div className="sub-info">{r.totalWeight.toFixed(2)} g</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const addedByPurity = purityMovement.added;
+  const returnedByPurity = purityMovement.returned;
+  const maxAddedGrams = Math.max(...addedByPurity.map((x) => x.grams), 1);
+  const maxReturnedGrams = Math.max(...returnedByPurity.map((x) => x.grams), 1);
+  const totalAdded = addedByPurity.reduce((s, x) => s + x.items, 0);
+  const totalReturned = returnedByPurity.reduce((s, x) => s + x.items, 0);
 
   return (
     <div id="inventory-reports" className="page">
-      {/* ================= PAGE HEADER ================= */}
       <div className="page-header">
         <h1 className="page-title">
           <FaClipboardList className="icon" />
           <span>Inventory Reports</span>
         </h1>
+      </div>
 
-        <div className="page-actions">
-          <div className="date-filters">
-            <Form.Control
-              type="date"
-              value={dateRange.dateFrom ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateFrom: e.target.value || null,
-                }))
-              }
-            />
+      <div className="sec-title">Stock right now</div>
+      <div className="stats4">
+        <ReportStatCard
+          label="Items in stock"
+          value={fmtNumber(stockSummary.itemsInStock ?? 0)}
+          sub={`across ${stockSummary.categoriesCount ?? 0} categories`}
+          accentColor="var(--admin-gold)"
+        />
+        <ReportStatCard
+          label="Total weight"
+          value={`${fmtNumber(stockSummary.totalWeight ?? 0)}g`}
+          sub="all purities"
+          accentColor="var(--admin-gold)"
+        />
+        <ReportStatCard
+          label="Stock value"
+          value={fmtCurrency(stockSummary.stockValue ?? 0)}
+          sub="at current sell prices"
+          accentColor="var(--admin-green)"
+          valueColor="var(--admin-green)"
+        />
+        <ReportStatCard
+          label="Avg item age"
+          value={`${Math.round(inventoryAging.averageDaysInInventory ?? 0)} days`}
+          sub="since added to stock"
+          accentColor="var(--admin-blue)"
+        />
+      </div>
 
-            <Form.Control
-              type="date"
-              value={dateRange.dateTo ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateTo: e.target.value || null,
-                }))
-              }
-            />
+      <div className="grid2">
+        <ChartPanel title="Stock by purity" subtitle="weight · value · items">
+          {stockByPurity.length > 0 ? (
+            stockByPurity.map((p) => (
+              <HorizontalBarRow
+                key={p.karatType}
+                label={`${p.karatType}K`}
+                percent={computeBarPercent(p.grams, maxPurityGrams)}
+                color="var(--admin-gold)"
+                amountLabel={`${fmtNumber(p.grams)}g · ${fmtCurrency(p.value)} · ${fmtNumber(p.items)} items`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
+        </ChartPanel>
+        <ChartPanel title="Stock by category" subtitle="share of value">
+          {stockByCategory.length > 0 ? (
+            stockByCategory.map((c, i) => (
+              <HorizontalBarRow
+                key={c.categoryName}
+                label={c.categoryName}
+                percent={computeBarPercent(c.value, maxCategoryValue)}
+                color="var(--admin-blue)"
+                amountLabel={`${fmtCurrency(c.value)} · ${categoryPercentages[i]}%`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
+        </ChartPanel>
+      </div>
 
-            <button
-              className="btn-md btn-gold"
-              onClick={handleApply}
-              disabled={!dateRange.dateFrom || !dateRange.dateTo}
-            >
-              Apply
-            </button>
-
-            <button
-              className="btn-md btn-gold"
-              onClick={handleAllTime}
-              disabled={
-                appliedDateRange.dateFrom == null &&
-                appliedDateRange.dateTo == null
-              }
-            >
-              All Time
-            </button>
-          </div>
+      <div className="panel">
+        <div className="panel-head">
+          <span className="panel-title">Inventory aging</span>
+          <span className="panel-sub">how long items have been sitting</span>
+        </div>
+        <div className="mini-grid4">
+          {agingBuckets.length > 0 ? (
+            agingBuckets.map((b) => (
+              <MiniStatCard
+                key={b.label}
+                label={b.label}
+                value={fmtNumber(b.itemCount)}
+                sub={`${fmtCurrency(b.totalEstimatedValue)} · ${b.percentage}%`}
+                valueColor={AGING_COLORS[b.label]}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
         </div>
       </div>
 
-      {/* ================= CONTENT ================= */}
-      <Card className="inventory-reports-wrapper">
-        {renderCards(
-          "Items Added",
-          <FaBoxOpen className="icon" />,
-          inventoryReports?.added ?? []
-        )}
+      <div className="sec-title move-title">
+        Inventory Movement — filtered by period
+      </div>
+      <div className="period-bar">
+        {PERIODS.map((p) => (
+          <button
+            key={p}
+            className={`pbtn ${period === p ? "active" : ""}`}
+            onClick={() => handleSetPeriod(p)}
+          >
+            {PERIOD_LABELS[p]}
+          </button>
+        ))}
+        <div className="range-inputs">
+          <input
+            type="date"
+            className="date-input"
+            value={dateRange.dateFrom}
+            onChange={(e) => setDateRange((prev) => ({ ...prev, dateFrom: e.target.value }))}
+          />
+          <span className="range-sep">to</span>
+          <input
+            type="date"
+            className="date-input"
+            value={dateRange.dateTo}
+            onChange={(e) => setDateRange((prev) => ({ ...prev, dateTo: e.target.value }))}
+          />
+          <button className="apply-btn" onClick={handleApplyCustomRange}>
+            Apply
+          </button>
+        </div>
+      </div>
 
-        {renderCards(
-          "Items Returned",
-          <FaUndo className="icon" />,
-          inventoryReports?.returned ?? [],
-          "gold"
-        )}
-      </Card>
+      <div className="stats4">
+        <ReportStatCard
+          label="Items added"
+          value={fmtNumber(movement.addedItems ?? 0)}
+          sub={`${fmtNumber(movement.addedGrams ?? 0)}g · ${periodLabel}`}
+          accentColor="var(--admin-green)"
+          valueColor="var(--admin-green)"
+        />
+        <ReportStatCard
+          label="Items sold"
+          value={fmtNumber(movement.soldItems ?? 0)}
+          sub={`${fmtNumber(movement.soldGrams ?? 0)}g`}
+          accentColor="var(--admin-gold)"
+        />
+        <ReportStatCard
+          label="Items returned"
+          value={fmtNumber(movement.returnedItems ?? 0)}
+          sub={`${fmtNumber(movement.returnedGrams ?? 0)}g back to stock`}
+          accentColor="var(--admin-blue)"
+          valueColor="var(--admin-blue)"
+        />
+        <ReportStatCard
+          label="Melted"
+          value={`${fmtNumber(movement.meltedGrams ?? 0)}g`}
+          sub="sent to dealer"
+          accentColor="var(--admin-amber)"
+          valueColor="var(--admin-amber)"
+        />
+      </div>
+
+      <div className="panel">
+        <div className="panel-head">
+          <span className="panel-title">
+            <FaStore className="icon" /> Bullions sold
+          </span>
+          <span className="panel-sub">{fmtNumber(totalStapleSold)} bullions sold</span>
+        </div>
+        <CustomTable headers={stapleHeaders} data={stapleRows} isLoading={staplesSoldLoading} />
+        <Paginator
+          totalRecords={pagination.totalRecords}
+          pageNumber={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          onPaginationChange={onPaginationChange}
+          onPageSizeChange={onPageSizeChange}
+        />
+      </div>
+
+      <div className="grid2">
+        <ChartPanel title="Items added by purity" subtitle={`${fmtNumber(totalAdded)} items`} modalSubtitle={periodLabel}>
+          {addedByPurity.length > 0 ? (
+            addedByPurity.map((x) => (
+              <HorizontalBarRow
+                key={x.karatType}
+                label={`${x.karatType}K`}
+                percent={computeBarPercent(x.grams, maxAddedGrams)}
+                color="var(--admin-green)"
+                amountLabel={`${fmtNumber(x.items)} items · ${fmtNumber(x.grams)}g`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
+        </ChartPanel>
+        <ChartPanel title="Items returned by purity" subtitle={`${fmtNumber(totalReturned)} items`} modalSubtitle={periodLabel}>
+          {returnedByPurity.length > 0 ? (
+            returnedByPurity.map((x) => (
+              <HorizontalBarRow
+                key={x.karatType}
+                label={`${x.karatType}K`}
+                percent={computeBarPercent(x.grams, maxReturnedGrams)}
+                color="var(--admin-amber)"
+                amountLabel={`${fmtNumber(x.items)} items · ${fmtNumber(x.grams)}g`}
+              />
+            ))
+          ) : (
+            <div className="no-data">No data available</div>
+          )}
+        </ChartPanel>
+      </div>
     </div>
   );
 };

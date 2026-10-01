@@ -1,0 +1,51 @@
+.tierBarRow {
+  font-family: var(--admin-font);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-radius: 8px;
+  transition: background 0.12s;
+
+  &.clickable {
+    cursor: pointer;
+
+    &:active {
+      background: var(--admin-bg3);
+    }
+  }
+
+  .tbr-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+    width: 76px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .tbr-track {
+    flex: 1;
+    height: 20px;
+    background: var(--admin-bg4);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .tbr-fill {
+    height: 100%;
+    border-radius: 5px;
+    min-width: 2px;
+  }
+
+  .tbr-amt {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--admin-t3);
+    width: 190px;
+    text-align: right;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}

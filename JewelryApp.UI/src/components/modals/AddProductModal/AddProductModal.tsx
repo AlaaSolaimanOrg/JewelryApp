@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
-import { FaSave, FaTimes } from "react-icons/fa";
-import {
-  createProduct,
-  generateSKU,
-  getProductsBySkus,
-} from "../../../apis/products.api/products.api";
+import { FaExclamationTriangle, FaSave, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { getPosPricingSettings } from "../../../apis/pricingSettings.api";
+import { useAuth } from "../../../context/AuthContext";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
+  hasMaxDecimals,
   isPositiveInteger,
   showError,
-  showSuccess,
 } from "../../../utils";
 import "./addProductModal.scss";
+
+const PRODUCT_TYPE_LABELS: Record<number, string> = {
+  [ProductType.Gold]: "Gold",
+};
 
 const categoriesRequiringSize = [
   ProductCategory.Necklaces,
@@ -24,7 +26,6 @@ const categoriesRequiringSize = [
 
 const initialFields = {
   productName: "",
-  sku: "",
   karat: String(KaratType.Karat18),
   productType: String(ProductType.Gold),
   weight: "",
@@ -32,6 +33,12 @@ const initialFields = {
   specification: "",
   quantity: 1,
 };
+
+interface PricingSettingItem {
+  karatType: KaratType;
+  productType: ProductType;
+  pricePerGram: number;
+}
 
 interface AddProductModalProps {
   show: boolean;
@@ -44,33 +51,29 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
   onClose,
   onProductAdded,
 }) => {
+  const { userInfo } = useAuth();
+  const isAdmin = !!userInfo?.roles?.includes("Admin");
   const [fields, setFields] = useState(initialFields);
   const [isLoading, setIsLoading] = useState(false);
+  const [pricingSettings, setPricingSettings] = useState<
+    PricingSettingItem[] | null
+  >(null);
 
-  // Reset form when modal opens
   useEffect(() => {
-    if (show) {
-      setFields(initialFields);
-    }
-  }, [show]);
-
-  // Auto-generate SKU when category changes
-  useEffect(() => {
-    if (!fields.category) {
-      setFields((prev) => ({ ...prev, sku: "" }));
-      return;
-    }
-    generateSKU({
-      category: fields.category as any,
-      karatType: fields.karat as any,
-    })
+    if (!show) return;
+    setFields(initialFields);
+    setPricingSettings(null);
+    setIsLoading(true);
+    getPosPricingSettings()
       .then((res) => {
         if (checkRequestSucceeded(res?.statusCode)) {
-          setFields((prev) => ({ ...prev, sku: res.data ?? "" }));
+          setPricingSettings(res?.data ?? []);
+        } else {
+          showError(res?.message);
         }
       })
-      .catch(() => {});
-  }, [fields.category, fields.karat]);
+      .finally(() => setIsLoading(false));
+  }, [show]);
 
   const handleField = (name: string, value: any) => {
     setFields((prev) => ({ ...prev, [name]: value }));
@@ -89,60 +92,55 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     !fields.weight ||
     Number(fields.quantity) <= 0;
 
+  const matchedPricingSetting =
+    pricingSettings?.find(
+      (item) =>
+        Number(item.karatType) === Number(fields.karat) &&
+        Number(item.productType) === Number(fields.productType),
+    ) ?? null;
+
+  const pricingMissing =
+    !isLoading &&
+    pricingSettings !== null &&
+    (!matchedPricingSetting || matchedPricingSetting.pricePerGram <= 0);
+
   const handleConfirm = () => {
-    if (isInvalid || isLoading) return;
-    setIsLoading(true);
+    if (isInvalid || isLoading || !pricingSettings || pricingMissing) return;
 
-    const formData = new FormData();
-    formData.append("Name", fields.productName);
-    formData.append("Sku", fields.sku);
-    formData.append("Category", fields.category);
-    formData.append("Specification", fields.specification);
-    formData.append("Type", fields.productType);
-    formData.append("KaratType", fields.karat);
-    formData.append("Description", "");
-    formData.append("Weight", fields.weight);
-    formData.append("quantity", String(fields.quantity));
+    const pricePerGram = matchedPricingSetting?.pricePerGram ?? 0;
 
-    createProduct(formData)
-      .then((res) => {
-        if (checkRequestSucceeded(res?.statusCode)) {
-          showSuccess(res?.message);
-          return getProductsBySkus({ skus: [fields.sku] });
-        } else {
-          showError(res?.message);
-          return null;
-        }
-      })
-      .then((skuRes) => {
-        if (!skuRes) return;
-        const fetched = skuRes?.data ?? [];
-        const p = fetched[0];
-        if (!p) {
-          showError("Could not retrieve created product.");
-          return;
-        }
-        onProductAdded({
-          ...p,
-          originalPricePerGram: p.pricePerGram,
-          quantityForSale: 1,
-          manual: false,
-        });
-        onClose();
-      })
-      .catch((e) => {
-        throw e;
-      })
-      .finally(() => setIsLoading(false));
+    onProductAdded({
+      id: null,
+      sku: null,
+      name: fields.productName,
+      quantity: Number(fields.quantity),
+      quantityForSale: 1,
+      karatType: Number(fields.karat),
+      weight: fields.weight,
+      category: Number(fields.category),
+      productType: Number(fields.productType),
+      specification: fields.specification,
+      description: "",
+      pricePerGram,
+      originalPricePerGram: pricePerGram,
+      images: [],
+      manual: false,
+      pending: true,
+    });
+    onClose();
   };
 
   return (
     <Modal
       show={show}
       onHide={onClose}
-      size="lg"
       centered
       className="add-product-modal"
+      container={() =>
+        (document.querySelector(".pos-app") ||
+          document.querySelector(".jewleryApp") ||
+          document.body) as HTMLElement
+      }
     >
       <Modal.Header closeButton>
         <Modal.Title>Add Product to Cart</Modal.Title>
@@ -161,18 +159,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                   placeholder="Enter product name"
                   value={fields.productName}
                   onChange={(e) => handleField("productName", e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">SKU</label>
-                <input
-                  type="text"
-                  className="form-control disabled-gold"
-                  placeholder="Auto Generated SKU"
-                  value={fields.sku}
-                  disabled
                 />
               </div>
             </div>
@@ -224,14 +210,17 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 <input
                   type="number"
                   onWheel={(e) => e.currentTarget.blur()}
-                  step="0.1"
+                  step="0.01"
                   className="form-control"
-                  placeholder="0.0"
+                  placeholder="0.00"
                   value={fields.weight}
                   onKeyDown={preventSignOnKeyDown}
                   min={0}
                   onChange={(e) => {
-                    if (e.target.value.length <= 12)
+                    if (
+                      e.target.value.length <= 12 &&
+                      hasMaxDecimals(e.target.value, 2)
+                    )
                       handleField("weight", e.target.value);
                   }}
                 />
@@ -284,11 +273,28 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                   onChange={(e) => handleField("productType", e.target.value)}
                 >
                   <option value={ProductType.Gold}>Gold</option>
-                  <option value={ProductType.Silver}>Silver</option>
                 </select>
               </div>
             </div>
           </div>
+
+          {pricingMissing && (
+            <div className="pricing-missing-warning">
+              <FaExclamationTriangle className="pricing-missing-icon" />
+              <div className="pricing-missing-text">
+                No price per gram is set for {Number(fields.karat)}K{" "}
+                {PRODUCT_TYPE_LABELS[Number(fields.productType)] ?? ""}.{" "}
+                {isAdmin ? (
+                  <>
+                    <Link to="/admin/pricing">Set it in Pricing Settings</Link>{" "}
+                    before adding this product.
+                  </>
+                ) : (
+                  "Contact the admin to adjust the pricing settings."
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </Modal.Body>
 
@@ -303,10 +309,12 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         <button
           className="btn-md btn-gold"
           onClick={handleConfirm}
-          disabled={isInvalid || isLoading}
+          disabled={
+            isInvalid || isLoading || !pricingSettings || pricingMissing
+          }
         >
           <FaSave className="icon" />
-          {isLoading ? "Saving..." : "Add to Cart"}
+          {isLoading ? "Loading prices..." : "Add to Cart"}
         </button>
       </Modal.Footer>
     </Modal>

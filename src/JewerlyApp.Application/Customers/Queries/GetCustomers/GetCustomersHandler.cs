@@ -74,7 +74,9 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
                     Total21K =
                         sales.SelectMany(x => x.SaleItems)
                              .Where(si => si.KaratType == KaratType.Karat21)
-                             .Sum(si => (decimal?)(si.Quantity * si.Weight)) ?? 0
+                             .Sum(si => (decimal?)(si.Quantity * si.Weight)) ?? 0,
+
+                    LastPurchaseDate = sales.Max(x => (DateTime?)x.CreatedDate)
                 };
 
             // =========================================

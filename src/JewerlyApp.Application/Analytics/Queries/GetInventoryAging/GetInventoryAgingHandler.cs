@@ -111,9 +111,10 @@ namespace JewerlyApp.Application.Analytics.Queries.GetInventoryAging
                 })
                 .ToList();
 
-            // --- Average days in inventory ---
-            var avgDays = enriched.Count > 0
-                ? enriched.Average(p => p.DaysInInventory)
+            // --- Average days in inventory (weighted by quantity, so stock with more units counts more) ---
+            var totalUnits = enriched.Sum(p => p.Quantity ?? 1);
+            var avgDays = totalUnits > 0
+                ? enriched.Sum(p => p.DaysInInventory * (p.Quantity ?? 1)) / (double)totalUnits
                 : 0d;
 
             // --- Average turnover (days from creation to sale, from sold items) ---

@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaEyeSlash, FaSave, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaEye, FaEyeSlash, FaSave, FaTimes } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   createUser,
   getAllRoles,
   getUserById,
   updateUser,
-} from "../../../apis/users.api/users.api";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+} from "../../../apis/users.api";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
+import { useAuth } from "../../../context/AuthContext";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { checkRequestSucceeded, showError, showSuccess } from "../../../utils";
+import {
+  ADMIN_ROLE,
+  RESTRICTED_ROLES,
+  formatPhoneDisplay,
+} from "./AddEditStaff.utils";
 import "./addEditStaff.scss";
 
 const staffFieldsInitialState = {
   fullName: "",
-  userName: "",
   email: "",
   password: "",
   phoneNumber: "",
@@ -25,9 +30,16 @@ const staffFieldsInitialState = {
 
 const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   const { userId } = useParams();
+  const navigate = useNavigate();
+  const { userInfo } = useAuth();
+  const isAdmin = userInfo?.roles?.includes(ADMIN_ROLE);
+  const isEditingSelf = isEdit && String(userInfo?.id) === userId;
 
   const [isLoading, setIsLoading] = useState(false);
   const [staffFields, setStaffFields] = useState(staffFieldsInitialState);
+  const [initialStaffFields, setInitialStaffFields] = useState(
+    staffFieldsInitialState
+  );
   const [showPassword, setShowPassword] = useState(false);
 
   const { data: staff } = useLocalApi({
@@ -37,23 +49,31 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     effectDependency: [userId],
   }) as { data: any };
 
-  const { data: allRoles = [] } = useLocalApi({
+  const { data: allRolesFromApi = [] } = useLocalApi({
     apiToCall: () => getAllRoles(),
     payload: null,
     effectDependency: [],
   }) as { data: string[] };
 
+  const allRoles = isAdmin
+    ? allRolesFromApi
+    : allRolesFromApi.filter((role) => !RESTRICTED_ROLES.includes(role));
+
+  const isReadOnly =
+    isEdit && !isAdmin && !!staff?.roles?.includes(ADMIN_ROLE);
+
   useEffect(() => {
     if (isEdit && staff) {
-      setStaffFields({
+      const loadedFields = {
         fullName: staff.fullName || "",
-        userName: staff.userName,
         email: staff.email,
         password: "",
-        phoneNumber: staff.phoneNumber || "",
+        phoneNumber: (staff.phoneNumber || "").replace(/\D/g, ""),
         roles: staff.roles || [],
         isActive: staff.isActive ?? true,
-      });
+      };
+      setStaffFields(loadedFields);
+      setInitialStaffFields(loadedFields);
     } else if (!isEdit) {
       handleClear();
     }
@@ -74,7 +94,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     setIsLoading(true);
     const createPayload = {
       fullName: staffFields.fullName,
-      userName: staffFields.userName,
       email: staffFields.email,
       password: staffFields.password,
       phoneNumber: staffFields.phoneNumber,
@@ -83,7 +102,6 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
     const editPayload = {
       userId: userId,
       fullName: staffFields.fullName,
-      userName: staffFields.userName,
       email: staffFields.email,
       phoneNumber: staffFields.phoneNumber,
       isActive: staffFields.isActive,
@@ -95,7 +113,11 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
       .then((response: any) => {
         if (checkRequestSucceeded(response.statusCode)) {
           showSuccess(response?.message);
-          handleClear();
+          if (isEdit) {
+            navigate("/admin/staff");
+          } else {
+            handleClear();
+          }
         } else {
           showError(response?.message);
         }
@@ -105,18 +127,14 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
   };
 
   const validateFields = () => {
-    if (!staffFields.fullName?.trim()) return false;
+    if (isReadOnly) return false;
 
-    if (!staffFields.userName?.trim()) return false;
+    if (!staffFields.fullName?.trim()) return false;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(staffFields.email)) return false;
 
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (
-      !staffFields.phoneNumber?.trim() ||
-      !phoneRegex.test(staffFields.phoneNumber.replace(/[\s\-\(\)]/g, ""))
-    ) {
+    if (staffFields.phoneNumber && staffFields.phoneNumber.length !== 10) {
       return false;
     }
 
@@ -133,129 +151,157 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
 
     if (!staffFields.roles || staffFields.roles.length === 0) return false;
 
+    if (isEditingSelf && !staffFields.isActive) return false;
+
+    if (isEdit && !hasChanges()) return false;
+
     return true;
+  };
+
+  const hasChanges = () => {
+    const rolesEqual =
+      staffFields.roles.length === initialStaffFields.roles.length &&
+      staffFields.roles.every((role) =>
+        initialStaffFields.roles.includes(role)
+      );
+
+    return (
+      staffFields.fullName !== initialStaffFields.fullName ||
+      staffFields.email !== initialStaffFields.email ||
+      staffFields.phoneNumber !== initialStaffFields.phoneNumber ||
+      staffFields.isActive !== initialStaffFields.isActive ||
+      !rolesEqual
+    );
+  };
+
+  const toggleRole = (role: string) => {
+    if (staffFields.roles.includes(role)) {
+      handleFieldChange(
+        "roles",
+        staffFields.roles.filter((r) => r !== role)
+      );
+    } else {
+      handleFieldChange("roles", [...staffFields.roles, role]);
+    }
+  };
+
+  const passwordChecks = {
+    length: staffFields.password.length >= 6,
+    uppercase: /[A-Z]/.test(staffFields.password),
+    special: /[^a-zA-Z0-9]/.test(staffFields.password),
   };
 
   return (
     <div id="add-staff-page" className="page">
       <div className="page-header">
-        <h1 className="page-title ">
+        <h1 className="page-title">
           <TiUserAdd className="icon" />
-          {isEdit ? <span>Edit Staff Member</span> : <span>Add New Staff</span>}
+          {isEdit ? <span>Edit staff member</span> : <span>Add new staff</span>}
         </h1>
         <div className="page-actions">
-          <button className="btn-md btn-gray" onClick={handleClear}>
+          <button
+            className="btn-md btn-outline"
+            disabled={isReadOnly}
+            onClick={handleClear}
+          >
             <FaTimes className="icon" /> Clear
           </button>
-
+          <button
+            className="btn-md btn-outline"
+            onClick={() => navigate("/admin/staff")}
+          >
+            <FaArrowLeft className="icon" /> Back to staff
+          </button>
           <button
             className="btn-md btn-gold"
             disabled={!validateFields()}
             onClick={callSaveStaff}
           >
-            <FaSave className="icon" /> Save Staff
+            <FaSave className="icon" /> {isEdit ? "Save changes" : "Save staff"}
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <form id="staff-form">
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={staffFields.fullName}
-                  maxLength={50}
-                  onChange={(e) =>
-                    handleFieldChange("fullName", e.target.value)
-                  }
-                  placeholder="Enter full name"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Username</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={staffFields.userName}
-                  maxLength={50}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "userName",
-                      e.target.value.replace(/\s/g, "")
-                    )
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === " ") {
-                      e.preventDefault();
-                    }
-                  }}
-                  placeholder="Enter username"
-                  required
-                />
-              </div>
-            </div>
+      <div className="panel">
+        {isReadOnly && (
+          <div className="readonly-notice">
+            This is an Admin account. Only an Admin can edit it.
+          </div>
+        )}
+        <form id="staff-form" className="form-grid">
+          <div className="fg">
+            <label>
+              Full name <span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              value={staffFields.fullName}
+              maxLength={50}
+              disabled={isReadOnly}
+              onChange={(e) => handleFieldChange("fullName", e.target.value)}
+              placeholder="Enter full name"
+              required
+            />
           </div>
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={staffFields.email}
-                  maxLength={100}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "email",
-                      e.target.value.replace(/[^\w@.\-+]/g, "")
-                    )
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === " ") e.preventDefault();
-                  }}
-                  placeholder="Enter email"
-                  required
-                />
-              </div>
-            </div>
+          <div className="fg">
+            <label>
+              Username <span className="opt">(email — used to log in)</span>
+            </label>
+            <input type="text" value={staffFields.email} placeholder="Auto-set to email" disabled />
+          </div>
 
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Phone Number</label>
-                <input
-                  type="tel"
-                  className="form-control"
-                  value={staffFields.phoneNumber}
-                  maxLength={20}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "phoneNumber",
-                      e.target.value.replace(/[^0-9+\-\s()]/g, "")
-                    )
-                  }
-                  placeholder="Enter phone number"
-                  required
-                />
-              </div>
-            </div>
+          <div className="fg">
+            <label>
+              Email <span className="req">*</span>
+            </label>
+            <input
+              type="email"
+              value={staffFields.email}
+              maxLength={100}
+              disabled={isReadOnly}
+              onChange={(e) =>
+                handleFieldChange(
+                  "email",
+                  e.target.value.replace(/[^\w@.\-+]/g, "")
+                )
+              }
+              onKeyDown={(e) => {
+                if (e.key === " ") e.preventDefault();
+              }}
+              placeholder="Enter email"
+              required
+            />
+          </div>
+
+          <div className="fg">
+            <label>
+              Phone number <span className="opt">(optional)</span>
+            </label>
+            <input
+              type="tel"
+              inputMode="tel"
+              value={formatPhoneDisplay(staffFields.phoneNumber)}
+              maxLength={12}
+              disabled={isReadOnly}
+              onChange={(e) =>
+                handleFieldChange(
+                  "phoneNumber",
+                  e.target.value.replace(/\D/g, "").slice(0, 10)
+                )
+              }
+              placeholder="780-123-1234"
+            />
           </div>
 
           {!isEdit && (
-            <div className="form-group">
-              <label className="form-label required">Password</label>
-              <div className="password-input-container">
+            <div className="fg span2">
+              <label>
+                Password <span className="req">*</span>
+              </label>
+              <div className="pw-wrap">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="form-control"
                   value={staffFields.password}
                   maxLength={50}
                   onChange={(e) =>
@@ -272,95 +318,87 @@ const AddEditStaff = ({ isEdit }: { isEdit: boolean }) => {
                 />
                 <button
                   type="button"
-                  className="password-toggle-btn"
+                  className="pw-eye"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
 
-              <div className="password-requirements">
-                <div className="requirements-title">Password Requirements:</div>
-                <div className="requirements-list">
-                  <ul>
-                    <li
-                      className={
-                        staffFields.password.length >= 6 ? "valid" : "invalid"
-                      }
-                    >
-                      At least 6 characters
-                    </li>
-                    <li
-                      className={
-                        /[A-Z]/.test(staffFields.password) ? "valid" : "invalid"
-                      }
-                    >
-                      At least one uppercase letter
-                    </li>
-                    <li
-                      className={
-                        /[^a-zA-Z0-9]/.test(staffFields.password)
-                          ? "valid"
-                          : "invalid"
-                      }
-                    >
-                      At least one special character
-                    </li>
-                  </ul>
-                </div>
+              <div className="pw-reqs">
+                <span className={`pw-req ${passwordChecks.length ? "met" : ""}`}>
+                  At least 6 characters
+                </span>
+                <span
+                  className={`pw-req ${passwordChecks.uppercase ? "met" : ""}`}
+                >
+                  One uppercase letter
+                </span>
+                <span className={`pw-req ${passwordChecks.special ? "met" : ""}`}>
+                  One special character
+                </span>
               </div>
             </div>
           )}
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Roles</label>
-                {allRoles.length > 0 ? (
-                  <div className="roles-checkboxes">
-                    {allRoles.map((role: string) => (
-                      <label key={role} className="checkbox-label">
-                        <input
-                          type="checkbox"
-                          value={role}
-                          checked={staffFields.roles.includes(role)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              handleFieldChange("roles", [
-                                ...staffFields.roles,
-                                role,
-                              ]);
-                            } else {
-                              handleFieldChange(
-                                "roles",
-                                staffFields.roles.filter((r) => r !== role)
-                              );
-                            }
-                          }}
-                        />
-                        {role}
-                      </label>
-                    ))}
-                  </div>
-                ) : (
-                  <p>Loading roles...</p>
-                )}
+          <div className="fg span2">
+            <label>
+              Roles <span className="req">*</span>
+            </label>
+            {allRoles.length > 0 ? (
+              <div className="role-checks">
+                {allRoles.map((role: string) => {
+                  const on = staffFields.roles.includes(role);
+                  return (
+                    <label
+                      key={role}
+                      className={`role-check ${on ? "on" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        value={role}
+                        checked={on}
+                        disabled={isEditingSelf || isReadOnly}
+                        onChange={() => toggleRole(role)}
+                      />
+                      <span className="rc-box">
+                        <FaCheck size={10} />
+                      </span>
+                      <span className="rc-label">{role}</span>
+                    </label>
+                  );
+                })}
               </div>
-            </div>
+            ) : (
+              <p>Loading roles...</p>
+            )}
+            {isEditingSelf && (
+              <span className="opt">You can't edit your own roles</span>
+            )}
           </div>
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">Active</label>
+          <div className="fg span2">
+            <label>Status</label>
+            <div className="toggle-row">
+              <label className="toggle">
                 <input
                   type="checkbox"
                   checked={staffFields.isActive}
+                  disabled={isEditingSelf || isReadOnly}
                   onChange={(e) =>
                     handleFieldChange("isActive", e.target.checked)
                   }
                 />
-              </div>
+                <span className="toggle-slider"></span>
+              </label>
+              <span className="active-label">
+                {staffFields.isActive
+                  ? "Active — can log in"
+                  : "Inactive — login blocked"}
+              </span>
+              {isEditingSelf && (
+                <span className="opt">You can't deactivate your own account</span>
+              )}
             </div>
           </div>
         </form>

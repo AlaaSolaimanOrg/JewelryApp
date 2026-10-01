@@ -47,6 +47,8 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
                     CashAmountPaid = g.Sum(x => x.CashAmount ?? 0),
                     CardAmountPaid = g.Sum(x => x.CardAmount ?? 0),
                     DiscountAmount = g.Sum(x => x.Discount ?? 0),
+                    TransactionsCount = g.Count(),
+                    ItemsSold = g.SelectMany(x => x.SaleItems).Sum(si => si.Quantity),
                     GoldByKarat = g.SelectMany(x => x.SaleItems)
                         .GroupBy(si => si.KaratType)
                         .Select(k => new GoldByKaratVM
@@ -60,7 +62,22 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
                         })
                         .ToList()
                 })
-                .FirstOrDefaultAsync(cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken) ?? new GetSalesInsightsVM();
+
+            salesData.AvgSale = salesData.TransactionsCount > 0
+                ? salesData.TotalSalesAmount / salesData.TransactionsCount
+                : 0;
+
+            var refundsQuery = _context.Returns.AsQueryable();
+            if (request.DateFrom.HasValue)
+            {
+                refundsQuery = refundsQuery.Where(r => r.CreatedDate >= request.DateFrom.Value);
+            }
+            if (request.DateTo.HasValue)
+            {
+                refundsQuery = refundsQuery.Where(r => r.CreatedDate <= request.DateTo.Value);
+            }
+            salesData.RefundAmount = await refundsQuery.SumAsync(r => r.TotalAmount, cancellationToken);
 
             return new GenericResponse<GetSalesInsightsVM>
             {

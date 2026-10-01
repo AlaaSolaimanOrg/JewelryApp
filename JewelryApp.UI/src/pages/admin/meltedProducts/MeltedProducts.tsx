@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Card, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import {
-  FaChartBar,
   FaFire,
   FaList,
   FaSearch,
@@ -11,13 +10,14 @@ import {
 import {
   getMeltedProducts,
   getMeltedReports,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
 import Paginator from "../../../components/Paginator/Paginator";
-import CustomTable from "../../../components/tables/Table/CustomTable";
+import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import useLocalApi from "../../../hooks/useLocalApi";
 import useLocalApiSearchSortPagination from "../../../hooks/useLocalApiSearchSortPagination";
 import { SortDirection } from "../../../types/enums";
 import { handleSort, renderLongDescription } from "../../../utils";
+import { renderSortLabel } from "../customers/Customers.utils";
 import "./meltedProducts.scss";
 
 interface MeltedProduct {
@@ -74,28 +74,6 @@ const MeltedProducts = () => {
     setAppliedDateRange({ dateFrom: null, dateTo: null });
   };
 
-  const renderCards = (
-    title: string,
-    icon: React.ReactNode,
-    rows: any[],
-    accent?: "gold",
-  ) => (
-    <div className="inventory-report-group">
-      <h4 className="section-subtitle">
-        {icon} {title}
-      </h4>
-      <div className="summary-cards">
-        {rows?.map((r) => (
-          <div key={r.karatType} className={`summary-card ${accent ?? ""}`}>
-            <h3>{r.karatType}K Gold</h3>
-            <div className="amount">{r.itemCount} items</div>
-            <div className="sub-info">{(r.totalWeight ?? 0).toFixed(2)} g</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   const {
     data: products,
     isLoading,
@@ -107,6 +85,11 @@ const MeltedProducts = () => {
     sortCriteria,
   } = useLocalApiSearchSortPagination<MeltedProduct>({
     apiToCall: (data) => getMeltedProducts(data.payload),
+    extraPayload: {
+      dateFrom: appliedDateRange.dateFrom,
+      dateTo: appliedDateRange.dateTo,
+    },
+    extraEffectDependency: [appliedDateRange],
     initialSortBy: "MeltedAt",
     initialSortDirection: SortDirection.Descending,
   });
@@ -114,38 +97,38 @@ const MeltedProducts = () => {
   const headers = [
     {
       key: "sku",
-      label: "SKU",
+      label: renderSortLabel("SKU", "Sku", sortCriteria),
       width: "150px",
       onHeaderClick: () => handleSort("Sku", sortCriteria, onSortChange),
     },
     {
       key: "productName",
-      label: "Product Name",
+      label: renderSortLabel("Product Name", "ProductName", sortCriteria),
       width: "200px",
       onHeaderClick: () =>
         handleSort("ProductName", sortCriteria, onSortChange),
     },
     {
       key: "quantity",
-      label: "Quantity",
+      label: renderSortLabel("Quantity", "Quantity", sortCriteria),
       width: "100px",
       onHeaderClick: () => handleSort("Quantity", sortCriteria, onSortChange),
     },
     {
       key: "weight",
-      label: "Weight (g)",
+      label: renderSortLabel("Weight (g)", "Weight", sortCriteria),
       width: "120px",
       onHeaderClick: () => handleSort("Weight", sortCriteria, onSortChange),
     },
     {
       key: "karat",
-      label: "Karat",
+      label: renderSortLabel("Karat", "KaratType", sortCriteria),
       width: "100px",
       onHeaderClick: () => handleSort("KaratType", sortCriteria, onSortChange),
     },
     {
       key: "meltedAt",
-      label: "Melted At",
+      label: renderSortLabel("Melted At", "MeltedAt", sortCriteria),
       width: "200px",
       onHeaderClick: () => handleSort("MeltedAt", sortCriteria, onSortChange),
     },
@@ -164,89 +147,107 @@ const MeltedProducts = () => {
     <div id="melted-products" className="page">
       <div className="page-header">
         <h1 className="page-title">
-          <FaFire className="icon me-2" /> Melted Products
+          <FaFire className="icon" />
+          <span>Melted products</span>
         </h1>
 
         <div className="page-actions">
           <div className="date-filters">
-            <Form.Control
-              type="date"
-              value={dateRange.dateFrom ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateFrom: e.target.value || null,
-                }))
-              }
-            />
-            <Form.Control
-              type="date"
-              value={dateRange.dateTo ?? ""}
-              onChange={(e) =>
-                setDateRange((prev) => ({
-                  ...prev,
-                  dateTo: e.target.value || null,
-                }))
-              }
-            />
+            <Form.Group className="date-field">
+              <Form.Label>From</Form.Label>
+              <Form.Control
+                type="date"
+                value={dateRange.dateFrom ?? ""}
+                max={dateRange.dateTo ?? undefined}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    dateFrom: e.target.value || null,
+                  }))
+                }
+              />
+            </Form.Group>
+            <Form.Group className="date-field">
+              <Form.Label>To</Form.Label>
+              <Form.Control
+                type="date"
+                value={dateRange.dateTo ?? ""}
+                min={dateRange.dateFrom ?? undefined}
+                onChange={(e) =>
+                  setDateRange((prev) => ({
+                    ...prev,
+                    dateTo: e.target.value || null,
+                  }))
+                }
+              />
+            </Form.Group>
             <button
               className="btn-md btn-gold"
               onClick={handleApply}
-              disabled={!dateRange.dateFrom || !dateRange.dateTo}
+              disabled={
+                !dateRange.dateFrom ||
+                !dateRange.dateTo ||
+                dateRange.dateFrom > dateRange.dateTo
+              }
             >
               Apply
             </button>
             <button
-              className="btn-md btn-gold"
+              className="btn-md btn-outline"
               onClick={handleAllTime}
               disabled={
                 appliedDateRange.dateFrom == null &&
                 appliedDateRange.dateTo == null
               }
             >
-              All Time
+              All time
             </button>
           </div>
         </div>
       </div>
 
-      <Card className="inventory-reports-wrapper mb-3">
-        {renderCards(
-          "Items Melted",
-          <FaFire className="icon" />,
-          meltedRows,
-          "gold",
-        )}
-      </Card>
+      <div className="panel">
+        <div className="panel-title">
+          <FaFire className="icon" /> Items melted
+        </div>
+        <div className="melt-summary-grid">
+          {meltedRows.map((r) => (
+            <div key={r.karatType} className="melt-card">
+              <span className="melt-karat">{r.karatType}K Gold</span>
+              <div className="melt-count">{r.itemCount} items</div>
+              <div className="melt-weight">{r.totalWeight.toFixed(2)} g</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <div className="card">
-        <div className="table-header">
-          <h5 className="section-title">
-            <FaList className="icon" /> Melted Records
-          </h5>
-          <div className="table-actions">
-            <div className="search-bar">
-              <FaSearch className="icon" />
+      <div className="panel">
+        <div className="tbl-head">
+          <span className="tbl-title">
+            <FaList className="icon" /> Melted records
+          </span>
+          <div className="tbl-tools">
+            <div className="search-wrap">
+              <FaSearch className="search-ico" />
               <input
                 type="text"
+                className="search-input"
                 placeholder="Search melted records..."
                 onChange={onSearchChange}
               />
             </div>
             <button
-              className="btn-md btn-gold"
-              title={`Sort by Date ${
-                sortCriteria.sortDirection === "Ascending"
-                  ? "Descending"
-                  : "Ascending"
-              }`}
+              className="btn-md btn-outline"
+              title="Sort by Date"
               onClick={() => handleSort("MeltedAt", sortCriteria, onSortChange)}
             >
-              {sortCriteria.sortDirection === "Ascending" ? (
+              {sortCriteria.sortBy === "MeltedAt" &&
+              sortCriteria.sortDirection === SortDirection.Ascending ? (
                 <FaSortAmountUp />
               ) : (
                 <FaSortAmountDown />
               )}
+              Date
             </button>
           </div>
         </div>

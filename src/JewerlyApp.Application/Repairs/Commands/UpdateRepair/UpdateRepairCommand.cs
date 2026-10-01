@@ -9,6 +9,7 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
     {
         public Guid Id { get; set; }
         public decimal Cost { get; set; }
-
+        public string Notes { get; set; } = string.Empty;
+        public DateOnly? DueDate { get; set; }
     }
 }

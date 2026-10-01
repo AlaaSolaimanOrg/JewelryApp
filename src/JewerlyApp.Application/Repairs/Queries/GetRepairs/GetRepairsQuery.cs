@@ -10,6 +10,8 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairs
     public class GetRepairsQuery : SortedPaginatedQuery, IRequest<PaginatedResponse<RepairDto>>
     {
         public RepairStatus? Status { get; set; }
+        public List<RepairStatus>? Statuses { get; set; }
+        public bool? Notified { get; set; }
         public string? SearchBy { get; set; }
     }
 }

@@ -9,5 +9,8 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepairPaymentStatus
     {
         public Guid Id { get; set; }
         public PaymentStatus NewPaymentStatus { get; set; }
+        public string? PayMethod { get; set; }
+        public decimal CashAmount { get; set; }
+        public decimal CardAmount { get; set; }
     }
 }

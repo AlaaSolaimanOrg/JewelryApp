@@ -14,5 +14,6 @@ namespace JewerlyApp.Application.Customers.Queries.GetCustomers
         public decimal? TotalDiscount { get; set; }
         public decimal Total18K { get; set; }
         public decimal Total21K { get; set; }
+        public DateTime? LastPurchaseDate { get; set; }
     }
 }

@@ -1,27 +1,162 @@
 #customerModal {
-  .modal-title {
-    color: var(--dark);
+  .modal-dialog {
+    max-width: 440px;
   }
+
+  .modal-content {
+    background: var(--pos-bg-surface, #1a1a1a);
+    border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    border-radius: var(--pos-radius-lg, 14px);
+    color: var(--pos-text, #fff);
+  }
+
+  .modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--pos-border, rgba(255, 255, 255, 0.08));
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--pos-text, #fff);
+    }
+
+    .btn-close {
+      width: 20px;
+      height: 20px;
+      padding: 12px;
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+  }
+
+  .modal-body {
+    padding: 18px 18px 6px;
+  }
+
+  .form-group {
+    margin-bottom: 12px !important;
+  }
+
   .form-label {
-    color: var(--dark);
+    font-size: 12px;
+    color: var(--pos-text-secondary, #ccc);
+    font-weight: 500;
+    margin-bottom: 4px;
   }
-  .modal-cancel-btn {
-    height: 40px;
+
+  .form-control {
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--pos-bg-raised, #2a2a2a);
+    border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+    color: var(--pos-text, #fff);
+    -webkit-text-fill-color: var(--pos-text, #fff);
+    color-scheme: dark;
+
+    &::placeholder {
+      color: var(--pos-text-muted, #888);
+      -webkit-text-fill-color: var(--pos-text-muted, #888);
+    }
+
+    &:focus {
+      background: var(--pos-bg-raised, #2a2a2a);
+      border-color: var(--pos-blue, #5ba3e6);
+      color: var(--pos-text, #fff);
+      -webkit-text-fill-color: var(--pos-text, #fff);
+      box-shadow: none;
+    }
+
+    &[readonly] {
+      opacity: 0.7;
+    }
+
+    &[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    &::selection {
+      background: var(--pos-gold-bg);
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--pos-text, #fff);
+      -webkit-box-shadow: 0 0 0 1000px var(--pos-bg-raised, #2a2a2a) inset;
+      box-shadow: 0 0 0 1000px var(--pos-bg-raised, #2a2a2a) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   }
+
+  .modal-footer {
+    display: flex;
+    padding: 4px 18px 18px;
+    gap: 8px;
+    border-top: none;
+
+    > * {
+      margin: 0;
+    }
+  }
+
+  .modal-cancel-btn,
   .modal-save-btn {
-    background-color: var(--gold);
-    color: var(--dark);
-    height: 40px;
+    flex: 1 1 0;
+    margin: 0;
+    padding: 13px !important;
+    font-size: 14px !important;
+    text-align: center;
+    justify-content: center;
+    border-radius: var(--pos-radius-sm, 10px) !important;
   }
+
+  .modal-cancel-btn {
+    background: var(--pos-bg-raised, #2a2a2a) !important;
+    border: 1px solid var(--pos-border-strong, rgba(255, 255, 255, 0.15)) !important;
+    color: var(--pos-text-muted, #888);
+    font-weight: 500;
+
+    &:hover,
+    &:focus {
+      background: var(--pos-bg-raised-active, #333) !important;
+      border-color: var(--pos-border-strong, rgba(255, 255, 255, 0.15));
+      color: var(--pos-text, #fff);
+    }
+  }
+
+  .modal-save-btn {
+    background-color: var(--pos-gold, #d4a017);
+    border: 1px solid var(--pos-gold, #d4a017) !important;
+    color: var(--on-gold-text);
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+      background-color: var(--pos-gold-hover, #c4930f);
+      border-color: var(--pos-gold-hover, #c4930f);
+      color: var(--on-gold-text);
+    }
+  }
+
   .error-text {
     margin-top: 6px;
-    color: var(--danger, #dc3545);
+    color: var(--pos-red, #e65b5b);
     font-size: 0.875rem;
   }
-  /* Phone input handled by PhoneNumberDigits component styles */
+}
 
-  .required {
-    color: var(--danger, #dc3545);
-    margin-left: 4px;
+.jewleryApp[data-theme="light"] {
+  #customerModal {
+    .modal-header .btn-close {
+      filter: none;
+    }
+
+    .form-control {
+      color-scheme: light;
+
+      &[type="date"]::-webkit-calendar-picker-indicator {
+        filter: none;
+      }
+    }
   }
 }

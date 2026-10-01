@@ -36,7 +36,9 @@ namespace JewerlyApp.Application.Customers.Commands.UpdateCustomer
             var duplicateCustomer = await _context.Customers
                 .FirstOrDefaultAsync(c =>
                     c.Id != request.Id &&
-                    (c.Email == request.Email || c.PhoneNumber == request.PhoneNumber),
+                    c.IsActive &&
+                    ((!string.IsNullOrEmpty(request.Email) && c.Email == request.Email) ||
+                     (!string.IsNullOrEmpty(request.PhoneNumber) && c.PhoneNumber == request.PhoneNumber)),
                     cancellationToken);
 
             if (duplicateCustomer != null)

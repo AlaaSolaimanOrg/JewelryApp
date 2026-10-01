@@ -37,6 +37,8 @@ namespace JewerlyApp.API.Controllers
                     return NotFound(response);
                 case ResponseStatusCode.Unauthorized:
                     return Unauthorized(response);
+                case ResponseStatusCode.Forbidden:
+                    return StatusCode(403, response);
                 case ResponseStatusCode.InternalServerError:
                     return StatusCode(500, response);
                 default:

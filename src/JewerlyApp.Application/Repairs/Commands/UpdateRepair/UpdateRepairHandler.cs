@@ -1,3 +1,4 @@
+using JewerlyApp.Application.Common.Helpers;
 using JewerlyApp.Application.Common.Messages;
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
@@ -33,8 +34,27 @@ namespace JewerlyApp.Application.Repairs.Commands.UpdateRepair
                 };
             }
 
-            repair.Cost = request.Cost;
+            if (request.Notes.Length > 1000)
+            {
+                return new GenericResponse<Unit>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_Notes_Too_Long
+                };
+            }
 
+            if (request.DueDate.HasValue && request.DueDate.Value < BusinessTimeZoneHelper.GetEdmontonDate())
+            {
+                return new GenericResponse<Unit>
+                {
+                    StatusCode = ResponseStatusCode.BadRequest,
+                    Message = Messages.Error_Repair_DueDate_In_Past
+                };
+            }
+
+            repair.Cost = request.Cost;
+            repair.Notes = request.Notes;
+            repair.DueDate = request.DueDate;
 
             await _context.SaveChangesAsync(cancellationToken);
 

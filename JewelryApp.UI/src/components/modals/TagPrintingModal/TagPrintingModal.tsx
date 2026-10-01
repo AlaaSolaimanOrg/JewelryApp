@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Modal, Spinner } from "react-bootstrap";
-import { FaPrint } from "react-icons/fa";
+import { Form, Spinner } from "react-bootstrap";
+import { FaPrint, FaSyncAlt, FaTimes } from "react-icons/fa";
 import type { Product } from "../../../pages/admin/inventory/Inventory";
 import "./tagPrintingModal.scss";
 
@@ -11,13 +11,23 @@ interface TagPrintingModalProps {
   show: boolean;
   onClose: () => void;
   product: Product | null;
+  products?: Product[];
+  initialTagCount?: number;
+  onPrinted?: () => void;
 }
 
 const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
   show,
   onClose,
   product,
+  products,
+  initialTagCount,
+  onPrinted,
 }) => {
+  const items = products && products.length > 0 ? products : product ? [product] : [];
+  const isBulk = items.length > 1;
+  const itemsKey = items.map((p) => p.id).join(",");
+
   const [tagCount, setTagCount] = useState(1);
   const [printers, setPrinters] = useState<any[]>([]);
   const [selectedPrinter, setSelectedPrinter] = useState("");
@@ -39,7 +49,14 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
     }
   }, [show]);
 
-  if (!product) return null;
+  useEffect(() => {
+    if (show && items.length > 0) {
+      setTagCount(initialTagCount || 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show, itemsKey]);
+
+  if (!show || items.length === 0) return null;
 
   /* ---------------------------------------------
      Check DYMO Connect status (REST API)
@@ -118,12 +135,18 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
       );
       const xml = await response.text();
 
-      const updatedXml = updateLabelXml(xml, product);
+      for (const item of items) {
+        const updatedXml = updateLabelXml(xml, item);
+        await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
+      }
 
-      // Print X copies
-      await DYMO.printMultipleCopies(selectedPrinter, updatedXml, tagCount);
-
-      showSuccess(`Printed ${tagCount} tag(s) successfully.`);
+      const totalTags = tagCount * items.length;
+      showSuccess(
+        isBulk
+          ? `Printed ${totalTags} tag${totalTags !== 1 ? "s" : ""} (${tagCount} × ${items.length} items) successfully.`
+          : `Printed ${tagCount} tag(s) successfully.`,
+      );
+      onPrinted?.();
     } catch (err) {
       console.error("PRINT ERROR:", err);
       showError("Printing failed. Check console.");
@@ -136,51 +159,46 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
      UI
   ---------------------------------------------- */
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      centered
-      size="lg"
-      className="tag-printing-modal-wrapper"
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Print Butterfly Tags — {product.sku}</Modal.Title>
-      </Modal.Header>
+    <div className="tag-printing-modal-wrapper mo" onClick={onClose}>
+      <div className="mo-box wide" onClick={(e) => e.stopPropagation()}>
+        <div className="mo-head">
+          <span className="mo-title">
+            <FaPrint /> Print butterfly tags —{" "}
+            <span className="sku">
+              {isBulk ? `${items.length} items selected` : items[0].sku}
+            </span>
+          </span>
+          <button className="mo-x" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
 
-      <Modal.Body>
-        <div className="settings-section">
-          <h6 className="section-title">Print Settings</h6>
-
-          {/* DYMO STATUS */}
-          <div className="dymo-status mb-3">
-            <div className="status-item">
-              <span>DYMO Service:</span>
-              <span
-                className={
-                  dymoStatus.installed ? "text-success" : "text-danger"
-                }
-              >
-                {dymoStatus.installed ? "✓ Running" : "✗ Not Running"}
+        <div className="mo-body">
+          <div className="info-strip">
+            <div className="svc-row">
+              <span>DYMO service:</span>
+              <span className={dymoStatus.installed ? "svc-good" : "svc-bad"}>
+                {dymoStatus.installed ? "✓ Running" : "✗ Not running"}
               </span>
             </div>
-            <div className="status-item">
+            <div className="svc-row">
               <span>Mode:</span>
-              <span className="text-info">REST API</span>
+              <span className="svc-mode">REST API</span>
             </div>
           </div>
 
-          {/* PRINTER SELECTION */}
-          <div className="control-group">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <label className="control-label">Printer</label>
+          <div className="fg2">
+            <label>
+              Printer
               <button
-                className="btn btn-sm btn-outline-secondary"
+                type="button"
+                className="refresh-link"
                 onClick={loadPrinters}
                 disabled={isLoadingPrinters}
               >
-                Refresh
+                <FaSyncAlt /> Refresh
               </button>
-            </div>
+            </label>
 
             {isLoadingPrinters ? (
               <Spinner size="sm" />
@@ -189,6 +207,9 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
                 value={selectedPrinter}
                 onChange={(e) => setSelectedPrinter(e.target.value)}
               >
+                {printers.length === 0 && (
+                  <option value="">No printers found</option>
+                )}
                 {printers.map((p) => (
                   <option key={p.name} value={p.name}>
                     {p.name}
@@ -198,9 +219,8 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             )}
           </div>
 
-          {/* TAG COUNT */}
-          <div className="control-group">
-            <label className="control-label">Number of Tags</label>
+          <div className="fg2">
+            <label>Number of tags</label>
             <Form.Control
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
@@ -211,54 +231,56 @@ const TagPrintingModal: React.FC<TagPrintingModalProps> = ({
             />
           </div>
 
-          {/* PRODUCT INFO */}
-          <div className="info-text">
-            <div className="d-flex justify-content-between">
-              <small>
-                SKU: <strong>{product.sku}</strong>
-              </small>
-              <small>
-                Price: <strong>${product.price?.toFixed(2)}</strong>
-              </small>
+          {isBulk ? (
+            <div className="item-summary bulk-summary">
+              {items.map((item) => (
+                <span key={item.id} className="bulk-sku-chip">
+                  {item.sku}
+                </span>
+              ))}
             </div>
-            <div className="d-flex justify-content-between mt-1">
-              <small>
-                Weight: <strong>{product.weight}g</strong>
-              </small>
-              <small>
-                Karat: <strong>{product.karatType}K</strong>
-              </small>
+          ) : (
+            <div className="item-summary">
+              <span>
+                SKU: <b>{items[0].sku}</b>
+              </span>
+              <span>
+                Price: <b>${items[0].price?.toFixed(2)}</b>
+              </span>
+              <span>
+                Weight: <b>{items[0].weight}g</b>
+              </span>
+              <span>
+                Karat: <b>{items[0].karatType}K</b>
+              </span>
             </div>
-          </div>
+          )}
 
-          {/* TEST BUTTON */}
-          <button
-            className="btn btn-outline-info mt-3 w-100"
-            onClick={testDymoConnection}
-          >
-            Test DYMO Connection
+          <button className="svc-link" onClick={testDymoConnection}>
+            Test DYMO connection
           </button>
         </div>
-      </Modal.Body>
 
-      <Modal.Footer>
-        <button className="btn btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
+        <div className="mo-foot">
+          <button className="mo-btn mo-btn-dark" onClick={onClose}>
+            Cancel
+          </button>
 
-        <button className="btn btn-primary btn-gold" onClick={handlePrint}>
-          {isPrinting ? (
-            <>
-              <Spinner size="sm" className="me-2" /> Printing...
-            </>
-          ) : (
-            <>
-              <FaPrint className="me-2" /> Print {tagCount} Tag(s)
-            </>
-          )}
-        </button>
-      </Modal.Footer>
-    </Modal>
+          <button className="mo-btn mo-btn-gold" onClick={handlePrint}>
+            {isPrinting ? (
+              <>
+                <Spinner size="sm" /> Printing...
+              </>
+            ) : (
+              <>
+                <FaPrint /> Print {tagCount} tag{tagCount !== 1 ? "s" : ""}
+                {isBulk ? ` × ${items.length} items` : ""}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

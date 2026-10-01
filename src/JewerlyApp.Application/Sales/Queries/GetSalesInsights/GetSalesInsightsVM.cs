@@ -12,6 +12,10 @@ namespace JewerlyApp.Application.Sales.Queries.GetSalesInsights
         public decimal CashAmountPaid { get; set; }
         public decimal CardAmountPaid { get; set; }
         public decimal DiscountAmount { get; set; }
+        public int TransactionsCount { get; set; }
+        public int ItemsSold { get; set; }
+        public decimal AvgSale { get; set; }
+        public decimal RefundAmount { get; set; }
         public List<GoldByKaratVM> GoldByKarat { get; set; } = new();
     }
 }

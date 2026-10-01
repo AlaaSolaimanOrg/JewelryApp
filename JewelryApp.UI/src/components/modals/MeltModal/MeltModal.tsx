@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Form, Modal } from "react-bootstrap";
-import { FaFire } from "react-icons/fa";
+import { Form } from "react-bootstrap";
+import { FaFire, FaTimes } from "react-icons/fa";
 import { showError } from "../../../utils";
 import "./meltModal.scss";
 
@@ -9,6 +9,7 @@ interface ProductMinimal {
   sku: string;
   quantity: number;
   weight?: number;
+  karatType?: number;
 }
 
 interface MeltModalProps {
@@ -32,33 +33,40 @@ const MeltModal: React.FC<MeltModalProps> = ({
     }
   }, [show, product]);
 
-  if (!product) return null;
+  if (!show || !product) return null;
+
+  const numQuantity = Number(quantity) || 0;
+  const isValid = numQuantity >= 1 && numQuantity <= product.quantity;
+  const totalWeight = (numQuantity * (product.weight ?? 0)).toFixed(2);
 
   const handleConfirm = () => {
-    if (Number(quantity) < 0 || Number(quantity) > product.quantity) {
+    if (!isValid) {
       showError("Please enter a valid quantity within allowed range.");
       return;
     }
 
-    onConfirm(product.id, Number(quantity));
+    onConfirm(product.id, numQuantity);
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered className="melt-modal">
-      <Modal.Header closeButton>
-        <Modal.Title>
-          <FaFire className="me-2" /> Melt Product — {product.sku}
-        </Modal.Title>
-      </Modal.Header>
+    <div className="melt-modal mo" onClick={onClose}>
+      <div className="mo-box" onClick={(e) => e.stopPropagation()}>
+        <div className="mo-head">
+          <span className="mo-title">
+            <FaFire /> Melt product — <span className="sku">{product.sku}</span>
+          </span>
+          <button className="mo-x" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
 
-      <Modal.Body>
-        <div className="melt-section">
-          <div className="control-group">
-            <label className="control-label">Quantity to Melt</label>
+        <div className="mo-body">
+          <div className="fg2">
+            <label>Quantity to melt</label>
             <Form.Control
               type="number"
               onWheel={(e) => e.currentTarget.blur()}
-              min={0}
+              min={1}
               max={product.quantity}
               step={1}
               value={quantity}
@@ -73,42 +81,45 @@ const MeltModal: React.FC<MeltModalProps> = ({
                   setQuantity("");
                   return;
                 }
-                const clamped = Math.max(0, Math.min(val, product.quantity));
-                setQuantity(clamped);
+                setQuantity(Math.max(0, Math.min(val, product.quantity)));
               }}
             />
-            <small className="text-muted mt-2 d-block">
-              Available: {product.quantity}
-            </small>
+            <div className="hint">Available: {product.quantity}</div>
           </div>
 
-          <div className="info-text mt-3">
-            <div className="d-flex justify-content-between">
-              <small>
-                SKU: <strong>{product.sku}</strong>
-              </small>
-              <small>
-                Weight: <strong>{product.weight}g</strong>
-              </small>
-            </div>
+          <div className="item-summary">
+            <span>
+              SKU: <b>{product.sku}</b>
+            </span>
+            <span>
+              Weight: <b>{product.weight ?? 0}g each</b>
+            </span>
+            <span>
+              Karat: <b>{product.karatType}K</b>
+            </span>
+            <span>
+              Total to melt: <b>{totalWeight}g</b>
+            </span>
           </div>
         </div>
-      </Modal.Body>
 
-      <Modal.Footer>
-        <button className="btn btn-secondary" onClick={onClose}>
-          Cancel
-        </button>
-
-        <button
-          className="btn btn-primary btn-gold"
-          onClick={handleConfirm}
-          disabled={quantity === "" || quantity === 0}
-        >
-          <FaFire className="me-2" /> Melt {quantity} Item(s)
-        </button>
-      </Modal.Footer>
-    </Modal>
+        <div className="mo-foot">
+          <button className="mo-btn mo-btn-dark" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className="mo-btn mo-btn-amber"
+            onClick={handleConfirm}
+            disabled={!isValid}
+          >
+            <FaFire />{" "}
+            {isValid
+              ? `Melt ${numQuantity} item${numQuantity !== 1 ? "s" : ""}`
+              : "Invalid quantity"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

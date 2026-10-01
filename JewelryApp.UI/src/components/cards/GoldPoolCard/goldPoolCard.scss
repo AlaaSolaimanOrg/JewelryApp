@@ -1,0 +1,56 @@
+.goldPoolCard {
+  font-family: var(--admin-font);
+  background: var(--admin-bg2);
+  border: 1px solid var(--admin-bd);
+  border-radius: var(--admin-radius-lg);
+  padding: 12px 14px;
+  position: relative;
+  overflow: hidden;
+
+  &.empty {
+    opacity: 0.35;
+  }
+
+  .pool-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .pool-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .pool-karat {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--admin-t1);
+  }
+
+  .pool-weight {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--admin-t2);
+  }
+
+  .pool-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 2px 0;
+  }
+
+  .pool-row-l {
+    color: var(--admin-t4);
+  }
+
+  .pool-row-v {
+    color: var(--admin-t3);
+    font-weight: 500;
+  }
+}

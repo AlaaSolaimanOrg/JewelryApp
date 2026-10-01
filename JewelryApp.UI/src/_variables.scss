@@ -1,0 +1,99 @@
+// Shared dark/light palette consumed by both .pos-app and .adminLayoutContainer in App.scss,
+// kept as a single source of truth instead of duplicating the same hex values twice.
+$theme-dark-bg: #111;
+$theme-dark-bg-surface: #1a1a1a;
+$theme-dark-bg-surface-hover: #222;
+$theme-dark-bg-raised: #2a2a2a;
+$theme-dark-bg-raised-active: #333;
+$theme-dark-text: #fff;
+$theme-dark-text-secondary: #ccc;
+$theme-dark-text-muted: #888;
+$theme-dark-text-subtle: #555;
+$theme-dark-border: rgba(255, 255, 255, 0.08);
+$theme-dark-border-strong: rgba(255, 255, 255, 0.15);
+$theme-dark-gold: #d4a017;
+$theme-dark-gold-hover: #c4930f;
+$theme-dark-gold-bg: rgba(212, 160, 23, 0.15);
+$theme-dark-green: #4caf7c;
+$theme-dark-green-bg: rgba(76, 175, 124, 0.12);
+$theme-dark-green-border: rgba(76, 175, 124, 0.3);
+$theme-dark-red: #e65b5b;
+$theme-dark-red-bg: rgba(230, 91, 91, 0.12);
+$theme-dark-red-border: rgba(230, 91, 91, 0.3);
+$theme-dark-blue: #5ba3e6;
+$theme-dark-blue-bg: rgba(91, 163, 230, 0.12);
+$theme-dark-blue-border: rgba(91, 163, 230, 0.3);
+$theme-dark-amber: #e6a23c;
+$theme-dark-amber-bg: rgba(230, 162, 60, 0.12);
+$theme-dark-amber-border: rgba(230, 162, 60, 0.35);
+$theme-dark-purple: #9b8de6;
+$theme-dark-purple-bg: rgba(155, 141, 230, 0.12);
+
+$theme-light-bg: #f2f2f4;
+$theme-light-bg-surface: #ffffff;
+$theme-light-bg-surface-hover: #f7f7f8;
+$theme-light-bg-raised: #ededef;
+$theme-light-bg-raised-active: #e2e2e5;
+$theme-light-text: #1a1a1a;
+$theme-light-text-secondary: #3a3a3a;
+$theme-light-text-muted: #6b6b70;
+$theme-light-text-subtle: #9a9aa0;
+$theme-light-border: rgba(0, 0, 0, 0.08);
+$theme-light-border-strong: rgba(0, 0, 0, 0.16);
+$theme-light-gold: #b8860b;
+$theme-light-gold-hover: #a4780a;
+$theme-light-gold-bg: rgba(184, 134, 11, 0.12);
+$theme-light-green: #2e8b5f;
+$theme-light-green-bg: rgba(46, 139, 95, 0.1);
+$theme-light-green-border: rgba(46, 139, 95, 0.3);
+$theme-light-red: #cf4444;
+$theme-light-red-bg: rgba(207, 68, 68, 0.1);
+$theme-light-red-border: rgba(207, 68, 68, 0.3);
+$theme-light-blue: #3d7fc4;
+$theme-light-blue-bg: rgba(61, 127, 196, 0.1);
+$theme-light-blue-border: rgba(61, 127, 196, 0.3);
+$theme-light-amber: #c4821a;
+$theme-light-amber-bg: rgba(196, 130, 26, 0.1);
+$theme-light-amber-border: rgba(196, 130, 26, 0.3);
+$theme-light-purple: #7a6bcc;
+$theme-light-purple-bg: rgba(122, 107, 204, 0.1);
+$theme-light-border-admin: rgba(0, 0, 0, 0.09);
+$theme-light-border-strong-admin: rgba(0, 0, 0, 0.18);
+$theme-radius-sm: 10px;
+$theme-radius-lg: 14px;
+
+// Legacy palette used by older/general components (login, tables, buttons, forms, etc.)
+// via the plain :root variables in App.scss — a separate, older set of brand colors,
+// distinct from the pos/admin theme above.
+$legacy-primary-dark: #b5942d;
+$legacy-primary-light: #f5e9c8;
+$legacy-secondary: #6c757d;
+$legacy-gold: #d4af37;
+$legacy-gold-opacity-5: "#d4af370d"; // quoted: an 8-digit hex would otherwise get renormalized to rgba() on interpolation
+$legacy-dark-gold: #b8860b;
+$legacy-light-bg: #f5f7fa;
+$legacy-light: #f8f9fa;
+$legacy-dark: #212529;
+$legacy-dark-light: #343a40;
+$legacy-gray: #e9ecef;
+$legacy-gray-dark: #adb5bd;
+$legacy-success: #28a745;
+$legacy-danger: #dc3545;
+$legacy-danger-light: #f8d7da;
+$legacy-info: #17a2b8;
+$legacy-border: #dee2e6;
+$legacy-shadow: rgba(0, 0, 0, 0.08);
+$legacy-text-dark: #333333;
+
+// Fixed (non-theme-reactive) text color used on gold-colored buttons/badges/pills
+// across pos, admin, and legacy components — always dark regardless of app theme,
+// since it sits on a gold background that stays legible either way.
+$on-gold-text: #1a1a1a;
+
+// Plain white, reused for text/backgrounds against dark or colored surfaces
+// (buttons, badges, print output) that are meant to stay white regardless of theme.
+$white: #fff;
+
+// Plain black, reused for fixed-dark elements (e.g. tooltip backgrounds) that
+// aren't meant to track the app's dark/light theme.
+$black: #000;

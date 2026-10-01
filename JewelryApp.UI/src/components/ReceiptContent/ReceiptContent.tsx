@@ -20,6 +20,30 @@ export interface Sale {
   discount: number;
   saleItems: SaleItem[];
   totalReturnAmount?: string;
+  exchangeCredit?: number;
+  exchangeReturnedItems?: ExchangeReturnedItem[];
+  tradeInCredit?: number;
+  tradeInItems?: TradeInItem[];
+  changeGiven?: number;
+}
+
+export interface ExchangeReturnedItem {
+  id: string;
+  returnSerialNumber: string;
+  originalSaleSerialNumber: string;
+  productName: string;
+  sku?: string;
+  karat: KaratType;
+  weight: number;
+  quantityReturned: number;
+  amountReturned: number;
+}
+
+export interface TradeInItem {
+  karat: number;
+  weight: number;
+  pricePerGram: number;
+  subtotal: number;
 }
 
 export interface SaleItem {
@@ -224,6 +248,18 @@ const ReceiptContent = ({
               <span>${saleDetails.cardAmount}</span>
             </div>
           )}
+          {(saleDetails.exchangeCredit ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Exchange Credit:</span>
+              <span>−${saleDetails.exchangeCredit?.toFixed(2)}</span>
+            </div>
+          )}
+          {(saleDetails.tradeInCredit ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Trade-in Credit:</span>
+              <span>−${saleDetails.tradeInCredit?.toFixed(2)}</span>
+            </div>
+          )}
           {saleDetails.totalReturnAmount &&
             Number(saleDetails.totalReturnAmount) > 0 && (
               <div className="summary-item returned-item">
@@ -243,6 +279,12 @@ const ReceiptContent = ({
             <div className="total-label">Total (incl. 5% GST)</div>
             <div className="total-value">${saleDetails.total}</div>
           </div>
+          {(saleDetails.changeGiven ?? 0) > 0 && (
+            <div className="summary-item">
+              <span>Cash paid to customer:</span>
+              <span>${saleDetails.changeGiven?.toFixed(2)}</span>
+            </div>
+          )}
         </div>
       )}
 

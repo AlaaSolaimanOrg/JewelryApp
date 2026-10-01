@@ -1,0 +1,60 @@
+.staffFilters {
+  font-family: var(--admin-font);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .f-select {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    min-height: 42px;
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-ico {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--admin-t4);
+    font-size: 12px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    font-family: var(--admin-font);
+    font-size: 13px;
+    padding: 10px 12px 10px 32px;
+    border-radius: var(--admin-radius-sm);
+    border: 1px solid var(--admin-bd2);
+    background: var(--admin-bg4);
+    color: var(--admin-t1);
+    -webkit-text-fill-color: var(--admin-t1);
+    width: 230px;
+
+    &:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+    }
+
+    &::placeholder {
+      color: var(--admin-t4);
+    }
+  }
+}

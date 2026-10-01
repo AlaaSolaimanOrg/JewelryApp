@@ -10,8 +10,8 @@ import {
 } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
-import { createReceiptPrintJob } from "../../../apis/printJobs.api/printJobs.api";
-import { getRepairById } from "../../../apis/repairs.api/repairs.api";
+import { createReceiptPrintJob } from "../../../apis/printJobs.api";
+import { getRepairById } from "../../../apis/repairs.api";
 import ADI_Jewelry_Logo_Horizontal from "../../../assets/images/ADI_Jewelry_Logo_Horizontal.avif";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { serializeReceiptHtml } from "../../../services/serializeReceiptHtml";

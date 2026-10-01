@@ -51,6 +51,10 @@ namespace JewerlyApp.Application.Repairs.Queries.GetRepairById
                 SlotNumber = repair.SlotNumber,
                 ReceiverName = repair.ReceiverName,
                 PickedUpDate = repair.PickedUpDate,
+                Notified = repair.Notified,
+                NotifiedDate = repair.NotifiedDate,
+                CancelledDate = repair.CancelledDate,
+                PayMethod = repair.PayMethod,
             };
 
             return new GenericResponse<RepairDto>

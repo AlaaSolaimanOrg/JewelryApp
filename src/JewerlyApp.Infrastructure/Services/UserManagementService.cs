@@ -34,10 +34,34 @@ namespace JewerlyApp.Infrastructure.Services
             _context = context;
         }
 
+        private const string AdminRoleName = "Admin";
+        private static readonly string[] RestrictedRoleNames = { AdminRoleName, "StaffManager" };
+
+        private async Task<bool> CallerIsAdminAsync()
+        {
+            var currentUserId = _userService.GetCurrentUserId();
+            if (currentUserId == 0) return false;
+            return await _userService.IsInRoleAsync(currentUserId, AdminRoleName);
+        }
+
+        private static bool HasRole(IEnumerable<string> roles, string roleName) =>
+            roles.Any(r => string.Equals(r?.Trim(), roleName, StringComparison.OrdinalIgnoreCase));
+
         public async Task<GenericResponse<UserDto>> CreateUserAsync(CreateUserRequest request)
         {
             try
             {
+                if (request.Roles != null &&
+                    RestrictedRoleNames.Any(role => HasRole(request.Roles, role)) &&
+                    !await CallerIsAdminAsync())
+                {
+                    return new GenericResponse<UserDto>
+                    {
+                        StatusCode = ResponseStatusCode.Forbidden,
+                        Message = Messages.Error_Only_Admin_Can_Assign_Restricted_Role
+                    };
+                }
+
                 var existingUser = await _userManager.FindByEmailAsync(request.Email);
                 if (existingUser != null)
                 {
@@ -50,10 +74,10 @@ namespace JewerlyApp.Infrastructure.Services
 
                 var user = new ApplicationUser
                 {
-                    UserName = request.UserName,
+                    UserName = request.Email,
                     Email = request.Email,
                     FullName = request.FullName,
-                    PhoneNumber = request.PhoneNumber,
+                    PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -117,17 +141,44 @@ namespace JewerlyApp.Infrastructure.Services
                     };
                 }
 
-                if (!string.IsNullOrEmpty(request.UserName))
-                    user.UserName = request.UserName;
+                var callerIsAdmin = await CallerIsAdminAsync();
+                var existingRoles = await _userManager.GetRolesAsync(user);
+
+                if (!callerIsAdmin && HasRole(existingRoles, AdminRoleName))
+                {
+                    return new GenericResponse<UserDto>
+                    {
+                        StatusCode = ResponseStatusCode.Forbidden,
+                        Message = Messages.Error_Only_Admin_Can_Modify_Admin
+                    };
+                }
+
+                if (request.Roles != null)
+                {
+                    var restrictedRolesChanged = RestrictedRoleNames.Any(role =>
+                        HasRole(existingRoles, role) != HasRole(request.Roles, role));
+
+                    if (restrictedRolesChanged && !callerIsAdmin)
+                    {
+                        return new GenericResponse<UserDto>
+                        {
+                            StatusCode = ResponseStatusCode.Forbidden,
+                            Message = Messages.Error_Only_Admin_Can_Assign_Restricted_Role
+                        };
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(request.Email))
+                {
                     user.Email = request.Email;
+                    user.UserName = request.Email;
+                }
 
                 if (request.IsActive.HasValue)
                     user.IsActive = request.IsActive.Value;
 
                 user.FullName = request.FullName;
-                user.PhoneNumber = request.PhoneNumber; 
+                user.PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber;
 
                 user.UpdatedAt = DateTime.UtcNow;
 
@@ -272,15 +323,24 @@ namespace JewerlyApp.Infrastructure.Services
             try
             {
                 var usersQuery =    from u in _context.Users
+
+                                    where string.IsNullOrWhiteSpace(query.Role) ||
+                                          _context.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                              _context.Roles.Any(r => r.Id == ur.RoleId && r.Name == query.Role))
+
+                                    where !query.IsActive.HasValue || u.IsActive == query.IsActive.Value
+
+                                    where string.IsNullOrWhiteSpace(query.SearchBy) ||
+                                          u.FullName!.Contains(query.SearchBy) ||
+                                          u.Email!.Contains(query.SearchBy) ||
+                                          _context.UserRoles.Any(ur => ur.UserId == u.Id &&
+                                              _context.Roles.Any(r => r.Id == ur.RoleId && r.Name!.Contains(query.SearchBy)))
+
                                     join ur in _context.UserRoles on u.Id equals ur.UserId into userRoles
                                     from ur in userRoles.DefaultIfEmpty()
                                     join r in _context.Roles on ur.RoleId equals r.Id into roles
                                     from r in roles.DefaultIfEmpty()
 
-                                    where string.IsNullOrWhiteSpace(query.SearchBy) ||
-                                          u.FullName!.Contains(query.SearchBy) ||
-                                          u.Email!.Contains(query.SearchBy) ||
-                                          (r != null && r.Name!.Contains(query.SearchBy))
                                     group r by u into g
                                     select new UserDto
                                     {

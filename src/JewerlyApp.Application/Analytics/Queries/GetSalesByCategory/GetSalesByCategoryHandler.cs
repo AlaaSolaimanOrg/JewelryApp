@@ -48,24 +48,45 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
 
             query = query.Where(si => si.Sale!.CreatedDate >= dateFrom && si.Sale!.CreatedDate <= dateTo);
 
+            // Prorate each item's SubTotal by its sale's Total/SubTotal ratio so category revenue
+            // reflects actual post-discount/trade-in/exchange revenue, consistent with Sale.Total.
             var categorySales = await query
                 .Where(si => si.Product != null && si.Product.Category != null)
-                .GroupBy(si => si.Product!.Category)
+                .Select(si => new
+                {
+                    si.Product!.Category,
+                    AdjustedRevenue = si.Sale!.SubTotal > 0
+                        ? si.SubTotal * (si.Sale.Total / si.Sale.SubTotal)
+                        : 0
+                })
+                .GroupBy(x => x.Category)
                 .Select(g => new
                 {
                     Category = g.Key,
-                    Revenue = g.Sum(si => si.SubTotal)
+                    Revenue = g.Sum(x => x.AdjustedRevenue)
                 })
                 .ToListAsync(cancellationToken);
 
             var totalRevenue = categorySales.Sum(x => x.Revenue);
 
-            var result = categorySales
-                .Select(x => new SalesByCategoryVM
+            var withRawPercentage = categorySales
+                .Select(x => new
+                {
+                    x.Category,
+                    x.Revenue,
+                    RawPercentage = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                })
+                .ToList();
+
+            var percentageByCategory = ApplyLargestRemainderRounding(
+                withRawPercentage.Select(x => x.RawPercentage).ToList());
+
+            var result = withRawPercentage
+                .Select((x, i) => new SalesByCategoryVM
                 {
                     CategoryName = x.Category.ToString()!,
                     Revenue = x.Revenue,
-                    Percentage = totalRevenue > 0 ? (x.Revenue / totalRevenue) * 100 : 0
+                    Percentage = percentageByCategory[i]
                 })
                 .OrderByDescending(x => x.Revenue)
                 .ToList();
@@ -76,6 +97,26 @@ namespace JewerlyApp.Application.Analytics.Queries.GetSalesByCategory
                 StatusCode = Domain.Enums.ResponseStatusCode.Success,
                 Message = Messages.Success
             };
+        }
+
+        private static List<decimal> ApplyLargestRemainderRounding(List<decimal> rawPercentages)
+        {
+            var floors = rawPercentages.Select(p => Math.Floor(p)).ToList();
+            var remainders = rawPercentages.Select((p, i) => p - floors[i]).ToList();
+
+            var pointsToDistribute = (int)(100 - floors.Sum());
+
+            var order = Enumerable.Range(0, rawPercentages.Count)
+                .OrderByDescending(i => remainders[i])
+                .ToList();
+
+            var rounded = new List<decimal>(floors);
+            for (int i = 0; i < pointsToDistribute && i < order.Count; i++)
+            {
+                rounded[order[i]] += 1;
+            }
+
+            return rounded;
         }
     }
 }

@@ -20,6 +20,8 @@ namespace JewerlyApp.Domain.Entities
         public string? ReasonNote { get; set; }
         public ItemCondition Condition { get; set; }
         public ReturnOption Option { get; set; } // Return to stock / Melt
+        public bool IsTagPrinted { get; set; }
+        public DateTime? TagPrintedDate { get; set; }
         public Return Return { get; set; } = default!;
         public SaleItem SaleItem { get; set; } = default!;
 

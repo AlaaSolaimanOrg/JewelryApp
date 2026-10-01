@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { getUserInfo } from "../apis/users.api/users.api";
+import { getUserInfo } from "../apis/users.api";
 import useLocalApi from "../hooks/useLocalApi";
 
 interface User {

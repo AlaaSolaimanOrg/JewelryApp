@@ -1,19 +1,24 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
-import Loader from "../components/Loader/Loader";
+import Loader from "../components/loaders/Loader/Loader";
 import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
 
 const Analytics = lazy(() => import("../pages/admin/analytics/Analytics"));
 const InventoryReports = lazy(
   () => import("../pages/admin/InventoryReports/InventoryReports"),
 );
-const PickUp = lazy(() => import("../pages/pos/pickup/PickUp"));
+const RepairOrders = lazy(
+  () => import("../pages/pos/repairOrders/RepairOrders"),
+);
 const Login = lazy(() => import("../pages/general/login/Login"));
 const Unauthorized = lazy(
   () => import("../pages/general/unauthorized/Unauthorized"),
 );
-const RepairAnalytics = lazy(
-  () => import("../pages/admin/repairAnalytics/RepairAnalytics"),
+const RepairsReports = lazy(
+  () => import("../pages/admin/repairsReports/RepairsReports"),
+);
+const CustomersReports = lazy(
+  () => import("../pages/admin/customersReports/CustomersReports"),
 );
 
 const Logs = lazy(() => import("../pages/admin/logs/Logs"));
@@ -26,33 +31,36 @@ const AdminHeader = lazy(
 );
 const Customers = lazy(() => import("../pages/admin/customers/Customers"));
 const Dashboard = lazy(() => import("../pages/admin/dashboard/Dashboard"));
-const ExportData = lazy(() => import("../pages/admin/exportData/ExportData"));
 const Inventory = lazy(() => import("../pages/admin/inventory/Inventory"));
 const MeltedProducts = lazy(
   () => import("../pages/admin/meltedProducts/MeltedProducts"),
 );
 
 const Pricing = lazy(() => import("../pages/admin/pricing/Pricing"));
-const TagPrinting = lazy(() => import("../pages/admin/printTags/TagPrinting"));
 const SalesReports = lazy(
   () => import("../pages/admin/salesReport/SalesReports"),
 );
 const Settings = lazy(() => import("../pages/admin/settings/Settings"));
 const SideNav = lazy(() => import("../pages/admin/sidenav/Sidenav"));
 const Staff = lazy(() => import("../pages/admin/staff/Staff"));
-const Header = lazy(() => import("../pages/pos/header/Header"));
-const Home = lazy(() => import("../pages/pos/home/Home"));
+const PosHeader = lazy(() => import("../pages/pos/posHeader/PosHeader"));
+const PosDashboard = lazy(
+  () => import("../pages/pos/posDashboard/PosDashboard"),
+);
 const MainPosPage = lazy(() => import("../pages/pos/posSale/PosSale"));
-const Receipt = lazy(() => import("../pages/pos/receipt/Receipt"));
-const TransactionHistory = lazy(
-  () => import("../pages/pos/transactionHistory/TransactionHistory"),
+const CashManagement = lazy(
+  () => import("../pages/pos/cashManagement/CashManagement"),
 );
 
-const Repair = lazy(() => import("../pages/pos/repair/Repair"));
+const RepairIntake = lazy(
+  () => import("../pages/pos/repairIntake/RepairIntake"),
+);
+const UsedGold = lazy(() => import("../pages/pos/usedGold/UsedGold"));
 const ReturnPage = lazy(() => import("../pages/pos/ReturnPage/ReturnPage"));
 const ReturnManagement = lazy(
   () => import("../pages/admin/returnManagement/ReturnManagement"),
 );
+const UsedGoldAdmin = lazy(() => import("../pages/admin/usedGold/UsedGold"));
 
 // Loading component for Suspense fallback
 const LoadingFallback = () => (
@@ -62,29 +70,33 @@ const LoadingFallback = () => (
 );
 
 // POS Layout (includes POS Header)
-const POSLayout = () => (
-  <>
-    <Suspense fallback={<LoadingFallback />}>
-      <Header />
-    </Suspense>
-    <main>
-      <Outlet />
-    </main>
-  </>
-);
+const POSLayout = () => {
+  return (
+    <div className="pos-app">
+      <Suspense fallback={<LoadingFallback />}>
+        <PosHeader />
+      </Suspense>
+      <main>
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
 // Admin Layout (can add AdminHeader/Sidebar if needed)
-const AdminLayout = () => (
-  <div className="adminLayoutContainer">
-    <Suspense fallback={<LoadingFallback />}>
-      <SideNav />
-      <AdminHeader />
-    </Suspense>
-    <main className="adminLayout-main">
-      <Outlet />
-    </main>
-  </div>
-);
+const AdminLayout = () => {
+  return (
+    <div className="adminLayoutContainer">
+      <Suspense fallback={<LoadingFallback />}>
+        <SideNav />
+        <AdminHeader />
+      </Suspense>
+      <main className="adminLayout-main">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
 const AppRoutes = () => {
   return (
@@ -98,16 +110,13 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           >
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<PosDashboard />} />
             <Route path="/sale" element={<MainPosPage />} />
-            <Route
-              path="/transactionHistory"
-              element={<TransactionHistory />}
-            />
-            <Route path="/receipt/:saleId" element={<Receipt />} />
-            <Route path="/repair" element={<Repair />} />
+            <Route path="/cashManagement" element={<CashManagement />} />
+            <Route path="/repair" element={<RepairIntake />} />
+            <Route path="/usedgold" element={<UsedGold />} />
             <Route path="/return" element={<ReturnPage />} />
-            <Route path="pickUp" element={<PickUp />} />
+            <Route path="/repairOrders" element={<RepairOrders />} />
           </Route>
 
           <Route
@@ -126,13 +135,14 @@ const AppRoutes = () => {
               path="/admin/inventory/reports"
               element={<InventoryReports />}
             />
-            <Route path="admin/repairAnalytics" element={<RepairAnalytics />} />
+            <Route path="admin/repairs/reports" element={<RepairsReports />} />
             <Route
               path="admin/returnManagement"
               element={<ReturnManagement />}
             />
             <Route path="admin/pricing" element={<Pricing />} />
             <Route path="admin/customers" element={<Customers />} />
+            <Route path="admin/usedGold" element={<UsedGoldAdmin />} />
             <Route
               path="admin/addProduct"
               element={<AddEditProduct isEdit={false} />}
@@ -153,15 +163,17 @@ const AppRoutes = () => {
             <Route path="admin/dashboard" element={<Dashboard />} />
             <Route path="admin/analytics" element={<Analytics />} />
             <Route path="admin/sales-reports" element={<SalesReports />} />
+            <Route
+              path="admin/customers-reports"
+              element={<CustomersReports />}
+            />
             <Route path="admin/settings" element={<Settings />} />
-            <Route path="admin/print-tags" element={<TagPrinting />} />
-            <Route path="admin/export-data" element={<ExportData />} />
             <Route path="admin/logs" element={<Logs />} />
           </Route>
 
           <Route
             element={
-              <ProtectedRoute allowedRoles={["StaffManager"]}>
+              <ProtectedRoute allowedRoles={["Admin", "StaffManager"]}>
                 <AdminLayout />
               </ProtectedRoute>
             }

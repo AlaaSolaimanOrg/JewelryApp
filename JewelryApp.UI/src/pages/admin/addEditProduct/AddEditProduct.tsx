@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import Barcode from "react-barcode";
 import { AiFillPrinter } from "react-icons/ai";
-import { FaSave, FaTimes } from "react-icons/fa";
-import { IoBarcodeSharp } from "react-icons/io5";
+import {
+  FaArrowLeft,
+  FaCheck,
+  FaPause,
+  FaRegCopy,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -10,14 +16,17 @@ import {
   editProduct,
   generateSKU,
   getProductById,
-} from "../../../apis/products.api/products.api";
+} from "../../../apis/products.api";
+import { getPosPricingSettings } from "../../../apis/pricingSettings.api";
 import ImageUpload from "../../../components/ImageUpload/ImageUpload";
-import LoadingScreen from "../../../components/LoadingScreen/LoadingScreen";
+import LoadingScreen from "../../../components/loaders/LoadingScreen/LoadingScreen";
 import TagPrintingModal from "../../../components/modals/TagPrintingModal/TagPrintingModal";
 import useLocalApi from "../../../hooks/useLocalApi";
 import { KaratType, ProductCategory, ProductType } from "../../../types/enums";
 import preventSignOnKeyDown, {
   checkRequestSucceeded,
+  copyToClipboard,
+  hasMaxDecimals,
   isPositiveInteger,
   showError,
   showSuccess,
@@ -35,7 +44,7 @@ const productFieldsInitialState = {
   description: "",
   quantity: 1,
   tags: [] as string[],
-  specification: "", // ✅ NEW FIELD
+  specification: "",
 };
 
 const AddEditProduct = ({ isEdit }) => {
@@ -43,11 +52,18 @@ const AddEditProduct = ({ isEdit }) => {
   const [isLoadingCreateProduct, setIsLoadingCreateProduct] = useState(false);
   const [productFields, setProductFields] = useState(productFieldsInitialState);
   const [files, setFiles] = useState([]);
-  const [tagInput, setTagInput] = useState(""); // For new tag input
+  const [tagInput, setTagInput] = useState("");
   const [showTagPrintingModal, setShowTagPrintingModal] = useState(false);
   const [keepFieldsAfterSave, setKeepFieldsAfterSave] = useState(false);
+  const [skuCopied, setSkuCopied] = useState(false);
 
   const { productId } = useParams();
+
+  const handleCopySku = () =>
+    copyToClipboard(productFields.sku, () => {
+      setSkuCopied(true);
+      setTimeout(() => setSkuCopied(false), 2000);
+    });
 
   const handleProductField = (fieldName, value) => {
     setProductFields((pre) => {
@@ -58,7 +74,6 @@ const AddEditProduct = ({ isEdit }) => {
     });
   };
 
-  // Add a new tag
   const handleAddTag = () => {
     if (tagInput.trim() && !productFields.tags.includes(tagInput.trim())) {
       setProductFields((prev) => ({
@@ -69,7 +84,6 @@ const AddEditProduct = ({ isEdit }) => {
     }
   };
 
-  // Remove a tag
   const handleRemoveTag = (tagToRemove: string) => {
     setProductFields((prev) => ({
       ...prev,
@@ -77,7 +91,6 @@ const AddEditProduct = ({ isEdit }) => {
     }));
   };
 
-  // Handle Enter key in tag input
   const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -100,6 +113,12 @@ const AddEditProduct = ({ isEdit }) => {
     data: any;
     setData: any;
     fetchData: () => void;
+  };
+
+  const { data: pricingSettings } = useLocalApi({
+    apiToCall: () => getPosPricingSettings(),
+  }) as {
+    data: { karatType: KaratType; productType: ProductType; pricePerGram: number }[];
   };
 
   const { data: product } = useLocalApi({
@@ -181,7 +200,6 @@ const AddEditProduct = ({ isEdit }) => {
     formData.append("Weight", productFields.weight);
     formData.append("quantity", productFields.quantity?.toString());
 
-    // Append tags as JSON array
     if (productFields.tags.length > 0) {
       productFields.tags.forEach((tag) => formData.append("Tags", tag));
     }
@@ -239,38 +257,49 @@ const AddEditProduct = ({ isEdit }) => {
     ProductCategory.Rings,
     ProductCategory.Bangles,
   ];
+
+  const showSizeField = categoriesRequiringSize.includes(
+    Number(productFields.category),
+  );
+
+  const matchedPricingSetting = pricingSettings?.find(
+    (item) =>
+      Number(item.karatType) === Number(productFields.karat) &&
+      Number(item.productType) === Number(productFields.productType),
+  );
+
+  const productPrice =
+    (matchedPricingSetting?.pricePerGram ?? 0) *
+    (Number(productFields.weight) || 0);
+
   return (
     <div id="add-product-page" className="page">
       <div className="page-header">
-        <h1 className="page-title ">
+        <h1 className="page-title">
           <MdOutlineAddShoppingCart className="icon" />
-          {isEdit ? <span>Edit Product</span> : <span>Add New Product</span>}
+          <span>{isEdit ? "Edit product" : "Add new product"}</span>
         </h1>
 
         <div className="page-actions">
           {!isEdit && (
-            <label className="keep-fields-checkbox">
-              <input
-                type="checkbox"
-                checked={keepFieldsAfterSave}
-                onChange={(e) => setKeepFieldsAfterSave(e.target.checked)}
-              />
-              Preserve
-            </label>
+            <button
+              type="button"
+              className={`btn-md btn-outline ${keepFieldsAfterSave ? "active" : ""}`}
+              onClick={() => setKeepFieldsAfterSave((v) => !v)}
+            >
+              <FaPause className="icon" /> Preserve
+            </button>
           )}
 
-          <button className="btn-md btn-gray" onClick={handleClearClick}>
-            <FaTimes className="icon" />
-            clear
+          <button className="btn-md btn-outline" onClick={handleClearClick}>
+            <FaTimes className="icon" /> Clear
           </button>
+
           <button
-            className="btn-md btn-info"
-            onClick={() => {
-              navigate("/admin/inventory/products");
-            }}
+            className="btn-md btn-outline"
+            onClick={() => navigate("/admin/inventory/products")}
           >
-            <FaTimes className="icon" />
-            Back To Inventory
+            <FaArrowLeft className="icon" /> Back to inventory
           </button>
 
           <button
@@ -278,266 +307,252 @@ const AddEditProduct = ({ isEdit }) => {
             disabled={checkAnyProductFieldHasNoValue}
             onClick={callCreateProduct}
           >
-            <FaSave className="icon" /> Save Product
+            <FaSave className="icon" /> Save product
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <form id="product-form">
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Product Name</label>
-                <input
-                  type="text"
-                  maxLength={100}
-                  className="form-control"
-                  placeholder="Enter product name"
-                  value={productFields.productName}
-                  onChange={(e) =>
-                    handleProductField("productName", e.target.value)
-                  }
-                  required
-                />
-              </div>
-            </div>
+      <div className="panel">
+        <form id="product-form" className="form-grid">
+          <div className="fg">
+            <label>
+              Product name <span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              maxLength={100}
+              placeholder="Enter product name"
+              value={productFields.productName}
+              onChange={(e) =>
+                handleProductField("productName", e.target.value)
+              }
+              required
+            />
+          </div>
 
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">SKU</label>
-                <input
-                  key={productFields.sku}
-                  type="text"
-                  className="form-control disabled-gold"
-                  placeholder="Auto Generated SKU"
-                  value={productFields.sku}
-                  disabled={true}
-                  required
-                />
-              </div>
+          <div className="fg">
+            <label>SKU</label>
+            <div className="input-with-icon">
+              <input
+                key={productFields.sku}
+                type="text"
+                className="disabled-gold"
+                placeholder="Auto generated"
+                value={productFields.sku}
+                disabled
+                required
+              />
+              <button
+                type="button"
+                className="copy-icon-btn"
+                onClick={handleCopySku}
+                disabled={!productFields.sku}
+                data-tip="Copy SKU"
+              >
+                {skuCopied ? <FaCheck /> : <FaRegCopy />}
+              </button>
             </div>
           </div>
 
-          <div className="form-row"></div>
+          <div className="fg">
+            <label>
+              Quantity <span className="req">*</span>
+            </label>
+            <input
+              type="number"
+              onWheel={(e) => e.currentTarget.blur()}
+              min={1}
+              step={1}
+              placeholder="Enter quantity"
+              onKeyDown={preventSignOnKeyDown}
+              value={productFields.quantity}
+              onChange={(e) => {
+                const value = e.target.value;
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Quantity</label>
-                <input
-                  type="number"
-                  onWheel={(e) => e.currentTarget.blur()}
-                  min={1} // ensures positive
-                  step={1} // disables decimals
-                  className="form-control"
-                  placeholder="Enter quantity"
-                  onKeyDown={preventSignOnKeyDown}
-                  value={productFields.quantity}
-                  onChange={(e) => {
-                    const value = e.target.value;
-
-                    if (value.length > 7) {
-                      return;
-                    } else if (value === "" || isPositiveInteger(value)) {
-                      handleProductField("quantity", value);
-                    }
-                  }}
-                  required
-                />
-              </div>
-            </div>
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Karat</label>
-                <select
-                  className="form-control"
-                  value={productFields.karat}
-                  onChange={(e) => handleProductField("karat", e.target.value)}
-                  required
-                >
-                  <option value="">Select Karat</option>
-                  <option value={KaratType.Karat18}>18K Gold</option>
-                  <option value={KaratType.Karat21}>21K Gold</option>
-                  <option value={KaratType.Karat22}>22K Gold</option>
-                  <option value={KaratType.Karat24}>24K Gold</option>
-                </select>
-              </div>
-            </div>
+                if (value.length > 7) {
+                  return;
+                } else if (value === "" || isPositiveInteger(value)) {
+                  handleProductField("quantity", value);
+                }
+              }}
+              required
+            />
           </div>
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Weight (grams)</label>
-                <input
-                  type="number"
-                  onWheel={(e) => e.currentTarget.blur()}
-                  step="0.1"
-                  className="form-control"
-                  placeholder="0.0"
-                  value={productFields.weight}
-                  onKeyDown={preventSignOnKeyDown}
-                  min={0}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
+          <div className="fg">
+            <label>
+              Karat <span className="req">*</span>
+            </label>
+            <select
+              value={productFields.karat}
+              onChange={(e) => handleProductField("karat", e.target.value)}
+              required
+            >
+              <option value="">Select karat</option>
+              <option value={KaratType.Karat18}>18K Gold</option>
+              <option value={KaratType.Karat21}>21K Gold</option>
+              <option value={KaratType.Karat22}>22K Gold</option>
+              <option value={KaratType.Karat24}>24K Gold</option>
+            </select>
+          </div>
 
-                    if (inputValue.length <= 12) {
-                      handleProductField("weight", inputValue);
-                    }
-                  }}
-                  required
-                />
-              </div>
+          <div className="fg">
+            <label>
+              Weight (grams) <span className="req">*</span>
+            </label>
+            <input
+              type="number"
+              onWheel={(e) => e.currentTarget.blur()}
+              step="0.01"
+              placeholder="0.00"
+              value={productFields.weight}
+              onKeyDown={preventSignOnKeyDown}
+              min={0}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+
+                if (inputValue.length <= 12 && hasMaxDecimals(inputValue, 2)) {
+                  handleProductField("weight", inputValue);
+                }
+              }}
+              required
+            />
+          </div>
+
+          <div className="fg">
+            <label>
+              Category <span className="req">*</span>
+            </label>
+            <select
+              className={isEdit ? "disabled-gold" : ""}
+              disabled={isEdit}
+              value={productFields.category}
+              onChange={(e) => handleProductField("category", e.target.value)}
+              required
+            >
+              <option value="">Select category</option>
+              <option value={ProductCategory.Necklaces}>Necklaces</option>
+              <option value={ProductCategory.Bracelets}>Bracelets</option>
+              <option value={ProductCategory.Bangles}>Bangles</option>
+              <option value={ProductCategory.Rings}>Rings</option>
+              <option value={ProductCategory.Earrings}>Earrings</option>
+              <option value={ProductCategory.Pendants}>Pendants</option>
+              <option value={ProductCategory.Bullion}>Bullion</option>
+            </select>
+          </div>
+
+          {showSizeField && (
+            <div className="fg">
+              <label>Size</label>
+              <input
+                type="text"
+                placeholder="e.g. 45"
+                value={productFields.specification}
+                onChange={(e) =>
+                  handleProductField("specification", e.target.value)
+                }
+                required
+              />
             </div>
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Category</label>
-                <select
-                  className={`form-control ${isEdit ? "disabled-gold" : ""}`}
-                  disabled={isEdit}
-                  value={productFields.category}
-                  onChange={(e) =>
-                    handleProductField("category", e.target.value)
-                  }
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option value={ProductCategory.Necklaces}>Necklaces</option>
-                  <option value={ProductCategory.Bracelets}>Bracelets</option>
-                  <option value={ProductCategory.Bangles}>Bangles</option>
-                  <option value={ProductCategory.Rings}>Rings</option>
-                  <option value={ProductCategory.Earrings}>Earrings</option>
-                  <option value={ProductCategory.Pendants}>Pendants</option>
-                  <option value={ProductCategory.Bullion}>Bullion</option>
-                </select>
-              </div>
+          )}
+
+          <div className="fg">
+            <label>
+              Product type <span className="req">*</span>
+            </label>
+            <select
+              value={productFields.productType}
+              onChange={(e) =>
+                handleProductField("productType", e.target.value)
+              }
+              required
+            >
+              <option value="">Select type</option>
+              <option value={ProductType.Gold}>Gold</option>
+            </select>
+          </div>
+
+          <div className="fg">
+            <label>
+              Tags <span className="opt">(optional)</span>
+            </label>
+            <div className="tags-row">
+              <input
+                type="text"
+                placeholder="Add tag, press Enter"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagInputKeyDown}
+              />
+              <button
+                type="button"
+                className="btn-md btn-outline"
+                onClick={handleAddTag}
+                disabled={
+                  !tagInput.trim() ||
+                  productFields.tags.some((tag) => tag === tagInput.trim())
+                }
+              >
+                Add
+              </button>
             </div>
 
-            {/* LENGTH for Necklaces */}
-            {categoriesRequiringSize.includes(
-              Number(productFields.category),
-            ) && (
-              <div className="form-group">
-                <label className="form-label required">Size</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="e.g., 45"
-                  value={productFields.specification}
-                  onChange={(e) =>
-                    handleProductField("specification", e.target.value)
-                  }
-                  required
-                />
+            {productFields.tags.length > 0 && (
+              <div className="tags-list">
+                {productFields.tags.map((tag, index) => (
+                  <span key={index} className="tag">
+                    {tag}
+                    <button
+                      type="button"
+                      className="tag-remove"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
+                      <FaTimes />
+                    </button>
+                  </span>
+                ))}
               </div>
             )}
-
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label required">Product Type</label>
-                <select
-                  className="form-control"
-                  value={productFields.productType}
-                  onChange={(e) =>
-                    handleProductField("productType", e.target.value)
-                  }
-                  required
-                >
-                  <option value="">Select Type</option>
-                  <option value={ProductType.Gold}>Gold</option>
-                  <option value={ProductType.Silver}>Silver</option>
-                </select>
-              </div>
-            </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-col">
-              <div className="form-group">
-                <label className="form-label">Description</label>
-                <textarea
-                  className="form-control"
-                  value={productFields.description}
-                  onChange={(e) =>
-                    handleProductField("description", e.target.value)
-                  }
-                  placeholder="Enter product description"
-                  rows={4}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Tags Section */}
-          <div className="form-group">
-            <label className="form-label">Tags (Optional)</label>
-            <div className="tags-input-container">
-              <div className="tags-display">
-                <div className="tag-input-wrapper">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Add a tag and press Enter or click Add"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={handleTagInputKeyDown}
-                  />
-                  <button
-                    type="button"
-                    className="btn-sm btn-gold"
-                    onClick={handleAddTag}
-                    disabled={
-                      !tagInput.trim() ||
-                      productFields.tags.some((tag) => tag === tagInput.trim())
-                    }
-                  >
-                    Add
-                  </button>
-                </div>
-                <div>
-                  {productFields.tags.map((tag, index) => (
-                    <span key={index} className="tag">
-                      {tag}
-                      <button
-                        type="button"
-                        className="tag-remove"
-                        onClick={() => handleRemoveTag(tag)}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="fg span3">
+            <label>Description</label>
+            <textarea
+              value={productFields.description}
+              onChange={(e) =>
+                handleProductField("description", e.target.value)
+              }
+              placeholder="Enter product description"
+              rows={3}
+            />
           </div>
 
           {productFields.sku && (
-            <div className="barcodeGenerator">
-              <div className="titleContainer">
-                <IoBarcodeSharp className="icon" />
-                <span className="title">Barcode</span>
-              </div>
+            <div className="fg span3">
+              <label>Barcode</label>
+              <div className="barcode-strip">
+                <div className="barcode-preview">
+                  <Barcode className="barCode" value={productFields.sku} />
+                </div>
 
-              <div className="barCodeWrapper">
-                <Barcode className="barCode" value={productFields.sku} />
-              </div>
-
-              <div className="actionsContainer">
-                <AiFillPrinter
-                  className="icon"
-                  onClick={() => {
-                    setShowTagPrintingModal(true);
-                  }}
-                />
+                <button
+                  type="button"
+                  className="btn-md btn-outline"
+                  onClick={() => setShowTagPrintingModal(true)}
+                >
+                  <AiFillPrinter className="icon" /> Print tag
+                </button>
               </div>
             </div>
           )}
 
-          <ImageUpload files={files} setFiles={setFiles} />
+          <div className="fg span3">
+            <label>Product images</label>
+            <ImageUpload files={files} setFiles={setFiles} />
+          </div>
         </form>
       </div>
+
       <TagPrintingModal
         show={showTagPrintingModal}
         onClose={() => {
@@ -549,7 +564,7 @@ const AddEditProduct = ({ isEdit }) => {
             weight: productFields.weight,
             karatType: productFields.karat,
             specification: productFields.specification,
-            price: 333,
+            price: productPrice,
           } as any
         }
       />

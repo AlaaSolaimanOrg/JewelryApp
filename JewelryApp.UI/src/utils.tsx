@@ -157,6 +157,9 @@ export const trimLeadingZeros = (value: number | string) => {
   return Number(String(value).replace(/^0+(?=\d)/, ""));
 };
 
+export const hasMaxDecimals = (value: string, maxDecimals: number): boolean =>
+  new RegExp(`^\\d*\\.?\\d{0,${maxDecimals}}$`).test(value);
+
 export const isPositiveInteger = (value: string | number): boolean => {
   if (typeof value === "number") {
     return Number.isInteger(value) && value > 0;
@@ -216,4 +219,25 @@ export const splitCamelCaseWords = (text: string): string => {
 
 export const smartRound = (value: number): number => {
   return parseFloat((Math.round(value * 100) / 100).toString());
+};
+
+export const getYearsSince = (startYear: number): number[] => {
+  const currentYear = new Date().getFullYear();
+  return Array.from(
+    { length: currentYear - startYear + 1 },
+    (_, i) => currentYear - i
+  );
+};
+
+export const copyToClipboard = async (
+  value: string,
+  onSuccess?: () => void
+): Promise<void> => {
+  if (!value) return;
+  try {
+    await navigator.clipboard.writeText(value);
+    onSuccess?.();
+  } catch {
+    showError("Failed to copy to clipboard");
+  }
 };
