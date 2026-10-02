@@ -19,7 +19,12 @@ import { SortDirection } from "../../../types/enums";
 import MeltGoldModal from "./MeltGoldModal/MeltGoldModal";
 import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
 import type { ReturnToStockPayload } from "./ReturnToStockModal/ReturnToStockModal.type";
-import type { GoldPool, Period, UsedGoldHistoryEntry } from "./UsedGold.type";
+import type {
+  GoldPool,
+  Period,
+  PoolsResult,
+  UsedGoldHistoryEntry,
+} from "./UsedGold.type";
 import {
   MONTHS,
   STANDARD_KARATS,
@@ -59,20 +64,22 @@ const UsedGold = () => {
     apiToCall: (data) => getUsedGoldPools(data.payload),
     payload: { period, month: selMonth, year: selYear },
     dataInitalValue: {
-      pools: {} as Record<number, GoldPool>,
+      pools: {},
       periodPurchaseCount: 0,
       periodSpent: 0,
-    },
+      periodSpentCash: 0,
+      periodSpentCard: 0,
+    } as PoolsResult,
     effectDependency: [refreshKey, period, selMonth, selYear],
-  }) as {
-    data: {
-      pools: Record<number, GoldPool>;
-      periodPurchaseCount: number;
-      periodSpent: number;
-    };
-  };
+  }) as { data: PoolsResult };
 
-  const { pools, periodPurchaseCount, periodSpent } = poolsResult;
+  const {
+    pools,
+    periodPurchaseCount,
+    periodSpent,
+    periodSpentCash,
+    periodSpentCard,
+  } = poolsResult;
 
   const [typeFilter, setTypeFilter] = useState<
     "all" | UsedGoldHistoryEntry["type"]
@@ -359,6 +366,16 @@ const UsedGold = () => {
           value={fmtCurrencyRounded(periodSpent)}
           label={`Spent (${periodLabel})`}
           valueColor="var(--admin-blue)"
+        />
+        <AdminStatCard
+          value={fmtCurrencyRounded(periodSpentCash)}
+          label={`Paid in cash (${periodLabel})`}
+          valueColor="var(--admin-green)"
+        />
+        <AdminStatCard
+          value={fmtCurrencyRounded(periodSpentCard)}
+          label={`Paid by card (${periodLabel})`}
+          valueColor="var(--admin-purple)"
         />
         <AdminStatCard
           value={`${periodPurchaseCount}`}

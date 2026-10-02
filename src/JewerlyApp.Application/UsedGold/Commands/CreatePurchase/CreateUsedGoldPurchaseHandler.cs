@@ -80,26 +80,25 @@ namespace JewerlyApp.Application.UsedGold.Commands.CreatePurchase
             purchase.TotalAmount = purchase.Items.Sum(i => i.Subtotal);
 
             //-----------------------------------------------------
-            // 3. CASH OUT (debit the box the seller was paid from)
+            // 3. CASH OUT (only cash leaves the store box; card is recorded on the purchase only)
             //-----------------------------------------------------
-            var boxType = request.PayMethod == UsedGoldPayMethod.Cash
-                ? CashBoxType.Store
-                : CashBoxType.Transfers;
-
-            var boxBalance = await CashBalanceCalculator.GetBalanceAsync(_context, boxType, cancellationToken);
-            if (purchase.TotalAmount > boxBalance)
-                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_InsufficientBalance);
-
-            _context.CashTransactions.Add(new CashTransaction
+            if (request.PayMethod == UsedGoldPayMethod.Cash)
             {
-                Id = Guid.NewGuid(),
-                BoxType = boxType,
-                Type = CashTransactionType.UsedGoldPurchaseOut,
-                Amount = purchase.TotalAmount,
-                CustomerName = customer.Name,
-                UsedGoldPurchaseId = purchase.Id,
-                Notes = $"Used gold purchase #{purchase.SerialNumber}",
-            });
+                var boxBalance = await CashBalanceCalculator.GetBalanceAsync(_context, CashBoxType.Store, cancellationToken);
+                if (purchase.TotalAmount > boxBalance)
+                    return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_InsufficientBalance);
+
+                _context.CashTransactions.Add(new CashTransaction
+                {
+                    Id = Guid.NewGuid(),
+                    BoxType = CashBoxType.Store,
+                    Type = CashTransactionType.UsedGoldPurchaseOut,
+                    Amount = purchase.TotalAmount,
+                    CustomerName = customer.Name,
+                    UsedGoldPurchaseId = purchase.Id,
+                    Notes = $"Used gold purchase #{purchase.SerialNumber}",
+                });
+            }
 
             //-----------------------------------------------------
             // 4. SAVE

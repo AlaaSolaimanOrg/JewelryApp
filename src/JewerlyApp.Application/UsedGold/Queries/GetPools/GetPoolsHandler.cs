@@ -1,5 +1,6 @@
 using JewerlyApp.Application.Common.Responses;
 using JewerlyApp.Application.Interfaces;
+using JewerlyApp.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -35,14 +36,16 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPools
 
             var periodItems = await _context.UsedGoldPurchaseItems
                 .Where(i => (startUtc == null || i.CreatedDate >= startUtc) && (endUtc == null || i.CreatedDate <= endUtc))
-                .Select(i => i.Subtotal)
+                .Select(i => new { i.Subtotal, i.Purchase.PayMethod })
                 .ToListAsync(cancellationToken);
 
             var result = new GetPoolsResultDto
             {
                 Pools = poolDtos,
                 PeriodPurchaseCount = periodItems.Count,
-                PeriodSpent = periodItems.Sum(),
+                PeriodSpent = periodItems.Sum(i => i.Subtotal),
+                PeriodSpentCash = periodItems.Where(i => i.PayMethod == UsedGoldPayMethod.Cash).Sum(i => i.Subtotal),
+                PeriodSpentCard = periodItems.Where(i => i.PayMethod == UsedGoldPayMethod.Card).Sum(i => i.Subtotal),
             };
 
             return GenericResponse<GetPoolsResultDto>.Success(result);

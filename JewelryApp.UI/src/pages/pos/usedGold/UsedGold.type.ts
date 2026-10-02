@@ -11,4 +11,4 @@ export interface Seller {
   phone: string;
 }
 
-export type PayMethod = "cash" | "eTransfer";
+export type PayMethod = "cash" | "card";

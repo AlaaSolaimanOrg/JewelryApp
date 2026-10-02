@@ -97,9 +97,7 @@ const UsedGold = () => {
       const response = await createUsedGoldPurchase({
         customerId: seller.id,
         payMethod:
-          payMethod === "cash"
-            ? UsedGoldPayMethod.Cash
-            : UsedGoldPayMethod.ETransfer,
+          payMethod === "cash" ? UsedGoldPayMethod.Cash : UsedGoldPayMethod.Card,
         notes: notes || undefined,
         items: activeRows.map((r) => ({
           karat: r.karat,
@@ -113,7 +111,7 @@ const UsedGold = () => {
           response?.message ||
             `Purchased ${totalWeight.toFixed(2)}g from ${seller.name} — ${formatCurrency(
               total,
-            )} (${payMethod === "cash" ? "Cash" : "E-Transfer"})`,
+            )} (${payMethod === "cash" ? "Cash" : "Card"})`,
         );
         resetForm();
       } else {
@@ -137,7 +135,7 @@ const UsedGold = () => {
       saveLabel = saving
         ? "Saving..."
         : `Pay ${formatCurrency(total)} — ${
-            payMethod === "cash" ? "cash out" : "e-transfer"
+            payMethod === "cash" ? "cash out" : "card"
           }`;
       canSave = !saving;
     }

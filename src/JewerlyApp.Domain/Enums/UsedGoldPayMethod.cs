@@ -5,6 +5,7 @@ namespace JewerlyApp.Domain.Enums
         Cash = 1,
         ETransfer = 2,
         // No cash actually moves — the gold's value is credited straight against a sale total.
-        TradeIn = 3
+        TradeIn = 3,
+        Card = 4
     }
 }
