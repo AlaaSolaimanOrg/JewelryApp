@@ -40,7 +40,7 @@ jobs:
 
             echo "== Build frontend (PROD) =="
             cd /var/www/myapi/JewelryApp.UI
-            rm -rf node_modules dist package-lock.json
+            rm -rf node_modules dist
             npm ci
             npx tsc --noEmit --pretty
             npm run build:prod
