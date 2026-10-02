@@ -16,6 +16,7 @@ export interface GoldPool {
 
 export interface PoolsResult {
   pools: Record<number, GoldPool>;
+  currentPools: Record<number, GoldPool>;
   periodPurchaseCount: number;
   periodSpent: number;
   periodSpentCash: number;

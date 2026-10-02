@@ -73,6 +73,7 @@ const UsedGold = () => {
     payload: { period, month: selMonth, year: selYear },
     dataInitalValue: {
       pools: {},
+      currentPools: {},
       periodPurchaseCount: 0,
       periodSpent: 0,
       periodSpentCash: 0,
@@ -83,6 +84,7 @@ const UsedGold = () => {
 
   const {
     pools,
+    currentPools,
     periodPurchaseCount,
     periodSpent,
     periodSpentCash,
@@ -100,6 +102,7 @@ const UsedGold = () => {
   const currentValue = getCurrentValue(pools);
   const totalInvested = getTotalInvested(pools);
   const avgPurity = getAvgPurity(pools);
+  const currentOnHand = getTotalOnHand(currentPools);
 
   const periodLabel = {
     [Period.Today]: "Today",
@@ -274,18 +277,18 @@ const UsedGold = () => {
           <button
             className="btn-md btn-green"
             onClick={() =>
-              totalOnHand > 0 ? setShowStockModal(true) : undefined
+              currentOnHand > 0 ? setShowStockModal(true) : undefined
             }
-            disabled={totalOnHand <= 0}
+            disabled={currentOnHand <= 0}
           >
             <FaBoxOpen /> Return to stock
           </button>
           <button
             className="btn-md btn-amber"
             onClick={() =>
-              totalOnHand > 0 ? setShowMeltModal(true) : undefined
+              currentOnHand > 0 ? setShowMeltModal(true) : undefined
             }
-            disabled={totalOnHand <= 0}
+            disabled={currentOnHand <= 0}
           >
             <FaFire /> Send to melt
           </button>
@@ -444,13 +447,13 @@ const UsedGold = () => {
       <MeltGoldModal
         show={showMeltModal}
         onClose={() => setShowMeltModal(false)}
-        pools={pools}
+        pools={currentPools}
         onConfirm={handleMeltConfirm}
       />
       <ReturnToStockModal
         show={showStockModal}
         onClose={() => setShowStockModal(false)}
-        pools={pools}
+        pools={currentPools}
         onConfirm={handleStockConfirm}
       />
     </div>

@@ -16,7 +16,7 @@ export const createUsedGoldPurchase = async (payload: {
 };
 
 export const getUsedGoldPools = async (payload: {
-  period?: "month" | "year" | "all";
+  period?: string;
   month?: number;
   year?: number;
 }) => {
@@ -26,7 +26,7 @@ export const getUsedGoldPools = async (payload: {
 export const getUsedGoldHistory = async (payload: {
   searchBy?: string;
   typeFilter?: string;
-  period?: "month" | "year" | "all";
+  period?: string;
   month?: number;
   year?: number;
   pageNumber?: number;
