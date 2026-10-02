@@ -53,3 +53,16 @@ export const moveMoney = async (payload: {
 }) => {
   return requestApi("POST", apiRoutes.cashManagement.moveMoney, payload);
 };
+
+export const correctSalePayment = async (payload: {
+  saleId: string;
+  cashAmount: number;
+  cardAmount: number;
+  reason: string;
+}) => {
+  return requestApi(
+    "POST",
+    apiRoutes.cashManagement.correctSalePayment,
+    payload,
+  );
+};
