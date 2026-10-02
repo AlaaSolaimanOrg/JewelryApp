@@ -9,7 +9,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetHistory
         public string? SearchBy { get; set; }
         public string? TypeFilter { get; set; }
 
-        // "month" | "year" | "all"
+        // "today" | "week" | "month" | "year" | "all"
         public string Period { get; set; } = "all";
 
         // 0-based, matches JS Date month convention

@@ -1,6 +1,12 @@
 export type HistoryType = "purchase" | "melt" | "stock";
 
-export type Period = "month" | "year" | "all";
+export enum Period {
+  Today = "today",
+  Week = "week",
+  Month = "month",
+  Year = "year",
+  All = "all",
+}
 
 export interface GoldPool {
   weight: number;
