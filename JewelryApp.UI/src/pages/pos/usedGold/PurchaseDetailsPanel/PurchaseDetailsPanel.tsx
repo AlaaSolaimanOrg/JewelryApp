@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  FaMobileAlt,
+  FaCreditCard,
   FaMoneyBillWave,
   FaPlus,
   FaSearch,
@@ -159,13 +159,11 @@ const PurchaseDetailsPanel = ({
             <span className="ug-pt-lbl">Cash</span>
           </div>
           <div
-            className={`ug-pay-tab ${
-              payMethod === "eTransfer" ? "sel-eTransfer" : ""
-            }`}
-            onClick={() => onPayMethodChange("eTransfer")}
+            className={`ug-pay-tab ${payMethod === "card" ? "sel-card" : ""}`}
+            onClick={() => onPayMethodChange("card")}
           >
-            <FaMobileAlt className="ug-pt-ico" />
-            <span className="ug-pt-lbl">E-Transfer</span>
+            <FaCreditCard className="ug-pt-ico" />
+            <span className="ug-pt-lbl">Card</span>
           </div>
         </div>
       </div>
@@ -199,7 +197,7 @@ const PurchaseDetailsPanel = ({
         <div className="ug-sum-sub-label">
           {payMethod === "cash"
             ? "Cash out from store box"
-            : "E-Transfer out from transfers box"}
+            : "Paid by card — no cash box affected"}
         </div>
         <div className="ug-sum-weight">
           <span>Total weight</span>

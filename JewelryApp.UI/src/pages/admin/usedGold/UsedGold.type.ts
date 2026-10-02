@@ -8,6 +8,14 @@ export interface GoldPool {
   totalInvested: number;
 }
 
+export interface PoolsResult {
+  pools: Record<number, GoldPool>;
+  periodPurchaseCount: number;
+  periodSpent: number;
+  periodSpentCash: number;
+  periodSpentCard: number;
+}
+
 export interface UsedGoldHistoryEntry {
   id: string;
   date: string;
