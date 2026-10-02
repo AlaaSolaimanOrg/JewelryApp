@@ -1,4 +1,5 @@
 using JewerlyApp.Application.Common.Helpers;
+using JewerlyApp.Domain.Enums;
 using System;
 
 namespace JewerlyApp.Application.UsedGold
@@ -9,6 +10,19 @@ namespace JewerlyApp.Application.UsedGold
         {
             if (period == "all")
                 return (null, null);
+
+            if (period == "today")
+            {
+                var (todayStartUtc, todayEndUtc) = BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(BusinessTimeZoneHelper.GetBusinessDate());
+                return (todayStartUtc, todayEndUtc);
+            }
+
+            if (period == "week")
+            {
+                var (weekStart, weekEnd) = DateRangeHelper.GetBusinessDateRange(ReportType.Weekly);
+                return (BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(weekStart).StartUtc,
+                        BusinessTimeZoneHelper.GetUtcBoundsForBusinessDate(weekEnd).EndUtc);
+            }
 
             if (period == "year")
             {

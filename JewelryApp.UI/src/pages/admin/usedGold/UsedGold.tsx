@@ -21,10 +21,10 @@ import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
 import type { ReturnToStockPayload } from "./ReturnToStockModal/ReturnToStockModal.type";
 import type {
   GoldPool,
-  Period,
   PoolsResult,
   UsedGoldHistoryEntry,
 } from "./UsedGold.type";
+import { Period } from "./UsedGold.type";
 import {
   MONTHS,
   STANDARD_KARATS,
@@ -44,7 +44,15 @@ const YEARS = getYearsSince(2025);
 
 const EMPTY_POOL: GoldPool = { weight: 0, cost: 0, totalInvested: 0 };
 
-const TYPE_LABEL: Record<UsedGoldHistoryEntry["type"], string> = {
+const PERIOD_OPTIONS: { value: Period; label: string }[] = [
+  { value: Period.Today, label: "Today" },
+  { value: Period.Week, label: "This week" },
+  { value: Period.Month, label: "Month" },
+  { value: Period.Year, label: "Year" },
+  { value: Period.All, label: "All time" },
+];
+
+const TYPE_LABEL:Record<UsedGoldHistoryEntry["type"], string> = {
   purchase: "Purchases",
   melt: "Melts",
   stock: "Returned to stock",
@@ -56,7 +64,7 @@ const UsedGold = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const refresh = () => setRefreshKey((k) => k + 1);
 
-  const [period, setPeriod] = useState<Period>("month");
+  const [period, setPeriod] = useState<Period>(Period.Month);
   const [selMonth, setSelMonth] = useState(now.getMonth());
   const [selYear, setSelYear] = useState(now.getFullYear());
 
@@ -93,12 +101,13 @@ const UsedGold = () => {
   const totalInvested = getTotalInvested(pools);
   const avgPurity = getAvgPurity(pools);
 
-  const periodLabel =
-    period === "month"
-      ? `${MONTHS[selMonth]} ${selYear}`
-      : period === "year"
-        ? `${selYear}`
-        : "All time";
+  const periodLabel = {
+    [Period.Today]: "Today",
+    [Period.Week]: "This week",
+    [Period.Month]: `${MONTHS[selMonth]} ${selYear}`,
+    [Period.Year]: `${selYear}`,
+    [Period.All]: "All time",
+  }[period];
 
   const {
     data: history,
@@ -286,28 +295,19 @@ const UsedGold = () => {
       <div className="controls">
         <div className="ctrl-group">
           <span className="ctrl-label">Period:</span>
-          <button
-            className={`pbtn ${period === "month" ? "active" : ""}`}
-            onClick={() => handlePeriodFilterChange("month")}
-          >
-            Month
-          </button>
-          <button
-            className={`pbtn ${period === "year" ? "active" : ""}`}
-            onClick={() => handlePeriodFilterChange("year")}
-          >
-            Year
-          </button>
-          <button
-            className={`pbtn ${period === "all" ? "active" : ""}`}
-            onClick={() => handlePeriodFilterChange("all")}
-          >
-            All time
-          </button>
+          {PERIOD_OPTIONS.map((p) => (
+            <button
+              key={p.value}
+              className={`pbtn ${period === p.value ? "active" : ""}`}
+              onClick={() => handlePeriodFilterChange(p.value)}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
-        {period !== "all" && (
+        {(period === Period.Month || period === Period.Year) && (
           <div className="ctrl-group">
-            {period === "month" && (
+            {period === Period.Month && (
               <select
                 className="ctrl-select"
                 value={selMonth}
