@@ -5,7 +5,7 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPools
 {
     public class GetPoolsQuery : IRequest<GenericResponse<GetPoolsResultDto>>
     {
-        // "month" | "year" | "all"
+        // "today" | "week" | "month" | "year" | "all"
         public string Period { get; set; } = "all";
 
         // 0-based, matches JS Date month convention
