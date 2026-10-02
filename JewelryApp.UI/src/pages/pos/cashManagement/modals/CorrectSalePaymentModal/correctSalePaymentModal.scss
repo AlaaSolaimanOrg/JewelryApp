@@ -1,0 +1,83 @@
+@use "../cashModalBase.scss";
+
+.correct-sale-modal {
+  .correct-sale-status,
+  .correct-sale-error {
+    font-size: 13px;
+    padding: 12px 0;
+    text-align: center;
+  }
+
+  .correct-sale-status {
+    color: var(--pos-text-muted);
+  }
+
+  .correct-sale-error {
+    color: var(--pos-red);
+  }
+
+  .correct-sale-methods {
+    margin-bottom: 12px;
+  }
+
+  .correct-sale-opt {
+    padding: 10px 4px;
+    border-radius: var(--pos-radius-sm);
+    border: 1px solid var(--pos-border-strong);
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--pos-font);
+    width: 100%;
+    color: var(--pos-text-muted);
+
+    .correct-sale-opt-ico {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .correct-sale-opt-lbl {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    &.sel-cash {
+      border-color: var(--pos-green);
+      background: var(--pos-green-bg);
+      box-shadow: 0 0 0 1px var(--pos-green);
+      color: var(--pos-green);
+    }
+
+    &.sel-card {
+      border-color: var(--pos-blue);
+      background: var(--pos-blue-bg);
+      box-shadow: 0 0 0 1px var(--pos-blue);
+      color: var(--pos-blue);
+    }
+
+    &.sel-split {
+      border-color: var(--pos-amber);
+      background: var(--pos-amber-bg);
+      box-shadow: 0 0 0 1px var(--pos-amber);
+      color: var(--pos-amber);
+    }
+  }
+
+  .correct-sale-diff {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+
+    &.in {
+      background: var(--pos-green-bg);
+      color: var(--pos-green);
+    }
+
+    &.out {
+      background: var(--pos-red-bg);
+      color: var(--pos-red);
+    }
+  }
+}

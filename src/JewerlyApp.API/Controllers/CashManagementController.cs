@@ -1,4 +1,5 @@
 using JewerlyApp.Application.CashManagement.Commands.AddExpense;
+using JewerlyApp.Application.CashManagement.Commands.CorrectSalePayment;
 using JewerlyApp.Application.CashManagement.Commands.ManualCashIn;
 using JewerlyApp.Application.CashManagement.Commands.MoveMoney;
 using JewerlyApp.Application.CashManagement.Commands.TransferIncome;
@@ -50,6 +51,14 @@ namespace JewerlyApp.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> MoveMoney([FromBody] MoveMoneyCommand command)
+        {
+            var response = await Mediator.Send(command);
+            return CreateResponse(response);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CorrectSalePayment([FromBody] CorrectSalePaymentCommand command)
         {
             var response = await Mediator.Send(command);
             return CreateResponse(response);

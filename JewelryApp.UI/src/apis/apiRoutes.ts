@@ -117,6 +117,7 @@ export const apiRoutes = {
     manualCashIn: "CashManagement/ManualCashIn",
     transferIncome: "CashManagement/TransferIncome",
     moveMoney: "CashManagement/MoveMoney",
+    correctSalePayment: "CashManagement/CorrectSalePayment",
   },
   usedGold: {
     createPurchase: "UsedGold/CreatePurchase",

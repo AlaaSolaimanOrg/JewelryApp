@@ -157,6 +157,10 @@
         public const string Error_Cash_NotesRequired = "Notes are required.";
         public const string Error_Cash_SourceRequired = "Select a source.";
         public const string Error_Cash_CustomerNameRequired = "Enter a customer name.";
+        public const string Success_Cash_SalePayment_Corrected = "Sale payment corrected successfully.";
+        public const string Error_Cash_ReasonRequired = "Reason is required.";
+        public const string Error_Cash_SalePayment_Mismatch = "Cash and card amounts must add up to the sale total.";
+        public const string Error_Cash_SalePayment_Unchanged = "The cash amount is the same — no correction needed.";
 
         // --------------------------------------------------
         // USED GOLD PURCHASE MESSAGES (NEW)

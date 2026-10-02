@@ -10,18 +10,22 @@ import { useState } from "react";
 import {
   getBoxTag,
   getDescription,
+  getCategoryLabel,
   formatCurrency,
   formatLogDate,
+  isSaleCorrectable,
   type CashTransactionRow,
 } from "./TransactionLogs.utils";
 import "./transactionLogs.scss";
 
 interface TransactionLogsProps {
   refreshKey: number;
+  onCorrectSale?: (saleId: string) => void;
 }
 
-const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
+const TransactionLogs = ({ refreshKey, onCorrectSale }: TransactionLogsProps) => {
   const [boxFilter, setBoxFilter] = useState<CashBoxType | "">("");
+  const showActions = !!onCorrectSale;
 
   const {
     data: transactions,
@@ -52,6 +56,15 @@ const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
         {sortCriteria.sortDirection === SortDirection.Ascending ? "▲" : "▼"}
       </span>
     );
+
+  const cols = {
+    date: { xs: 3, md: 2 },
+    desc: { xs: showActions ? 4 : 5, md: showActions ? 3 : 4 },
+    box: { md: 2 },
+    amount: { xs: showActions ? 3 : 4, md: 2 },
+    balance: { md: 2 },
+    actions: { xs: 2, md: 1 },
+  };
 
   return (
     <div className="log-panel">
@@ -86,33 +99,31 @@ const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
 
       <Row className="g-2 log-cols">
         <Col
-          xs={3}
-          md={2}
+          {...cols.date}
           className="log-col-sortable"
           onClick={() => handleSort("createdDate", sortCriteria, onSortChange)}
         >
           Date {renderSortArrow("createdDate")}
         </Col>
-        <Col xs={5} md={5}>
-          Description
-        </Col>
+        <Col {...cols.desc}>Description</Col>
         <Col
-          md={2}
-          className="d-none d-md-block log-col-sortable"
-          style={{ textAlign: "center" }}
+          {...cols.box}
+          className="d-none d-md-block log-col-sortable log-center"
           onClick={() => handleSort("boxType", sortCriteria, onSortChange)}
         >
           Box {renderSortArrow("boxType")}
         </Col>
         <Col
-          xs={4}
-          md={3}
-          className="log-col-sortable"
-          style={{ textAlign: "right" }}
+          {...cols.amount}
+          className="log-col-sortable log-right"
           onClick={() => handleSort("amount", sortCriteria, onSortChange)}
         >
           Amount {renderSortArrow("amount")}
         </Col>
+        <Col {...cols.balance} className="d-none d-md-block log-right">
+          Type
+        </Col>
+        {showActions && <Col {...cols.actions} />}
       </Row>
 
       <div className="log-body">
@@ -126,31 +137,41 @@ const TransactionLogs = ({ refreshKey }: TransactionLogsProps) => {
             const desc = getDescription(row);
             return (
               <Row className="g-2 log-row" key={row.id}>
-                <Col xs={3} md={2} className="log-date">
+                <Col {...cols.date} className="log-date">
                   {formatLogDate(row.createdDate)}
                 </Col>
-                <Col xs={5} md={5}>
+                <Col {...cols.desc}>
                   <div className="log-desc">{desc.title}</div>
                   {desc.sub && <div className="log-desc-sub">{desc.sub}</div>}
                   {row.createdByName && (
                     <div className="log-desc-user">by {row.createdByName}</div>
                   )}
                 </Col>
-                <Col
-                  md={2}
-                  className="d-none d-md-block"
-                  style={{ textAlign: "center" }}
-                >
+                <Col {...cols.box} className="d-none d-md-block log-center">
                   <span className={`log-tag ${tag.className}`}>{tag.label}</span>
                 </Col>
                 <Col
-                  xs={4}
-                  md={3}
+                  {...cols.amount}
                   className={`log-amount ${row.isCredit ? "in" : "out"}`}
                 >
                   {row.isCredit ? "+" : "-"}
                   {formatCurrency(row.amount)}
                 </Col>
+                <Col {...cols.balance} className="d-none d-md-block log-balance">
+                  {getCategoryLabel(row)}
+                </Col>
+                {showActions && (
+                  <Col {...cols.actions} className="log-actions">
+                    {isSaleCorrectable(row) && (
+                      <button
+                        className="log-act"
+                        onClick={() => onCorrectSale!(row.saleId!)}
+                      >
+                        Correct
+                      </button>
+                    )}
+                  </Col>
+                )}
               </Row>
             );
           })

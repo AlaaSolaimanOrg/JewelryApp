@@ -18,6 +18,44 @@ export interface CashTransactionRow {
   createdDate: string;
 }
 
+const SALE_CORRECTABLE_TYPES = [
+  CashTransactionType.SaleCashIn,
+  CashTransactionType.SalePaymentCorrectionIn,
+  CashTransactionType.SalePaymentCorrectionOut,
+];
+
+export const isSaleCorrectable = (row: CashTransactionRow) =>
+  !!row.saleId && SALE_CORRECTABLE_TYPES.includes(row.type);
+
+export const getCategoryLabel = (row: CashTransactionRow) => {
+  switch (row.type) {
+    case CashTransactionType.Expense:
+    case CashTransactionType.ManualCashIn:
+      return row.category || "Other";
+    case CashTransactionType.TransferIncome:
+      return "Transfer";
+    case CashTransactionType.MoveMoneyOut:
+    case CashTransactionType.MoveMoneyIn:
+      return "Move";
+    case CashTransactionType.SaleCashIn:
+      return "Sale";
+    case CashTransactionType.SaleChangeOut:
+      return "Sale change";
+    case CashTransactionType.UsedGoldPurchaseOut:
+      return "Used Gold";
+    case CashTransactionType.ReturnCashOut:
+      return "Refund";
+    case CashTransactionType.RepairCashIn:
+    case CashTransactionType.RepairCashOut:
+      return "Repair";
+    case CashTransactionType.SalePaymentCorrectionIn:
+    case CashTransactionType.SalePaymentCorrectionOut:
+      return "Correction";
+    default:
+      return "";
+  }
+};
+
 export const getBoxTag = (row: CashTransactionRow) =>
   row.boxType === CashBoxType.Store
     ? { label: "Store", className: "log-tag-cash" }
@@ -60,6 +98,12 @@ export const getDescription = (row: CashTransactionRow) => {
       return {
         title: `Change paid — Sale #${row.saleSerialNumber}`,
         sub: row.notes || "Trade-in/exchange credit exceeded sale total",
+      };
+    case CashTransactionType.SalePaymentCorrectionIn:
+    case CashTransactionType.SalePaymentCorrectionOut:
+      return {
+        title: `Payment correction — Sale #${row.saleSerialNumber}`,
+        sub: row.notes || "",
       };
     case CashTransactionType.RepairCashIn:
       return {
