@@ -22,6 +22,7 @@ import {
   manualCashIn,
   transferIncome,
   moveMoney,
+  correctSalePayment,
 } from "../../../apis/cashManagement.api";
 import { verifySalesPin } from "../../../apis/securitySettings.api";
 import TransactionLogs from "./TransactionLogs/TransactionLogs";
@@ -31,6 +32,7 @@ import MoveMoneyModal, {
 } from "./modals/MoveMoneyModal/MoveMoneyModal";
 import TransferIncomeModal from "./modals/TransferIncomeModal/TransferIncomeModal";
 import ManualCashInModal from "./modals/ManualCashInModal/ManualCashInModal";
+import CorrectSalePaymentModal from "./modals/CorrectSalePaymentModal/CorrectSalePaymentModal";
 import {
   TODAY,
   formatCurrency,
@@ -77,6 +79,8 @@ const CashManagement = () => {
   const [moveOpen, setMoveOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [manualOpen, setManualOpen] = useState(false);
+  const [correctOpen, setCorrectOpen] = useState(false);
+  const [correctSaleId, setCorrectSaleId] = useState<string | undefined>();
   const [pinOpen, setPinOpen] = useState(false);
   const [pendingExpense, setPendingExpense] = useState<PendingExpense | null>(
     null,
@@ -207,6 +211,32 @@ const CashManagement = () => {
     }
   };
 
+  const openCorrectSale = (saleId: string) => {
+    setCorrectSaleId(saleId);
+    setCorrectOpen(true);
+  };
+
+  const handleCorrectSaleSubmit = async (
+    saleId: string,
+    cashAmount: number,
+    cardAmount: number,
+    reason: string,
+  ) => {
+    const response = await correctSalePayment({
+      saleId,
+      cashAmount,
+      cardAmount,
+      reason,
+    });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setCorrectOpen(false);
+      showSuccess(response?.message || "Sale payment corrected");
+      refresh();
+    } else {
+      showError(response?.message || "Failed to correct sale payment");
+    }
+  };
+
   return (
     <div className="cash-mgmt-page">
       <div className="cash-mgmt-header">
@@ -314,7 +344,10 @@ const CashManagement = () => {
         )}
       </div>
 
-      <TransactionLogs refreshKey={refreshKey} />
+      <TransactionLogs
+        refreshKey={refreshKey}
+        onCorrectSale={isAdmin ? openCorrectSale : undefined}
+      />
 
       <ExpenseModal
         show={expenseOpen}
@@ -335,6 +368,12 @@ const CashManagement = () => {
         show={manualOpen}
         onClose={() => setManualOpen(false)}
         onSubmit={handleManualSubmit}
+      />
+      <CorrectSalePaymentModal
+        show={correctOpen}
+        saleId={correctSaleId}
+        onClose={() => setCorrectOpen(false)}
+        onSubmit={handleCorrectSaleSubmit}
       />
 
       <PinPad

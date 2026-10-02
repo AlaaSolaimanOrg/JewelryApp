@@ -13,6 +13,8 @@ namespace JewerlyApp.Domain.Enums
         RepairCashIn = 9,
         RepairCashOut = 10,
         // Trade-in/exchange credit exceeded the sale total, so the store paid the customer cash back.
-        SaleChangeOut = 11
+        SaleChangeOut = 11,
+        SalePaymentCorrectionIn = 12,
+        SalePaymentCorrectionOut = 13
     }
 }
