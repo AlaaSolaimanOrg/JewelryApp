@@ -1,5 +1,6 @@
 using JewerlyApp.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,19 +18,22 @@ namespace JewerlyApp.Application.UsedGold
     public static class UsedGoldPoolCalculator
     {
         public static async Task<Dictionary<int, GoldPoolBalance>> GetPoolsAsync(
-            IApplicationDbContext context, CancellationToken cancellationToken)
+            IApplicationDbContext context, CancellationToken cancellationToken, DateTime? asOfUtc = null)
         {
             var purchased = await context.UsedGoldPurchaseItems
+                .Where(i => asOfUtc == null || i.CreatedDate <= asOfUtc)
                 .GroupBy(i => i.Karat)
                 .Select(g => new { Karat = g.Key, Weight = g.Sum(i => i.Weight), Cost = g.Sum(i => i.Subtotal) })
                 .ToListAsync(cancellationToken);
 
             var melted = await context.UsedGoldMeltBatchItems
+                .Where(i => asOfUtc == null || i.CreatedDate <= asOfUtc)
                 .GroupBy(i => i.Karat)
                 .Select(g => new { Karat = g.Key, Weight = g.Sum(i => i.Weight), Cost = g.Sum(i => i.Cost) })
                 .ToListAsync(cancellationToken);
 
             var returned = await context.UsedGoldStockReturns
+                .Where(r => asOfUtc == null || r.CreatedDate <= asOfUtc)
                 .GroupBy(r => r.Karat)
                 .Select(g => new { Karat = g.Key, Weight = g.Sum(r => r.Weight), Cost = g.Sum(r => r.Cost) })
                 .ToListAsync(cancellationToken);

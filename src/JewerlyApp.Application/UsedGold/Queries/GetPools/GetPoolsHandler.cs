@@ -21,18 +21,10 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPools
 
         public async Task<GenericResponse<GetPoolsResultDto>> Handle(GetPoolsQuery request, CancellationToken cancellationToken)
         {
-            var pools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken);
-
-            var poolDtos = pools.ToDictionary(
-                kv => kv.Key,
-                kv => new GoldPoolDto
-                {
-                    Weight = kv.Value.Weight,
-                    Cost = kv.Value.Cost,
-                    TotalInvested = kv.Value.TotalInvested,
-                });
-
             var (startUtc, endUtc) = UsedGoldDateRangeHelper.GetRange(request.Period, request.Month, request.Year);
+
+            var currentPools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken);
+            var periodEndPools = await UsedGoldPoolCalculator.GetPoolsAsync(_context, cancellationToken, endUtc);
 
             var periodItems = await _context.UsedGoldPurchaseItems
                 .Where(i => (startUtc == null || i.CreatedDate >= startUtc) && (endUtc == null || i.CreatedDate <= endUtc))
@@ -41,7 +33,8 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPools
 
             var result = new GetPoolsResultDto
             {
-                Pools = poolDtos,
+                Pools = ToDtos(periodEndPools),
+                CurrentPools = ToDtos(currentPools),
                 PeriodPurchaseCount = periodItems.Count,
                 PeriodSpent = periodItems.Sum(i => i.Subtotal),
                 PeriodSpentCash = periodItems.Where(i => i.PayMethod == UsedGoldPayMethod.Cash).Sum(i => i.Subtotal),
@@ -50,5 +43,15 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPools
 
             return GenericResponse<GetPoolsResultDto>.Success(result);
         }
+
+        private static Dictionary<int, GoldPoolDto> ToDtos(Dictionary<int, GoldPoolBalance> pools) =>
+            pools.ToDictionary(
+                kv => kv.Key,
+                kv => new GoldPoolDto
+                {
+                    Weight = kv.Value.Weight,
+                    Cost = kv.Value.Cost,
+                    TotalInvested = kv.Value.TotalInvested,
+                });
     }
 }
