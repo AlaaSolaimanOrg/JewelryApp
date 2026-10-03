@@ -19,6 +19,9 @@ export interface PeriodStats {
   spent: number;
   spentCash: number;
   spentCard: number;
+  boughtWeight: number;
+  meltedWeight: number;
+  returnedWeight: number;
 }
 
 export interface UsedGoldHistoryEntry {

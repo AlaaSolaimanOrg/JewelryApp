@@ -24,8 +24,16 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPeriodStats
 
             var periodItems = await _context.UsedGoldPurchaseItems
                 .Where(i => (startUtc == null || i.CreatedDate >= startUtc) && (endUtc == null || i.CreatedDate <= endUtc))
-                .Select(i => new { i.Subtotal, i.Purchase.PayMethod })
+                .Select(i => new { i.Subtotal, i.Weight, i.Purchase.PayMethod })
                 .ToListAsync(cancellationToken);
+
+            var meltedWeight = await _context.UsedGoldMeltBatches
+                .Where(b => (startUtc == null || b.CreatedDate >= startUtc) && (endUtc == null || b.CreatedDate <= endUtc))
+                .SumAsync(b => b.TotalWeight, cancellationToken);
+
+            var returnedWeight = await _context.UsedGoldStockReturns
+                .Where(r => (startUtc == null || r.CreatedDate >= startUtc) && (endUtc == null || r.CreatedDate <= endUtc))
+                .SumAsync(r => r.Weight, cancellationToken);
 
             var result = new UsedGoldPeriodStatsDto
             {
@@ -33,6 +41,9 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPeriodStats
                 Spent = periodItems.Sum(i => i.Subtotal),
                 SpentCash = periodItems.Where(i => i.PayMethod == UsedGoldPayMethod.Cash).Sum(i => i.Subtotal),
                 SpentCard = periodItems.Where(i => i.PayMethod == UsedGoldPayMethod.Card).Sum(i => i.Subtotal),
+                BoughtWeight = periodItems.Sum(i => i.Weight),
+                MeltedWeight = meltedWeight,
+                ReturnedWeight = returnedWeight,
             };
 
             return GenericResponse<UsedGoldPeriodStatsDto>.Success(result);

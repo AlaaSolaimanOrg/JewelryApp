@@ -32,6 +32,7 @@ import {
   fmtCurrency,
   fmtCurrencyRounded,
   fmtDate,
+  fmtWeight,
   getAllKarats,
   getAvgPurity,
   getCurrentValue,
@@ -83,6 +84,9 @@ const UsedGold = () => {
       spent: 0,
       spentCash: 0,
       spentCard: 0,
+      boughtWeight: 0,
+      meltedWeight: 0,
+      returnedWeight: 0,
     } as PeriodStats,
     effectDependency: [refreshKey, period, selMonth, selYear],
   }) as { data: PeriodStats };
@@ -98,6 +102,8 @@ const UsedGold = () => {
   const currentValue = getCurrentValue(currentPools);
   const totalInvested = getTotalInvested(currentPools);
   const avgPurity = getAvgPurity(currentPools);
+  const netWeightChange =
+    periodStats.boughtWeight - periodStats.meltedWeight - periodStats.returnedWeight;
 
   const periodLabel = {
     [Period.Today]: "Today",
@@ -394,6 +400,29 @@ const UsedGold = () => {
         <AdminStatCard
           value={`${periodStats.purchaseCount}`}
           label={`Purchases (${periodLabel})`}
+        />
+      </div>
+
+      <div className="stats">
+        <AdminStatCard
+          value={fmtWeight(periodStats.boughtWeight)}
+          label={`Gold bought (${periodLabel})`}
+          valueColor="var(--admin-gold)"
+        />
+        <AdminStatCard
+          value={fmtWeight(periodStats.meltedWeight)}
+          label={`Melted (${periodLabel})`}
+          valueColor="var(--admin-amber)"
+        />
+        <AdminStatCard
+          value={fmtWeight(periodStats.returnedWeight)}
+          label={`Returned to stock (${periodLabel})`}
+          valueColor="var(--admin-green)"
+        />
+        <AdminStatCard
+          value={`${netWeightChange > 0 ? "+" : netWeightChange < 0 ? "-" : ""}${fmtWeight(Math.abs(netWeightChange))}`}
+          label={`Net change (${periodLabel})`}
+          valueColor="var(--admin-blue)"
         />
       </div>
 

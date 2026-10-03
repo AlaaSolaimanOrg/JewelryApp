@@ -6,5 +6,8 @@ namespace JewerlyApp.Application.UsedGold.Queries.GetPeriodStats
         public decimal Spent { get; set; }
         public decimal SpentCash { get; set; }
         public decimal SpentCard { get; set; }
+        public decimal BoughtWeight { get; set; }
+        public decimal MeltedWeight { get; set; }
+        public decimal ReturnedWeight { get; set; }
     }
 }
