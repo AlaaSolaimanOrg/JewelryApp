@@ -1,4 +1,4 @@
-import { FaReceipt } from "react-icons/fa";
+import { FaEdit, FaReceipt } from "react-icons/fa";
 import { getSoldItems } from "../../../../apis/sales.api";
 import ReceiptModal from "../../../../components/modals/ReceiptModal/ReceiptModal";
 import Paginator from "../../../../components/Paginator/Paginator";
@@ -10,7 +10,7 @@ import { SortDirection } from "../../../../types/enums";
 import { handleSort } from "../../../../utils";
 import type { ItemsSoldToProps, SoldItem } from "./ItemsSoldTo.type";
 
-const ItemsSoldTo = ({ range }: ItemsSoldToProps) => {
+const ItemsSoldTo = ({ range, onCorrectSale }: ItemsSoldToProps) => {
   const {
     data: soldItems,
     onPaginationChange,
@@ -69,6 +69,9 @@ const ItemsSoldTo = ({ range }: ItemsSoldToProps) => {
       onHeaderClick: () => handleSort("SubTotal", sortCriteria, onSortChange),
     },
     { key: "receipt", label: "Receipt", align: "center" },
+    ...(onCorrectSale
+      ? [{ key: "payment", label: "Payment", align: "center" } as TableHeader]
+      : []),
   ];
 
   const tableData = soldItems.map((item) => ({
@@ -94,6 +97,11 @@ const ItemsSoldTo = ({ range }: ItemsSoldToProps) => {
           <FaReceipt /> View
         </button>
       </ReceiptModal>
+    ),
+    payment: onCorrectSale && (
+      <button className="receipt-btn" onClick={() => onCorrectSale(item.saleId)}>
+        <FaEdit /> Correct
+      </button>
     ),
   }));
 

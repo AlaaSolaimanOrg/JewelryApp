@@ -2,6 +2,7 @@ import type { ReportRangePayload } from "../../../../utils";
 
 export interface ItemsSoldToProps {
   range: ReportRangePayload;
+  onCorrectSale?: (saleId: string) => void;
 }
 
 export interface SoldItem {

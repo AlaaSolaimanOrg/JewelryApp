@@ -1,9 +1,11 @@
+@use "../cashButton.scss";
+
 .cash-mo {
   display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
-  z-index: 50;
+  z-index: 1100;
   justify-content: center;
   align-items: center;
   padding: 20px;
@@ -138,8 +140,7 @@
         .cash-btn {
           flex: 1;
           justify-content: center;
-          padding: 13px;
-          font-size: 14px;
+          @include cashButton.cash-btn(13px, 14px);
         }
       }
     }

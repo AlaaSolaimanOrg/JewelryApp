@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaChartBar } from "react-icons/fa";
 import { getSalesByCategory, getSalesOverTime } from "../../../apis/analytics.api";
 import { getSalesInsights, getTopCustomers } from "../../../apis/sales.api";
+import { correctSalePayment } from "../../../apis/cashManagement.api";
 import ReportListPanel from "../../../components/ReportListPanel/ReportListPanel";
 import ReportStatCard from "../../../components/cards/ReportStatCard/ReportStatCard";
 import HorizontalBarRow from "../../../components/charts/HorizontalBarRow/HorizontalBarRow";
@@ -9,7 +10,8 @@ import RevenueBarChart from "../../../components/charts/RevenueBarChart/RevenueB
 import ExpandButton from "../../../components/ExpandButton/ExpandButton";
 import ChartExpandModal from "../../../components/modals/ChartExpandModal/ChartExpandModal";
 import useLocalApi from "../../../hooks/useLocalApi";
-import { getReportRangePayload } from "../../../utils";
+import { checkRequestSucceeded, getReportRangePayload, showError, showSuccess } from "../../../utils";
+import CorrectSalePaymentModal from "../../pos/cashManagement/modals/CorrectSalePaymentModal/CorrectSalePaymentModal";
 import ItemsSoldTo from "./itemsSoldTo/ItemsSoldTo";
 import type { Period } from "./SalesReports.type";
 import {
@@ -69,6 +71,9 @@ const SalesReports = () => {
   const [dateTo, setDateTo] = useState(todayStr);
   const [appliedRange, setAppliedRange] = useState<{ dateFrom: string; dateTo: string } | null>(null);
   const [expandedChart, setExpandedChart] = useState<ExpandedChart>(null);
+  const [correctOpen, setCorrectOpen] = useState(false);
+  const [correctSaleId, setCorrectSaleId] = useState<string | undefined>();
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSetPeriod = (p: Exclude<Period, "custom">) => {
     setPeriod(p);
@@ -79,6 +84,32 @@ const SalesReports = () => {
     if (!dateFrom || !dateTo) return;
     setAppliedRange({ dateFrom, dateTo });
     setPeriod("custom");
+  };
+
+  const openCorrectSale = (saleId: string) => {
+    setCorrectSaleId(saleId);
+    setCorrectOpen(true);
+  };
+
+  const handleCorrectSaleSubmit = async (
+    saleId: string,
+    cashAmount: number,
+    cardAmount: number,
+    reason: string,
+  ) => {
+    const response = await correctSalePayment({
+      saleId,
+      cashAmount,
+      cardAmount,
+      reason,
+    });
+    if (checkRequestSucceeded(response?.statusCode)) {
+      setCorrectOpen(false);
+      showSuccess(response?.message || "Sale payment corrected");
+      setRefreshKey((k) => k + 1);
+    } else {
+      showError(response?.message || "Failed to correct sale payment");
+    }
   };
 
   const rangePayload = getReportRangePayload(period, appliedRange);
@@ -92,7 +123,7 @@ const SalesReports = () => {
     apiToCall: (data) => getSalesInsights(data.payload),
     payload: rangePayload,
     dataInitalValue: {},
-    effectDependency: [period, appliedRange],
+    effectDependency: [period, appliedRange, refreshKey],
   }) as { data: Partial<SalesInsights> };
 
   const { data: salesOverTime } = useLocalApi({
@@ -324,7 +355,14 @@ const SalesReports = () => {
         />
       </div>
 
-      <ItemsSoldTo range={rangePayload} />
+      <ItemsSoldTo range={rangePayload} onCorrectSale={openCorrectSale} />
+
+      <CorrectSalePaymentModal
+        show={correctOpen}
+        saleId={correctSaleId}
+        onClose={() => setCorrectOpen(false)}
+        onSubmit={handleCorrectSaleSubmit}
+      />
 
       <ChartExpandModal
         show={expandedChart === "revenue"}
