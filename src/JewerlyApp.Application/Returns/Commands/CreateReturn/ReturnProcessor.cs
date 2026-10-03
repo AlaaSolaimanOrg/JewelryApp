@@ -212,7 +212,10 @@ namespace JewerlyApp.Application.Returns.Commands.CreateReturn
             int countToday = await context.Returns
                 .CountAsync(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
 
-            return $"{prefix}-{today}-{(countToday + 1).ToString("D4")}";
+            int pendingToday = context.Returns.Local
+                .Count(x => x.SerialNumber.StartsWith($"{prefix}-{today}"));
+
+            return $"{prefix}-{today}-{(countToday + pendingToday + 1).ToString("D4")}";
         }
     }
 }

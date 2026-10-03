@@ -7,6 +7,7 @@ import {
 } from "../../../../../types/enums";
 import type {
   ExchangeApplyData,
+  ExchangeItemGroup,
   ExchangeSearchSale,
   SelectedExchangeItem,
 } from "./ExchangeSection.type";
@@ -51,19 +52,30 @@ export const searchPastTransactions = async (
 export const getExchangeTotal = (items: SelectedExchangeItem[]) =>
   items.reduce((sum, i) => sum + i.returnAmount, 0);
 
-export const buildExchangeApplyData = (
-  sale: ExchangeSearchSale,
-  items: SelectedExchangeItem[],
-): ExchangeApplyData => ({
-  saleId: sale.id,
-  saleSerialNumber: sale.serialNumber,
-  items: items.map((i) => ({
-    saleItemId: i.saleItemId,
-    quantityToReturn: i.returnQty,
-    reason: i.reason as ReturnReason,
-    reasonNote: i.reason === ReturnReason.Other ? i.reasonNote : undefined,
-    returnAmount: i.returnAmount,
-    condition: i.condition as ItemCondition,
-    option: i.dest as ReturnOption,
-  })),
-});
+export const groupItemsBySale = (items: SelectedExchangeItem[]): ExchangeItemGroup[] =>
+  items.reduce<ExchangeItemGroup[]>((groups, item) => {
+    const group = groups.find((g) => g.saleId === item.saleId);
+    if (group) {
+      group.items.push(item);
+      return groups;
+    }
+    return [
+      ...groups,
+      { saleId: item.saleId, saleSerialNumber: item.saleSerialNumber, items: [item] },
+    ];
+  }, []);
+
+export const buildExchangeApplyData = (items: SelectedExchangeItem[]): ExchangeApplyData[] =>
+  groupItemsBySale(items).map((group) => ({
+    saleId: group.saleId,
+    saleSerialNumber: group.saleSerialNumber,
+    items: group.items.map((i) => ({
+      saleItemId: i.saleItemId,
+      quantityToReturn: i.returnQty,
+      reason: i.reason as ReturnReason,
+      reasonNote: i.reason === ReturnReason.Other ? i.reasonNote : undefined,
+      returnAmount: i.returnAmount,
+      condition: i.condition as ItemCondition,
+      option: i.dest as ReturnOption,
+    })),
+  }));

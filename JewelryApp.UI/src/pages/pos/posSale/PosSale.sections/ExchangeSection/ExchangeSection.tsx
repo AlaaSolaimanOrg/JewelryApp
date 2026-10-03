@@ -11,6 +11,7 @@ import {
   buildExchangeApplyData,
   formatMoney,
   getExchangeTotal,
+  groupItemsBySale,
   searchPastTransactions,
 } from "./ExchangeSection.utils";
 
@@ -19,7 +20,7 @@ interface Props {
   onOpen: () => void;
   onClose: () => void;
   onCreditChange: (amount: number) => void;
-  onExchangeChange: (data: ExchangeApplyData | null) => void;
+  onExchangeChange: (data: ExchangeApplyData[] | null) => void;
 }
 
 const REASONS: { value: ReturnReason; label: string }[] = [
@@ -53,6 +54,7 @@ const ExchangeSection: React.FC<Props> = ({
   const [items, setItems] = useState<SelectedExchangeItem[]>([]);
 
   const total = getExchangeTotal(items);
+  const itemGroups = groupItemsBySale(items);
 
   const allHaveDestAndCondition =
     items.length > 0 && items.every((i) => i.dest && i.condition && i.returnQty > 0);
@@ -62,9 +64,9 @@ const ExchangeSection: React.FC<Props> = ({
 
   useEffect(() => {
     onCreditChange(total);
-    onExchangeChange(canApply && selectedSale ? buildExchangeApplyData(selectedSale, items) : null);
+    onExchangeChange(canApply ? buildExchangeApplyData(items) : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [total, canApply, items, selectedSale]);
+  }, [total, canApply, items]);
 
   useEffect(() => {
     if (!search.trim()) {
@@ -95,12 +97,10 @@ const ExchangeSection: React.FC<Props> = ({
 
   const selectTxn = (sale: ExchangeSearchSale) => {
     setSelectedSale(sale);
-    setItems([]);
   };
 
   const backToSearch = () => {
     setSelectedSale(null);
-    setItems([]);
   };
 
   const toggleItem = (saleItemId: string) => {
@@ -109,11 +109,14 @@ const ExchangeSection: React.FC<Props> = ({
       setItems((prev) => prev.filter((i) => i.saleItemId !== saleItemId));
       return;
     }
-    const item = selectedSale?.saleItems.find((i) => i.id === saleItemId);
+    if (!selectedSale) return;
+    const item = selectedSale.saleItems.find((i) => i.id === saleItemId);
     if (!item || item.quantity <= 0) return;
     setItems((prev) => [
       ...prev,
       {
+        saleId: selectedSale.id,
+        saleSerialNumber: selectedSale.serialNumber,
         saleItemId,
         name: item.productName,
         karat: item.karat,
@@ -203,24 +206,31 @@ const ExchangeSection: React.FC<Props> = ({
 
   return (
     <>
-      {items.length > 0 && selectedSale && (
+      {items.length > 0 && (
         <div className="ps-credit-panel ps-red-border">
-          <div className="ps-panel-label">⏩ Exchange credit · {selectedSale.serialNumber}</div>
-          <div className="ps-credit-val ps-red-text">−{formatMoney(total)}</div>
-          <div className="ps-exch-items">
-            {items.map((i) => (
-              <div className="ps-exch-item" key={i.saleItemId}>
-                <div>
-                  <span className="ps-exch-item-name">
-                    {i.dest === ReturnOption.MeltAfterReturn ? "🔥" : "📦"} {i.name}
-                    {i.returnQty > 1 ? ` (×${i.returnQty})` : ""}
-                  </span>{" "}
-                  {i.sku && <span className="ps-exch-item-sku">{i.sku}</span>}
-                </div>
-                <span className="ps-exch-item-amt">−{formatMoney(i.returnAmount)}</span>
-              </div>
-            ))}
+          <div className="ps-panel-label">
+            ⏩ Exchange credit · {itemGroups.map((g) => g.saleSerialNumber).join(", ")}
           </div>
+          <div className="ps-credit-val ps-red-text">−{formatMoney(total)}</div>
+          {itemGroups.map((group) => (
+            <div className="ps-exch-items" key={group.saleId}>
+              {itemGroups.length > 1 && (
+                <div className="ps-exch-group-head">{group.saleSerialNumber}</div>
+              )}
+              {group.items.map((i) => (
+                <div className="ps-exch-item" key={i.saleItemId}>
+                  <div>
+                    <span className="ps-exch-item-name">
+                      {i.dest === ReturnOption.MeltAfterReturn ? "🔥" : "📦"} {i.name}
+                      {i.returnQty > 1 ? ` (×${i.returnQty})` : ""}
+                    </span>{" "}
+                    {i.sku && <span className="ps-exch-item-sku">{i.sku}</span>}
+                  </div>
+                  <span className="ps-exch-item-amt">−{formatMoney(i.returnAmount)}</span>
+                </div>
+              ))}
+            </div>
+          ))}
           <div className="ps-credit-actions">
             <button className="ps-btn ps-btn-red" onClick={onOpen}>
               Edit
@@ -289,7 +299,14 @@ const ExchangeSection: React.FC<Props> = ({
                         <div className="ps-exch-txn-desc">
                           {t.customerName} · {t.customerPhone}
                         </div>
-                        <div className="ps-exch-txn-id">{t.serialNumber}</div>
+                        <div className="ps-exch-txn-id">
+                          {t.serialNumber}
+                          {items.some((i) => i.saleId === t.id) && (
+                            <span className="ps-exch-txn-selected">
+                              {items.filter((i) => i.saleId === t.id).length} selected
+                            </span>
+                          )}
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -299,7 +316,7 @@ const ExchangeSection: React.FC<Props> = ({
                 <div className="ps-exch-items-section">
                   <div className="ps-exch-back-row">
                     <button className="ps-exch-back" onClick={backToSearch}>
-                      <FaArrowLeft /> Back to search
+                      <FaArrowLeft /> {items.length ? "Add from another sale" : "Back to search"}
                     </button>
                   </div>
                   <div className="ps-exch-txn-info">

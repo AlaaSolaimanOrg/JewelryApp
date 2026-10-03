@@ -99,6 +99,16 @@
       color: var(--pos-text-subtle);
       font-family: "SF Mono", "Fira Code", monospace;
       margin-top: 2px;
+
+      .ps-exch-txn-selected {
+        margin-left: 8px;
+        padding: 1px 8px;
+        border-radius: 10px;
+        background: var(--pos-gold);
+        color: var(--on-gold-text);
+        font-family: var(--pos-font);
+        font-weight: 600;
+      }
     }
   }
 
@@ -374,6 +384,13 @@
 
 .ps-exch-items {
   margin-top: 6px;
+
+  .ps-exch-group-head {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pos-text-subtle);
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
 
   .ps-exch-item {
     display: flex;

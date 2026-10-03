@@ -23,6 +23,8 @@ export interface ExchangeSearchSale {
 }
 
 export interface SelectedExchangeItem {
+  saleId: string;
+  saleSerialNumber: string;
   saleItemId: string;
   name: string;
   karat: KaratType;
@@ -36,6 +38,12 @@ export interface SelectedExchangeItem {
   reasonNote: string;
   dest: ReturnOption | "";
   condition: ItemCondition | "";
+}
+
+export interface ExchangeItemGroup {
+  saleId: string;
+  saleSerialNumber: string;
+  items: SelectedExchangeItem[];
 }
 
 export interface ExchangeApplyData {

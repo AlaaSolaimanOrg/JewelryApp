@@ -45,7 +45,7 @@ const MainPosPage: React.FC = () => {
   const [tradeInItems, setTradeInItems] = useState<TradeInItem[]>([]);
   const [showExchangeModal, setShowExchangeModal] = useState(false);
   const [exchangeCredit, setExchangeCredit] = useState(0);
-  const [exchangeData, setExchangeData] = useState<ExchangeApplyData | null>(null);
+  const [exchangeData, setExchangeData] = useState<ExchangeApplyData[] | null>(null);
 
   // Calculate totals
   const subtotal = products?.reduce((sum, product) => {
@@ -308,9 +308,7 @@ const MainPosPage: React.FC = () => {
         };
       }),
       tradeInItems,
-      exchange: exchangeData
-        ? { saleId: exchangeData.saleId, items: exchangeData.items }
-        : null,
+      exchanges: (exchangeData ?? []).map((e) => ({ saleId: e.saleId, items: e.items })),
     };
 
     createSale(payload)

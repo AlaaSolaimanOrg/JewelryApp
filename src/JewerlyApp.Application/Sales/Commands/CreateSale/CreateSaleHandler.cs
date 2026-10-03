@@ -51,18 +51,22 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                     return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_UsedGold_Purchase_Invalid_Price);
             }
 
-            Sale? exchangeSourceSale = null;
-            decimal exchangeCredit = 0;
-            if (request.Exchange != null)
+            var exchanges = request.Exchanges ?? new List<ExchangeReturnDto>();
+            if (exchanges.Select(e => e.SaleId).Distinct().Count() != exchanges.Count)
+                return GenericResponse<string>.Error(ResponseStatusCode.BadRequest, Messages.Error_Return_Duplicate_Sale);
+
+            var exchangeSources = new List<(Sale Sale, List<ReturnItemDto> Items)>();
+            foreach (var exchange in exchanges)
             {
                 var (exchangeError, sourceSale) = await ReturnProcessor.ValidateAsync(
-                    _context, request.Exchange.SaleId, request.Exchange.Items, cancellationToken);
+                    _context, exchange.SaleId, exchange.Items, cancellationToken);
                 if (exchangeError != null)
                     return exchangeError;
 
-                exchangeSourceSale = sourceSale;
-                exchangeCredit = request.Exchange.Items.Sum(i => i.ReturnAmount);
+                exchangeSources.Add((sourceSale!, exchange.Items));
             }
+
+            decimal exchangeCredit = exchanges.SelectMany(e => e.Items).Sum(i => i.ReturnAmount);
 
             // -------------------------------
             // 2. STAGE NEW / MANUAL PRODUCTS (saved together with the sale)
@@ -161,12 +165,12 @@ namespace JewerlyApp.Application.Sales.Commands.CreateSale
                 };
             }
 
-            if (exchangeSourceSale != null)
+            foreach (var (sourceSale, exchangeItems) in exchangeSources)
             {
                 await ReturnProcessor.CreateAsync(
                     _context,
-                    exchangeSourceSale,
-                    request.Exchange!.Items,
+                    sourceSale,
+                    exchangeItems,
                     RefundMethod.StoreCredit,
                     loggedInUser.Id,
                     sale.Id,
