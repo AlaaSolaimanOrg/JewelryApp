@@ -66,7 +66,7 @@ const UsedGold = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const refresh = () => setRefreshKey((k) => k + 1);
 
-  const [period, setPeriod] = useState<Period>(Period.Month);
+  const [period, setPeriod] = useState<Period>(Period.Today);
   const [selMonth, setSelMonth] = useState(now.getMonth());
   const [selYear, setSelYear] = useState(now.getFullYear());
 
