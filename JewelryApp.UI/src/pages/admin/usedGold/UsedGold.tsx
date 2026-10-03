@@ -8,6 +8,7 @@ import CustomTable from "../../../components/tables/CustomTable/CustomTable";
 import type { TableHeader } from "../../../components/tables/CustomTable/CustomTable";
 import {
   getUsedGoldPools,
+  getUsedGoldPeriodStats,
   getUsedGoldHistory,
   sendToMelt,
   returnToStock,
@@ -21,7 +22,7 @@ import ReturnToStockModal from "./ReturnToStockModal/ReturnToStockModal";
 import type { ReturnToStockPayload } from "./ReturnToStockModal/ReturnToStockModal.type";
 import type {
   GoldPool,
-  PoolsResult,
+  PeriodStats,
   UsedGoldHistoryEntry,
 } from "./UsedGold.type";
 import { Period } from "./UsedGold.type";
@@ -68,28 +69,23 @@ const UsedGold = () => {
   const [selMonth, setSelMonth] = useState(now.getMonth());
   const [selYear, setSelYear] = useState(now.getFullYear());
 
-  const { data: poolsResult } = useLocalApi({
-    apiToCall: (data) => getUsedGoldPools(data.payload),
+  const { data: currentPools } = useLocalApi({
+    apiToCall: () => getUsedGoldPools(),
+    dataInitalValue: {},
+    effectDependency: [refreshKey],
+  }) as { data: Record<number, GoldPool> };
+
+  const { data: periodStats } = useLocalApi({
+    apiToCall: (data) => getUsedGoldPeriodStats(data.payload),
     payload: { period, month: selMonth, year: selYear },
     dataInitalValue: {
-      pools: {},
-      currentPools: {},
-      periodPurchaseCount: 0,
-      periodSpent: 0,
-      periodSpentCash: 0,
-      periodSpentCard: 0,
-    } as PoolsResult,
+      purchaseCount: 0,
+      spent: 0,
+      spentCash: 0,
+      spentCard: 0,
+    } as PeriodStats,
     effectDependency: [refreshKey, period, selMonth, selYear],
-  }) as { data: PoolsResult };
-
-  const {
-    pools,
-    currentPools,
-    periodPurchaseCount,
-    periodSpent,
-    periodSpentCash,
-    periodSpentCard,
-  } = poolsResult;
+  }) as { data: PeriodStats };
 
   const [typeFilter, setTypeFilter] = useState<
     "all" | UsedGoldHistoryEntry["type"]
@@ -98,11 +94,10 @@ const UsedGold = () => {
   const [showMeltModal, setShowMeltModal] = useState(false);
   const [showStockModal, setShowStockModal] = useState(false);
 
-  const totalOnHand = getTotalOnHand(pools);
-  const currentValue = getCurrentValue(pools);
-  const totalInvested = getTotalInvested(pools);
-  const avgPurity = getAvgPurity(pools);
-  const currentOnHand = getTotalOnHand(currentPools);
+  const totalOnHand = getTotalOnHand(currentPools);
+  const currentValue = getCurrentValue(currentPools);
+  const totalInvested = getTotalInvested(currentPools);
+  const avgPurity = getAvgPurity(currentPools);
 
   const periodLabel = {
     [Period.Today]: "Today",
@@ -145,7 +140,7 @@ const UsedGold = () => {
     onPaginationChange(1);
   };
 
-  const otherKarats = getAllKarats(pools).filter(
+  const otherKarats = getAllKarats(currentPools).filter(
     (k) => !STANDARD_KARATS.includes(k),
   );
 
@@ -225,7 +220,7 @@ const UsedGold = () => {
   }));
 
   const poolCard = (k: number) => {
-    const pool = pools[k] ?? EMPTY_POOL;
+    const pool = currentPools[k] ?? EMPTY_POOL;
     return (
       <GoldPoolCard
         key={k}
@@ -277,24 +272,60 @@ const UsedGold = () => {
           <button
             className="btn-md btn-green"
             onClick={() =>
-              currentOnHand > 0 ? setShowStockModal(true) : undefined
+              totalOnHand > 0 ? setShowStockModal(true) : undefined
             }
-            disabled={currentOnHand <= 0}
+            disabled={totalOnHand <= 0}
           >
             <FaBoxOpen /> Return to stock
           </button>
           <button
             className="btn-md btn-amber"
             onClick={() =>
-              currentOnHand > 0 ? setShowMeltModal(true) : undefined
+              totalOnHand > 0 ? setShowMeltModal(true) : undefined
             }
-            disabled={currentOnHand <= 0}
+            disabled={totalOnHand <= 0}
           >
             <FaFire /> Send to melt
           </button>
         </div>
       </div>
 
+      <div className="stats">
+        <AdminStatCard
+          value={`${totalOnHand.toFixed(1)}g`}
+          label="On hand"
+          valueColor="var(--admin-gold)"
+        />
+        <AdminStatCard
+          value={`${avgPurity.toFixed(1)}K`}
+          label="Avg purity"
+          valueColor="var(--admin-amber)"
+        />
+        <AdminStatCard
+          value={fmtCurrencyRounded(currentValue)}
+          label="Value on hand"
+          valueColor="var(--admin-green)"
+        />
+        <AdminStatCard
+          value={fmtCurrencyRounded(totalInvested)}
+          label="Total invested"
+          valueColor="var(--admin-red)"
+        />
+      </div>
+
+      <div className="section-title">Gold pools — what's in the drawer</div>
+      <div className="pools">{STANDARD_KARATS.map((k) => poolCard(k))}</div>
+
+      {otherKarats.length > 0 && (
+        <>
+          <div className="section-title">
+            Other purities — odd buys (9K, 23K, ...)
+          </div>
+          <div className="pools">{otherKarats.map((k) => poolCard(k))}</div>
+        </>
+      )}
+
+      <div className="section-title">History ({periodLabel})</div>
       <div className="controls">
         <div className="ctrl-group">
           <span className="ctrl-label">Period:</span>
@@ -346,59 +377,26 @@ const UsedGold = () => {
 
       <div className="stats">
         <AdminStatCard
-          value={`${totalOnHand.toFixed(1)}g`}
-          label="On hand"
-          valueColor="var(--admin-gold)"
-        />
-        <AdminStatCard
-          value={`${avgPurity.toFixed(1)}K`}
-          label="Avg purity"
-          valueColor="var(--admin-amber)"
-        />
-        <AdminStatCard
-          value={fmtCurrencyRounded(currentValue)}
-          label="Value on hand"
-          valueColor="var(--admin-green)"
-        />
-        <AdminStatCard
-          value={fmtCurrencyRounded(totalInvested)}
-          label="Total invested"
-          valueColor="var(--admin-red)"
-        />
-        <AdminStatCard
-          value={fmtCurrencyRounded(periodSpent)}
+          value={fmtCurrencyRounded(periodStats.spent)}
           label={`Spent (${periodLabel})`}
           valueColor="var(--admin-blue)"
         />
         <AdminStatCard
-          value={fmtCurrencyRounded(periodSpentCash)}
+          value={fmtCurrencyRounded(periodStats.spentCash)}
           label={`Paid in cash (${periodLabel})`}
           valueColor="var(--admin-green)"
         />
         <AdminStatCard
-          value={fmtCurrencyRounded(periodSpentCard)}
+          value={fmtCurrencyRounded(periodStats.spentCard)}
           label={`Paid by card (${periodLabel})`}
           valueColor="var(--admin-purple)"
         />
         <AdminStatCard
-          value={`${periodPurchaseCount}`}
+          value={`${periodStats.purchaseCount}`}
           label={`Purchases (${periodLabel})`}
         />
       </div>
 
-      <div className="section-title">Gold pools — what's in the drawer</div>
-      <div className="pools">{STANDARD_KARATS.map((k) => poolCard(k))}</div>
-
-      {otherKarats.length > 0 && (
-        <>
-          <div className="section-title">
-            Other purities — odd buys (9K, 23K, ...)
-          </div>
-          <div className="pools">{otherKarats.map((k) => poolCard(k))}</div>
-        </>
-      )}
-
-      <div className="section-title">History ({periodLabel})</div>
       <div className="panel">
         <div className="tbl-head">
           <span className="tbl-title">

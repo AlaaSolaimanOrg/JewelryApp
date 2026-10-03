@@ -15,12 +15,16 @@ export const createUsedGoldPurchase = async (payload: {
   return requestApi("POST", apiRoutes.usedGold.createPurchase, payload);
 };
 
-export const getUsedGoldPools = async (payload: {
+export const getUsedGoldPools = async () => {
+  return requestApi("GET", apiRoutes.usedGold.getPools);
+};
+
+export const getUsedGoldPeriodStats = async (payload: {
   period?: string;
   month?: number;
   year?: number;
 }) => {
-  return requestApi("GET", apiRoutes.usedGold.getPools, payload);
+  return requestApi("GET", apiRoutes.usedGold.getPeriodStats, payload);
 };
 
 export const getUsedGoldHistory = async (payload: {

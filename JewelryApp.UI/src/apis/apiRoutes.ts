@@ -122,6 +122,7 @@ export const apiRoutes = {
   usedGold: {
     createPurchase: "UsedGold/CreatePurchase",
     getPools: "UsedGold/GetPools",
+    getPeriodStats: "UsedGold/GetPeriodStats",
     getHistory: "UsedGold/GetHistory",
     sendToMelt: "UsedGold/SendToMelt",
     returnToStock: "UsedGold/ReturnToStock",

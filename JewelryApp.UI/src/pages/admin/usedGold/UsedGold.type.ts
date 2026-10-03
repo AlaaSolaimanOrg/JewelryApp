@@ -14,13 +14,11 @@ export interface GoldPool {
   totalInvested: number;
 }
 
-export interface PoolsResult {
-  pools: Record<number, GoldPool>;
-  currentPools: Record<number, GoldPool>;
-  periodPurchaseCount: number;
-  periodSpent: number;
-  periodSpentCash: number;
-  periodSpentCard: number;
+export interface PeriodStats {
+  purchaseCount: number;
+  spent: number;
+  spentCash: number;
+  spentCard: number;
 }
 
 export interface UsedGoldHistoryEntry {

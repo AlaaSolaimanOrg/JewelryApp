@@ -2,6 +2,7 @@ using JewerlyApp.Application.UsedGold.Commands.CreatePurchase;
 using JewerlyApp.Application.UsedGold.Commands.ReturnToStock;
 using JewerlyApp.Application.UsedGold.Commands.SendToMelt;
 using JewerlyApp.Application.UsedGold.Queries.GetHistory;
+using JewerlyApp.Application.UsedGold.Queries.GetPeriodStats;
 using JewerlyApp.Application.UsedGold.Queries.GetPools;
 using JewerlyApp.Application.UsedGold.Queries.GetSummary;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,13 @@ namespace JewerlyApp.API.Controllers.UsedGold
 
         [HttpGet]
         public async Task<IActionResult> GetPools([FromQuery] GetPoolsQuery query)
+        {
+            var response = await Mediator.Send(query);
+            return CreateResponse(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPeriodStats([FromQuery] GetPeriodStatsQuery query)
         {
             var response = await Mediator.Send(query);
             return CreateResponse(response);
